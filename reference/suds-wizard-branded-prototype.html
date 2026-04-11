@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuDS Enviro - Chamber Configurator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:    #004d70;
+  --navy-d:  #003a54;
+  --blue:    #1a82a2;
+  --blue-l:  #2a9fc5;
+  --green:   #44af43;
+  --green-d: #339932;
+  --light:   #f0f6fa;
+  --border:  #d8e8f0;
+  --text:    #0f2535;
+  --muted:   #5a7a90;
+  --white:   #ffffff;
+  --card-shadow: 0 2px 12px rgba(0,77,112,0.10);
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #c8d8e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 48px;
+  min-height: 100vh;
+}
+
+/* Page wrapper */
+.page-label {
+  text-align: center;
+  margin-bottom: 18px;
+}
+.page-label h1 { font-size: 14px; font-weight: 700; color: #1a3a50; margin-bottom: 2px; }
+.page-label p { font-size: 11px; color: #5a7a90; }
+.label-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--navy); color: white;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px; margin-bottom: 8px;
+}
+
+/* Screen note */
+.screen-note-bar {
+  width: 100%; max-width: 390px;
+  background: var(--white); border-radius: 8px;
+  padding: 10px 14px; margin-bottom: 12px;
+  font-size: 11px; color: #5a7a90; line-height: 1.5;
+  box-shadow: 0 1px 6px rgba(0,77,112,0.1);
+}
+.screen-note-bar strong { color: var(--navy); }
+
+/* PHONE FRAME */
+.phone {
+  width: 390px;
+  height: 780px;
+  border: 2px solid #1a3a50;
+  border-radius: 46px;
+  overflow: hidden;
+  background: var(--light);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+/* Notch */
+.phone-notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 28px;
+  background: #1a3a50; border-radius: 0 0 18px 18px;
+  z-index: 60;
+}
+.notch-dot {
+  position: absolute; right: 22px; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 8px; border-radius: 50%; background: #2a4a60;
+}
+
+/* Status bar */
+.status-bar {
+  height: 46px; background: var(--navy);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 0 22px 8px; flex-shrink: 0;
+  color: rgba(255,255,255,0.9); font-size: 12px; font-weight: 600;
+}
+
+/* App header */
+.app-header {
+  background: linear-gradient(135deg, var(--navy) 0%, #005f8c 100%);
+  padding: 12px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.app-logo { display: flex; align-items: center; gap: 10px; }
+.app-logo-icon {
+  width: 34px; height: 34px; background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+}
+.app-logo-text { line-height: 1.15; }
+.app-logo-text strong { display: block; font-size: 13px; font-weight: 800; color: white; letter-spacing: -0.01em; }
+.app-logo-text span { display: block; font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.55); letter-spacing: 0.08em; text-transform: uppercase; }
+.app-save-btn { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); cursor: pointer; }
+
+/* Progress bar */
+.progress-wrap {
+  background: var(--navy);
+  padding: 10px 18px 12px;
+  flex-shrink: 0;
+}
+.progress-steps {
+  display: flex; align-items: center; gap: 0;
+}
+.prog-pip {
+  height: 4px; flex: 1; background: rgba(255,255,255,0.15);
+  border-radius: 2px; transition: background 0.3s;
+}
+.prog-pip.done { background: var(--green); }
+.prog-pip.active { background: rgba(68,175,67,0.6); }
+.prog-count { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.45); margin-left: 10px; white-space: nowrap; }
+
+/* Summary accordion */
+.summary-bar {
+  background: var(--navy-d);
+  padding: 10px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.summary-bar-left { display: flex; align-items: center; gap: 8px; }
+.summary-bar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.45); }
+.summary-bar-value { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.75); }
+.summary-chevron { color: rgba(255,255,255,0.35); transition: transform 0.25s; }
+.summary-chevron.open { transform: rotate(180deg); }
+
+.summary-panel {
+  background: var(--navy-d);
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.3s ease;
+  flex-shrink: 0;
+}
+.summary-panel.open { max-height: 200px; }
+.summary-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: rgba(255,255,255,0.06);
+  margin: 0 18px 10px;
+  border-radius: 6px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.sum-cell {
+  background: rgba(255,255,255,0.04);
+  padding: 7px 10px;
+}
+.sum-cell .sk { font-size: 9px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
+.sum-cell .sv { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.8); }
+.sum-cell .sv.pending { color: rgba(255,255,255,0.2); font-weight: 400; font-style: italic; }
+.sum-cell .sv.locked { color: rgba(68,175,67,0.8); }
+
+/* Screen content */
+.screen-content {
+  flex: 1; overflow-y: auto; padding: 20px 18px 8px;
+  -webkit-overflow-scrolling: touch;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.screen-content::-webkit-scrollbar { display: none; }
+.screen-content.fading { opacity: 0; transform: translateX(16px); }
+
+/* Step typography */
+.step-eyebrow {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--blue); margin-bottom: 5px;
+}
+.step-heading {
+  font-size: 20px; font-weight: 800; color: var(--text);
+  letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 5px;
+}
+.step-sub {
+  font-size: 12px; font-weight: 400; color: var(--muted);
+  margin-bottom: 20px; line-height: 1.55;
+}
+
+/* Option cards */
+.option-stack { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.opt-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 13px 14px;
+  display: flex; align-items: center; gap: 13px;
+  cursor: pointer; transition: all 0.15s;
+  box-shadow: var(--card-shadow);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.opt-card:active { transform: scale(0.98); }
+.opt-card.selected {
+  border-color: var(--navy); border-width: 2px;
+  background: #f0f7fb;
+  box-shadow: 0 0 0 3px rgba(0,77,112,0.08), var(--card-shadow);
+}
+.opt-card.disabled {
+  opacity: 0.4; pointer-events: none; background: var(--light);
+}
+.opt-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: var(--light); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.15s;
+}
+.opt-card.selected .opt-icon { background: rgba(0,77,112,0.08); }
+.opt-body { flex: 1; }
+.opt-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.opt-card.selected .opt-title { color: var(--navy); }
+.opt-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.opt-check {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.opt-card.selected .opt-check {
+  background: var(--navy); border-color: var(--navy);
+}
+
+/* Size grid */
+.size-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+.size-grid.cols3 { grid-template-columns: repeat(3, 1fr); }
+.size-card {
+  background: var(--white); border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 14px 10px; text-align: center; cursor: pointer;
+  transition: all 0.15s; box-shadow: var(--card-shadow);
+  -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.size-card:active { transform: scale(0.96); }
+.size-card.selected {
+  border-color: var(--navy); border-width: 2px; background: #f0f7fb;
+  box-shadow: 0 0 0 3px rgba(0,77,112,0.08);
+}
+.size-card.disabled { opacity: 0.35; pointer-events: none; background: var(--light); }
+.size-num {
+  font-size: 26px; font-weight: 800; color: var(--text);
+  display: block; line-height: 1; letter-spacing: -0.02em;
+}
+.size-card.selected .size-num { color: var(--navy); }
+.size-unit { font-size: 11px; color: var(--muted); display: block; margin-top: 3px; font-weight: 500; }
+.size-card.selected .size-unit { color: var(--blue); }
+
+/* Alert boxes */
+.alert {
+  border-radius: 8px; padding: 11px 13px; margin-bottom: 11px;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.alert.warn { background: rgba(224,160,42,0.08); border: 1px solid rgba(224,160,42,0.25); }
+.alert.ok { background: rgba(68,175,67,0.08); border: 1px solid rgba(68,175,67,0.25); }
+.alert.info { background: rgba(26,130,162,0.08); border: 1px solid rgba(26,130,162,0.2); }
+.alert.error { background: rgba(200,60,60,0.08); border: 1px solid rgba(200,60,60,0.25); }
+.alert-icon { flex-shrink: 0; margin-top: 1px; }
+.alert-body { flex: 1; }
+.alert-title { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.alert.warn .alert-title { color: #a06000; }
+.alert.ok .alert-title { color: var(--green-d); }
+.alert.info .alert-title { color: var(--blue); }
+.alert.error .alert-title { color: #c03030; }
+.alert-text { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.alert-link { font-size: 11px; font-weight: 700; color: var(--blue); margin-top: 5px; display: block; cursor: pointer; }
+
+/* Info box */
+.info-box {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 13px 14px; margin-bottom: 14px;
+  box-shadow: var(--card-shadow);
+}
+.info-box-title { font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.info-row { display: flex; gap: 8px; margin-bottom: 4px; font-size: 11px; color: var(--muted); }
+.info-row strong { color: var(--text); }
+
+/* Clock face */
+.clock-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; }
+.clock-counter {
+  font-size: 12px; font-weight: 700; color: var(--navy);
+  background: var(--light); border: 1px solid var(--border);
+  border-radius: 20px; padding: 6px 14px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.clock-face {
+  width: 210px; height: 210px; border-radius: 50%;
+  background: var(--white); border: 2px solid var(--border);
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,77,112,0.12), inset 0 0 0 6px var(--light);
+  margin-bottom: 14px;
+}
+.clock-ring {
+  position: absolute; inset: 16px; border-radius: 50%;
+  border: 1px dashed rgba(0,77,112,0.12);
+}
+.clock-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--navy); border: 3px solid var(--white);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,77,112,0.3);
+}
+.clock-center-text { font-size: 8px; font-weight: 800; color: white; text-align: center; line-height: 1.2; letter-spacing: -0.02em; }
+.cp {
+  position: absolute; width: 40px; height: 40px; border-radius: 50%;
+  border: 1.5px solid var(--border); background: var(--white);
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 11px; font-weight: 700; color: var(--muted);
+  transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 1px 4px rgba(0,77,112,0.1);
+}
+.cp:active { transform: translate(-50%, -50%) scale(0.9); }
+.cp.inlet {
+  background: var(--navy); border-color: var(--navy); color: white;
+  box-shadow: 0 2px 8px rgba(0,77,112,0.35);
+}
+.cp.outlet-node {
+  background: var(--green); border-color: var(--green-d); color: white;
+  pointer-events: none; font-size: 8px; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(68,175,67,0.35);
+}
+.cp.blocked {
+  background: var(--light); border-color: var(--border);
+  color: rgba(0,0,0,0.15); pointer-events: none;
+  box-shadow: none;
+}
+.clock-key {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+}
+.ck-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.ck-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 1.5px solid var(--border);
+}
+.ck-dot.inlet { background: var(--navy); border-color: var(--navy); }
+.ck-dot.outlet { background: var(--green); border-color: var(--green-d); }
+
+/* Pipe rows */
+.pipe-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.pipe-item {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 11px 13px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--card-shadow);
+}
+.pipe-item.locked { background: var(--light); }
+.pipe-item-label { }
+.pipe-item-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.pipe-item-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.pipe-selector {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--light); border: 1px solid var(--border);
+  border-radius: 6px; padding: 6px 10px; cursor: pointer;
+  font-size: 12px; font-weight: 700; color: var(--navy);
+  -webkit-tap-highlight-color: transparent;
+}
+.pipe-selector.locked { background: rgba(68,175,67,0.08); border-color: rgba(68,175,67,0.25); color: var(--green-d); cursor: default; }
+
+/* Bottom sheet */
+.sheet-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.4);
+  z-index: 200; display: none; backdrop-filter: blur(2px);
+}
+.sheet-overlay.show { display: block; }
+.bottom-sheet {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--white); border-radius: 16px 16px 0 0;
+  z-index: 201; padding: 16px;
+  transform: translateY(100%); transition: transform 0.3s ease;
+  max-height: 55%;
+  overflow-y: auto;
+}
+.bottom-sheet.open { transform: translateY(0); }
+.sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 14px; }
+.sheet-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 12px; }
+.sheet-option {
+  padding: 12px 13px; border: 1px solid var(--border); border-radius: 8px;
+  margin-bottom: 7px; font-size: 13px; font-weight: 600; color: var(--text);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: all 0.15s;
+}
+.sheet-option:active { background: var(--light); }
+.sheet-option.selected { border-color: var(--navy); background: #f0f7fb; color: var(--navy); }
+.sheet-option.disabled { opacity: 0.35; pointer-events: none; }
+
+/* Yes/No toggle */
+.yn-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.yn-btn {
+  background: var(--white); border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 14px; text-align: center;
+  font-size: 14px; font-weight: 700; color: var(--muted);
+  cursor: pointer; transition: all 0.15s;
+  box-shadow: var(--card-shadow);
+  -webkit-tap-highlight-color: transparent;
+}
+.yn-btn.selected { border-color: var(--navy); border-width: 2px; color: var(--navy); background: #f0f7fb; }
+
+/* Subsection */
+.subsection {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px; margin-bottom: 14px;
+  box-shadow: var(--card-shadow);
+}
+.subsection-title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+
+/* Form */
+.field-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); display: block; margin-bottom: 5px; }
+.field-input {
+  width: 100%; border: 1px solid var(--border); border-radius: 8px;
+  padding: 11px 13px; font-size: 13px; font-family: 'Montserrat', sans-serif;
+  color: var(--text); background: var(--white); margin-bottom: 10px;
+  outline: none; transition: border-color 0.2s;
+}
+.field-input:focus { border-color: var(--blue); }
+.field-textarea {
+  width: 100%; border: 1px solid var(--border); border-radius: 8px;
+  padding: 11px 13px; font-size: 13px; font-family: 'Montserrat', sans-serif;
+  color: var(--text); background: var(--white); margin-bottom: 10px;
+  height: 72px; resize: none; outline: none;
+}
+.field-textarea:focus { border-color: var(--blue); }
+
+/* Review */
+.review-block {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+.review-block-header {
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--light);
+}
+.review-block-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.review-edit { font-size: 11px; font-weight: 700; color: var(--blue); cursor: pointer; }
+.review-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 14px; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 12px;
+}
+.review-row:last-child { border-bottom: none; }
+.rv-key { color: var(--muted); }
+.rv-val { font-weight: 700; color: var(--text); }
+.comp-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 12px;
+}
+.comp-item:last-child { border-bottom: none; }
+.comp-tick {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--green); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.comp-label { flex: 1; color: var(--muted); }
+.comp-status { font-weight: 700; color: var(--green-d); font-size: 11px; }
+
+/* Output cards */
+.output-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; margin-bottom: 10px;
+  box-shadow: var(--card-shadow);
+}
+.output-card-top { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.output-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.output-icon.navy { background: rgba(0,77,112,0.1); }
+.output-icon.blue { background: rgba(26,130,162,0.1); }
+.output-icon.green { background: rgba(68,175,67,0.1); }
+.output-info { flex: 1; }
+.output-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.output-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.output-btn {
+  display: block; text-align: center;
+  padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 700;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.output-btn.primary { background: var(--navy); color: white; }
+.output-btn.secondary { background: var(--light); color: var(--navy); border: 1px solid var(--border); }
+
+/* Branch note */
+.branch-note {
+  background: rgba(26,130,162,0.06); border: 1px dashed rgba(26,130,162,0.25);
+  border-radius: 8px; padding: 10px 12px; margin-bottom: 12px;
+  font-size: 11px; color: var(--muted); line-height: 1.5;
+}
+.branch-note strong { color: var(--blue); }
+
+/* Bottom nav */
+.bottom-nav {
+  height: 58px; background: var(--white);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 14px; gap: 10px;
+  flex-shrink: 0; position: relative;
+}
+.btn-back {
+  display: flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--muted);
+  cursor: pointer; background: var(--white);
+  -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+  transition: all 0.15s;
+}
+.btn-back:active { background: var(--light); }
+.btn-next {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--navy); color: white;
+  border-radius: 8px; padding: 11px 16px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s;
+  box-shadow: 0 2px 8px rgba(0,77,112,0.3);
+}
+.btn-next:active { opacity: 0.85; }
+.btn-next.disabled { background: var(--border); color: var(--muted); pointer-events: none; box-shadow: none; }
+.step-label { font-size: 10px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+
+/* 3D FLOAT BUTTON */
+.btn-3d {
+  position: absolute; bottom: 68px; right: 14px;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 4px 16px rgba(68,175,67,0.45);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 100;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 2px solid var(--green-d);
+}
+.btn-3d:active { transform: scale(0.92); box-shadow: 0 2px 8px rgba(68,175,67,0.3); }
+.btn-3d-label {
+  position: absolute; bottom: 70px; right: 64px;
+  background: var(--text); color: white;
+  font-size: 9px; font-weight: 700; padding: 4px 8px; border-radius: 4px;
+  white-space: nowrap; opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.btn-3d:hover + .btn-3d-label { opacity: 1; }
+
+/* 3D PANEL */
+.panel-3d {
+  position: absolute; inset: 0; z-index: 300;
+  background: var(--navy-d);
+  display: flex; flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.panel-3d.open { transform: translateY(0); }
+
+.panel-3d-header {
+  background: linear-gradient(135deg, var(--navy), #005f8c);
+  padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.panel-3d-title { display: flex; flex-direction: column; gap: 1px; }
+.panel-3d-title strong { font-size: 14px; font-weight: 800; color: white; }
+.panel-3d-title span { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 500; }
+.panel-3d-close {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+
+.canvas-3d-wrap { flex: 1; position: relative; }
+#canvas3d { width: 100%; height: 100%; display: block; }
+
+.canvas-hint {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.35);
+  background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 20px;
+  white-space: nowrap; pointer-events: none;
+}
+
+.panel-3d-spec {
+  background: rgba(0,0,0,0.25);
+  padding: 12px 18px; flex-shrink: 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.spec-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.spec-chip {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.7);
+}
+.spec-chip.green { background: rgba(68,175,67,0.15); border-color: rgba(68,175,67,0.3); color: rgba(68,175,67,0.9); }
+.spec-chip.blue { background: rgba(26,130,162,0.2); border-color: rgba(26,130,162,0.35); color: rgba(100,180,210,0.9); }
+
+/* Home indicator */
+.home-ind {
+  height: 22px; display: flex; align-items: center; justify-content: center;
+  background: var(--white); flex-shrink: 0;
+  border-top: 1px solid var(--border);
+}
+.home-bar { width: 110px; height: 4px; background: var(--text); border-radius: 2px; opacity: 0.15; }
+
+/* Scroll hint */
+.scroll-hint { text-align: center; font-size: 10px; color: var(--border); padding: 8px 0 16px; }
+</style>
+</head>
+<body>
+
+<div class="page-label">
+  <div class="label-tag">Interactive Prototype</div>
+  <h1>SuDS Enviro - Chamber Configurator</h1>
+  <p>Tap through the wizard. Press the green button to view in 3D.</p>
+</div>
+
+<div class="screen-note-bar" id="noteBar">
+  <strong>Screen 0:</strong> Tap a product type to begin the wizard. This prototype follows the Inspection Chamber path.
+</div>
+
+<!-- PHONE -->
+<div class="phone" id="phone">
+  <div class="phone-notch"><div class="notch-dot"></div></div>
+
+  <!-- Status -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <span id="statusRight">SuDS Enviro</span>
+  </div>
+
+  <!-- App header -->
+  <div class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">
+        <!-- Rhino SVG icon -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2.5 4.5L6 18h12l-1.5-4.5C18 12.5 19 11 19 9c0-3-3-6-7-6z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M9 9c0 1.66 1.34 3 3 3s3-1.34 3-3" stroke="white" stroke-width="1.5"/>
+          <path d="M5 9L3 7M19 9l2-2" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="app-logo-text">
+        <strong>SuDS Enviro</strong>
+        <span>Configurator</span>
+      </div>
+    </div>
+    <div class="app-save-btn" id="appSaveBtn"></div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-wrap" id="progressWrap" style="display:none;">
+    <div class="progress-steps" id="progressSteps"></div>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="summary-bar" id="summaryBar" style="display:none;" onclick="toggleSummary()">
+    <div class="summary-bar-left">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><path d="M7 8h10M7 12h10M7 16h6" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="summary-bar-label">Configuration</span>
+      <span class="summary-bar-value" id="summaryBarValue"></span>
+    </div>
+    <svg class="summary-chevron" id="summaryChevron" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </div>
+
+  <!-- Summary panel -->
+  <div class="summary-panel" id="summaryPanel">
+    <div class="summary-grid" id="summaryGrid"></div>
+  </div>
+
+  <!-- Screen content -->
+  <div class="screen-content" id="screenContent"></div>
+
+  <!-- Sheet overlay -->
+  <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+
+  <!-- Bottom sheet (pipe picker) -->
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="sheetTitle">Select pipe size</div>
+    <div id="sheetOptions"></div>
+  </div>
+
+  <!-- 3D Float button (inside phone, above bottom nav) -->
+  <div class="btn-3d" id="btn3d" onclick="toggle3D()" style="display:none;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M2 17l10 5 10-5" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M2 12l10 5 10-5" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav" id="bottomNav" style="display:none;">
+    <div class="btn-back" id="btnBack" onclick="goBack()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Back
+    </div>
+    <div class="step-label" id="stepLabel"></div>
+    <div class="btn-next" id="btnNext" onclick="goNext()">
+      <span id="nextLabel">Next</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+
+  <!-- 3D Panel (full overlay inside phone) -->
+  <div class="panel-3d" id="panel3d">
+    <div class="panel-3d-header">
+      <div class="panel-3d-title">
+        <strong>3D Chamber Preview</strong>
+        <span>Live - updates with your selections</span>
+      </div>
+      <div class="panel-3d-close" onclick="toggle3D()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="canvas-3d-wrap">
+      <canvas id="canvas3d"></canvas>
+      <div class="canvas-hint">Drag to rotate</div>
+    </div>
+    <div class="panel-3d-spec">
+      <div class="spec-chips" id="specChips">
+        <div class="spec-chip">Select options to see your chamber</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home indicator -->
+  <div class="home-ind"><div class="home-bar"></div></div>
+</div>
+
+<script>
+// ════════════════════════════════════
+// ICONS
+// ════════════════════════════════════
+const Icon = {
+  wave: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#1a82a2" stroke-width="1.5" stroke-linecap="round"/><path d="M3 17c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#1a82a2" stroke-width="1.5" stroke-linecap="round"/><path d="M3 7c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#1a82a2" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  pipe: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="8" width="18" height="8" rx="4" stroke="#5a7a90" stroke-width="1.5"/><circle cx="12" cy="12" r="2" fill="#5a7a90"/></svg>`,
+  split: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3v4M12 7l-5 5H3M12 7l5 5h4M7 12v6M17 12v6" stroke="#5a7a90" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  chamber: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="7" rx="7" ry="3" stroke="#004d70" stroke-width="1.5"/><path d="M5 7v10c0 1.66 3.13 3 7 3s7-1.34 7-3V7" stroke="#004d70" stroke-width="1.5"/></svg>`,
+  catchpit: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="8" width="16" height="12" rx="2" stroke="#004d70" stroke-width="1.5"/><path d="M12 3v5M9 5l3-2 3 2" stroke="#004d70" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  vortex: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0-18 0" stroke="#1a82a2" stroke-width="1.5"/><path d="M12 12c0-3 2-5 4-4s3 4 1 6-5 2-6 0 0-4 2-4" stroke="#1a82a2" stroke-width="1.5"/></svg>`,
+  rhino: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 4C9 4 7 6.5 7 9c0 1.5.6 2.8 1.5 3.7L7 18h10l-1.5-5.3C16.4 11.8 17 10.5 17 9c0-2.5-2-5-5-5z" stroke="#004d70" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 9l-2.5-2M17 9l2.5-2" stroke="#004d70" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  pump: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="6" stroke="#5a7a90" stroke-width="1.5"/><path d="M12 8v4l3 2" stroke="#5a7a90" stroke-width="1.5" stroke-linecap="round"/><path d="M6 12H3M18 12h3M12 6V3M12 18v3" stroke="#5a7a90" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  check: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  arrowR: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  warn: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 16.5v.5" stroke="#a06000" stroke-width="2" stroke-linecap="round"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="#a06000" stroke-width="1.5" stroke-linejoin="round"/></svg>`,
+  ok: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#339932" stroke-width="1.5"/><path d="M8 12l3 3 5-5" stroke="#339932" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  info: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#1a82a2" stroke-width="1.5"/><path d="M12 11v6M12 8v.5" stroke="#1a82a2" stroke-width="2" stroke-linecap="round"/></svg>`,
+  lock: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.5"/></svg>`,
+  download: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M8 12l4 4 4-4" stroke="#004d70" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 18h16" stroke="#004d70" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  send: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#1a82a2" stroke-width="1.5" stroke-linejoin="round"/></svg>`,
+  email: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="#44af43" stroke-width="1.5"/><path d="M2 7l10 7 10-7" stroke="#44af43" stroke-width="1.5"/></svg>`,
+  tick3: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+};
+
+// ════════════════════════════════════
+// STATE
+// ════════════════════════════════════
+const S = {
+  step: 0,
+  product: null,
+  systemType: null,
+  diameter: null,
+  inletCount: null,
+  positions: [],
+  pipeSizes: {},
+  outletLocked: null,
+  flowControl: null,
+  flowType: null,
+  flowRate: '',
+  depth: null,
+  adoptable: null,
+};
+
+let activePipeSlot = null;
+let is3dOpen = false;
+let threeScene = null;
+
+const STEP_NOTES = [
+  '<strong>Screen 0:</strong> Product selection. Each product has its own wizard path. This prototype follows the Inspection Chamber.',
+  '<strong>Step 1:</strong> System type determines compliance standards and product availability throughout the wizard.',
+  '<strong>Step 2:</strong> Diameter immediately constrains the maximum inlet count in the next step via the rule engine.',
+  '<strong>Step 3:</strong> Inlet count triggers the outlet minimum rule on selection, shown inline before proceeding.',
+  '<strong>Step 4:</strong> Clock face position selector. Blocked positions are greyed out. Counter enforces exact count.',
+  '<strong>Step 5:</strong> Outlet is locked from the rule in Step 3. Tap any inlet to change size via the picker sheet.',
+  '<strong>Step 6:</strong> Yes or No branch. Yes reveals flow type and target rate inline without a new screen.',
+  '<strong>Step 7:</strong> Depth options are constrained by adoptable status. Exceeding limits is blocked.',
+  '<strong>Step 8:</strong> Full review with compliance check. Each section links back to edit. Tap "Generate Output."',
+  '<strong>Step 9:</strong> Three output paths: PDF spec, structured enquiry (config auto-attached), or email link.',
+];
+
+// ════════════════════════════════════
+// RULES
+// ════════════════════════════════════
+function maxInlets(d) {
+  return d === '450' ? 2 : d === '600' ? 4 : d === '750' ? 5 : 6;
+}
+function outletMin(count, d) {
+  if (parseInt(count) >= 3 && d === '600') return '225mm twinwall';
+  if (parseInt(count) >= 4) return '225mm twinwall';
+  return null;
+}
+function maxDepth(adoptable) {
+  return adoptable === 'yes' ? 2000 : 3000;
+}
+function blockedPositions(outletSize) {
+  return outletSize === '225mm twinwall' ? ['5', '7'] : [];
+}
+
+// ════════════════════════════════════
+// THREE.JS 3D
+// ════════════════════════════════════
+let renderer, scene, camera, chamberGroup;
+let isDragging = false, prevMouse = { x: 0, y: 0 };
+let rotX = -0.3, rotY = 0.5;
+
+function init3D() {
+  const canvas = document.getElementById('canvas3d');
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x071828, 1);
+  renderer.shadowMap.enabled = true;
+
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x071828, 10, 30);
+
+  camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 2, 6);
+  camera.lookAt(0, 0, 0);
+
+  // Lights
+  const ambient = new THREE.AmbientLight(0x6090b0, 0.6);
+  scene.add(ambient);
+  const dir = new THREE.DirectionalLight(0xffffff, 1.0);
+  dir.position.set(3, 6, 4);
+  dir.castShadow = true;
+  scene.add(dir);
+  const fill = new THREE.DirectionalLight(0x4488bb, 0.3);
+  fill.position.set(-4, 2, -3);
+  scene.add(fill);
+
+  // Ground plane
+  const groundGeo = new THREE.PlaneGeometry(12, 12);
+  const groundMat = new THREE.MeshLambertMaterial({ color: 0x0a1828 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -2.5;
+  scene.add(ground);
+
+  // Grid helper
+  const grid = new THREE.GridHelper(12, 12, 0x1a3050, 0x0f2538);
+  grid.position.y = -2.49;
+  scene.add(grid);
+
+  chamberGroup = new THREE.Group();
+  scene.add(chamberGroup);
+
+  // Mouse/touch events on canvas
+  canvas.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+  canvas.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - prevMouse.x;
+    const dy = e.clientY - prevMouse.y;
+    rotY += dx * 0.008;
+    rotX += dy * 0.005;
+    rotX = Math.max(-1, Math.min(0.8, rotX));
+    prevMouse = { x: e.clientX, y: e.clientY };
+  });
+  canvas.addEventListener('mouseup', () => { isDragging = false; });
+  canvas.addEventListener('touchstart', e => {
+    isDragging = true;
+    prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, { passive: true });
+  canvas.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - prevMouse.x;
+    const dy = e.touches[0].clientY - prevMouse.y;
+    rotY += dx * 0.008;
+    rotX += dy * 0.005;
+    rotX = Math.max(-1, Math.min(0.8, rotX));
+    prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, { passive: true });
+  canvas.addEventListener('touchend', () => { isDragging = false; });
+
+  resizeRenderer();
+  animate();
+}
+
+function resizeRenderer() {
+  const canvas = document.getElementById('canvas3d');
+  if (!canvas || !renderer) return;
+  const wrap = canvas.parentElement;
+  const w = wrap.clientWidth;
+  const h = wrap.clientHeight;
+  renderer.setSize(w, h);
+  if (camera) { camera.aspect = w / h; camera.updateProjectionMatrix(); }
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (!isDragging) rotY += 0.004;
+  if (chamberGroup) {
+    chamberGroup.rotation.y = rotY;
+    chamberGroup.rotation.x = rotX;
+  }
+  if (renderer && scene && camera) renderer.render(scene, camera);
+}
+
+function update3D() {
+  if (!chamberGroup) return;
+  while (chamberGroup.children.length) chamberGroup.remove(chamberGroup.children[0]);
+
+  const d = parseFloat(S.diameter) || 600;
+  const radius = (d / 600) * 1.0;
+  const depthM = S.depth ? (parseInt(S.depth) / 600) * 1.4 : 2.0;
+  const chamberH = Math.max(0.8, depthM);
+
+  // Chamber body (cylinder)
+  const bodyGeo = new THREE.CylinderGeometry(radius, radius, chamberH, 32, 1, true);
+  const bodyMat = new THREE.MeshPhongMaterial({ color: 0x004d70, shininess: 80, side: THREE.DoubleSide });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.position.y = chamberH / 2 - 2.5;
+  chamberGroup.add(body);
+
+  // Top cap
+  const topGeo = new THREE.CircleGeometry(radius, 32);
+  const topMat = new THREE.MeshPhongMaterial({ color: 0x005f8c, shininess: 60 });
+  const top = new THREE.Mesh(topGeo, topMat);
+  top.rotation.x = -Math.PI / 2;
+  top.position.y = chamberH - 2.5;
+  chamberGroup.add(top);
+
+  // Shaft ring
+  const ringGeo = new THREE.TorusGeometry(radius, 0.05, 8, 32);
+  const ringMat = new THREE.MeshPhongMaterial({ color: 0x1a82a2, shininess: 90 });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI / 2;
+  ring.position.y = chamberH - 2.5;
+  chamberGroup.add(ring);
+
+  // Manhole cover
+  const coverGeo = new THREE.CylinderGeometry(radius * 0.45, radius * 0.45, 0.06, 16);
+  const coverMat = new THREE.MeshPhongMaterial({ color: 0x1a3a50, shininess: 40 });
+  const cover = new THREE.Mesh(coverGeo, coverMat);
+  cover.position.y = chamberH - 2.47;
+  chamberGroup.add(cover);
+
+  // Pipe helper
+  function addPipe(angle, yFrac, size, isOutlet) {
+    const pipeR = size === '225mm twinwall' ? 0.2 : size === '160mm EN1401' ? 0.15 : size === '110mm EN1401' ? 0.11 : size === '300mm twinwall' ? 0.25 : 0.15;
+    const pipeLen = 0.8;
+    const yPos = (chamberH * yFrac) - 2.5;
+    const dir = new THREE.Vector3(Math.sin(angle), 0, Math.cos(angle)).normalize();
+    const color = isOutlet ? 0x44af43 : 0x1a82a2;
+    const pipeGeo = new THREE.CylinderGeometry(pipeR, pipeR, pipeLen, 12);
+    const pipeMat = new THREE.MeshPhongMaterial({ color, shininess: 60 });
+    const pipe = new THREE.Mesh(pipeGeo, pipeMat);
+    // Align cylinder (default Y) to dir (horizontal)
+    const up = new THREE.Vector3(0, 1, 0);
+    const quat = new THREE.Quaternion().setFromUnitVectors(up, dir);
+    pipe.setRotationFromQuaternion(quat);
+    pipe.position.set(dir.x * (radius + pipeLen / 2), yPos, dir.z * (radius + pipeLen / 2));
+    chamberGroup.add(pipe);
+    // End cap
+    const capGeo = new THREE.CircleGeometry(pipeR, 12);
+    const capMat = new THREE.MeshPhongMaterial({ color: isOutlet ? 0x339932 : 0x005f8c, side: THREE.FrontSide });
+    const cap = new THREE.Mesh(capGeo, capMat);
+    cap.setRotationFromQuaternion(quat);
+    cap.rotateX(Math.PI / 2);
+    cap.position.set(dir.x * (radius + pipeLen + 0.01), yPos, dir.z * (radius + pipeLen + 0.01));
+    chamberGroup.add(cap);
+  }
+
+  // Inlet pipes
+  const clockToRad = (pos) => (parseFloat(pos) / 12) * Math.PI * 2;
+  const count = parseInt(S.inletCount) || 0;
+  for (let i = 0; i < count; i++) {
+    const pos = S.positions[i] || null;
+    if (pos) {
+      const angle = clockToRad(pos);
+      const inletSize = S.pipeSizes['inlet' + (i + 1)] || '160mm EN1401';
+      const yFrac = 0.55 + (i * 0.12);
+      addPipe(angle, yFrac, inletSize, false);
+    } else {
+      // Placeholder at default position
+      addPipe(i * (Math.PI * 2 / Math.max(count, 1)), 0.55 + i * 0.12, '160mm EN1401', false);
+    }
+  }
+
+  // Outlet pipe at 6 o'clock
+  const outletAngle = clockToRad(6);
+  const outletSize = S.outletLocked || '160mm EN1401';
+  if (count > 0) addPipe(outletAngle, 0.35, outletSize, true);
+
+  // Sump indicator (bottom ring)
+  const sumpGeo = new THREE.CylinderGeometry(radius * 0.7, radius * 0.7, 0.04, 24);
+  const sumpMat = new THREE.MeshPhongMaterial({ color: 0x003050, shininess: 30 });
+  const sump = new THREE.Mesh(sumpGeo, sumpMat);
+  sump.position.y = -2.5;
+  chamberGroup.add(sump);
+
+  // Update spec chips
+  updateSpecChips();
+}
+
+function updateSpecChips() {
+  const el = document.getElementById('specChips');
+  if (!el) return;
+  const chips = [];
+  if (S.diameter) chips.push(`<div class="spec-chip blue">Ø ${S.diameter}mm</div>`);
+  if (S.inletCount) chips.push(`<div class="spec-chip blue">${S.inletCount} inlet${S.inletCount > 1 ? 's' : ''}</div>`);
+  if (S.outletLocked) chips.push(`<div class="spec-chip green">Outlet: ${S.outletLocked}</div>`);
+  if (S.depth) chips.push(`<div class="spec-chip">${parseInt(S.depth)}mm deep</div>`);
+  if (S.adoptable) chips.push(`<div class="spec-chip">${S.adoptable === 'yes' ? 'Adoptable' : 'Non-adoptable'}</div>`);
+  if (!chips.length) chips.push(`<div class="spec-chip">Select options to build your chamber</div>`);
+  el.innerHTML = chips.join('');
+}
+
+function toggle3D() {
+  is3dOpen = !is3dOpen;
+  const panel = document.getElementById('panel3d');
+  panel.classList.toggle('open', is3dOpen);
+  if (is3dOpen) {
+    if (!renderer) {
+      setTimeout(() => { init3D(); update3D(); resizeRenderer(); }, 100);
+    } else {
+      update3D(); resizeRenderer();
+    }
+  }
+}
+
+// ════════════════════════════════════
+// NAV
+// ════════════════════════════════════
+function goNext() {
+  if (!canProceed()) return;
+  transition(() => { S.step++; });
+}
+function goBack() {
+  if (S.step === 0) return;
+  transition(() => { S.step--; });
+}
+function goToStep(n) {
+  transition(() => { S.step = n; });
+}
+
+function canProceed() {
+  switch (S.step) {
+    case 0: return !!S.product;
+    case 1: return !!S.systemType;
+    case 2: return !!S.diameter;
+    case 3: return !!S.inletCount;
+    case 4: return S.positions.length === parseInt(S.inletCount);
+    case 5: return true;
+    case 6: return !!S.flowControl;
+    case 7: return !!S.depth && !!S.adoptable;
+    case 8: return true;
+    default: return true;
+  }
+}
+
+function transition(fn) {
+  const c = document.getElementById('screenContent');
+  c.classList.add('fading');
+  setTimeout(() => {
+    fn();
+    render();
+    c.classList.remove('fading');
+  }, 180);
+}
+
+// ════════════════════════════════════
+// CHROME
+// ════════════════════════════════════
+function updateChrome() {
+  // Progress bar
+  const pw = document.getElementById('progressWrap');
+  const ps = document.getElementById('progressSteps');
+  const showProgress = S.step >= 1 && S.step <= 8;
+  pw.style.display = showProgress ? 'block' : 'none';
+  if (showProgress) {
+    let html = '';
+    for (let i = 1; i <= 8; i++) {
+      const cls = i < S.step ? 'done' : i === S.step ? 'active' : '';
+      html += `<div class="prog-pip ${cls}"></div>`;
+      if (i < 8) html += '<div style="width:3px;"></div>';
+    }
+    html += `<div class="prog-count">${S.step}/8</div>`;
+    ps.innerHTML = html;
+  }
+
+  // Summary bar
+  const sb = document.getElementById('summaryBar');
+  const showSummary = S.step >= 1 && S.step <= 8;
+  sb.style.display = showSummary ? 'flex' : 'none';
+  if (showSummary) {
+    const parts = [];
+    if (S.diameter) parts.push(S.diameter + 'mm');
+    if (S.inletCount) parts.push(S.inletCount + ' inlets');
+    if (S.depth) parts.push(parseInt(S.depth) + 'mm');
+    document.getElementById('summaryBarValue').textContent = parts.length ? parts.join(' · ') : '';
+  }
+  updateSummaryGrid();
+
+  // Bottom nav
+  const bn = document.getElementById('bottomNav');
+  bn.style.display = S.step === 9 ? 'none' : 'flex';
+  const back = document.getElementById('btnBack');
+  back.style.visibility = S.step === 0 ? 'hidden' : 'visible';
+  const nextBtn = document.getElementById('btnNext');
+  const nextLabel = document.getElementById('nextLabel');
+  nextBtn.classList.toggle('disabled', !canProceed());
+  nextLabel.textContent = S.step === 8 ? 'Generate Output' : S.step === 7 ? 'Review' : 'Next';
+
+  // 3D button
+  const b3d = document.getElementById('btn3d');
+  b3d.style.display = S.step >= 2 ? 'flex' : 'none';
+  if (is3dOpen) update3D();
+
+  // Step label
+  const sl = document.getElementById('stepLabel');
+  sl.textContent = S.step >= 1 && S.step <= 8 ? `Step ${S.step} of 8` : '';
+
+  // Status right
+  document.getElementById('statusRight').textContent = S.step === 0 ? 'SuDS Enviro' : S.step === 9 ? 'Complete' : `Step ${S.step}/8`;
+
+  // App save
+  document.getElementById('appSaveBtn').textContent = (S.step >= 1 && S.step < 9) ? 'Save' : '';
+
+  // Note bar
+  document.getElementById('noteBar').innerHTML = STEP_NOTES[S.step] || '';
+}
+
+function updateSummaryGrid() {
+  const g = document.getElementById('summaryGrid');
+  const items = [
+    { k: 'System', v: S.systemType === 'surface' ? 'Surface Water' : S.systemType },
+    { k: 'Diameter', v: S.diameter ? S.diameter + 'mm' : null },
+    { k: 'Inlets', v: S.inletCount ? S.inletCount + (S.inletCount == 1 ? ' inlet' : ' inlets') : null },
+    { k: 'Positions', v: S.positions.length ? S.positions.join(', ') : null },
+    { k: 'Outlet', v: S.outletLocked },
+    { k: 'Flow', v: S.flowControl === 'no' ? 'None' : S.flowType || (S.flowControl === 'yes' ? 'Yes' : null) },
+    { k: 'Depth', v: S.depth ? parseInt(S.depth) + 'mm' : null },
+    { k: 'Adoptable', v: S.adoptable === 'yes' ? 'Yes' : S.adoptable === 'no' ? 'No' : null },
+  ];
+  g.innerHTML = items.map(i => `
+    <div class="sum-cell">
+      <div class="sk">${i.k}</div>
+      <div class="sv ${i.v ? 'locked' : 'pending'}">${i.v || 'Not set'}</div>
+    </div>
+  `).join('');
+}
+
+function toggleSummary() {
+  const panel = document.getElementById('summaryPanel');
+  const chevron = document.getElementById('summaryChevron');
+  const bar = document.getElementById('summaryBar');
+  panel.classList.toggle('open');
+  chevron.classList.toggle('open');
+  bar.classList.toggle('open');
+}
+
+// ════════════════════════════════════
+// PIPE PICKER
+// ════════════════════════════════════
+function openPicker(slot, title) {
+  activePipeSlot = slot;
+  const sizes = ['110mm EN1401', '160mm EN1401', '225mm twinwall', '300mm twinwall'];
+  const outletRank = sizes.indexOf(S.outletLocked || '225mm twinwall');
+  document.getElementById('sheetTitle').textContent = title;
+  document.getElementById('sheetOptions').innerHTML = sizes.map((s, i) => {
+    const tooLarge = S.outletLocked && i > outletRank;
+    const current = (S.pipeSizes[slot] || '160mm EN1401') === s;
+    return `<div class="sheet-option ${current ? 'selected' : ''} ${tooLarge ? 'disabled' : ''}" onclick="${tooLarge ? '' : `pickSize('${s}')`}">
+      ${s}${tooLarge ? ' - exceeds outlet' : ''}
+      ${current ? Icon.check.replace('white', '#004d70') : ''}
+    </div>`;
+  }).join('');
+  document.getElementById('sheetOverlay').classList.add('show');
+  document.getElementById('bottomSheet').classList.add('open');
+}
+function closeSheet() {
+  document.getElementById('sheetOverlay').classList.remove('show');
+  document.getElementById('bottomSheet').classList.remove('open');
+  activePipeSlot = null;
+}
+function pickSize(size) {
+  if (activePipeSlot) S.pipeSizes[activePipeSlot] = size;
+  closeSheet();
+  render();
+}
+
+// ════════════════════════════════════
+// SCREENS
+// ════════════════════════════════════
+function render() {
+  updateChrome();
+  const el = document.getElementById('screenContent');
+  switch (S.step) {
+    case 0: return renderSelect(el);
+    case 1: return renderSystem(el);
+    case 2: return renderDiameter(el);
+    case 3: return renderInletCount(el);
+    case 4: return renderPositions(el);
+    case 5: return renderPipeSizes(el);
+    case 6: return renderFlow(el);
+    case 7: return renderDepth(el);
+    case 8: return renderReview(el);
+    case 9: return renderOutput(el);
+  }
+  el.scrollTop = 0;
+}
+
+// S0
+function renderSelect(el) {
+  const products = [
+    { id: 'chamber', icon: Icon.chamber, title: 'Inspection Chamber', sub: 'Single or multi-inlet configuration' },
+    { id: 'catchpit', icon: Icon.catchpit, title: 'Catchpit / Silt Trap', sub: 'Rhino Pit range, 450-1050mm' },
+    { id: 'flow', icon: Icon.vortex, title: 'Flow Control', sub: 'Vortex or orifice plate' },
+    { id: 'rhino', icon: Icon.rhino, title: 'RhinoCeptor', sub: 'Oil and water separator' },
+    { id: 'pump', icon: Icon.pump, title: 'Pump Station', sub: 'Package unit' },
+  ];
+  el.innerHTML = `
+    <div class="step-eyebrow">Start Here</div>
+    <div class="step-heading">What are you configuring?</div>
+    <div class="step-sub">Choose a product type to begin your guided setup.</div>
+    <div class="option-stack">
+      ${products.map(p => `
+        <div class="opt-card ${S.product === p.id ? 'selected' : ''}" onclick="selectProduct('${p.id}')">
+          <div class="opt-icon">${p.icon}</div>
+          <div class="opt-body">
+            <div class="opt-title">${p.title}</div>
+            <div class="opt-sub">${p.sub}</div>
+          </div>
+          <div class="opt-check">${S.product === p.id ? Icon.check : ''}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="branch-note">
+      <strong>Note:</strong> This prototype walks through the Inspection Chamber path, which is the most complete flow. All other paths share the same core steps.
+    </div>
+    <div class="scroll-hint">Scroll to see all options</div>
+  `;
+}
+function selectProduct(id) {
+  S.product = 'chamber';
+  render();
+}
+
+// S1
+function renderSystem(el) {
+  const types = [
+    { id: 'surface', icon: Icon.wave, title: 'Surface Water', sub: 'Rainwater, runoff, SuDS schemes' },
+    { id: 'foul', icon: Icon.pipe, title: 'Foul Drainage', sub: 'Wastewater systems' },
+    { id: 'combined', icon: Icon.split, title: 'Combined', sub: 'Surface water and foul' },
+  ];
+  el.innerHTML = `
+    <div class="step-eyebrow">Step 1 of 8</div>
+    <div class="step-heading">What system is this for?</div>
+    <div class="step-sub">This sets the compliance standards and available products throughout the wizard.</div>
+    <div class="option-stack">
+      ${types.map(t => `
+        <div class="opt-card ${S.systemType === t.id ? 'selected' : ''}" onclick="selectSystem('${t.id}')">
+          <div class="opt-icon">${t.icon}</div>
+          <div class="opt-body">
+            <div class="opt-title">${t.title}</div>
+            <div class="opt-sub">${t.sub}</div>
+          </div>
+          <div class="opt-check">${S.systemType === t.id ? Icon.check : ''}</div>
+        </div>
+      `).join('')}
+    </div>
+    ${S.systemType && S.systemType !== 'surface' ? `
+      <div class="branch-note"><strong>Branch note:</strong> ${S.systemType === 'foul' ? 'Foul path uses a simplified 4-step flow with different standards.' : 'Combined systems require a consultant review - the wizard will flag where.'}</div>
+    ` : ''}
+  `;
+}
+function selectSystem(id) { S.systemType = id; render(); }
+
+// S2
+function renderDiameter(el) {
+  const sizes = ['450', '600', '750', '1050'];
+  el.innerHTML = `
+    <div class="step-eyebrow">Step 2 of 8</div>
+    <div class="step-heading">Chamber diameter?</div>
+    <div class="step-sub">Diameter determines the maximum number of inlets and pipe size ranges available.</div>
+    <div class="size-grid">
+      ${sizes.map(s => `
+        <div class="size-card ${S.diameter === s ? 'selected' : ''}" onclick="selectDiameter('${s}')">
+          <span class="size-num">${s}</span>
+          <span class="size-unit">mm</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="info-box">
+      <div class="info-box-title">Quick guide</div>
+      <div class="info-row"><strong>450mm</strong> Max 2 inlets, up to 160mm pipes</div>
+      <div class="info-row"><strong>600mm</strong> Max 4 inlets, up to 225mm pipes</div>
+      <div class="info-row"><strong>750mm</strong> Max 5 inlets, up to 300mm pipes</div>
+      <div class="info-row"><strong>1050mm</strong> Max 6 inlets, up to 450mm pipes</div>
+    </div>
+    <div class="alert info">
+      ${Icon.info}<div class="alert-body"><div class="alert-title">Press the green button</div><div class="alert-text">The 3D preview updates live as you make selections throughout the wizard.</div></div>
+    </div>
+  `;
+}
+function selectDiameter(d) {
+  S.diameter = d;
+  const m = maxInlets(d);
+  if (S.inletCount && parseInt(S.inletCount) > m) {
+    S.inletCount = null; S.positions = []; S.outletLocked = null;
+  }
+  render();
+}
+
+// S3
+function renderInletCount(el) {
+  const m = maxInlets(S.diameter);
+  const rule = S.inletCount ? outletMin(S.inletCount, S.diameter) : null;
+  if (rule) S.outletLocked = rule;
+  el.innerHTML = `
+    <div class="step-eyebrow">Step 3 of 8</div>
+    <div class="step-heading">How many inlets?</div>
+    <div class="step-sub">${S.diameter}mm chamber supports a maximum of ${m} inlets.</div>
+    <div class="size-grid cols3">
+      ${['1','2','3','4','5','6'].map(c => {
+        const dis = parseInt(c) > m;
+        return `<div class="size-card ${S.inletCount === c ? 'selected' : ''} ${dis ? 'disabled' : ''}" onclick="${dis ? '' : `selectInlets('${c}')`}">
+          <span class="size-num">${c}</span>
+          <span class="size-unit">${c == 1 ? 'inlet' : 'inlets'}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    ${rule && S.inletCount ? `
+      <div class="alert warn">
+        ${Icon.warn}<div class="alert-body"><div class="alert-title">Outlet constraint applied</div><div class="alert-text">With ${S.inletCount} inlets on ${S.diameter}mm, your outlet is locked to a minimum of ${rule}. This is pre-set in the pipe sizes step.<span class="alert-link">Why this rule applies</span></div></div>
+      </div>
+      <div class="alert ok">
+        ${Icon.ok}<div class="alert-body"><div class="alert-title">DCG Section C7.1.1 - within spec</div><div class="alert-text">${S.inletCount} inlets on ${S.diameter}mm is within adoptable specification limits.</div></div>
+      </div>
+    ` : ''}
+    ${!rule && S.inletCount ? `
+      <div class="alert ok">
+        ${Icon.ok}<div class="alert-body"><div class="alert-title">Configuration valid</div><div class="alert-text">${S.inletCount} inlet${S.inletCount > 1 ? 's' : ''} on ${S.diameter}mm - no outlet constraint triggered.</div></div>
+      </div>
+    ` : ''}
+  `;
+}
+function selectInlets(c) {
+  S.inletCount = c; S.positions = [];
+  const rule = outletMin(c, S.diameter);
+  S.outletLocked = rule;
+  const count = parseInt(c);
+  S.pipeSizes = {};
+  for (let i = 1; i <= count; i++) S.pipeSizes['inlet' + i] = '160mm EN1401';
+  render();
+}
+
+// S4
+function renderPositions(el) {
+  const count = parseInt(S.inletCount);
+  const blocked = blockedPositions(S.outletLocked);
+  const nodes = [
+    { id: '12', style: 'top:4%;left:50%' },
+    { id: '2',  style: 'top:20%;left:83%' },
+    { id: '3',  style: 'top:50%;left:95%' },
+    { id: '4',  style: 'top:80%;left:83%' },
+    { id: '8',  style: 'top:80%;left:17%' },
+    { id: '9',  style: 'top:50%;left:5%' },
+    { id: '10', style: 'top:20%;left:17%' },
+  ];
+  const placed = S.positions.length;
+  el.innerHTML = `
+    <div class="step-eyebrow">Step 4 of 8</div>
+    <div class="step-heading">Inlet positions</div>
+    <div class="step-sub">Tap ${count} position${count > 1 ? 's' : ''} on the clock face. Outlet is fixed at 6 o'clock.</div>
+    <div class="clock-container">
+      <div class="clock-counter">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="${placed === count ? '#339932' : '#1a82a2'}" stroke-width="1.5"/><path d="M12 7v5l3 2" stroke="${placed === count ? '#339932' : '#1a82a2'}" stroke-width="1.5" stroke-linecap="round"/></svg>
+        ${placed} of ${count} inlets placed${placed === count ? ' - ready' : ''}
+      </div>
+      <div class="clock-face">
+        <div class="clock-ring"></div>
+        <div class="clock-center">
+          <div class="clock-center-text">O${S.diameter}</div>
+        </div>
+        ${nodes.map(n => {
+          const isInlet = S.positions.includes(n.id);
+          const isBlocked = blocked.includes(n.id);
+          const cls = isInlet ? 'inlet' : isBlocked ? 'blocked' : '';
+          return `<div class="cp ${cls}" style="${n.style};transform:translate(-50%,-50%);" onclick="togglePos('${n.id}')">${n.id}</div>`;
+        }).join('')}
+        <div class="cp outlet-node" style="top:93%;left:50%;transform:translate(-50%,-50%);font-size:8px;font-weight:800;">OUT</div>
+      </div>
+      <div class="clock-key">
+        <div class="ck-item"><div class="ck-dot inlet"></div> Selected</div>
+        <div class="ck-item"><div class="ck-dot outlet"></div> Outlet</div>
+        <div class="ck-item"><div class="ck-dot"></div> Available</div>
+      </div>
+    </div>
+    ${placed === count ? `
+      <div class="alert ok">
+        ${Icon.ok}<div class="alert-body"><div class="alert-title">All ${count} inlets placed</div><div class="alert-text">Positions ${S.positions.join(', ')} o'clock are valid with the 6 o'clock outlet.</div></div>
+      </div>
+    ` : placed > 0 ? `
+      <div class="alert info">
+        ${Icon.info}<div class="alert-body"><div class="alert-title">${count - placed} more to place</div><div class="alert-text">Tap ${count - placed} more position${count - placed > 1 ? 's' : ''} to continue.</div></div>
+      </div>
+    ` : ''}
+    ${blocked.length ? `<div class="branch-note"><strong>Blocked:</strong> Positions ${blocked.join(' and ')} are unavailable - they clash with the ${S.outletLocked} outlet at 6 o'clock.</div>` : ''}
+  `;
+}
+function togglePos(id) {
+  const count = parseInt(S.inletCount);
+  if (blockedPositions(S.outletLocked).includes(id)) return;
+  if (S.positions.includes(id)) {
+    S.positions = S.positions.filter(p => p !== id);
+  } else if (S.positions.length < count) {
+    S.positions.push(id);
+  }
+  render();
+}
+
+// S5
+function renderPipeSizes(el) {
+  const count = parseInt(S.inletCount);
+  el.innerHTML = `
+    <div class="step-eyebrow">Step 5 of 8</div>
+    <div class="step-heading">Inlet pipe sizes</div>
+    <div class="step-sub">Tap each inlet to change its pipe size. Outlet is pre-set${S.outletLocked ? ' and locked' : ''}.</div>
+    <div class="pipe-list">
+      ${Array.from({ length: count }, (_, i) => {
+        const key = 'inlet' + (i + 1);
+        const size = S.pipeSizes[key] || '160mm EN1401';
+        const pos = S.positions[i] || '?';
+        return `
+          <div class="pipe-item">
+            <div class="pipe-item-label">
+              <div class="pipe-item-title">Inlet ${i + 1}</div>
+              <div class="pipe-item-sub">Position: ${pos} o'clock</div>
+            </div>
+            <div class="pipe-selector" onclick="openPicker('${key}', 'Inlet ${i + 1} pipe size')">
+              ${size}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1a82a2" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+        `;
+      }).join('')}
+      <div class="pipe-item locked">
+        <div class="pipe-item-label">
+          <div class="pipe-item-title">Outlet</div>
+          <div class="pipe-item-sub">Position: 6 o'clock${S.outletLocked ? ' - locked by rule' : ''}</div>
+        </div>
+        <div class="pipe-selector locked">
+          ${S.outletLocked || '160mm EN1401'}
+          <span style="color:var(--green-d);">${Icon.lock}</span>
+        </div>
+      </div>
+    </div>
+    <div class="alert ok">
+      ${Icon.ok}<div class="alert-body"><div class="alert-title">All pipe sizes valid</div><div class="alert-text">Flow cannot increase on exit. Inlet sizes cannot exceed the outlet size. Current configuration is compliant.</div></div>
+    </div>
+  `;
+}
+
+// S6
+function renderFlow(el) {
+  el.innerHTML = `
+    <div class="step-eyebrow">Step 6 of 8</div>
+    <div class="step-heading">Flow control required?</div>
+    <div class="step-sub">Required if your planning condition specifies a maximum discharge rate in litres per second.</div>
+    <div class="yn-pair">
+      <div class="yn-btn ${S.flowControl === 'yes' ? 'selected' : ''}" onclick="selectFlow('yes')">Yes</div>
+      <div class="yn-btn ${S.flowControl === 'no' ? 'selected' : ''}" onclick="selectFlow('no')">No</div>
+    </div>
+    ${S.flowControl === 'yes' ? `
+      <div class="subsection">
+        <div class="subsection-title">Flow control type</div>
+        <div class="option-stack" style="margin-bottom:14px;">
+          <div class="opt-card ${S.flowType === 'Vortex' ? 'selected' : ''}" onclick="selectFlowType('Vortex')">
+            <div class="opt-icon">${Icon.vortex}</div>
+            <div class="opt-body"><div class="opt-title">Vortex</div><div class="opt-sub">Variable flow rate - most common for SuDS</div></div>
+            <div class="opt-check">${S.flowType === 'Vortex' ? Icon.check : ''}</div>
+          </div>
+          <div class="opt-card ${S.flowType === 'Orifice plate' ? 'selected' : ''}" onclick="selectFlowType('Orifice plate')">
+            <div class="opt-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#1a82a2" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="#1a82a2" stroke-width="1.5"/></svg>
+            </div>
+            <div class="opt-body"><div class="opt-title">Orifice Plate</div><div class="opt-sub">Fixed rate - simpler installation</div></div>
+            <div class="opt-check">${S.flowType === 'Orifice plate' ? Icon.check : ''}</div>
+          </div>
+        </div>
+        <label class="field-label">Target discharge rate (L/s)</label>
+        <input class="field-input" type="number" placeholder="e.g. 12" value="${S.flowRate}" oninput="S.flowRate=this.value;updateChrome();">
+      </div>
+    ` : ''}
+    ${S.flowControl === 'no' ? `
+      <div class="alert ok">
+        ${Icon.ok}<div class="alert-body"><div class="alert-title">No flow control</div><div class="alert-text">Chamber configured as a standard pass-through inspection chamber with no flow restriction.</div></div>
+      </div>
+    ` : ''}
+    <div class="branch-note">
+      <strong>Branch:</strong> Selecting "Yes" adds vortex or orifice configuration here inline. Selecting "No" skips directly to depth in Step 7.
+    </div>
+  `;
+}
+function selectFlow(v) {
+  S.flowControl = v;
+  if (v === 'no') { S.flowType = null; S.flowRate = ''; }
+  render();
+}
+function selectFlowType(t) { S.flowType = t; render(); }
+
+// S7
+function renderDepth(el) {
+  const depths = ['1000', '1500', '2000', '2500', '3000'];
+  const maxD = S.adoptable ? maxDepth(S.adoptable) : 9999;
+  el.innerHTML = `
+    <div class="step-eyebrow">Step 7 of 8</div>
+    <div class="step-heading">Depth and adoption status</div>
+    <div class="step-sub">Select whether this chamber will be adopted by the water authority, then choose the required depth.</div>
+    <label class="field-label" style="margin-bottom:6px;">Will this chamber be adopted?</label>
+    <div class="yn-pair" style="margin-bottom:18px;">
+      <div class="yn-btn ${S.adoptable === 'yes' ? 'selected' : ''}" onclick="selectAdoptable('yes')">Yes - S104</div>
+      <div class="yn-btn ${S.adoptable === 'no' ? 'selected' : ''}" onclick="selectAdoptable('no')">No - private</div>
+    </div>
+    <label class="field-label" style="margin-bottom:8px;">Shaft depth${S.adoptable ? ' - max ' + maxDepth(S.adoptable) + 'mm' : ''}</label>
+    <div class="size-grid">
+      ${depths.map(d => {
+        const tooDeep = S.adoptable && parseInt(d) > maxDepth(S.adoptable);
+        return `<div class="size-card ${S.depth === d ? 'selected' : ''} ${tooDeep ? 'disabled' : ''}" onclick="${tooDeep ? '' : `selectDepth('${d}')`}">
+          <span class="size-num">${parseFloat(d)/1000}</span>
+          <span class="size-unit">metre${d === '1000' ? '' : 's'}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    ${S.depth && S.adoptable ? `
+      <div class="alert ok">
+        ${Icon.ok}<div class="alert-body"><div class="alert-title">Depth valid - ${S.adoptable === 'yes' ? 'adoptable' : 'non-adoptable'}</div><div class="alert-text">${parseInt(S.depth)}mm is within the ${maxDepth(S.adoptable)}mm ${S.adoptable === 'yes' ? 'to pipe soffit adoptable limit per DCG.' : 'total depth non-adoptable limit.'}</div></div>
+      </div>
+    ` : ''}
+  `;
+}
+function selectAdoptable(v) {
+  S.adoptable = v;
+  if (S.depth && parseInt(S.depth) > maxDepth(v)) S.depth = null;
+  render();
+}
+function selectDepth(d) { S.depth = d; render(); }
+
+// S8
+function renderReview(el) {
+  const count = parseInt(S.inletCount) || 0;
+  el.innerHTML = `
+    <div class="step-eyebrow">Review</div>
+    <div class="step-heading">Your configuration</div>
+    <div class="step-sub">Check all details below. Tap Edit on any section to make changes.</div>
+
+    <div class="review-block">
+      <div class="review-block-header">
+        <span class="review-block-title">Chamber</span>
+        <span class="review-edit" onclick="goToStep(2)">Edit</span>
+      </div>
+      <div class="review-row"><span class="rv-key">Product</span><span class="rv-val">Inspection Chamber</span></div>
+      <div class="review-row"><span class="rv-key">System</span><span class="rv-val">${S.systemType === 'surface' ? 'Surface Water' : S.systemType}</span></div>
+      <div class="review-row"><span class="rv-key">Diameter</span><span class="rv-val">${S.diameter}mm</span></div>
+      <div class="review-row"><span class="rv-key">Depth</span><span class="rv-val">${parseInt(S.depth)}mm</span></div>
+      <div class="review-row"><span class="rv-key">Adoption</span><span class="rv-val">${S.adoptable === 'yes' ? 'Yes - S104' : 'No - private'}</span></div>
+    </div>
+
+    <div class="review-block">
+      <div class="review-block-header">
+        <span class="review-block-title">Pipework</span>
+        <span class="review-edit" onclick="goToStep(5)">Edit</span>
+      </div>
+      ${Array.from({length: count}, (_, i) => {
+        const pos = S.positions[i] || '?';
+        const size = S.pipeSizes['inlet' + (i+1)] || '160mm EN1401';
+        return `<div class="review-row"><span class="rv-key">Inlet ${i+1} (${pos} o'clock)</span><span class="rv-val">${size}</span></div>`;
+      }).join('')}
+      <div class="review-row"><span class="rv-key">Outlet (6 o'clock)</span><span class="rv-val" style="color:var(--green-d);">${S.outletLocked || '160mm EN1401'} ${Icon.lock}</span></div>
+    </div>
+
+    ${S.flowControl === 'yes' ? `
+      <div class="review-block">
+        <div class="review-block-header">
+          <span class="review-block-title">Flow Control</span>
+          <span class="review-edit" onclick="goToStep(6)">Edit</span>
+        </div>
+        <div class="review-row"><span class="rv-key">Type</span><span class="rv-val">${S.flowType}</span></div>
+        <div class="review-row"><span class="rv-key">Target rate</span><span class="rv-val">${S.flowRate} L/s</span></div>
+      </div>
+    ` : ''}
+
+    <div class="review-block">
+      <div class="review-block-header">
+        <span class="review-block-title">Compliance Check</span>
+      </div>
+      <div class="comp-item"><div class="comp-tick">${Icon.tick3}</div><span class="comp-label">DCG Section C7.1.1</span><span class="comp-status">Pass</span></div>
+      <div class="comp-item"><div class="comp-tick">${Icon.tick3}</div><span class="comp-label">Sewers for Adoption SfA7</span><span class="comp-status">Pass</span></div>
+      <div class="comp-item"><div class="comp-tick">${Icon.tick3}</div><span class="comp-label">EN13598-1 and 2</span><span class="comp-status">Pass</span></div>
+      <div class="comp-item"><div class="comp-tick">${Icon.tick3}</div><span class="comp-label">Building Regulations Part H1</span><span class="comp-status">Pass</span></div>
+      <div class="comp-item"><div class="comp-tick">${Icon.tick3}</div><span class="comp-label">Outlet rule - no flow increase on exit</span><span class="comp-status">Pass</span></div>
+    </div>
+    <div class="scroll-hint">Scroll down - all checks passed</div>
+  `;
+}
+
+// S9
+function renderOutput(el) {
+  el.innerHTML = `
+    <div class="step-eyebrow">Complete</div>
+    <div class="step-heading">Specification ready</div>
+    <div class="step-sub">Inspection Chamber ${S.diameter}mm, ${S.inletCount} inlets, ${parseInt(S.depth)}mm deep${S.adoptable === 'yes' ? ', adoptable' : ''}.</div>
+
+    <div class="output-card">
+      <div class="output-card-top">
+        <div class="output-icon navy">${Icon.download}</div>
+        <div class="output-info">
+          <div class="output-title">Download Spec PDF</div>
+          <div class="output-desc">Full specification sheet with compliance references, ready to attach to a planning application or S104 submission.</div>
+        </div>
+      </div>
+      <div class="output-btn primary">Download PDF</div>
+    </div>
+
+    <div class="output-card">
+      <div class="output-card-top">
+        <div class="output-icon blue">${Icon.send}</div>
+        <div class="output-info">
+          <div class="output-title">Submit Enquiry</div>
+          <div class="output-desc">Your full configuration is automatically attached. Our team will respond within 4 working hours with pricing and lead time.</div>
+        </div>
+      </div>
+      <label class="field-label">Name</label>
+      <input class="field-input" type="text" placeholder="Full name">
+      <label class="field-label">Company</label>
+      <input class="field-input" type="text" placeholder="Company name">
+      <label class="field-label">Email</label>
+      <input class="field-input" type="email" placeholder="email@company.com">
+      <label class="field-label">Additional notes</label>
+      <textarea class="field-textarea" placeholder="Any site context or delivery requirements..."></textarea>
+      <div class="output-btn primary" style="margin-top:4px;">Submit Enquiry</div>
+    </div>
+
+    <div class="output-card">
+      <div class="output-card-top">
+        <div class="output-icon green">${Icon.email}</div>
+        <div class="output-info">
+          <div class="output-title">Email to Myself</div>
+          <div class="output-desc">Save a shareable link to this configuration to review later or send to a colleague or engineer.</div>
+        </div>
+      </div>
+      <input class="field-input" type="email" placeholder="your@email.com">
+      <div class="output-btn secondary">Send Link</div>
+    </div>
+
+    <div class="output-btn secondary" style="margin-top:4px;" onclick="restart()">Start a new configuration</div>
+    <div class="scroll-hint">Scroll down for all options</div>
+  `;
+}
+
+function restart() {
+  Object.assign(S, {
+    step: 0, product: null, systemType: null, diameter: null,
+    inletCount: null, positions: [], pipeSizes: {},
+    outletLocked: null, flowControl: null, flowType: null,
+    flowRate: '', depth: null, adoptable: null,
+  });
+  document.getElementById('bottomNav').style.display = 'flex';
+  if (is3dOpen) toggle3D();
+  render();
+}
+
+// INIT
+render();
+</script>
+</body>
+</html>
