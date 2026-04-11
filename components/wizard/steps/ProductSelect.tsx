@@ -6,7 +6,7 @@ import { OptionCard } from '@/components/ui/OptionCard'
 import { CategoryCard } from '@/components/ui/CategoryCard'
 import { CATEGORIES, getProductsByCategory } from '@/lib/products/registry'
 import '@/lib/products/register-all'
-import type { ProductId } from '@/lib/types'
+import type { ProductId, ProductCategory } from '@/lib/types'
 import type { ReactNode } from 'react'
 
 // ── PRODUCT ICONS ───────────────────────────────────────────
@@ -88,6 +88,18 @@ const PRODUCT_ICONS: Record<ProductId, ReactNode> = {
   ),
 }
 
+// ── CATEGORY ACCENT BORDERS ─────────────────────────────────
+
+const CATEGORY_BORDER_COLOR: Record<ProductCategory, string> = {
+  chambers: 'border-navy',
+  silt: 'border-blue',
+  stormwater: 'border-green',
+  flow: 'border-blue',
+  pumps: 'border-navy',
+  drawpits: 'border-muted',
+  bespoke: 'border-green-d',
+}
+
 // ── COMPONENT ───────────────────────────────────────────────
 
 export function ProductSelect() {
@@ -95,18 +107,38 @@ export function ProductSelect() {
 
   return (
     <div className="flex flex-col">
-      <div className="mb-5 flex items-center justify-center">
-        <Image
-          src="/logos/rhino/logo-horizontal.png"
-          alt="SuDS Enviro RHINO"
-          width={180}
-          height={60}
-          className="object-contain"
-        />
+      {/* RHINO hero banner */}
+      <div className="relative mb-5 overflow-hidden rounded-xl bg-gradient-to-br from-navy to-navy-d px-5 py-5">
+        {/* Decorative rhino watermark */}
+        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-[0.15]">
+          <Image
+            src="/logos/rhino/icon-white.png"
+            alt=""
+            width={60}
+            height={60}
+            className="object-contain"
+          />
+        </div>
+        {/* Logo and tagline */}
+        <div className="relative">
+          <Image
+            src="/logos/rhino/logo-white.png"
+            alt="SuDS Enviro RHINO"
+            width={140}
+            height={50}
+            className="object-contain"
+          />
+          <p className="mt-1.5 text-xs text-white/60">
+            Configure your drainage solution
+          </p>
+        </div>
       </div>
+
       {CATEGORIES.map((cat) => {
         const products = getProductsByCategory(cat.id)
         if (products.length === 0) return null
+
+        const borderClass = CATEGORY_BORDER_COLOR[cat.id]
 
         return (
           <div key={cat.id}>
@@ -117,16 +149,20 @@ export function ProductSelect() {
             />
             <div className="flex flex-col gap-2 mb-2">
               {products.map((p) => (
-                <OptionCard
+                <div
                   key={p.id}
-                  icon={PRODUCT_ICONS[p.id]}
-                  title={p.name}
-                  subtitle={p.subtitle}
-                  selected={state.product === p.id}
-                  onClick={() =>
-                    dispatch({ type: 'SET_PRODUCT', payload: p.id })
-                  }
-                />
+                  className={`border-l-[3px] ${borderClass} rounded-r-[10px]`}
+                >
+                  <OptionCard
+                    icon={PRODUCT_ICONS[p.id]}
+                    title={p.name}
+                    subtitle={p.subtitle}
+                    selected={state.product === p.id}
+                    onClick={() =>
+                      dispatch({ type: 'SET_PRODUCT', payload: p.id })
+                    }
+                  />
+                </div>
               ))}
             </div>
           </div>
