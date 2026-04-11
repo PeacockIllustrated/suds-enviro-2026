@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Download, Send, Mail } from 'lucide-react'
+import Image from 'next/image'
+import { Download, Mail } from 'lucide-react'
 import { useWizardContext } from '../WizardContext'
 import { generateProductCode } from '@/lib/rule-engine'
 import { getSessionId } from '@/lib/supabase'
@@ -113,7 +114,13 @@ export function Output() {
       <div className="mb-2.5 rounded-xl border border-border bg-white p-4 shadow-[0_2px_12px_rgba(0,77,112,0.10)]">
         <div className="mb-3 flex gap-3">
           <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[10px] bg-blue/10">
-            <Send className="h-5 w-5 text-blue" />
+            <Image
+              src="/logos/suds/icon-main.png"
+              alt="SuDS Enviro"
+              width={24}
+              height={24}
+              className="object-contain"
+            />
           </div>
           <div className="flex-1">
             <div className="text-sm font-extrabold text-ink">

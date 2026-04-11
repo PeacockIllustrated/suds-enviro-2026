@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Lock } from 'lucide-react'
 
 export default function AdminLoginPage() {
@@ -41,33 +42,19 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         {/* Branding */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-navy to-[#005f8c] shadow-lg">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2.5 4.5L6 18h12l-1.5-4.5C18 12.5 19 11 19 9c0-3-3-6-7-6z"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M9 9c0 1.66 1.34 3 3 3s3-1.34 3-3"
-                stroke="white"
-                strokeWidth="1.5"
-              />
-              <path
-                d="M5 9L3 7M19 9l2-2"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
+          <div className="mx-auto mb-4">
+            <Image
+              src="/logos/suds/logo-slogan-main.png"
+              alt="SuDS Enviro - Bespoke, Standardised"
+              width={200}
+              height={120}
+              className="mx-auto object-contain"
+              priority
+            />
           </div>
-          <h1 className="text-xl font-extrabold tracking-tight text-ink">
-            SuDS Enviro Admin
-          </h1>
-          <p className="mt-1 text-[12px] font-medium text-muted">
-            Sign in to manage enquiries and configurations
-          </p>
+          <h2 className="text-sm font-bold tracking-tight text-muted">
+            Admin Access
+          </h2>
         </div>
 
         {/* Login form */}

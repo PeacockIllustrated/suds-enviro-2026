@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: "SuDS Enviro - Chamber Configurator",
   description:
     "Configure HDPE rotationally moulded drainage chambers with the SuDS Enviro guided specification tool.",
+  icons: {
+    icon: "/logos/suds/icon-main.png",
+    apple: "/logos/suds/icon-main.png",
+  },
 };
 
 export const viewport: Viewport = {

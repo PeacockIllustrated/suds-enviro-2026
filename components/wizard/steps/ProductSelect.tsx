@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useWizardContext } from '../WizardContext'
 import { OptionCard } from '@/components/ui/OptionCard'
 import { CategoryCard } from '@/components/ui/CategoryCard'
@@ -94,6 +95,15 @@ export function ProductSelect() {
 
   return (
     <div className="flex flex-col">
+      <div className="mb-5 flex items-center justify-center">
+        <Image
+          src="/logos/rhino/logo-horizontal.png"
+          alt="SuDS Enviro RHINO"
+          width={180}
+          height={60}
+          className="object-contain"
+        />
+      </div>
       {CATEGORIES.map((cat) => {
         const products = getProductsByCategory(cat.id)
         if (products.length === 0) return null

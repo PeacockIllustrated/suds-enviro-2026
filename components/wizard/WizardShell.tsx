@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, type ComponentType } from 'react'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import { ChevronLeft, ChevronRight, ChevronDown, Layers, Bookmark } from 'lucide-react'
 import { useWizardContext } from './WizardContext'
 import {
@@ -276,25 +277,13 @@ export function WizardShell() {
       <header className="flex shrink-0 items-center justify-between bg-gradient-to-br from-navy to-[#005f8c] px-[18px] py-3 shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
         <div className="flex items-center gap-2.5">
           <div className="flex h-[34px] w-[34px] items-center justify-center rounded-lg border border-white/20 bg-white/12">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2.5 4.5L6 18h12l-1.5-4.5C18 12.5 19 11 19 9c0-3-3-6-7-6z"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M9 9c0 1.66 1.34 3 3 3s3-1.34 3-3"
-                stroke="white"
-                strokeWidth="1.5"
-              />
-              <path
-                d="M5 9L3 7M19 9l2-2"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
+            <Image
+              src="/logos/suds/icon-white.png"
+              alt="SuDS Enviro"
+              width={28}
+              height={28}
+              className="object-contain"
+            />
           </div>
           <div className="leading-tight">
             <strong className="block text-[13px] font-extrabold tracking-tight text-white">

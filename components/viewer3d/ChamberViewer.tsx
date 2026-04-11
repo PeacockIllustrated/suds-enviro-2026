@@ -2,6 +2,7 @@
 
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
+import Image from 'next/image'
 import { X } from 'lucide-react'
 import { ChamberModel } from './ChamberModel'
 import { useWizardContext } from '@/components/wizard/WizardContext'
@@ -54,13 +55,22 @@ export function ChamberViewer({ open, onClose }: ChamberViewerProps) {
     >
       {/* Header */}
       <div className="flex shrink-0 items-center justify-between bg-gradient-to-br from-navy to-[#005f8c] px-[18px] py-3.5">
-        <div className="flex flex-col gap-px">
-          <strong className="text-sm font-extrabold text-white">
-            3D Chamber Preview
-          </strong>
-          <span className="text-[10px] font-medium text-white/50">
-            Live - updates with your selections
-          </span>
+        <div className="flex items-center gap-px">
+          <Image
+            src="/logos/suds/icon-white.png"
+            alt=""
+            width={20}
+            height={20}
+            className="mr-2 object-contain"
+          />
+          <div className="flex flex-col gap-px">
+            <strong className="text-sm font-extrabold text-white">
+              3D Chamber Preview
+            </strong>
+            <span className="text-[10px] font-medium text-white/50">
+              Live - updates with your selections
+            </span>
+          </div>
         </div>
         <button
           type="button"
