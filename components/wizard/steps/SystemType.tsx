@@ -2,7 +2,8 @@
 
 import { useWizardContext } from '../WizardContext'
 import { OptionCard } from '@/components/ui/OptionCard'
-import type { SystemType as SystemTypeVal } from '@/lib/types'
+import { getSystemTypeValue, getSystemActionType } from './helpers'
+import type { SystemType as SystemTypeVal, WizardAction } from '@/lib/types'
 
 const systems: {
   id: SystemTypeVal
@@ -47,6 +48,8 @@ const systems: {
 
 export function SystemType() {
   const { state, dispatch } = useWizardContext()
+  const systemType = getSystemTypeValue(state)
+  const actionType = getSystemActionType(state.product)
 
   return (
     <>
@@ -57,16 +60,21 @@ export function SystemType() {
             icon={s.icon}
             title={s.title}
             subtitle={s.subtitle}
-            selected={state.systemType === s.id}
-            onClick={() => dispatch({ type: 'SET_SYSTEM', payload: s.id })}
+            selected={systemType === s.id}
+            onClick={() =>
+              dispatch({
+                type: actionType,
+                payload: s.id,
+              } as WizardAction)
+            }
           />
         ))}
       </div>
 
-      {(state.systemType === 'foul' || state.systemType === 'combined') && (
+      {(systemType === 'foul' || systemType === 'combined') && (
         <div className="rounded-lg border border-dashed border-blue/25 bg-blue/6 p-3 text-[11px] leading-relaxed text-muted">
           <strong className="text-blue">Branch note:</strong> Foul and combined
-          systems follow the same chamber configurator path. Compliance
+          systems follow the same configurator path. Compliance
           standards are adjusted automatically based on your selection.
         </div>
       )}

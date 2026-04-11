@@ -3,6 +3,13 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { useWizardContext } from '@/components/wizard/WizardContext'
+import {
+  getDiameterValue,
+  getDepthValue,
+  getPositionsValue,
+  getPipeSizesValue,
+  getOutletLockedValue,
+} from '@/components/wizard/steps/helpers'
 
 // Scale factor: 1 unit = 100mm
 const SCALE = 1 / 100
@@ -25,10 +32,16 @@ function clockToAngle(hour: number): number {
 export function ChamberModel() {
   const { state } = useWizardContext()
 
-  const diameter = (state.diameter ?? 600) * SCALE
+  const diameterVal = getDiameterValue(state) ?? 600
+  const depthVal = getDepthValue(state) ?? 1500
+  const positions = getPositionsValue(state)
+  const pipeSizes = getPipeSizesValue(state)
+  const outletLocked = getOutletLockedValue(state)
+
+  const diameter = diameterVal * SCALE
   const radius = diameter / 2
   const wallThickness = 12 * SCALE
-  const depth = (state.depth ?? 1500) * SCALE
+  const depth = depthVal * SCALE
   const totalHeight = depth + SUMP_HEIGHT
 
   // Chamber body
@@ -56,15 +69,9 @@ export function ChamberModel() {
     [innerRadius]
   )
 
-  // Base disc
-  const baseGeom = useMemo(
-    () => new THREE.CircleGeometry(radius, 32),
-    [radius]
-  )
-
   // Pipe dimensions
   const pipeLength = radius * 1.2
-  const outletSize = state.outletLocked ?? '160mm EN1401'
+  const outletSize = outletLocked ?? '160mm EN1401'
   const outletRadius = PIPE_RADIUS[outletSize] ?? 80 * SCALE
 
   return (
@@ -118,11 +125,11 @@ export function ChamberModel() {
       </mesh>
 
       {/* Inlet pipes */}
-      {state.positions.map((pos, i) => {
+      {positions.map((pos, i) => {
         const hour = parseInt(pos)
         const angle = clockToAngle(hour)
         const slot = `inlet${i + 1}`
-        const size = state.pipeSizes[slot] ?? '160mm EN1401'
+        const size = pipeSizes[slot] ?? '160mm EN1401'
         const pipeRad = PIPE_RADIUS[size] ?? 80 * SCALE
 
         // Position pipe at 75% of chamber height

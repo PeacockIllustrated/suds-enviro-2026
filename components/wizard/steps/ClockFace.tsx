@@ -1,11 +1,17 @@
 'use client'
 
 import { useWizardContext } from '../WizardContext'
-import { getBlockedPositions, clockToDegrees } from '@/lib/rule-engine'
-import type { ClockPosition } from '@/lib/types'
+import { getBlockedPositions } from '@/lib/rule-engine'
+import {
+  getDiameterValue,
+  getInletCountValue,
+  getPositionsValue,
+  getOutletLockedValue,
+  getTogglePositionActionType,
+} from './helpers'
+import type { ClockPosition, WizardAction } from '@/lib/types'
 
-// All positions except 6 (outlet) and 11 which isn't on standard clock faces
-// The prototype shows positions: 12, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11
+// All positions except 6 (outlet)
 const ALL_POSITIONS: ClockPosition[] = [
   '12', '1', '2', '3', '4', '5', '7', '8', '9', '10', '11',
 ]
@@ -15,16 +21,6 @@ const CENTER = CLOCK_SIZE / 2
 const RING_RADIUS = 72
 const NODE_SIZE = 40
 
-function clockPosition(hour: number): { x: number; y: number } {
-  const angleDeg = clockToDegrees(hour)
-  const angleRad = (angleDeg - 90) * (Math.PI / 180) + Math.PI / 2
-  return {
-    x: CENTER + RING_RADIUS * Math.sin(angleRad - Math.PI),
-    y: CENTER - RING_RADIUS * Math.cos(angleRad - Math.PI),
-  }
-}
-
-// More intuitive: clock 12 = top, clock 3 = right, etc.
 function getNodePosition(hour: number): { left: string; top: string } {
   const angleRad = ((hour / 12) * 360) * (Math.PI / 180)
   const x = CENTER + RING_RADIUS * Math.sin(angleRad)
@@ -37,9 +33,13 @@ function getNodePosition(hour: number): { left: string; top: string } {
 
 export function ClockFace() {
   const { state, dispatch } = useWizardContext()
-  const inletCount = state.inletCount ?? 0
-  const placed = state.positions.length
-  const blocked = getBlockedPositions(state.outletLocked)
+  const diameter = getDiameterValue(state)
+  const inletCount = getInletCountValue(state) ?? 0
+  const positions = getPositionsValue(state)
+  const outletLocked = getOutletLockedValue(state)
+  const actionType = getTogglePositionActionType(state.product)
+  const placed = positions.length
+  const blocked = getBlockedPositions(outletLocked)
 
   const subheading = `Tap ${inletCount} position${inletCount > 1 ? 's' : ''} on the clock face.`
 
@@ -79,7 +79,7 @@ export function ClockFace() {
           {/* Centre hub */}
           <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[3px] border-white bg-navy shadow-[0_2px_8px_rgba(0,77,112,0.3)]">
             <span className="text-center text-[8px] font-extrabold leading-tight tracking-tight text-white">
-              {state.diameter ?? '---'}
+              {diameter ?? '---'}
               <br />
               mm
             </span>
@@ -89,7 +89,7 @@ export function ClockFace() {
           {ALL_POSITIONS.map((pos) => {
             const hour = parseInt(pos)
             const { left, top } = getNodePosition(hour)
-            const isInlet = state.positions.includes(pos)
+            const isInlet = positions.includes(pos)
             const isBlocked = blocked.includes(pos)
 
             return (
@@ -97,7 +97,10 @@ export function ClockFace() {
                 key={pos}
                 type="button"
                 onClick={() =>
-                  dispatch({ type: 'TOGGLE_POSITION', payload: pos })
+                  dispatch({
+                    type: actionType,
+                    payload: pos,
+                  } as WizardAction)
                 }
                 disabled={isBlocked || (!isInlet && placed >= inletCount)}
                 className={`absolute flex items-center justify-center rounded-full text-[11px] font-bold transition-all

@@ -4,14 +4,23 @@ import { useWizardContext } from '../WizardContext'
 import { SizeCard } from '@/components/ui/SizeCard'
 import { AlertBox } from '@/components/ui/AlertBox'
 import { getMaxDepth } from '@/lib/rule-engine'
-import type { DepthMm } from '@/lib/types'
+import {
+  getDepthValue,
+  getAdoptableValue,
+  getDepthActionType,
+  getAdoptableActionType,
+} from './helpers'
+import type { DepthMm, WizardAction } from '@/lib/types'
 
 const depths: DepthMm[] = [1000, 1500, 2000, 2500, 3000]
 
 export function Depth() {
   const { state, dispatch } = useWizardContext()
-  const maxDepth =
-    state.adoptable !== null ? getMaxDepth(state.adoptable) : 3000
+  const depth = getDepthValue(state)
+  const adoptable = getAdoptableValue(state)
+  const depthAction = getDepthActionType(state.product)
+  const adoptableAction = getAdoptableActionType(state.product)
+  const maxDepth = adoptable !== null ? getMaxDepth(adoptable) : 3000
 
   return (
     <>
@@ -23,11 +32,14 @@ export function Depth() {
         <button
           type="button"
           onClick={() =>
-            dispatch({ type: 'SET_ADOPTABLE', payload: true })
+            dispatch({
+              type: adoptableAction,
+              payload: true,
+            } as WizardAction)
           }
           className={`rounded-[10px] border-[1.5px] py-3.5 text-center text-sm font-bold transition-all shadow-[0_2px_12px_rgba(0,77,112,0.10)]
             ${
-              state.adoptable === true
+              adoptable === true
                 ? 'border-navy border-2 bg-[#f0f7fb] text-navy'
                 : 'border-border bg-white text-muted'
             }
@@ -38,11 +50,14 @@ export function Depth() {
         <button
           type="button"
           onClick={() =>
-            dispatch({ type: 'SET_ADOPTABLE', payload: false })
+            dispatch({
+              type: adoptableAction,
+              payload: false,
+            } as WizardAction)
           }
           className={`rounded-[10px] border-[1.5px] py-3.5 text-center text-sm font-bold transition-all shadow-[0_2px_12px_rgba(0,77,112,0.10)]
             ${
-              state.adoptable === false
+              adoptable === false
                 ? 'border-navy border-2 bg-[#f0f7fb] text-navy'
                 : 'border-border bg-white text-muted'
             }
@@ -62,10 +77,13 @@ export function Depth() {
               key={d}
               value={label}
               unit="m"
-              selected={state.depth === d}
+              selected={depth === d}
               disabled={d > maxDepth}
               onClick={() =>
-                dispatch({ type: 'SET_DEPTH', payload: d })
+                dispatch({
+                  type: depthAction,
+                  payload: d,
+                } as WizardAction)
               }
             />
           )
@@ -73,7 +91,7 @@ export function Depth() {
       </div>
 
       {/* Constraint alert */}
-      {state.adoptable === true && (
+      {adoptable === true && (
         <AlertBox
           type="info"
           title="Adoptable depth limit"
@@ -82,11 +100,11 @@ export function Depth() {
       )}
 
       {/* Valid selection alert */}
-      {state.depth !== null && state.adoptable !== null && (
+      {depth !== null && adoptable !== null && (
         <AlertBox
           type="ok"
           title="Depth valid"
-          body={`${state.depth}mm depth for a${state.adoptable ? 'n adoptable' : ' private'} installation is within specification.`}
+          body={`${depth}mm depth for a${adoptable ? 'n adoptable' : ' private'} installation is within specification.`}
         />
       )}
     </>

@@ -5,6 +5,13 @@ import { OrbitControls } from '@react-three/drei'
 import { X } from 'lucide-react'
 import { ChamberModel } from './ChamberModel'
 import { useWizardContext } from '@/components/wizard/WizardContext'
+import {
+  getDiameterValue,
+  getInletCountValue,
+  getOutletLockedValue,
+  getDepthValue,
+  getAdoptableValue,
+} from '@/components/wizard/steps/helpers'
 
 interface ChamberViewerProps {
   open: boolean
@@ -14,22 +21,28 @@ interface ChamberViewerProps {
 export function ChamberViewer({ open, onClose }: ChamberViewerProps) {
   const { state } = useWizardContext()
 
+  const diameter = getDiameterValue(state)
+  const inletCount = getInletCountValue(state)
+  const outletLocked = getOutletLockedValue(state)
+  const depth = getDepthValue(state)
+  const adoptable = getAdoptableValue(state)
+
   const chips: { label: string; variant?: 'green' | 'blue' }[] = []
 
-  if (state.diameter) {
-    chips.push({ label: `${state.diameter}mm` })
+  if (diameter) {
+    chips.push({ label: `${diameter}mm` })
   }
-  if (state.inletCount) {
-    chips.push({ label: `${state.inletCount} inlet${state.inletCount > 1 ? 's' : ''}`, variant: 'blue' })
+  if (inletCount) {
+    chips.push({ label: `${inletCount} inlet${inletCount > 1 ? 's' : ''}`, variant: 'blue' })
   }
-  if (state.outletLocked) {
-    chips.push({ label: `Outlet: ${state.outletLocked}`, variant: 'green' })
+  if (outletLocked) {
+    chips.push({ label: `Outlet: ${outletLocked}`, variant: 'green' })
   }
-  if (state.depth) {
-    chips.push({ label: `${state.depth}mm deep` })
+  if (depth) {
+    chips.push({ label: `${depth}mm deep` })
   }
-  if (state.adoptable !== null) {
-    chips.push({ label: state.adoptable ? 'Adoptable' : 'Private', variant: 'green' })
+  if (adoptable !== null) {
+    chips.push({ label: adoptable ? 'Adoptable' : 'Private', variant: 'green' })
   }
 
   return (

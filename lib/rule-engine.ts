@@ -1,231 +1,69 @@
 /**
- * SuDS Enviro Chamber Configurator — Rule Engine
- *
- * Enforces all physical and regulatory constraints for chamber configuration.
- * Rules are numbered R1-R7 to match CLAUDE.md documentation.
- * All functions are pure - no side effects.
+ * Rule Engine Orchestrator
+ * Delegates to product-specific rule modules.
+ * Re-exports chamber rules for backward compatibility.
  */
 
-import type {
-  WizardState,
-  PipeSize,
-  ClockPosition,
-  ValidationResult,
-  ComplianceResult,
-} from './types'
+import type { ProductId, WizardState, ValidationResult, ComplianceResult } from './types'
+import type { ProductRuleModule } from './rules/types'
 
-// ── PIPE SIZE ORDER (ascending) ──────────────────────────────
+import * as chamberRules from './rules/chamber'
+import * as catchpitRules from './rules/catchpit'
+import * as rhinoceptorRules from './rules/rhinoceptor'
+import * as flowControlRules from './rules/flow-control'
+import * as pumpStationRules from './rules/pump-station'
+import * as greaseTrapRules from './rules/grease-trap'
+import * as greaseSeparatorRules from './rules/grease-separator'
+import * as rhinopodRules from './rules/rhinopod'
+import * as rainwaterRules from './rules/rainwater'
+import * as septicTankRules from './rules/septic-tank'
+import * as drawpitRules from './rules/drawpit'
 
-const PIPE_SIZES: PipeSize[] = [
-  '110mm EN1401',
-  '160mm EN1401',
-  '225mm Twinwall',
-  '300mm Twinwall',
-  '450mm Twinwall',
-]
+// ── MODULE DISPATCH ──────────────────────────────────────────
 
-const pipeSizeRank = (size: PipeSize): number => PIPE_SIZES.indexOf(size)
-
-// ── R1: Maximum Inlets by Diameter ───────────────────────────
-
-export function getMaxInlets(diameter: number): number {
-  switch (diameter) {
-    case 450:  return 2
-    case 600:  return 4
-    case 750:  return 5
-    case 1050: return 6
-    default:   return 0
-  }
+const modules: Record<ProductId, ProductRuleModule> = {
+  'chamber': chamberRules,
+  'catchpit': catchpitRules,
+  'rhinoceptor': rhinoceptorRules,
+  'flow-control': flowControlRules,
+  'pump-station': pumpStationRules,
+  'grease-trap': greaseTrapRules,
+  'grease-separator': greaseSeparatorRules,
+  'rhinopod': rhinopodRules,
+  'rainwater': rainwaterRules,
+  'septic-tank': septicTankRules,
+  'drawpit': drawpitRules,
 }
 
-// ── R2: Outlet Minimum Size ───────────────────────────────────
-
-export function getOutletMinSize(
-  inletCount: number,
-  diameter: number
-): PipeSize | null {
-  if (inletCount >= 3 && diameter === 600) return '225mm Twinwall'
-  if (inletCount >= 4) return '225mm Twinwall'
-  return null
+export function getRuleModule(product: ProductId): ProductRuleModule {
+  return modules[product]
 }
-
-// ── R3: Blocked Clock Positions ──────────────────────────────
-
-export function getBlockedPositions(outletSize: PipeSize | null): ClockPosition[] {
-  if (outletSize === '225mm Twinwall') return ['5', '7']
-  return []
-}
-
-// ── R4: Maximum Installation Depth ───────────────────────────
-
-export function getMaxDepth(adoptable: boolean): number {
-  return adoptable ? 2000 : 3000
-}
-
-// ── R7: Maximum Inlet Pipe Size by Diameter ──────────────────
-
-export function getMaxInletPipeSize(diameter: number): PipeSize {
-  switch (diameter) {
-    case 450:  return '160mm EN1401'
-    case 600:  return '225mm Twinwall'
-    case 750:  return '300mm Twinwall'
-    case 1050: return '450mm Twinwall'
-    default:   return '160mm EN1401'
-  }
-}
-
-// ── R6 + R7: Available Pipe Sizes for an Inlet ───────────────
-// Combines both rules: must not exceed outlet AND must not exceed diameter max
-
-export function getAvailableInletSizes(
-  diameter: number | null,
-  outletLocked: PipeSize | null
-): PipeSize[] {
-  if (!diameter) return PIPE_SIZES
-
-  const maxByDiameter = getMaxInletPipeSize(diameter)
-  const maxByOutlet   = outletLocked ?? '450mm Twinwall'
-
-  const maxRank = Math.min(
-    pipeSizeRank(maxByDiameter),
-    pipeSizeRank(maxByOutlet)
-  )
-
-  return PIPE_SIZES.slice(0, maxRank + 1)
-}
-
-// ── VALIDATION ────────────────────────────────────────────────
 
 export function validateConfig(state: WizardState): ValidationResult {
-  const errors: string[] = []
-
-  if (!state.product)     errors.push('Product not selected')
-  if (!state.systemType)  errors.push('System type not selected')
-  if (!state.diameter)    errors.push('Diameter not selected')
-  if (!state.inletCount)  errors.push('Inlet count not selected')
-
-  if (state.diameter && state.inletCount) {
-    const maxIn = getMaxInlets(state.diameter)
-    if (state.inletCount > maxIn) {
-      errors.push(`Inlet count ${state.inletCount} exceeds max ${maxIn} for ${state.diameter}mm`)
-    }
-  }
-
-  if (state.inletCount && state.positions.length !== state.inletCount) {
-    errors.push(`${state.positions.length} positions placed, ${state.inletCount} required`)
-  }
-
-  if (state.flowControl === null) errors.push('Flow control decision required')
-
-  if (state.flowControl) {
-    if (!state.flowType)  errors.push('Flow control type not selected')
-    if (!state.flowRate)  errors.push('Flow rate not specified')
-  }
-
-  if (!state.depth)     errors.push('Depth not selected')
-  if (state.adoptable === null) errors.push('Adoption status not selected')
-
-  if (state.depth && state.adoptable !== null) {
-    const maxD = getMaxDepth(state.adoptable)
-    if (state.depth > maxD) {
-      errors.push(`Depth ${state.depth}mm exceeds max ${maxD}mm for ${state.adoptable ? 'adoptable' : 'non-adoptable'}`)
-    }
-  }
-
-  return { valid: errors.length === 0, errors }
+  if (!state.product) return { valid: false, errors: ['Product not selected'] }
+  return modules[state.product].validateConfig(state)
 }
-
-// ── PRODUCT CODE ──────────────────────────────────────────────
 
 export function generateProductCode(state: WizardState): string {
-  if (!state.diameter || !state.depth) return 'IC-???-???-???'
-  const adoptStr = state.adoptable ? 'S104' : 'PRIV'
-  return `IC-${state.diameter}-${state.depth}-${adoptStr}`
+  if (!state.product) return '???'
+  return modules[state.product].generateProductCode(state)
 }
-
-// ── COMPLIANCE CHECK ─────────────────────────────────────────
 
 export function generateCompliance(state: WizardState): ComplianceResult[] {
-  const { valid } = validateConfig(state)
-
-  // Outlet rule: no flow increase on exit
-  let outletRulePass = true
-  if (state.outletLocked && state.diameter) {
-    const outletRank = pipeSizeRank(state.outletLocked)
-    Object.entries(state.pipeSizes).forEach(([key, size]) => {
-      if (key.startsWith('inlet')) {
-        if (pipeSizeRank(size) > outletRank) outletRulePass = false
-      }
-    })
-  }
-
-  // Depth rule for adoptable
-  let depthPass = true
-  if (state.depth && state.adoptable !== null) {
-    depthPass = state.depth <= getMaxDepth(state.adoptable)
-  }
-
-  const overallPass = valid && outletRulePass && depthPass
-
-  return [
-    {
-      standard: 'DCG Section C7.1.1',
-      scope: 'Sediment Management - Adoptable',
-      status: overallPass ? 'Pass' : 'Warning',
-    },
-    {
-      standard: 'Sewers for Adoption 7th Ed. (SfA7)',
-      scope: 'Adoptable Sewer Standards',
-      status: (state.adoptable && depthPass) ? 'Pass' : state.adoptable === false ? 'Pass' : 'Warning',
-    },
-    {
-      standard: 'BS EN 13598-1 and EN 13598-2',
-      scope: 'Plastic Inspection Chambers',
-      status: 'Pass',
-    },
-    {
-      standard: 'Building Regulations Part H1',
-      scope: 'Surface Water Drainage',
-      status: state.systemType === 'surface' ? 'Pass' : 'Warning',
-    },
-    {
-      standard: 'Environment Agency PPG3',
-      scope: 'Pollution Prevention',
-      status: 'Pass',
-    },
-    {
-      standard: 'Outlet rule - no flow increase on exit',
-      scope: 'Rule Engine Validation',
-      status: outletRulePass ? 'Pass' : 'Fail',
-    },
-  ]
+  if (!state.product) return []
+  return modules[state.product].generateCompliance(state)
 }
 
-// ── HELPER: Clock angle to degrees from North ─────────────────
+// ── CHAMBER RULE RE-EXPORTS (backward compatibility) ─────────
 
-export function clockToDegrees(clockHour: number): number {
-  return (clockHour / 12) * 360
-}
-
-// ── HELPER: Clock angle to 3D direction vector ────────────────
-
-export function clockToDirection(clockHour: number): [number, number, number] {
-  const radians = (clockHour / 12) * Math.PI * 2
-  return [Math.sin(radians), 0, Math.cos(radians)]
-}
-
-// ── HELPER: Inlet heights (approximate, for drawing) ─────────
-
-export function getDefaultInletHeights(
-  depth: number,
-  inletCount: number
-): number[] {
-  // Distribute inlets evenly in the upper 65% of the chamber
-  // Starting from 85% of depth down to 65% of depth
-  const heights: number[] = []
-  for (let i = 0; i < inletCount; i++) {
-    const fraction = 0.85 - (i * 0.1)
-    heights.push(Math.round(depth * fraction))
-  }
-  return heights
-}
+export {
+  getMaxInlets,
+  getOutletMinSize,
+  getBlockedPositions,
+  getMaxDepth,
+  getMaxInletPipeSize,
+  getAvailableInletSizes,
+  clockToDegrees,
+  clockToDirection,
+  getDefaultInletHeights,
+} from './rules/chamber'

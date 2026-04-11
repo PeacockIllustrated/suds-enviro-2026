@@ -3,7 +3,8 @@
 import { useWizardContext } from '../WizardContext'
 import { SizeCard } from '@/components/ui/SizeCard'
 import { AlertBox } from '@/components/ui/AlertBox'
-import type { Diameter as DiameterVal } from '@/lib/types'
+import { getDiameterValue, getDiameterActionType } from './helpers'
+import type { Diameter as DiameterVal, WizardAction } from '@/lib/types'
 
 const diameters: DiameterVal[] = [450, 600, 750, 1050]
 
@@ -19,6 +20,8 @@ const diameterInfo: Record<
 
 export function Diameter() {
   const { state, dispatch } = useWizardContext()
+  const diameter = getDiameterValue(state)
+  const actionType = getDiameterActionType(state.product)
 
   return (
     <>
@@ -28,9 +31,12 @@ export function Diameter() {
             key={d}
             value={String(d)}
             unit="mm"
-            selected={state.diameter === d}
+            selected={diameter === d}
             onClick={() =>
-              dispatch({ type: 'SET_DIAMETER', payload: d })
+              dispatch({
+                type: actionType,
+                payload: d,
+              } as WizardAction)
             }
           />
         ))}

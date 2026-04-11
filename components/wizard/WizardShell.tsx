@@ -1,12 +1,18 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, type ComponentType } from 'react'
 import dynamic from 'next/dynamic'
 import { ChevronLeft, ChevronRight, ChevronDown, Layers, Bookmark } from 'lucide-react'
 import { useWizardContext } from './WizardContext'
-import { STEP_META } from '@/lib/types'
+import {
+  getProductConfig,
+  getReviewStepIndex,
+  getOutputStepIndex,
+} from '@/lib/products/registry'
+import '@/lib/products/register-all'
+import type { SummaryField } from '@/lib/types'
 
-// Step components
+// Step components - shared steps
 import { ProductSelect } from './steps/ProductSelect'
 import { SystemType } from './steps/SystemType'
 import { Diameter } from './steps/Diameter'
@@ -24,18 +30,94 @@ const ChamberViewer = dynamic(
   { ssr: false }
 )
 
-const STEP_COMPONENTS = [
-  ProductSelect,
-  SystemType,
-  Diameter,
-  InletCount,
-  ClockFace,
-  PipeSizes,
-  FlowControl,
-  Depth,
-  Review,
-  Output,
-]
+// ── PLACEHOLDER STEP ────────────────────────────────────────
+// Used for product-specific steps that don't have components yet.
+
+function PlaceholderStep({ stepId }: { stepId: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center rounded-[10px] border border-dashed border-blue/25 bg-blue/6 px-4 py-10 text-center">
+      <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue">
+        Coming Soon
+      </div>
+      <div className="text-sm font-bold text-ink">{stepId}</div>
+      <div className="mt-1 text-[11px] text-muted">
+        This step is not yet implemented. It will be available in a future update.
+      </div>
+    </div>
+  )
+}
+
+// ── STEP COMPONENT MAP ──────────────────────────────────────
+// Maps step IDs to their component implementations.
+// Shared steps are mapped to their real components.
+// Product-specific steps that don't exist yet get null (resolved to PlaceholderStep at render).
+
+const STEP_COMPONENT_MAP: Record<string, ComponentType | null> = {
+  // Shared steps (chamber, catchpit, etc.)
+  'system-type': SystemType,
+  'diameter': Diameter,
+  'inlet-count': InletCount,
+  'clock-face': ClockFace,
+  'pipe-sizes': PipeSizes,
+  'flow-control': FlowControl,
+  'depth': Depth,
+
+  // Catchpit-specific
+  'silt-options': null,
+
+  // RhinoCeptor-specific
+  'variant-select': null,
+  'drainage-area': null,
+  'flow-sizing': null,
+  'class-select': null,
+
+  // Flow Control product-specific
+  'fc-system-type': SystemType,
+  'fc-application': null,
+  'head-depth': null,
+  'discharge-rate': null,
+  'fc-chamber-size': Diameter,
+
+  // Pump Station-specific
+  'pump-system-type': SystemType,
+  'pump-flow': null,
+  'pump-head': null,
+  'pump-config': null,
+  'pump-well-sizing': null,
+  'pump-pipe-sizing': null,
+
+  // Grease Trap-specific
+  'gt-model-select': null,
+  'gt-connections': null,
+
+  // Grease Separator-specific
+  'gs-application': null,
+  'gs-covers': null,
+  'gs-flow-sizing': null,
+
+  // RhinoPod-specific
+  'pod-type-select': null,
+  'pod-chamber-compat': null,
+
+  // Rainwater-specific
+  'rw-system-type': null,
+  'rw-catchment-area': null,
+  'rw-capacity': null,
+  'rw-rainfall': null,
+
+  // Septic Tank-specific
+  'st-treatment': null,
+  'st-population': null,
+  'st-discharge': null,
+
+  // Drawpit-specific
+  'dp-dimensions': null,
+  'dp-depth-rings': null,
+  'dp-load-rating': null,
+  'dp-cover-type': null,
+}
+
+// ── WIZARD SHELL ────────────────────────────────────────────
 
 export function WizardShell() {
   const { state, canProceed, goNext, goBack } = useWizardContext()
@@ -64,11 +146,89 @@ export function WizardShell() {
     contentRef.current?.scrollTo(0, 0)
   }, [state.step])
 
-  const StepComponent = STEP_COMPONENTS[state.step]
-  const meta = STEP_META[state.step]
-  const showProgress = state.step >= 1 && state.step <= 8
-  const showNav = state.step < 9
-  const show3dButton = state.step >= 2 && state.step <= 8
+  // ── Derive step data from registry ────────────────────────
+
+  const hasProduct = state.product !== null
+  const config = hasProduct ? getProductConfig(state.product!) : null
+  const reviewStepIndex = hasProduct ? getReviewStepIndex(state.product!) : -1
+  const outputStepIndex = hasProduct ? getOutputStepIndex(state.product!) : -1
+  const configStepCount = config ? config.steps.length : 0
+
+  // Resolve the current step component and metadata
+  let StepComponent: ComponentType | null = null
+  let placeholderStepId: string | null = null
+  let stepHeading = ''
+  let stepSubheading: string | ((s: typeof state) => string) = ''
+  let stepEyebrow = ''
+  let stepLabel = ''
+
+  if (state.step === 0) {
+    // Product selection
+    StepComponent = ProductSelect
+    stepEyebrow = 'Step 0'
+    stepHeading = 'Select Product'
+    stepSubheading = 'Choose the product you want to configure.'
+    stepLabel = 'Product'
+  } else if (hasProduct && state.step === reviewStepIndex) {
+    // Review step
+    StepComponent = Review
+    stepEyebrow = 'Review'
+    stepHeading = 'Configuration Review'
+    stepSubheading = 'Check your specification before generating the output.'
+    stepLabel = 'Review'
+  } else if (hasProduct && state.step === outputStepIndex) {
+    // Output step
+    StepComponent = Output
+    stepEyebrow = 'Output'
+    stepHeading = 'Your Specification'
+    stepSubheading = ''
+    stepLabel = 'Output'
+  } else if (config) {
+    // Product config step (step index 1..N maps to config.steps[0..N-1])
+    const configStepIndex = state.step - 1
+    if (configStepIndex >= 0 && configStepIndex < config.steps.length) {
+      const stepDef = config.steps[configStepIndex]
+      const stepId = stepDef.id
+
+      // Resolve from component map, fall back to placeholder
+      const mapped = STEP_COMPONENT_MAP[stepId]
+      if (mapped) {
+        StepComponent = mapped
+      } else {
+        placeholderStepId = stepId
+      }
+
+      stepEyebrow = `Step ${state.step}`
+      stepHeading = stepDef.heading
+      stepSubheading = stepDef.subheading
+      stepLabel = stepDef.label
+    } else {
+      StepComponent = ProductSelect
+    }
+  } else {
+    StepComponent = ProductSelect
+  }
+
+  // Resolve dynamic subheading
+  const resolvedSubheading =
+    typeof stepSubheading === 'function'
+      ? stepSubheading(state)
+      : stepSubheading
+
+  // Progress bar visibility
+  const isConfigStep = state.step >= 1 && state.step <= (configStepCount)
+  const isReviewStep = state.step === reviewStepIndex
+  const showProgress = hasProduct && (isConfigStep || isReviewStep)
+
+  // Nav bar visibility
+  const showNav = state.step < outputStepIndex || !hasProduct
+
+  // 3D button visibility
+  const show3dButton = hasProduct && config?.has3dViewer === true && state.step >= 2 && state.step <= reviewStepIndex
+
+  // Summary fields from product config
+  const summaryFields: SummaryField[] =
+    hasProduct && config ? config.getSummaryFields(state) : []
 
   const handleNext = () => {
     if (canProceed()) {
@@ -76,7 +236,7 @@ export function WizardShell() {
     }
   }
 
-  const nextLabel = state.step === 8 ? 'Generate Output' : 'Next'
+  const nextLabel = state.step === reviewStepIndex ? 'Generate Output' : 'Next'
 
   return (
     <div className="relative mx-auto flex h-dvh w-full max-w-md flex-col overflow-hidden bg-light">
@@ -126,7 +286,7 @@ export function WizardShell() {
       {showProgress && (
         <div className="shrink-0 bg-navy px-[18px] pb-3 pt-2.5">
           <div className="flex items-center gap-0">
-            {Array.from({ length: 8 }, (_, i) => {
+            {Array.from({ length: configStepCount }, (_, i) => {
               const stepNum = i + 1
               const isDone = state.step > stepNum
               const isActive = state.step === stepNum
@@ -140,14 +300,14 @@ export function WizardShell() {
               )
             })}
             <span className="ml-2.5 whitespace-nowrap text-[10px] font-bold text-white/45">
-              {state.step}/8
+              {Math.min(state.step, configStepCount)}/{configStepCount}
             </span>
           </div>
         </div>
       )}
 
       {/* Summary Accordion */}
-      {showProgress && (
+      {showProgress && summaryFields.length > 0 && (
         <>
           <button
             type="button"
@@ -159,9 +319,9 @@ export function WizardShell() {
               <span className="text-[10px] font-bold uppercase tracking-widest text-white/45">
                 Configuration
               </span>
-              {state.diameter && (
+              {config && (
                 <span className="text-[11px] font-semibold text-white/75">
-                  {state.diameter}mm
+                  {config.name}
                 </span>
               )}
             </div>
@@ -177,7 +337,7 @@ export function WizardShell() {
               ${summaryOpen ? 'max-h-[200px]' : 'max-h-0'}
             `}
           >
-            <SummaryGrid state={state} />
+            <SummaryGrid fields={summaryFields} />
           </div>
         </>
       )}
@@ -198,18 +358,18 @@ export function WizardShell() {
       >
         {/* Step typography */}
         <div className="mb-1 text-[9px] font-bold uppercase tracking-[0.14em] text-blue">
-          {meta.eyebrow}
+          {stepEyebrow}
         </div>
         <h2 className="mb-1 text-xl font-extrabold leading-tight tracking-tight text-ink">
-          {meta.heading}
+          {stepHeading}
         </h2>
-        {meta.subheading && (
+        {resolvedSubheading && (
           <p className="mb-5 text-xs font-normal leading-relaxed text-muted">
-            {meta.subheading}
+            {resolvedSubheading}
           </p>
         )}
 
-        <StepComponent />
+        {StepComponent ? <StepComponent /> : <PlaceholderStep stepId={placeholderStepId ?? 'unknown'} />}
       </div>
 
       {/* 3D Float Button */}
@@ -256,7 +416,7 @@ export function WizardShell() {
             </button>
           )}
           <span className="flex-1 text-center text-[10px] font-semibold text-muted whitespace-nowrap">
-            {meta.label}
+            {stepLabel}
           </span>
           <button
             type="button"
@@ -291,44 +451,12 @@ export function WizardShell() {
 
 // ── SUMMARY GRID ─────────────────────────────────────────────
 
-function SummaryGrid({ state }: { state: import('@/lib/types').WizardState }) {
-  const cells: { label: string; value: string; locked?: boolean }[] = [
-    {
-      label: 'Product',
-      value: state.product === 'chamber' ? 'Inspection Chamber' : '--',
-    },
-    {
-      label: 'System',
-      value: state.systemType
-        ? state.systemType === 'surface'
-          ? 'Surface Water'
-          : state.systemType === 'foul'
-            ? 'Foul'
-            : 'Combined'
-        : '--',
-    },
-    {
-      label: 'Diameter',
-      value: state.diameter ? `${state.diameter}mm` : '--',
-    },
-    {
-      label: 'Inlets',
-      value: state.inletCount ? `${state.inletCount}` : '--',
-    },
-    {
-      label: 'Outlet',
-      value: state.outletLocked ?? 'Auto',
-      locked: !!state.outletLocked,
-    },
-    {
-      label: 'Depth',
-      value: state.depth ? `${state.depth}mm` : '--',
-    },
-  ]
+function SummaryGrid({ fields }: { fields: SummaryField[] }) {
+  if (fields.length === 0) return null
 
   return (
     <div className="mx-[18px] mb-2.5 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-white/6 bg-white/6">
-      {cells.map((cell) => (
+      {fields.map((cell) => (
         <div key={cell.label} className="bg-white/4 px-2.5 py-[7px]">
           <div className="text-[9px] uppercase tracking-wide text-white/35">
             {cell.label}
@@ -337,7 +465,7 @@ function SummaryGrid({ state }: { state: import('@/lib/types').WizardState }) {
             className={`text-[11px] font-bold ${
               cell.locked
                 ? 'text-green/80'
-                : cell.value === '--'
+                : cell.value === '--' || cell.value === '-'
                   ? 'text-white/20 font-normal italic'
                   : 'text-white/80'
             }`}

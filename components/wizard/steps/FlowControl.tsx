@@ -3,10 +3,24 @@
 import { useWizardContext } from '../WizardContext'
 import { OptionCard } from '@/components/ui/OptionCard'
 import { AlertBox } from '@/components/ui/AlertBox'
-import type { FlowType } from '@/lib/types'
+import {
+  getFlowControlValue,
+  getFlowTypeValue,
+  getFlowRateValue,
+  getFlowControlActionType,
+  getFlowTypeActionType,
+  getFlowRateActionType,
+} from './helpers'
+import type { WizardAction } from '@/lib/types'
 
 export function FlowControl() {
   const { state, dispatch } = useWizardContext()
+  const flowControl = getFlowControlValue(state)
+  const flowType = getFlowTypeValue(state)
+  const flowRate = getFlowRateValue(state)
+  const flowControlAction = getFlowControlActionType(state.product)
+  const flowTypeAction = getFlowTypeActionType(state.product)
+  const flowRateAction = getFlowRateActionType(state.product)
 
   return (
     <>
@@ -15,11 +29,14 @@ export function FlowControl() {
         <button
           type="button"
           onClick={() =>
-            dispatch({ type: 'SET_FLOW_CONTROL', payload: true })
+            dispatch({
+              type: flowControlAction,
+              payload: true,
+            } as WizardAction)
           }
           className={`rounded-[10px] border-[1.5px] py-3.5 text-center text-sm font-bold transition-all shadow-[0_2px_12px_rgba(0,77,112,0.10)]
             ${
-              state.flowControl === true
+              flowControl === true
                 ? 'border-navy border-2 bg-[#f0f7fb] text-navy'
                 : 'border-border bg-white text-muted'
             }
@@ -30,11 +47,14 @@ export function FlowControl() {
         <button
           type="button"
           onClick={() =>
-            dispatch({ type: 'SET_FLOW_CONTROL', payload: false })
+            dispatch({
+              type: flowControlAction,
+              payload: false,
+            } as WizardAction)
           }
           className={`rounded-[10px] border-[1.5px] py-3.5 text-center text-sm font-bold transition-all shadow-[0_2px_12px_rgba(0,77,112,0.10)]
             ${
-              state.flowControl === false
+              flowControl === false
                 ? 'border-navy border-2 bg-[#f0f7fb] text-navy'
                 : 'border-border bg-white text-muted'
             }
@@ -45,7 +65,7 @@ export function FlowControl() {
       </div>
 
       {/* Flow control sub-section */}
-      {state.flowControl === true && (
+      {flowControl === true && (
         <div className="rounded-[10px] border border-border bg-white p-3.5 shadow-[0_2px_12px_rgba(0,77,112,0.10)] mb-3.5">
           <div className="mb-3 text-xs font-bold text-navy">
             Flow control type
@@ -61,9 +81,12 @@ export function FlowControl() {
               }
               title="Vortex"
               subtitle="Hydrodynamic vortex flow control"
-              selected={state.flowType === 'Vortex'}
+              selected={flowType === 'Vortex'}
               onClick={() =>
-                dispatch({ type: 'SET_FLOW_TYPE', payload: 'Vortex' })
+                dispatch({
+                  type: flowTypeAction,
+                  payload: 'Vortex',
+                } as WizardAction)
               }
             />
             <OptionCard
@@ -75,12 +98,12 @@ export function FlowControl() {
               }
               title="Orifice plate"
               subtitle="Fixed orifice flow restriction"
-              selected={state.flowType === 'Orifice plate'}
+              selected={flowType === 'Orifice plate'}
               onClick={() =>
                 dispatch({
-                  type: 'SET_FLOW_TYPE',
+                  type: flowTypeAction,
                   payload: 'Orifice plate',
-                })
+                } as WizardAction)
               }
             />
           </div>
@@ -92,12 +115,12 @@ export function FlowControl() {
             <div className="flex items-center gap-2">
               <input
                 type="number"
-                value={state.flowRate}
+                value={flowRate}
                 onChange={(e) =>
                   dispatch({
-                    type: 'SET_FLOW_RATE',
+                    type: flowRateAction,
                     payload: e.target.value,
-                  })
+                  } as WizardAction)
                 }
                 placeholder="e.g. 5.0"
                 className="w-full rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue"
@@ -110,7 +133,7 @@ export function FlowControl() {
         </div>
       )}
 
-      {state.flowControl === false && (
+      {flowControl === false && (
         <AlertBox
           type="ok"
           title="Pass-through configuration"

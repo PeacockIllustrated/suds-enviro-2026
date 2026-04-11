@@ -3,23 +3,26 @@
 import { useWizardContext } from '../WizardContext'
 import { SizeCard } from '@/components/ui/SizeCard'
 import { AlertBox } from '@/components/ui/AlertBox'
-import { getMaxInlets, getOutletMinSize } from '@/lib/rule-engine'
-import { STEP_META } from '@/lib/types'
+import { getMaxInlets } from '@/lib/rule-engine'
+import {
+  getDiameterValue,
+  getInletCountValue,
+  getOutletLockedValue,
+  getInletCountActionType,
+} from './helpers'
+import type { WizardAction } from '@/lib/types'
 
 export function InletCount() {
   const { state, dispatch } = useWizardContext()
-  const diameter = state.diameter
+  const diameter = getDiameterValue(state)
+  const inletCount = getInletCountValue(state)
+  const outletLocked = getOutletLockedValue(state)
+  const actionType = getInletCountActionType(state.product)
   const maxInlets = diameter ? getMaxInlets(diameter) : 0
 
   const subheading = diameter
     ? `${diameter}mm supports max ${maxInlets} inlets`
-    : STEP_META[3].subheading
-
-  // Check if R2 (outlet lock) will trigger for each count
-  const willLockOutlet = (count: number): boolean => {
-    if (!diameter) return false
-    return getOutletMinSize(count, diameter) !== null
-  }
+    : 'How many inlet connections does this unit need?'
 
   return (
     <>
@@ -35,35 +38,38 @@ export function InletCount() {
             key={n}
             value={String(n)}
             unit={n === 1 ? 'inlet' : 'inlets'}
-            selected={state.inletCount === n}
+            selected={inletCount === n}
             disabled={n > maxInlets}
             onClick={() =>
-              dispatch({ type: 'SET_INLET_COUNT', payload: n })
+              dispatch({
+                type: actionType,
+                payload: n,
+              } as WizardAction)
             }
           />
         ))}
       </div>
 
       {/* R2 warning when outlet is locked */}
-      {state.inletCount !== null && state.outletLocked && (
+      {inletCount !== null && outletLocked && (
         <AlertBox
           type="warn"
           title="Outlet size locked"
-          body={`With ${state.inletCount} inlets on a ${diameter}mm chamber, the outlet must be minimum ${state.outletLocked}. This is set automatically.`}
+          body={`With ${inletCount} inlets on a ${diameter}mm chamber, the outlet must be minimum ${outletLocked}. This is set automatically.`}
         />
       )}
 
       {/* Info when selection is valid and no outlet lock */}
-      {state.inletCount !== null && !state.outletLocked && (
+      {inletCount !== null && !outletLocked && (
         <AlertBox
           type="ok"
           title="Within adoptable spec"
-          body={`${state.inletCount} inlet${state.inletCount > 1 ? 's' : ''} on a ${diameter}mm chamber is within standard specification.`}
+          body={`${inletCount} inlet${inletCount > 1 ? 's' : ''} on a ${diameter}mm chamber is within standard specification.`}
         />
       )}
 
       {/* Hint about outlet lock for eligible counts */}
-      {state.inletCount === null && diameter && (
+      {inletCount === null && diameter && (
         <div className="rounded-lg border border-dashed border-blue/25 bg-blue/6 p-3 text-[11px] leading-relaxed text-muted">
           <strong className="text-blue">Note:</strong> Selecting{' '}
           {diameter === 600 ? '3 or more' : '4 or more'} inlets will

@@ -6,21 +6,34 @@ import { PipeRow } from '@/components/ui/PipeRow'
 import { BottomSheet } from '@/components/ui/BottomSheet'
 import { AlertBox } from '@/components/ui/AlertBox'
 import { getAvailableInletSizes, clockToDegrees } from '@/lib/rule-engine'
-import type { PipeSize } from '@/lib/types'
+import {
+  getDiameterValue,
+  getInletCountValue,
+  getPositionsValue,
+  getOutletLockedValue,
+  getPipeSizesValue,
+  getPipeSizeActionType,
+} from './helpers'
+import type { PipeSize, WizardAction } from '@/lib/types'
 
 export function PipeSizes() {
   const { state, dispatch } = useWizardContext()
   const [activeSlot, setActiveSlot] = useState<string | null>(null)
 
-  const inletCount = state.inletCount ?? 0
-  const available = getAvailableInletSizes(state.diameter, state.outletLocked)
+  const diameter = getDiameterValue(state)
+  const inletCount = getInletCountValue(state) ?? 0
+  const positions = getPositionsValue(state)
+  const outletLocked = getOutletLockedValue(state)
+  const pipeSizes = getPipeSizesValue(state)
+  const actionType = getPipeSizeActionType(state.product)
+  const available = getAvailableInletSizes(diameter, outletLocked)
 
   const handleSelect = (size: PipeSize) => {
     if (activeSlot) {
       dispatch({
-        type: 'SET_PIPE_SIZE',
+        type: actionType,
         payload: { slot: activeSlot, size },
-      })
+      } as WizardAction)
       setActiveSlot(null)
     }
   }
@@ -30,9 +43,9 @@ export function PipeSizes() {
       <div className="flex flex-col gap-2 mb-3.5">
         {Array.from({ length: inletCount }, (_, i) => {
           const slot = `inlet${i + 1}`
-          const pos = state.positions[i]
+          const pos = positions[i]
           const angle = pos ? `${clockToDegrees(parseInt(pos))}deg` : '--'
-          const size = state.pipeSizes[slot] ?? '160mm EN1401'
+          const size = pipeSizes[slot] ?? '160mm EN1401'
 
           return (
             <PipeRow
@@ -49,10 +62,10 @@ export function PipeSizes() {
         <PipeRow
           label="Outlet"
           sublabel="Position 6 o'clock (180deg) - fixed"
-          size={state.outletLocked ?? '160mm EN1401'}
-          locked={!!state.outletLocked}
+          size={outletLocked ?? '160mm EN1401'}
+          locked={!!outletLocked}
           onTap={
-            state.outletLocked
+            outletLocked
               ? undefined
               : () => setActiveSlot('outlet')
           }
@@ -73,7 +86,7 @@ export function PipeSizes() {
       >
         {available.map((size) => {
           const isSelected =
-            activeSlot && state.pipeSizes[activeSlot] === size
+            activeSlot && pipeSizes[activeSlot] === size
           return (
             <button
               key={size}

@@ -1,18 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronDown, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { useWizardContext } from '../WizardContext'
-import {
-  generateProductCode,
-  generateCompliance,
-  clockToDegrees,
-} from '@/lib/rule-engine'
+import { generateProductCode, generateCompliance } from '@/lib/rule-engine'
+import { getProductConfig } from '@/lib/products/registry'
 
 export function Review() {
   const { state, goToStep } = useWizardContext()
+
+  if (!state.product) return null
+
+  const config = getProductConfig(state.product)
   const compliance = generateCompliance(state)
   const productCode = generateProductCode(state)
+  const reviewBlocks = config.getReviewBlocks(state)
 
   return (
     <>
@@ -21,59 +22,26 @@ export function Review() {
         {productCode}
       </div>
 
-      {/* Chamber block */}
-      <ReviewBlock title="Chamber" onEdit={() => goToStep(2)}>
-        <ReviewRow label="Product" value="Inspection Chamber" />
-        <ReviewRow
-          label="System"
-          value={
-            state.systemType === 'surface'
-              ? 'Surface Water'
-              : state.systemType === 'foul'
-                ? 'Foul'
-                : 'Combined'
-          }
-        />
-        <ReviewRow label="Diameter" value={`${state.diameter}mm`} />
-        <ReviewRow label="Depth" value={`${state.depth}mm`} />
-        <ReviewRow
-          label="Adoption"
-          value={state.adoptable ? 'Adoptable (S104)' : 'Private'}
-        />
-      </ReviewBlock>
-
-      {/* Pipework block */}
-      <ReviewBlock title="Pipework" onEdit={() => goToStep(5)}>
-        {Array.from({ length: state.inletCount ?? 0 }, (_, i) => {
-          const slot = `inlet${i + 1}`
-          const pos = state.positions[i]
-          const size = state.pipeSizes[slot] ?? '--'
-          const angle = pos ? `${clockToDegrees(parseInt(pos))}deg` : '--'
-          return (
-            <ReviewRow
-              key={slot}
-              label={`Inlet ${i + 1} (${pos ? pos + " o'clock" : '--'})`}
-              value={`${size}`}
-            />
-          )
-        })}
-        <ReviewRow
-          label="Outlet (6 o'clock)"
-          value={state.outletLocked ?? 'Auto'}
-          highlight={!!state.outletLocked}
-        />
-      </ReviewBlock>
-
-      {/* Flow control block */}
-      {state.flowControl && (
-        <ReviewBlock title="Flow Control" onEdit={() => goToStep(6)}>
-          <ReviewRow label="Type" value={state.flowType ?? '--'} />
-          <ReviewRow
-            label="Target rate"
-            value={state.flowRate ? `${state.flowRate} L/s` : '--'}
-          />
-        </ReviewBlock>
-      )}
+      {/* Dynamic review blocks from product config */}
+      {reviewBlocks.map((block, blockIndex) => {
+        const fields = block.fields(state)
+        return (
+          <ReviewBlock
+            key={blockIndex}
+            title={block.title}
+            onEdit={() => goToStep(block.editStep)}
+          >
+            {fields.map((field, fieldIndex) => (
+              <ReviewRow
+                key={fieldIndex}
+                label={field.label}
+                value={field.value}
+                highlight={field.highlight}
+              />
+            ))}
+          </ReviewBlock>
+        )
+      })}
 
       {/* Compliance table */}
       <div className="mt-2 mb-2 rounded-[10px] border border-border bg-white shadow-[0_2px_12px_rgba(0,77,112,0.10)] overflow-hidden">
