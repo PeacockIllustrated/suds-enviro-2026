@@ -1,14 +1,18 @@
 'use client'
 
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Download, Send, Mail } from 'lucide-react'
 import { useWizardContext } from '../WizardContext'
 import { generateProductCode } from '@/lib/rule-engine'
+import { getSessionId } from '@/lib/supabase'
+import type { SubmitEnquiryPayload, SubmitEnquiryResponse } from '@/lib/types'
 
 interface EnquiryForm {
   name: string
   company: string
   email: string
+  phone: string
   notes: string
 }
 
@@ -16,15 +20,56 @@ export function Output() {
   const { state, dispatch } = useWizardContext()
   const productCode = generateProductCode(state)
 
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<EnquiryForm>()
 
-  const onSubmit = (data: EnquiryForm) => {
-    // Phase 1: log to console
-    console.log('Enquiry submitted:', { ...data, productCode, state })
+  const onSubmit = async (data: EnquiryForm) => {
+    setSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      // Ensure we have a sessionId for tracking
+      getSessionId()
+
+      const payload: SubmitEnquiryPayload = {
+        configurationId: state.configId,
+        name: data.name,
+        company: data.company || undefined,
+        email: data.email,
+        phone: data.phone || undefined,
+        notes: data.notes || undefined,
+      }
+
+      const response = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}))
+        throw new Error((errorBody as { error?: string }).error || 'Failed to submit enquiry')
+      }
+
+      const result: SubmitEnquiryResponse = await response.json()
+      console.log('Enquiry submitted:', result.enquiryId)
+
+      setSubmitted(true)
+      setSuccessMessage('Your enquiry has been submitted. We will be in touch shortly.')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Something went wrong. Please try again.'
+      setSubmitError(message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const handleReset = () => {
@@ -81,53 +126,96 @@ export function Output() {
           </div>
         </div>
 
+        {/* Success message */}
+        {successMessage && (
+          <div className="mb-3 rounded-lg border border-green/30 bg-green/10 px-3.5 py-2.5 text-[12px] font-semibold text-green-d">
+            {successMessage}
+          </div>
+        )}
+
+        {/* Error message */}
+        {submitError && (
+          <div className="mb-3 rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-[12px] font-semibold text-red-700">
+            {submitError}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted">
-            Name *
-          </label>
-          <input
-            {...register('name', { required: true })}
-            className="mb-2.5 w-full rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue"
-            placeholder="Your name"
-          />
+          <fieldset disabled={submitted}>
+            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted">
+              Name *
+            </label>
+            <input
+              {...register('name', { required: true })}
+              className={`mb-2.5 w-full rounded-lg border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue ${
+                errors.name ? 'border-red-400' : 'border-border'
+              } ${submitted ? 'opacity-60' : ''}`}
+              placeholder="Your name"
+            />
 
-          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted">
-            Company
-          </label>
-          <input
-            {...register('company')}
-            className="mb-2.5 w-full rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue"
-            placeholder="Company name"
-          />
+            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted">
+              Company
+            </label>
+            <input
+              {...register('company')}
+              className={`mb-2.5 w-full rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue ${
+                submitted ? 'opacity-60' : ''
+              }`}
+              placeholder="Company name"
+            />
 
-          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted">
-            Email *
-          </label>
-          <input
-            {...register('email', {
-              required: true,
-              pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            })}
-            type="email"
-            className="mb-2.5 w-full rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue"
-            placeholder="your@email.com"
-          />
+            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted">
+              Email *
+            </label>
+            <input
+              {...register('email', {
+                required: true,
+                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              })}
+              type="email"
+              className={`mb-2.5 w-full rounded-lg border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue ${
+                errors.email ? 'border-red-400' : 'border-border'
+              } ${submitted ? 'opacity-60' : ''}`}
+              placeholder="your@email.com"
+            />
 
-          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted">
-            Additional notes
-          </label>
-          <textarea
-            {...register('notes')}
-            className="mb-3 h-[72px] w-full resize-none rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue"
-            placeholder="Any additional requirements..."
-          />
+            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted">
+              Phone
+            </label>
+            <input
+              {...register('phone')}
+              type="tel"
+              className={`mb-2.5 w-full rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue ${
+                submitted ? 'opacity-60' : ''
+              }`}
+              placeholder="Phone number"
+            />
 
-          <button
-            type="submit"
-            className="block w-full rounded-lg bg-light py-3 text-center text-[13px] font-bold text-navy border border-border"
-          >
-            Submit Enquiry
-          </button>
+            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted">
+              Additional notes
+            </label>
+            <textarea
+              {...register('notes')}
+              className={`mb-3 h-[72px] w-full resize-none rounded-lg border border-border bg-white px-3.5 py-2.5 font-sans text-[13px] text-ink outline-none transition-colors focus:border-blue ${
+                submitted ? 'opacity-60' : ''
+              }`}
+              placeholder="Any additional requirements..."
+            />
+
+            <button
+              type="submit"
+              disabled={submitting || submitted}
+              className={`block w-full rounded-lg py-3 text-center text-[13px] font-bold border transition-colors ${
+                submitted
+                  ? 'border-green/30 bg-green/10 text-green-d cursor-default'
+                  : submitting
+                    ? 'border-border bg-light text-muted cursor-wait'
+                    : 'border-border bg-light text-navy hover:bg-border/50'
+              }`}
+            >
+              {submitted ? 'Enquiry Submitted' : submitting ? 'Submitting...' : 'Submit Enquiry'}
+            </button>
+          </fieldset>
         </form>
       </div>
 
