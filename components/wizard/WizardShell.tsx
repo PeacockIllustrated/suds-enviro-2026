@@ -24,6 +24,38 @@ import { Depth } from './steps/Depth'
 import { Review } from './steps/Review'
 import { Output } from './steps/Output'
 
+// Product-specific step components
+import { SiltOptions } from './steps/catchpit/SiltOptions'
+import { VariantSelect } from './steps/rhinoceptor/VariantSelect'
+import { DrainageArea } from './steps/rhinoceptor/DrainageArea'
+import { ClassSelect } from './steps/rhinoceptor/ClassSelect'
+import { ApplicationType } from './steps/flow-control/ApplicationType'
+import { HeadDepth } from './steps/flow-control/HeadDepth'
+import { DischargeRate } from './steps/flow-control/DischargeRate'
+import { PumpFlow } from './steps/pump-station/PumpFlow'
+import { PumpHead } from './steps/pump-station/PumpHead'
+import { ControllerConfig } from './steps/pump-station/ControllerConfig'
+import { PumpWellSizing } from './steps/pump-station/PumpWellSizing'
+import { PumpPipeSizing } from './steps/pump-station/PumpPipeSizing'
+import { GTModelSelect } from './steps/grease-trap/GTModelSelect'
+import { GTConnections } from './steps/grease-trap/GTConnections'
+import { GSApplication } from './steps/grease-separator/GSApplication'
+import { GSCovers } from './steps/grease-separator/GSCovers'
+import { GSFlowSizing } from './steps/grease-separator/GSFlowSizing'
+import { PodTypeSelect } from './steps/rhinopod/PodTypeSelect'
+import { PodChamberCompat } from './steps/rhinopod/PodChamberCompat'
+import { RWSystemType } from './steps/rainwater/RWSystemType'
+import { RWCatchmentArea } from './steps/rainwater/RWCatchmentArea'
+import { RWCapacity } from './steps/rainwater/RWCapacity'
+import { RWRainfall } from './steps/rainwater/RWRainfall'
+import { STTreatment } from './steps/septic-tank/STTreatment'
+import { STPopulation } from './steps/septic-tank/STPopulation'
+import { STDischarge } from './steps/septic-tank/STDischarge'
+import { DPDimensions } from './steps/drawpit/DPDimensions'
+import { DPDepthRings } from './steps/drawpit/DPDepthRings'
+import { DPLoadRating } from './steps/drawpit/DPLoadRating'
+import { DPCoverType } from './steps/drawpit/DPCoverType'
+
 // 3D viewer (lazy loaded)
 const ChamberViewer = dynamic(
   () => import('@/components/viewer3d/ChamberViewer').then((m) => m.ChamberViewer),
@@ -63,58 +95,58 @@ const STEP_COMPONENT_MAP: Record<string, ComponentType | null> = {
   'depth': Depth,
 
   // Catchpit-specific
-  'silt-options': null,
+  'silt-options': SiltOptions,
 
   // RhinoCeptor-specific
-  'variant-select': null,
-  'drainage-area': null,
-  'flow-sizing': null,
-  'class-select': null,
+  'variant-select': VariantSelect,
+  'drainage-area': DrainageArea,
+  'flow-sizing': ClassSelect,
+  'class-select': ClassSelect,
 
   // Flow Control product-specific
   'fc-system-type': SystemType,
-  'fc-application': null,
-  'head-depth': null,
-  'discharge-rate': null,
+  'fc-application': ApplicationType,
+  'head-depth': HeadDepth,
+  'discharge-rate': DischargeRate,
   'fc-chamber-size': Diameter,
 
   // Pump Station-specific
   'pump-system-type': SystemType,
-  'pump-flow': null,
-  'pump-head': null,
-  'pump-config': null,
-  'pump-well-sizing': null,
-  'pump-pipe-sizing': null,
+  'pump-flow': PumpFlow,
+  'pump-head': PumpHead,
+  'pump-config': ControllerConfig,
+  'pump-well-sizing': PumpWellSizing,
+  'pump-pipe-sizing': PumpPipeSizing,
 
   // Grease Trap-specific
-  'gt-model-select': null,
-  'gt-connections': null,
+  'gt-model-select': GTModelSelect,
+  'gt-connections': GTConnections,
 
   // Grease Separator-specific
-  'gs-application': null,
-  'gs-covers': null,
-  'gs-flow-sizing': null,
+  'gs-application': GSApplication,
+  'gs-covers': GSCovers,
+  'gs-flow-sizing': GSFlowSizing,
 
   // RhinoPod-specific
-  'pod-type-select': null,
-  'pod-chamber-compat': null,
+  'pod-type-select': PodTypeSelect,
+  'pod-chamber-compat': PodChamberCompat,
 
   // Rainwater-specific
-  'rw-system-type': null,
-  'rw-catchment-area': null,
-  'rw-capacity': null,
-  'rw-rainfall': null,
+  'rw-system-type': RWSystemType,
+  'rw-catchment-area': RWCatchmentArea,
+  'rw-capacity': RWCapacity,
+  'rw-rainfall': RWRainfall,
 
   // Septic Tank-specific
-  'st-treatment': null,
-  'st-population': null,
-  'st-discharge': null,
+  'st-treatment': STTreatment,
+  'st-population': STPopulation,
+  'st-discharge': STDischarge,
 
   // Drawpit-specific
-  'dp-dimensions': null,
-  'dp-depth-rings': null,
-  'dp-load-rating': null,
-  'dp-cover-type': null,
+  'dp-dimensions': DPDimensions,
+  'dp-depth-rings': DPDepthRings,
+  'dp-load-rating': DPLoadRating,
+  'dp-cover-type': DPCoverType,
 }
 
 // ── WIZARD SHELL ────────────────────────────────────────────
