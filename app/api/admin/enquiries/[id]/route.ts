@@ -125,6 +125,13 @@ export async function PATCH(
 
   const supabase = getSupabaseServer()
 
+  // Fetch current state for audit log
+  const { data: current } = await supabase
+    .from('se_enquiries')
+    .select('status')
+    .eq('id', id)
+    .single()
+
   const { data, error } = await supabase
     .from('se_enquiries')
     .update(update)
@@ -137,6 +144,27 @@ export async function PATCH(
       { error: 'Failed to update enquiry' },
       { status: 500 }
     )
+  }
+
+  // Insert audit log entry (best-effort, errors are ignored)
+  if (body.status && current) {
+    await supabase.from('se_audit_log').insert({
+      action: `enquiry_status_changed_to_${body.status}`,
+      entity_type: 'enquiry',
+      entity_id: id,
+      details: {
+        old_status: current.status,
+        new_status: body.status,
+        admin_notes: body.admin_notes || null,
+      },
+    })
+  } else if (body.admin_notes !== undefined) {
+    await supabase.from('se_audit_log').insert({
+      action: 'enquiry_notes_updated',
+      entity_type: 'enquiry',
+      entity_id: id,
+      details: { admin_notes: body.admin_notes },
+    })
   }
 
   return NextResponse.json(data)
