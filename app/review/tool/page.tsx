@@ -56,45 +56,15 @@ export default function ReviewToolPage() {
     y: number
   } | null>(null)
 
-  // Auth check: try fetching feedback to see if we get a response
-  // and check the reviewer cookie via a simple endpoint
+  // Auth check: reviewer name is stored in sessionStorage on login
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Attempt to get reviewer identity by checking the cookie
-        const res = await fetch('/api/review/auth', { method: 'HEAD' })
-        // HEAD won't work - use GET on feedback instead to validate
-        if (res.status === 405 || res.ok) {
-          // Try a different approach: just load feedback, if Supabase is down
-          // we still show the tool. Auth is via cookie presence.
-          // We'll parse the cookie client-side for the author name
-          const cookieVal = document.cookie
-            .split('; ')
-            .find((c) => c.startsWith('se-reviewer-session='))
-          if (!cookieVal) {
-            router.push('/review')
-            return
-          }
-          // Cookie is httpOnly so we can't read it client-side
-          // Instead, just check by trying to load the page and see
-        }
-      } catch {
-        // Silent
-      }
-
-      // Alternative: fetch feedback and look for a special header
-      // Simplest approach: store author in localStorage on login success
-      const storedAuthor = sessionStorage.getItem('se-reviewer-name')
-      if (!storedAuthor) {
-        router.push('/review')
-        return
-      }
-
-      setAuthor(storedAuthor)
-      setLoading(false)
+    const storedAuthor = sessionStorage.getItem('se-reviewer-name')
+    if (!storedAuthor) {
+      router.push('/review')
+      return
     }
-
-    checkAuth()
+    setAuthor(storedAuthor)
+    setLoading(false)
   }, [router])
 
   const fetchFeedback = useCallback(async () => {
