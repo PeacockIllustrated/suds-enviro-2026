@@ -90,9 +90,9 @@ export default function ReviewToolPage() {
     setCommentMode(false)
   }
 
-  const handleUrlChange = (url: string) => {
+  const handleUrlChange = useCallback((url: string) => {
     setCurrentUrl(url)
-  }
+  }, [])
 
   const handleToggleCommentMode = () => {
     setCommentMode(!commentMode)

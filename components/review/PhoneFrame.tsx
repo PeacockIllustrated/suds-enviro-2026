@@ -38,17 +38,20 @@ export function PhoneFrame({
 }: PhoneFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const onUrlChangeRef = useRef(onUrlChange)
+  onUrlChangeRef.current = onUrlChange
   const [scrollY, setScrollY] = useState(0)
   const [contentHeight, setContentHeight] = useState(0)
   const [viewportHeight, setViewportHeight] = useState(0)
 
-  // Track iframe scroll position so pins stay anchored to content
+  // Track iframe scroll position and detect client-side navigation
   useEffect(() => {
     const iframe = iframeRef.current
     if (!iframe) return
 
     let animFrame: number
-    let cleanup: (() => void) | null = null
+    let scrollCleanup: (() => void) | null = null
+    let lastPathname = ''
 
     const attachScrollListener = () => {
       try {
@@ -65,25 +68,47 @@ export function PhoneFrame({
         }
 
         win.addEventListener('scroll', onScroll, { passive: true })
-        // Initial read
         onScroll()
 
-        cleanup = () => {
+        scrollCleanup = () => {
           win.removeEventListener('scroll', onScroll)
           if (animFrame) cancelAnimationFrame(animFrame)
         }
       } catch {
-        // Cross-origin - can't attach listener
+        // Cross-origin
       }
     }
 
+    // Poll iframe URL to catch client-side navigation (App Router)
+    const pollInterval = setInterval(() => {
+      try {
+        const pathname = iframe.contentWindow?.location.pathname
+        if (pathname && pathname !== lastPathname) {
+          lastPathname = pathname
+          onUrlChangeRef.current(pathname)
+          setScrollY(0)
+          // Re-read content dimensions after navigation
+          const doc = iframe.contentDocument
+          if (doc) {
+            setContentHeight(doc.documentElement.scrollHeight || 0)
+            setViewportHeight(iframe.contentWindow?.innerHeight || 0)
+          }
+          // Re-attach scroll listener for new page
+          if (scrollCleanup) scrollCleanup()
+          attachScrollListener()
+        }
+      } catch {
+        // Cross-origin
+      }
+    }, 300)
+
     iframe.addEventListener('load', attachScrollListener)
-    // Also try immediately in case iframe is already loaded
     attachScrollListener()
 
     return () => {
+      clearInterval(pollInterval)
       iframe.removeEventListener('load', attachScrollListener)
-      if (cleanup) cleanup()
+      if (scrollCleanup) scrollCleanup()
       if (animFrame) cancelAnimationFrame(animFrame)
     }
   }, [src])
@@ -113,22 +138,10 @@ export function PhoneFrame({
   )
 
   const handleIframeLoad = useCallback(() => {
-    try {
-      const iframe = iframeRef.current
-      if (!iframe?.contentWindow) return
-      const pathname = iframe.contentWindow.location.pathname
-      onUrlChange(pathname)
-      // Reset scroll tracking
-      setScrollY(0)
-      const doc = iframe.contentDocument
-      if (doc) {
-        setContentHeight(doc.documentElement.scrollHeight || 0)
-        setViewportHeight(iframe.contentWindow.innerHeight || 0)
-      }
-    } catch {
-      // Cross-origin restriction
-    }
-  }, [onUrlChange])
+    // Full page loads are handled by the poll interval above,
+    // but we reset scroll on load to avoid stale values
+    setScrollY(0)
+  }, [])
 
   const handleBack = () => {
     try {
