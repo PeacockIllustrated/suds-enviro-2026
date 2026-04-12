@@ -1,4 +1,5 @@
 import { HeroSection } from '@/components/marketing/HeroSection'
+import { ScrollVideoSection } from '@/components/marketing/ScrollVideoSection'
 import { IntroSection } from '@/components/marketing/IntroSection'
 import { USPTrio } from '@/components/marketing/USPTrio'
 import { ProductShowcase } from '@/components/marketing/ProductShowcase'
@@ -11,6 +12,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <ScrollVideoSection />
       <IntroSection />
       <USPTrio />
       <ProductShowcase />
