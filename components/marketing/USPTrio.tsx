@@ -34,16 +34,16 @@ const USP_ITEMS: USPItem[] = [
 
 export function USPTrio() {
   return (
-    <section className="py-24 md:py-32 bg-[#f8fafb]">
+    <section className="py-24 md:py-28 bg-[#f8fafb]">
       <div className="mx-auto max-w-5xl px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {USP_ITEMS.map((item) => (
             <div
               key={item.title}
-              className="rounded-2xl bg-white p-8 border border-border/60 shadow-sm"
+              className="rounded-2xl bg-white p-8 border border-border/60 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
             >
               <div className={`${item.iconColor} mb-5`}>{item.icon}</div>
-              <h3 className="text-lg font-bold text-ink">{item.title}</h3>
+              <h3 className="text-lg font-bold text-ink tracking-tight">{item.title}</h3>
               <p className="mt-3 text-sm text-muted leading-relaxed">
                 {item.description}
               </p>

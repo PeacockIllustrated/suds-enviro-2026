@@ -14,13 +14,13 @@ export default function ProductsPage() {
   return (
     <>
       <Section className="pt-32">
-        <h1 className="text-4xl font-extrabold text-ink">Products</h1>
-        <p className="text-muted mt-2 max-w-2xl">
+        <h1 className="text-4xl font-extrabold text-ink tracking-tight">Products</h1>
+        <p className="text-lg text-muted mt-3 max-w-2xl leading-relaxed">
           Our complete range of HDPE drainage products, manufactured in the UK using
           rotational moulding for one-piece, joint-free construction.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-14">
           {PRODUCT_CATALOG.map((product) => (
             <ProductCard
               key={product.id}

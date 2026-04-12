@@ -19,7 +19,7 @@ export function ProductModel({ productSlug }: ProductModelProps) {
     // Gradient sphere placeholder for products without 3D models
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="h-64 w-64 rounded-full bg-gradient-to-br from-navy/10 to-blue/10 shadow-[0_0_80px_rgba(26,130,162,0.1)]" />
+        <div className="h-56 w-56 md:h-64 md:w-64 rounded-full bg-gradient-to-br from-navy/10 to-blue/10 border border-border/20 shadow-[0_0_80px_rgba(26,130,162,0.1)]" />
       </div>
     )
   }

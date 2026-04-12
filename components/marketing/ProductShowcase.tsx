@@ -48,7 +48,7 @@ export function ProductShowcase() {
           <h2 className="text-3xl md:text-4xl font-bold text-ink tracking-tight">
             Our Product Range
           </h2>
-          <p className="mt-4 text-muted text-lg">
+          <p className="mt-4 text-muted text-lg max-w-md mx-auto">
             Solutions for every drainage requirement
           </p>
         </div>
@@ -77,12 +77,12 @@ export function ProductShowcase() {
                   </p>
                   <Link
                     href={product.href}
-                    className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-green hover:text-green-d transition-colors group"
+                    className="inline-flex items-center gap-2 mt-6 text-sm font-bold text-green hover:text-green-d transition-colors group"
                   >
                     Explore
                     <ArrowRight
                       size={16}
-                      className="transition-transform group-hover:translate-x-1"
+                      className="transition-transform duration-200 group-hover:translate-x-1"
                     />
                   </Link>
                 </div>
@@ -90,7 +90,7 @@ export function ProductShowcase() {
                 {/* Sphere placeholder */}
                 <div className="flex-1 flex items-center justify-center">
                   <div
-                    className={`h-48 w-48 md:h-64 md:w-64 rounded-full bg-gradient-to-br ${product.gradient}`}
+                    className={`h-48 w-48 md:h-64 md:w-64 rounded-full bg-gradient-to-br ${product.gradient} border border-border/30`}
                     style={{
                       boxShadow: `0 0 80px ${product.shadowColor}`,
                     }}

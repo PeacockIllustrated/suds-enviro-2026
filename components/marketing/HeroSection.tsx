@@ -48,7 +48,7 @@ export function HeroSection() {
       </div>
 
       {/* Content overlay */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-40 pb-32 w-full">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-32 md:pt-40 pb-32 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
           {/* Left: headline, subtitle, CTAs */}
           <div className="max-w-lg">
@@ -57,16 +57,16 @@ export function HeroSection() {
               alt="SuDS Enviro RHINO"
               width={200}
               height={65}
-              className="mb-8"
+              className="mb-10"
             />
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-ink tracking-tight leading-[1.05]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-ink tracking-tight leading-[1.08]">
               Water Management
               <br />
               <span className="text-green">Just Got Exciting</span>
             </h1>
 
-            <p className="text-lg text-muted mt-6 leading-relaxed">
+            <p className="text-lg text-muted mt-6 leading-relaxed max-w-md">
               Innovation and proven technology fuse together to create water
               management solutions that are streets ahead.
             </p>
@@ -78,13 +78,13 @@ export function HeroSection() {
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="/configurator"
-                className="rounded-full bg-green hover:bg-green-d text-white px-8 py-4 text-base font-bold transition-colors shadow-lg shadow-green/20"
+                className="rounded-full bg-green hover:bg-green-d text-white px-8 py-4 text-base font-bold transition-colors shadow-lg shadow-green/25"
               >
                 Start Configurator
               </Link>
               <Link
                 href="/products"
-                className="rounded-full border border-border hover:border-navy text-ink px-8 py-4 text-base font-bold transition-colors"
+                className="rounded-full border border-border hover:border-navy text-ink px-8 py-4 text-base font-bold transition-colors hover:shadow-sm"
               >
                 View Products
               </Link>
@@ -97,11 +97,11 @@ export function HeroSection() {
       </div>
 
       {/* Scroll hint */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
-        <span className="text-xs font-medium text-muted/50 uppercase tracking-widest">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2.5">
+        <span className="text-[11px] font-semibold text-muted/40 uppercase tracking-[0.2em]">
           Scroll to explore
         </span>
-        <div className="w-px h-8 bg-gradient-to-b from-border to-transparent" />
+        <div className="w-px h-10 bg-gradient-to-b from-border/60 to-transparent" />
       </div>
     </section>
   )

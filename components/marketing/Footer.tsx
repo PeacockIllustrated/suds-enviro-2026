@@ -12,8 +12,8 @@ export function Footer() {
         <div className="h-px bg-white/10" />
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+      <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-16">
           {/* Column 1: Logo + description */}
           <div>
             <Image
@@ -22,7 +22,7 @@ export function Footer() {
               width={160}
               height={80}
             />
-            <p className="mt-6 text-sm text-white/50 leading-relaxed">
+            <p className="mt-6 text-sm text-white/45 leading-relaxed max-w-xs">
               UK manufacturer of HDPE rotationally moulded drainage chambers,
               separators and treatment systems. Built to specification, delivered
               nationwide.
@@ -31,15 +31,15 @@ export function Footer() {
 
           {/* Column 2: Products */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-white/35 mb-5">
               Products
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {categories.map((cat) => (
                 <li key={cat.category}>
                   <Link
                     href={`/products#category-${cat.category}`}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
+                    className="text-sm text-white/55 hover:text-white transition-colors duration-200"
                   >
                     {cat.label}
                   </Link>
@@ -50,14 +50,14 @@ export function Footer() {
 
           {/* Column 3: Company */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-white/35 mb-5">
               Company
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               <li>
                 <Link
                   href="/about"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
+                  className="text-sm text-white/55 hover:text-white transition-colors duration-200"
                 >
                   About
                 </Link>
@@ -65,7 +65,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
+                  className="text-sm text-white/55 hover:text-white transition-colors duration-200"
                 >
                   Contact
                 </Link>
@@ -73,7 +73,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/configurator"
-                  className="text-sm text-white/60 hover:text-white transition-colors"
+                  className="text-sm text-white/55 hover:text-white transition-colors duration-200"
                 >
                   Configurator
                 </Link>
@@ -83,10 +83,10 @@ export function Footer() {
 
           {/* Column 4: Contact */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-white/35 mb-5">
               Contact
             </h3>
-            <address className="not-italic space-y-3 text-sm text-white/60">
+            <address className="not-italic space-y-2 text-sm text-white/55">
               <p>9 Ambleside Court</p>
               <p>Chester-le-Street</p>
               <p>DH3 2EB</p>
@@ -94,7 +94,7 @@ export function Footer() {
               <p>
                 <a
                   href="tel:01224057700"
-                  className="hover:text-white transition-colors"
+                  className="hover:text-white transition-colors duration-200"
                 >
                   01224 057 700
                 </a>
@@ -102,7 +102,7 @@ export function Footer() {
               <p>
                 <a
                   href="mailto:hello@sudsenviro.com"
-                  className="hover:text-white transition-colors"
+                  className="hover:text-white transition-colors duration-200"
                 >
                   hello@sudsenviro.com
                 </a>
@@ -114,8 +114,8 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="mx-auto max-w-7xl px-6 pb-8">
-        <div className="h-px bg-white/10 mb-6" />
-        <p className="text-xs text-white/30">
+        <div className="h-px bg-white/8 mb-6" />
+        <p className="text-[11px] text-white/25 tracking-wide">
           &copy; {new Date().getFullYear()} SuDS Enviro Ltd. Company No. SC682733
         </p>
       </div>

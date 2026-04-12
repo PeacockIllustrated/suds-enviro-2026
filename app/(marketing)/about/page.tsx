@@ -13,8 +13,8 @@ export default function AboutPage() {
   return (
     <>
       <Section className="pt-32">
-        <h1 className="text-4xl font-extrabold text-ink">About SuDS Enviro</h1>
-        <p className="text-lg text-muted mt-4 max-w-3xl leading-relaxed">
+        <h1 className="text-4xl font-extrabold text-ink tracking-tight">About SuDS Enviro</h1>
+        <p className="text-lg text-muted mt-4 max-w-2xl leading-relaxed">
           SuDS Enviro is a UK manufacturer of HDPE rotationally moulded drainage products.
           From inspection chambers and oil separators to pump stations and grease management,
           every product is built in-house using one-piece construction for maximum strength and
@@ -23,7 +23,7 @@ export default function AboutPage() {
       </Section>
 
       <Section dark id="values">
-        <h2 className="text-3xl font-extrabold text-white text-center mb-12">
+        <h2 className="text-3xl font-extrabold text-white text-center mb-14 tracking-tight">
           What Sets Us Apart
         </h2>
         <FeatureGrid />

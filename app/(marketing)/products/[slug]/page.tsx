@@ -41,24 +41,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <Section className="pt-32">
         <Link
           href="/products"
-          className="inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-navy transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-navy transition-colors duration-200 mb-8"
         >
           <ArrowLeft size={16} />
           Back to Products
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Left: product info */}
           <div>
-            <span className="inline-flex items-center rounded-full bg-light px-3 py-1 text-xs font-medium text-navy mb-4">
+            <span className="inline-flex items-center rounded-full bg-light px-3.5 py-1 text-xs font-semibold text-navy mb-5">
               {product.categoryLabel}
             </span>
-            <h1 className="text-4xl font-extrabold text-ink">{product.name}</h1>
-            <p className="text-lg text-muted mt-4 leading-relaxed">{product.description}</p>
+            <h1 className="text-4xl font-extrabold text-ink tracking-tight">{product.name}</h1>
+            <p className="text-lg text-muted mt-4 leading-relaxed max-w-lg">{product.description}</p>
 
             <Link
               href={`/configurator?product=${product.id}`}
-              className="inline-flex mt-8 rounded-lg bg-green hover:bg-green-d text-white px-8 py-4 text-base font-bold transition-colors"
+              className="inline-flex mt-8 rounded-full bg-green hover:bg-green-d text-white px-8 py-4 text-base font-bold transition-colors shadow-lg shadow-green/20"
             >
               Configure This Product
             </Link>
@@ -73,11 +73,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Features */}
       <Section className="bg-light">
-        <h2 className="text-2xl font-extrabold text-ink mb-8">Key Features</h2>
+        <h2 className="text-2xl font-extrabold text-ink mb-8 tracking-tight">Key Features</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {product.features.map((feature) => (
             <li key={feature} className="flex items-start gap-3">
-              <CheckCircle2 size={20} className="text-green shrink-0 mt-0.5" />
+              <CheckCircle2 size={18} className="text-green shrink-0 mt-0.5" />
               <span className="text-sm text-ink leading-relaxed">{feature}</span>
             </li>
           ))}
@@ -86,8 +86,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Specifications */}
       <Section>
-        <h2 className="text-2xl font-extrabold text-ink mb-8">Specifications</h2>
-        <div className="overflow-hidden rounded-xl border border-border">
+        <h2 className="text-2xl font-extrabold text-ink mb-8 tracking-tight">Specifications</h2>
+        <div className="overflow-hidden rounded-xl border border-border/70">
           <table className="w-full text-sm">
             <tbody>
               {product.specifications.map((spec, i) => (
@@ -95,8 +95,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   key={spec.label}
                   className={i % 2 === 0 ? 'bg-white' : 'bg-light'}
                 >
-                  <td className="px-6 py-3 font-medium text-ink w-1/3">{spec.label}</td>
-                  <td className="px-6 py-3 text-muted">{spec.value}</td>
+                  <td className="px-6 py-3.5 font-medium text-ink w-1/3">{spec.label}</td>
+                  <td className="px-6 py-3.5 text-muted">{spec.value}</td>
                 </tr>
               ))}
             </tbody>
@@ -106,11 +106,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Compliance */}
       <Section className="bg-light">
-        <h2 className="text-2xl font-extrabold text-ink mb-8">Compliance</h2>
-        <ul className="space-y-2">
+        <h2 className="text-2xl font-extrabold text-ink mb-8 tracking-tight">Compliance</h2>
+        <ul className="space-y-3">
           {product.compliance.map((item) => (
             <li key={item} className="flex items-start gap-3">
-              <CheckCircle2 size={20} className="text-navy shrink-0 mt-0.5" />
+              <CheckCircle2 size={18} className="text-navy shrink-0 mt-0.5" />
               <span className="text-sm text-ink leading-relaxed">{item}</span>
             </li>
           ))}
@@ -119,11 +119,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Applications */}
       <Section>
-        <h2 className="text-2xl font-extrabold text-ink mb-8">Applications</h2>
+        <h2 className="text-2xl font-extrabold text-ink mb-8 tracking-tight">Applications</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {product.applications.map((app) => (
             <li key={app} className="flex items-start gap-3">
-              <CheckCircle2 size={20} className="text-blue shrink-0 mt-0.5" />
+              <CheckCircle2 size={18} className="text-blue shrink-0 mt-0.5" />
               <span className="text-sm text-ink leading-relaxed">{app}</span>
             </li>
           ))}

@@ -36,11 +36,11 @@ export function FeatureGrid() {
       {FEATURES.map((feature) => (
         <div
           key={feature.title}
-          className="rounded-xl bg-white/10 p-6 border border-white/10"
+          className="rounded-xl bg-white/8 p-6 border border-white/10 hover:bg-white/12 transition-colors duration-300"
         >
           <div className="text-green mb-4">{feature.icon}</div>
-          <h3 className="font-bold text-white text-base">{feature.title}</h3>
-          <p className="text-sm text-white/60 mt-2 leading-relaxed">
+          <h3 className="font-bold text-white text-base tracking-tight">{feature.title}</h3>
+          <p className="text-sm text-white/55 mt-2.5 leading-relaxed">
             {feature.description}
           </p>
         </div>

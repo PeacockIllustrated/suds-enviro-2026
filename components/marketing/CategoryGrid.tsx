@@ -16,19 +16,19 @@ export function CategoryGrid() {
 
   return (
     <div>
-      <h2 className="text-3xl font-extrabold text-ink text-center">Our Product Range</h2>
-      <p className="text-muted text-center mt-2">
+      <h2 className="text-3xl font-extrabold text-ink text-center tracking-tight">Our Product Range</h2>
+      <p className="text-muted text-center mt-3 text-lg">
         Drainage solutions for every application
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-14">
         {categories.map((cat) => (
           <Link
             key={cat.category}
             href={`/products#category-${cat.category}`}
-            className="rounded-xl bg-white p-6 border border-border hover:shadow-lg transition-shadow group"
+            className="rounded-xl bg-white p-6 border border-border/70 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group"
           >
-            <h3 className="font-bold text-ink group-hover:text-navy transition-colors">
+            <h3 className="font-bold text-ink group-hover:text-navy transition-colors duration-200 tracking-tight">
               {cat.label}
             </h3>
             <p className="text-sm text-muted mt-2 leading-relaxed">

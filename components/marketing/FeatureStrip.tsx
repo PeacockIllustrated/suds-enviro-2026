@@ -15,20 +15,20 @@ const FEATURES: FeatureBadge[] = [
 
 export function FeatureStrip() {
   return (
-    <section className="py-16 md:py-20 bg-[#f8fafb]">
+    <section className="py-14 md:py-16 bg-[#f8fafb] border-y border-border/40">
       <div className="mx-auto max-w-5xl px-6">
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 md:gap-x-12">
+        <div className="flex flex-wrap items-center justify-center gap-y-4">
           {FEATURES.map((feature, index) => (
-            <div key={feature.label} className="flex items-center gap-x-8 md:gap-x-12">
-              <div className="inline-flex items-center gap-2.5 text-ink/70">
+            <div key={feature.label} className="flex items-center">
+              {index > 0 && (
+                <div className="hidden md:block h-5 w-px bg-border/80 mx-6 lg:mx-10" />
+              )}
+              <div className="inline-flex items-center gap-2.5 px-3 md:px-0">
                 <span className="text-navy">{feature.icon}</span>
-                <span className="text-sm font-medium whitespace-nowrap">
+                <span className="text-sm font-medium text-ink/70 whitespace-nowrap">
                   {feature.label}
                 </span>
               </div>
-              {index < FEATURES.length - 1 && (
-                <div className="hidden md:block h-5 w-px bg-border" />
-              )}
             </div>
           ))}
         </div>
