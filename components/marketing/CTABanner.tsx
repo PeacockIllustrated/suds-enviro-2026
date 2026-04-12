@@ -2,21 +2,29 @@ import Link from 'next/link'
 
 export function CTABanner() {
   return (
-    <section className="py-8 px-6">
-      <div className="mx-auto max-w-5xl rounded-2xl bg-gradient-to-r from-green to-green-d py-16 px-8 text-center">
-        <h2 className="text-2xl md:text-3xl font-extrabold text-white">
-          Ready to configure your drainage solution?
+    <section className="py-24 md:py-32 bg-navy-d">
+      <div className="mx-auto max-w-3xl px-6 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+          Need our help?
         </h2>
-        <p className="text-white/80 mt-3 text-base max-w-xl mx-auto">
-          Use our guided configurator to specify chambers, separators and treatment systems to
-          your exact requirements.
+        <p className="mt-4 text-white/60 text-lg leading-relaxed max-w-xl mx-auto">
+          Get to know us better and discover why SuDS Enviro is the number one
+          choice for your water management needs.
         </p>
-        <Link
-          href="/configurator"
-          className="inline-flex mt-8 rounded-lg bg-white text-green-d px-8 py-4 text-base font-bold hover:bg-white/90 transition-colors"
-        >
-          Start Configurator
-        </Link>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            href="/configurator"
+            className="rounded-full bg-green hover:bg-green-d text-white px-8 py-4 text-base font-bold transition-colors"
+          >
+            Start Configurator
+          </Link>
+          <Link
+            href="/contact"
+            className="rounded-full border border-white/30 hover:border-white/60 text-white px-8 py-4 text-base font-bold transition-colors"
+          >
+            Get in Touch
+          </Link>
+        </div>
       </div>
     </section>
   )
