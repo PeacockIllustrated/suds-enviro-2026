@@ -10,6 +10,7 @@ import {
   LogOut,
   X,
   FileText,
+  MessageCircle,
 } from 'lucide-react'
 
 interface NavItem {
@@ -23,6 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Enquiries', href: '/admin/enquiries', icon: Inbox },
   { label: 'Configurations', href: '/admin/configurations', icon: Settings },
   { label: 'Quotes', href: '/admin/quotes', icon: FileText },
+  { label: 'Feedback', href: '/admin/feedback', icon: MessageCircle },
   { label: 'Settings', href: '/admin/settings', icon: Sliders },
 ]
 

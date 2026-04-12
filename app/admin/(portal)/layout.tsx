@@ -13,6 +13,7 @@ function usePageTitle(): string {
   if (path.includes('/enquiries')) return 'Enquiries'
   if (path.includes('/configurations')) return 'Configurations'
   if (path.includes('/quotes')) return 'Quotes'
+  if (path.includes('/feedback')) return 'Feedback'
   if (path.includes('/settings')) return 'Settings'
   return 'Admin'
 }
