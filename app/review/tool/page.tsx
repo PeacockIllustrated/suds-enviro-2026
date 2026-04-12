@@ -207,7 +207,7 @@ export default function ReviewToolPage() {
         {/* Phone frame area */}
         <div className="flex shrink-0 items-start justify-center overflow-y-auto px-6 py-6">
           <PhoneFrame
-            src={currentUrl}
+            src="/"
             commentMode={commentMode}
             pins={phonePins}
             onPinPlace={handlePinPlace}

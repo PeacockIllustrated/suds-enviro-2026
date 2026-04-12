@@ -92,11 +92,15 @@ export function FeedbackPanel({
     setExpandedId((prev) => (prev === id ? null : id))
   }
 
-  // Detect section name from URL
+  // Detect section name from URL (may include #step-N suffix)
   const sectionName = (() => {
-    if (currentUrl.includes('/configurator')) return 'Configurator'
-    if (currentUrl === '/' || currentUrl === '') return 'Home'
-    const parts = currentUrl.split('/').filter(Boolean)
+    const stepMatch = currentUrl.match(/#step-(\d+)/)
+    const basePath = currentUrl.replace(/#.*$/, '')
+    if (basePath.includes('/configurator')) {
+      return stepMatch ? `Configurator - Step ${stepMatch[1]}` : 'Configurator'
+    }
+    if (basePath === '/' || basePath === '') return 'Home'
+    const parts = basePath.split('/').filter(Boolean)
     if (parts.length > 0) {
       return parts[parts.length - 1]
         .replace(/-/g, ' ')

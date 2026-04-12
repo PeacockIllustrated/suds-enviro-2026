@@ -40,6 +40,9 @@ export function PhoneFrame({
   const overlayRef = useRef<HTMLDivElement>(null)
   const onUrlChangeRef = useRef(onUrlChange)
   onUrlChangeRef.current = onUrlChange
+  // Only use src for initial load - don't let currentUrl changes reload the iframe
+  const initialSrc = useRef(src)
+  const [displayUrl, setDisplayUrl] = useState(src)
   const [scrollY, setScrollY] = useState(0)
   const [contentHeight, setContentHeight] = useState(0)
   const [viewportHeight, setViewportHeight] = useState(0)
@@ -51,7 +54,6 @@ export function PhoneFrame({
 
     let animFrame: number
     let scrollCleanup: (() => void) | null = null
-    let lastPathname = ''
 
     const attachScrollListener = () => {
       try {
@@ -79,21 +81,43 @@ export function PhoneFrame({
       }
     }
 
-    // Poll iframe URL to catch client-side navigation (App Router)
+    // Read wizard step from iframe DOM (e.g. "Step 1" -> "#step-1")
+    const getStepSuffix = (doc: Document | null): string => {
+      if (!doc) return ''
+      try {
+        const stepEls = doc.querySelectorAll('div, span')
+        for (let i = 0; i < stepEls.length; i++) {
+          const el = stepEls[i]
+          if (el.children.length === 0) {
+            const match = el.textContent?.trim().match(/^Step\s+(\d+)$/i)
+            if (match) return `#step-${match[1]}`
+          }
+        }
+      } catch { /* ignore */ }
+      return ''
+    }
+
+    // Poll iframe URL + wizard step to catch client-side navigation
+    let lastFullPath = ''
     const pollInterval = setInterval(() => {
       try {
-        const pathname = iframe.contentWindow?.location.pathname
-        if (pathname && pathname !== lastPathname) {
-          lastPathname = pathname
-          onUrlChangeRef.current(pathname)
+        const win = iframe.contentWindow
+        const doc = iframe.contentDocument
+        const pathname = win?.location.pathname
+        if (!pathname) return
+
+        const stepSuffix = getStepSuffix(doc)
+        const fullPath = pathname + stepSuffix
+
+        if (fullPath !== lastFullPath) {
+          lastFullPath = fullPath
+          setDisplayUrl(pathname)
+          onUrlChangeRef.current(fullPath)
           setScrollY(0)
-          // Re-read content dimensions after navigation
-          const doc = iframe.contentDocument
           if (doc) {
             setContentHeight(doc.documentElement.scrollHeight || 0)
-            setViewportHeight(iframe.contentWindow?.innerHeight || 0)
+            setViewportHeight(win?.innerHeight || 0)
           }
-          // Re-attach scroll listener for new page
           if (scrollCleanup) scrollCleanup()
           attachScrollListener()
         }
@@ -206,7 +230,7 @@ export function PhoneFrame({
         <div className="relative" style={{ height: 'calc(100% - 72px)' }}>
           <iframe
             ref={iframeRef}
-            src={src}
+            src={initialSrc.current}
             onLoad={handleIframeLoad}
             className="h-full w-full border-0 bg-white"
             title="App preview"
@@ -281,7 +305,7 @@ export function PhoneFrame({
           <RotateCcw className="h-4 w-4" />
         </button>
         <div className="ml-1 rounded-lg border border-border bg-white px-3 py-2 text-[12px] font-medium text-muted">
-          {src}
+          {displayUrl}
         </div>
       </div>
     </div>
