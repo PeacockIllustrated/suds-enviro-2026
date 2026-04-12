@@ -9,6 +9,7 @@ import {
   Sliders,
   LogOut,
   X,
+  FileText,
 } from 'lucide-react'
 
 interface NavItem {
@@ -21,6 +22,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'Enquiries', href: '/admin/enquiries', icon: Inbox },
   { label: 'Configurations', href: '/admin/configurations', icon: Settings },
+  { label: 'Quotes', href: '/admin/quotes', icon: FileText },
   { label: 'Settings', href: '/admin/settings', icon: Sliders },
 ]
 

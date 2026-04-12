@@ -357,6 +357,7 @@ export interface SaveConfigPayload {
 export interface SaveConfigResponse {
   configId: string
   productCode: string
+  quoteRef: string | null
 }
 
 export interface SubmitEnquiryPayload {

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Image from 'next/image'
-import { Download, Mail } from 'lucide-react'
+import { Download, Mail, Copy, Check } from 'lucide-react'
 import { useWizardContext } from '../WizardContext'
 import { generateProductCode } from '@/lib/rule-engine'
 import { getSessionId } from '@/lib/supabase'
@@ -25,6 +25,8 @@ export function Output() {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [quoteRef, setQuoteRef] = useState<string | null>(null)
+  const [copiedRef, setCopiedRef] = useState(false)
 
   const {
     register,
@@ -63,6 +65,21 @@ export function Output() {
       const result: SubmitEnquiryResponse = await response.json()
       console.log('Enquiry submitted:', result.enquiryId)
 
+      // Try to get the quote reference for display
+      if (state.configId) {
+        try {
+          const statusRes = await fetch(`/api/status/${encodeURIComponent(`SE-Q-${new Date().getFullYear()}-${state.configId.slice(0, 4).toUpperCase()}`)}`)
+          if (statusRes.ok) {
+            const statusData = await statusRes.json() as { quote_ref?: string }
+            if (statusData.quote_ref) {
+              setQuoteRef(statusData.quote_ref)
+            }
+          }
+        } catch {
+          // Non-critical - quote ref display is optional
+        }
+      }
+
       setSubmitted(true)
       setSuccessMessage('Your enquiry has been submitted. We will be in touch shortly.')
     } catch (err) {
@@ -98,16 +115,21 @@ export function Output() {
             </div>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            // Phase 1 placeholder: open reference drawing
-            window.open('/reference/suds-drawing-v4.html', '_blank')
-          }}
-          className="block w-full rounded-lg bg-navy py-3 text-center text-[13px] font-bold text-white"
-        >
-          Download Spec Sheet
-        </button>
+        {state.configId ? (
+          <button
+            type="button"
+            onClick={() => {
+              window.open(`/api/pdf/${state.configId}`, '_blank')
+            }}
+            className="block w-full rounded-lg bg-navy py-3 text-center text-[13px] font-bold text-white"
+          >
+            Download Spec Sheet
+          </button>
+        ) : (
+          <div className="rounded-lg bg-light py-3 text-center text-[11px] font-semibold text-muted border border-border">
+            Save your configuration first to download the spec sheet
+          </div>
+        )}
       </div>
 
       {/* Enquiry Card */}
@@ -137,6 +159,36 @@ export function Output() {
         {successMessage && (
           <div className="mb-3 rounded-lg border border-green/30 bg-green/10 px-3.5 py-2.5 text-[12px] font-semibold text-green-d">
             {successMessage}
+          </div>
+        )}
+
+        {/* Quote reference display */}
+        {quoteRef && (
+          <div className="mb-3 rounded-lg border border-navy/20 bg-navy/5 px-3.5 py-3">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted mb-1">
+              Your Reference Number
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[16px] font-extrabold text-navy tracking-wide">
+                {quoteRef}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(quoteRef).then(() => {
+                    setCopiedRef(true)
+                    setTimeout(() => setCopiedRef(false), 2000)
+                  }).catch(() => { /* clipboard not available */ })
+                }}
+                className="flex h-6 w-6 items-center justify-center rounded text-muted hover:text-navy transition-colors"
+                title="Copy reference"
+              >
+                {copiedRef ? <Check className="h-3.5 w-3.5 text-green" /> : <Copy className="h-3.5 w-3.5" />}
+              </button>
+            </div>
+            <div className="mt-1 text-[10px] text-muted">
+              Note this reference to check your configuration status later.
+            </div>
           </div>
         )}
 

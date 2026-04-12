@@ -12,6 +12,7 @@ function usePageTitle(): string {
   if (path.includes('/dashboard')) return 'Dashboard'
   if (path.includes('/enquiries')) return 'Enquiries'
   if (path.includes('/configurations')) return 'Configurations'
+  if (path.includes('/quotes')) return 'Quotes'
   if (path.includes('/settings')) return 'Settings'
   return 'Admin'
 }

@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       .from('se_configurations')
       .update(row)
       .eq('id', existing.id)
-      .select('id, product_code')
+      .select('id, product_code, quote_ref')
       .single()
 
     if (error || !data) {
@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       configId: data.id as string,
       productCode: data.product_code as string,
+      quoteRef: (data.quote_ref as string) || null,
     })
   }
 
@@ -104,8 +105,21 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // Generate quote reference: SE-Q-{year}-{first 4 chars of UUID uppercase}
+  const configId = data.id as string
+  const year = new Date().getFullYear()
+  const quoteRef = `SE-Q-${year}-${configId.slice(0, 4).toUpperCase()}`
+
+  // Update with quote_ref (fire-and-forget to not block response)
+  void supabase
+    .from('se_configurations')
+    .update({ quote_ref: quoteRef })
+    .eq('id', configId)
+    .then(() => { /* updated */ })
+
   return NextResponse.json({
-    configId: data.id as string,
+    configId,
     productCode: data.product_code as string,
+    quoteRef,
   })
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabase'
+import { sendEnquiryNotification } from '@/lib/email/send-enquiry-notification'
 
 interface SubmitEnquiryBody {
   configurationId?: string
@@ -82,6 +83,41 @@ export async function POST(request: NextRequest) {
       // Log but don't fail the enquiry submission
       console.error('Failed to update configuration status:', updateError.message)
     }
+  }
+
+  // Send email notification (fire-and-forget)
+  try {
+    let productCode = 'Unknown Product'
+    let quoteRef: string | null = null
+
+    if (configurationId) {
+      const { data: configData } = await supabase
+        .from('se_configurations')
+        .select('product_code, quote_ref')
+        .eq('id', configurationId)
+        .single()
+
+      if (configData) {
+        productCode = (configData.product_code as string) || productCode
+        quoteRef = (configData.quote_ref as string) || null
+      }
+    }
+
+    sendEnquiryNotification({
+      enquiryId: data.id as string,
+      name: name.trim(),
+      email: email.trim(),
+      company: company?.trim() || null,
+      phone: phone?.trim() || null,
+      notes: notes?.trim() || null,
+      productCode,
+      quoteRef,
+      configId: configurationId || null,
+    }).catch((err) => {
+      console.error('Email notification error:', err)
+    })
+  } catch (err) {
+    console.error('Failed to prepare email notification:', err)
   }
 
   return NextResponse.json({
