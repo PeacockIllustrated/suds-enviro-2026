@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import { AmbientCircles } from '@/components/three/AmbientCircles'
@@ -11,23 +11,49 @@ interface HeroCanvasProps {
 }
 
 export default function HeroCanvas({ scrollProgress }: HeroCanvasProps) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    function check() {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    check()
+    window.addEventListener('resize', check, { passive: true })
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // Responsive positioning
+  const chamberPos: [number, number, number] = isMobile
+    ? [0, -1.8, 0]      // centred below text on mobile
+    : [2.2, -0.1, 0]    // right side on desktop
+
+  const chamberScale = isMobile ? 0.85 : 1
+
   return (
     <Canvas
-      camera={{ position: [0, 0.3, 5], fov: 38 }}
+      camera={{
+        position: isMobile ? [0, 0, 5.5] : [0, 0.2, 4.5],
+        fov: isMobile ? 42 : 36,
+      }}
       style={{ width: '100%', height: '100%' }}
-      dpr={[1, 1.5]}
+      dpr={[1, isMobile ? 1 : 1.5]}
       gl={{ alpha: true, antialias: true }}
     >
       <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 8, 5]} intensity={0.4} />
-      <directionalLight position={[-3, 4, -2]} intensity={0.15} />
+      <directionalLight position={[5, 8, 5]} intensity={0.5} />
+      <directionalLight position={[-4, 3, -3]} intensity={0.2} />
 
       <Suspense fallback={null}>
-        {/* Soft ambient circles - respond to mouse/tap */}
-        <AmbientCircles count={6} spread={14} speed={0.06} mouseIntensity={2.5} />
+        {/* Ambient circles - fewer on mobile */}
+        <AmbientCircles
+          count={isMobile ? 4 : 6}
+          spread={isMobile ? 10 : 14}
+          speed={0.06}
+          mouseIntensity={isMobile ? 1.5 : 2.5}
+        />
 
-        {/* Chamber model - positioned to the right */}
-        <group position={[1.8, -0.2, 0]}>
+        {/* Chamber model */}
+        <group position={chamberPos} scale={chamberScale}>
           <WireframeChamber
             scrollProgress={scrollProgress}
             rotateSpeed={0.15}
