@@ -1,83 +1,108 @@
 'use client'
 
+import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { ParticleField } from '@/components/three/ParticleField'
+import Image from 'next/image'
 
-const Scene = dynamic(() => import('@/components/three/SceneCanvas'), { ssr: false })
-
-const ChamberModel = dynamic(
-  () => import('@/components/three/WireframeChamberCanvas'),
+// Lazy-load the combined scene (particles + chamber in one canvas)
+const HeroCanvas = dynamic(
+  () => import('@/components/marketing/HeroCanvas'),
   { ssr: false }
 )
 
 export function HeroSection() {
-  return (
-    <section className="relative min-h-dvh flex items-center overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy-d to-[#001a2e]" />
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const sectionRef = useRef<HTMLElement>(null)
 
-      {/* Radial overlay for depth */}
+  useEffect(() => {
+    function handleScroll() {
+      if (!sectionRef.current) return
+      const rect = sectionRef.current.getBoundingClientRect()
+      const sectionHeight = sectionRef.current.offsetHeight
+      // Progress: 0 when section top is at viewport top, 1 when section bottom reaches viewport top
+      const progress = Math.max(0, Math.min(1, -rect.top / (sectionHeight * 0.6)))
+      setScrollProgress(progress)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  return (
+    <section ref={sectionRef} className="relative min-h-[120vh] overflow-hidden">
+      {/* Clean white background */}
+      <div className="absolute inset-0 bg-white" />
+
+      {/* Subtle radial gradient for depth */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse at 30% 40%, rgba(26,130,162,0.08) 0%, transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(68,175,67,0.05) 0%, transparent 50%)',
+            'radial-gradient(ellipse at 65% 50%, rgba(26,130,162,0.04) 0%, transparent 50%), radial-gradient(ellipse at 30% 80%, rgba(68,175,67,0.03) 0%, transparent 40%)',
         }}
       />
 
-      {/* Particle field background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <Scene>
-          <ParticleField />
-        </Scene>
+      {/* 3D canvas covering the full section */}
+      <div className="absolute inset-0">
+        <HeroCanvas scrollProgress={scrollProgress} />
       </div>
 
-      {/* Content overlay - two-column on desktop */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-40 pb-24 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* Content overlay */}
+      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-40 pb-32 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
           {/* Left: headline, subtitle, CTAs */}
-          <div className="max-w-xl">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.05]">
+          <div className="max-w-lg">
+            <Image
+              src="/logos/suds/icon-main.png"
+              alt=""
+              width={36}
+              height={36}
+              className="mb-6 opacity-80"
+            />
+
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-ink tracking-tight leading-[1.05]">
               Water Management
               <br />
               <span className="text-green">Just Got Exciting</span>
             </h1>
 
-            <p className="text-lg text-white/60 mt-6 leading-relaxed">
+            <p className="text-lg text-muted mt-6 leading-relaxed">
               Innovation and proven technology fuse together to create water
               management solutions that are streets ahead.
             </p>
 
-            <p className="text-sm font-semibold text-white/40 uppercase tracking-widest mt-4">
+            <p className="text-sm font-semibold text-muted/60 uppercase tracking-widest mt-4">
               Welcome to SuDS Enviro.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="/configurator"
-                className="rounded-full bg-green hover:bg-green-d text-white px-8 py-4 text-base font-bold transition-colors"
+                className="rounded-full bg-green hover:bg-green-d text-white px-8 py-4 text-base font-bold transition-colors shadow-lg shadow-green/20"
               >
                 Start Configurator
               </Link>
               <Link
                 href="/products"
-                className="rounded-full border border-white/30 hover:border-white/60 text-white px-8 py-4 text-base font-bold transition-colors"
+                className="rounded-full border border-border hover:border-navy text-ink px-8 py-4 text-base font-bold transition-colors"
               >
                 View Products
               </Link>
             </div>
           </div>
 
-          {/* Right: wireframe chamber 3D model */}
-          <div className="relative h-[400px] lg:h-[500px] pointer-events-auto">
-            <ChamberModel dark />
-          </div>
+          {/* Right: 3D model lives in the full-section canvas behind */}
+          <div className="hidden lg:block" />
         </div>
       </div>
 
-      {/* Bottom fade to white */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+      {/* Scroll hint */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+        <span className="text-xs font-medium text-muted/50 uppercase tracking-widest">
+          Scroll to explore
+        </span>
+        <div className="w-px h-8 bg-gradient-to-b from-border to-transparent" />
+      </div>
     </section>
   )
 }
