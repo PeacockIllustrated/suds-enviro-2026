@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseServer } from '@/lib/supabase'
 
 interface FeedbackBody {
   author: string
@@ -12,6 +11,15 @@ interface FeedbackBody {
   priority?: string
   category?: string
   structured_data?: Record<string, string>[] | null
+}
+
+function getSupabase() {
+  try {
+    const { getSupabaseServer } = require('@/lib/supabase')
+    return getSupabaseServer()
+  } catch {
+    return null
+  }
 }
 
 /**
@@ -28,7 +36,11 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get('limit') || '50')
   const offset = parseInt(searchParams.get('offset') || '0')
 
-  const supabase = getSupabaseServer()
+  const supabase = getSupabase()
+  if (!supabase) {
+    // No Supabase configured - return empty results
+    return NextResponse.json({ feedback: [], total: 0 })
+  }
 
   let query = supabase
     .from('se_feedback')
@@ -36,29 +48,18 @@ export async function GET(request: NextRequest) {
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
-  if (page_url) {
-    query = query.eq('page_url', page_url)
-  }
-  if (status) {
-    query = query.eq('status', status)
-  }
-  if (priority) {
-    query = query.eq('priority', priority)
-  }
-  if (category) {
-    query = query.eq('category', category)
-  }
-  if (author) {
-    query = query.eq('author', author)
-  }
+  if (page_url) query = query.eq('page_url', page_url)
+  if (status) query = query.eq('status', status)
+  if (priority) query = query.eq('priority', priority)
+  if (category) query = query.eq('category', category)
+  if (author) query = query.eq('author', author)
 
   const { data, error, count } = await query
 
   if (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch feedback' },
-      { status: 500 }
-    )
+    console.error('Feedback fetch error:', error.message)
+    // Table might not exist yet - return empty
+    return NextResponse.json({ feedback: [], total: 0 })
   }
 
   return NextResponse.json({
@@ -104,7 +105,13 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const supabase = getSupabaseServer()
+  const supabase = getSupabase()
+  if (!supabase) {
+    return NextResponse.json(
+      { error: 'Database not configured. Run the Supabase migration and set env vars.' },
+      { status: 503 }
+    )
+  }
 
   const insertData: Record<string, unknown> = {
     author: body.author,
@@ -127,8 +134,9 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (error) {
+    console.error('Feedback insert error:', error.message)
     return NextResponse.json(
-      { error: 'Failed to create feedback' },
+      { error: `Failed to save: ${error.message}` },
       { status: 500 }
     )
   }

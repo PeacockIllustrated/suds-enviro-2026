@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useState, useEffect } from 'react'
 import {
   ArrowLeft,
   ArrowRight,
@@ -38,21 +38,78 @@ export function PhoneFrame({
 }: PhoneFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const [scrollY, setScrollY] = useState(0)
+  const [contentHeight, setContentHeight] = useState(0)
+  const [viewportHeight, setViewportHeight] = useState(0)
+
+  // Track iframe scroll position so pins stay anchored to content
+  useEffect(() => {
+    const iframe = iframeRef.current
+    if (!iframe) return
+
+    let animFrame: number
+    let cleanup: (() => void) | null = null
+
+    const attachScrollListener = () => {
+      try {
+        const win = iframe.contentWindow
+        const doc = iframe.contentDocument
+        if (!win || !doc) return
+
+        const onScroll = () => {
+          animFrame = requestAnimationFrame(() => {
+            setScrollY(win.scrollY || 0)
+            setContentHeight(doc.documentElement.scrollHeight || 0)
+            setViewportHeight(win.innerHeight || 0)
+          })
+        }
+
+        win.addEventListener('scroll', onScroll, { passive: true })
+        // Initial read
+        onScroll()
+
+        cleanup = () => {
+          win.removeEventListener('scroll', onScroll)
+          if (animFrame) cancelAnimationFrame(animFrame)
+        }
+      } catch {
+        // Cross-origin - can't attach listener
+      }
+    }
+
+    iframe.addEventListener('load', attachScrollListener)
+    // Also try immediately in case iframe is already loaded
+    attachScrollListener()
+
+    return () => {
+      iframe.removeEventListener('load', attachScrollListener)
+      if (cleanup) cleanup()
+      if (animFrame) cancelAnimationFrame(animFrame)
+    }
+  }, [src])
 
   const handleOverlayClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!commentMode || !overlayRef.current) return
 
       const rect = overlayRef.current.getBoundingClientRect()
+      // X is a percentage of viewport width (doesn't scroll horizontally)
       const x = ((e.clientX - rect.left) / rect.width) * 100
-      const y = ((e.clientY - rect.top) / rect.height) * 100
+      // Y needs to account for scroll: convert click position to content position
+      const clickYInViewport = e.clientY - rect.top
+      const clickYInContent = clickYInViewport + scrollY
+      // Store as pixel offset from top of content, not percentage of viewport
+      // We'll use negative values as a sentinel that this is a px-based pin
+      // Actually, let's store as percentage of total content height for consistency
+      const totalHeight = contentHeight > 0 ? contentHeight : rect.height
+      const y = (clickYInContent / totalHeight) * 100
 
       onPinPlace(
         Math.round(x * 100) / 100,
         Math.round(y * 100) / 100
       )
     },
-    [commentMode, onPinPlace]
+    [commentMode, onPinPlace, scrollY, contentHeight]
   )
 
   const handleIframeLoad = useCallback(() => {
@@ -61,8 +118,15 @@ export function PhoneFrame({
       if (!iframe?.contentWindow) return
       const pathname = iframe.contentWindow.location.pathname
       onUrlChange(pathname)
+      // Reset scroll tracking
+      setScrollY(0)
+      const doc = iframe.contentDocument
+      if (doc) {
+        setContentHeight(doc.documentElement.scrollHeight || 0)
+        setViewportHeight(iframe.contentWindow.innerHeight || 0)
+      }
     } catch {
-      // Cross-origin restriction - silently ignore
+      // Cross-origin restriction
     }
   }, [onUrlChange])
 
@@ -88,6 +152,14 @@ export function PhoneFrame({
     } catch {
       // Ignore cross-origin errors
     }
+  }
+
+  // Convert a pin's content-based Y% to a pixel offset in the overlay,
+  // accounting for current scroll position
+  const pinTopPx = (pinYPercent: number): number => {
+    const totalHeight = contentHeight > 0 ? contentHeight : viewportHeight || 700
+    const contentPx = (pinYPercent / 100) * totalHeight
+    return contentPx - scrollY
   }
 
   return (
@@ -127,29 +199,34 @@ export function PhoneFrame({
             title="App preview"
           />
 
-          {/* Pin overlay */}
+          {/* Pin overlay - clips pins that scroll out of view */}
           <div
             ref={overlayRef}
             onClick={handleOverlayClick}
-            className={`absolute inset-0 z-10 ${
+            className={`absolute inset-0 z-10 overflow-hidden ${
               commentMode
                 ? 'cursor-crosshair pointer-events-auto'
                 : 'pointer-events-none'
             }`}
           >
-            {/* Render existing pins */}
-            {pins.map((pin) => (
-              <div
-                key={pin.id}
-                className={`absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 shadow-md ${
-                  PIN_COLOURS[pin.priority] || PIN_COLOURS.medium
-                }`}
-                style={{
-                  left: `${pin.x}%`,
-                  top: `${pin.y}%`,
-                }}
-              />
-            ))}
+            {/* Render existing pins positioned relative to content */}
+            {pins.map((pin) => {
+              const topPx = pinTopPx(pin.y)
+              // Hide pins that are scrolled out of view
+              if (topPx < -10 || topPx > (viewportHeight || 700) + 10) return null
+              return (
+                <div
+                  key={pin.id}
+                  className={`absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 shadow-md ${
+                    PIN_COLOURS[pin.priority] || PIN_COLOURS.medium
+                  }`}
+                  style={{
+                    left: `${pin.x}%`,
+                    top: `${topPx}px`,
+                  }}
+                />
+              )
+            })}
 
             {/* Comment mode indicator */}
             {commentMode && (

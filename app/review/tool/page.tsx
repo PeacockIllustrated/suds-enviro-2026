@@ -119,9 +119,12 @@ export default function ReviewToolPage() {
         setShowCommentForm(false)
         setPendingPin(null)
         await fetchFeedback()
+      } else {
+        const errData = await res.json().catch(() => ({ error: 'Unknown error' }))
+        alert(errData.error || 'Failed to save feedback')
       }
-    } catch {
-      // Silent
+    } catch (err) {
+      alert('Network error - could not save feedback')
     }
   }
 
