@@ -53,11 +53,11 @@ export function HeroSection() {
           {/* Left: headline, subtitle, CTAs */}
           <div className="max-w-lg">
             <Image
-              src="/logos/suds/icon-main.png"
-              alt=""
-              width={36}
-              height={36}
-              className="mb-6 opacity-80"
+              src="/logos/rhino/logo-horizontal.png"
+              alt="SuDS Enviro RHINO"
+              width={200}
+              height={65}
+              className="mb-8"
             />
 
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-ink tracking-tight leading-[1.05]">

@@ -3,7 +3,7 @@
 import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { ParticleField } from '@/components/three/ParticleField'
+import { AmbientCircles } from '@/components/three/AmbientCircles'
 import { WireframeChamber } from '@/components/three/WireframeChamber'
 
 interface HeroCanvasProps {
@@ -23,16 +23,8 @@ export default function HeroCanvas({ scrollProgress }: HeroCanvasProps) {
       <directionalLight position={[-3, 4, -2]} intensity={0.15} />
 
       <Suspense fallback={null}>
-        {/* Wireframe particles - outline style, fewer count */}
-        <ParticleField
-          count={10}
-          sizeRange={[0.15, 0.6]}
-          spread={14}
-          speed={0.1}
-          mouseIntensity={1}
-          opacity={0.25}
-          outline
-        />
+        {/* Soft ambient circles - respond to mouse/tap */}
+        <AmbientCircles count={6} spread={14} speed={0.06} mouseIntensity={2.5} />
 
         {/* Chamber model - positioned to the right */}
         <group position={[1.8, -0.2, 0]}>
