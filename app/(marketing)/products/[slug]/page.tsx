@@ -4,6 +4,7 @@ import { ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { getProductBySlug, PRODUCT_CATALOG } from '@/lib/product-catalog'
 import { Section } from '@/components/marketing/Section'
 import { CTABanner } from '@/components/marketing/CTABanner'
+import { ProductModel } from '@/components/marketing/ProductModel'
 import type { Metadata } from 'next'
 
 interface ProductPageProps {
@@ -63,9 +64,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </Link>
           </div>
 
-          {/* Right: placeholder visual */}
+          {/* Right: 3D model or placeholder */}
           <div className="flex items-center justify-center">
-            <div className="h-64 w-64 rounded-full bg-gradient-to-br from-navy/10 to-blue/10 shadow-[0_0_80px_rgba(26,130,162,0.1)]" />
+            <ProductModel productSlug={slug} />
           </div>
         </div>
       </Section>
