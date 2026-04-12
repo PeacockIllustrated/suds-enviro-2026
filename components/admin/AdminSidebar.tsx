@@ -11,6 +11,7 @@ import {
   X,
   FileText,
   MessageCircle,
+  Eye,
 } from 'lucide-react'
 
 interface NavItem {
@@ -111,9 +112,15 @@ export function AdminSidebar({ mobileOpen, onClose }: AdminSidebarProps) {
 
         {/* Bottom section */}
         <div className="border-t border-white/10 px-3 py-4">
-          <div className="mb-3 px-3 text-[10px] font-bold uppercase tracking-widest text-white/40">
-            Admin
-          </div>
+          <a
+            href="/review"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-semibold text-green/80 transition-colors hover:bg-white/10 hover:text-green"
+          >
+            <Eye className="h-4 w-4 shrink-0" />
+            Review Tool
+          </a>
           <button
             type="button"
             onClick={handleLogout}
