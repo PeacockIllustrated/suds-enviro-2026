@@ -1,60 +1,65 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react'
+import Spline from '@splinetool/react-spline'
+import type { Application } from '@splinetool/runtime'
 
 /**
- * Scroll-driven video section - Apple-style scroll-to-scrub.
+ * Scroll-locked Spline 3D section.
  *
- * When the real rendered videos arrive, replace the placeholder
- * with a <video> element and set currentTime based on scrollProgress.
+ * The Spline canvas has pointer-events disabled until the sticky engages
+ * (section top reaches viewport top). This prevents the scene's scroll
+ * animation from firing early while the section scrolls into view.
  *
- * For now, shows a visual timeline with labelled keyframes
- * to communicate the concept and mark where video content goes.
+ * Once locked, wheel events are forwarded to the canvas so the built-in
+ * scroll animation plays in sync with the page scroll.
  */
 
 interface Keyframe {
-  at: number  // 0-1 progress position
+  at: number
   label: string
-  description: string
 }
 
 const KEYFRAMES: Keyframe[] = [
-  {
-    at: 0,
-    label: 'Assembled',
-    description: 'Complete inspection chamber, factory-assembled and ready for installation.',
-  },
-  {
-    at: 0.25,
-    label: 'Lid Removal',
-    description: 'Access lid lifts away, revealing the internal shaft and stepped collar.',
-  },
-  {
-    at: 0.5,
-    label: 'Component Breakdown',
-    description: 'Corrugated twinwall body separates from the base, showing the sump and inlet connections.',
-  },
-  {
-    at: 0.75,
-    label: 'Inlet Detail',
-    description: 'Pipe connections at clock-face positions with precision-moulded seals.',
-  },
-  {
-    at: 1,
-    label: 'Base and Sump',
-    description: 'Stepped base with integrated sump for sediment collection. Outlet at 6 o\'clock.',
-  },
+  { at: 0, label: 'Assembled' },
+  { at: 0.25, label: 'Lid Removal' },
+  { at: 0.5, label: 'Component Breakdown' },
+  { at: 0.75, label: 'Inlet Detail' },
+  { at: 1, label: 'Base and Sump' },
 ]
 
 export function ScrollVideoSection() {
   const [progress, setProgress] = useState(0)
+  const [stickyEngaged, setStickyEngaged] = useState(false)
   const sectionRef = useRef<HTMLDivElement>(null)
+  const canvasContainerRef = useRef<HTMLDivElement>(null)
+  const splineRef = useRef<Application | null>(null)
+  const engagedRef = useRef(false)
 
+  const onSplineLoad = useCallback((app: Application) => {
+    splineRef.current = app
+  }, [])
+
+  // Track when the sticky engages (section top <= 0) and compute progress
   useEffect(() => {
     function handleScroll() {
       if (!sectionRef.current) return
       const rect = sectionRef.current.getBoundingClientRect()
       const sectionHeight = sectionRef.current.offsetHeight - window.innerHeight
+
+      // Sticky engages when the section top hits the viewport top
+      const isEngaged = rect.top <= 0 && rect.bottom >= window.innerHeight
+      if (isEngaged !== engagedRef.current) {
+        engagedRef.current = isEngaged
+        setStickyEngaged(isEngaged)
+      }
+
+      if (!isEngaged) {
+        // If section hasn't reached sticky yet, keep progress at 0
+        if (rect.top > 0) setProgress(0)
+        return
+      }
+
       const scrolled = -rect.top
       const p = Math.max(0, Math.min(1, scrolled / sectionHeight))
       setProgress(p)
@@ -63,18 +68,36 @@ export function ScrollVideoSection() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Find the active keyframe
+  // Only forward wheel events to the Spline canvas once the sticky is engaged
+  useEffect(() => {
+    function handleWheel(e: WheelEvent) {
+      if (!engagedRef.current || !canvasContainerRef.current) return
+
+      const canvas = canvasContainerRef.current.querySelector('canvas')
+      if (!canvas || e.target === canvas) return
+
+      const syntheticWheel = new WheelEvent('wheel', {
+        deltaY: e.deltaY,
+        deltaX: e.deltaX,
+        bubbles: true,
+        cancelable: true,
+      })
+      canvas.dispatchEvent(syntheticWheel)
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: true })
+    return () => window.removeEventListener('wheel', handleWheel)
+  }, [])
+
   const activeIndex = KEYFRAMES.reduce((best, kf, i) => {
     return Math.abs(kf.at - progress) < Math.abs(KEYFRAMES[best].at - progress) ? i : best
   }, 0)
-
-  const activeKf = KEYFRAMES[activeIndex]
 
   return (
     <div
       ref={sectionRef}
       className="relative bg-white"
-      style={{ height: '300vh' }}
+      style={{ height: '800vh' }}
     >
       {/* Sticky container - fills viewport while scrolling through */}
       <div className="sticky top-0 h-dvh flex flex-col overflow-hidden">
@@ -89,66 +112,26 @@ export function ScrollVideoSection() {
           </h2>
         </div>
 
-        {/* Video placeholder area */}
-        <div className="flex-1 flex items-center justify-center px-6">
-          <div className="relative w-full max-w-3xl aspect-video rounded-2xl border border-border/50 bg-light overflow-hidden">
-
-            {/* Placeholder visual - progress-driven gradient */}
-            <div
-              className="absolute inset-0 transition-opacity duration-500"
-              style={{
-                background: `linear-gradient(${135 + progress * 90}deg,
-                  rgba(0,77,112,${0.03 + progress * 0.06}) 0%,
-                  rgba(26,130,162,${0.04 + progress * 0.04}) 40%,
-                  rgba(68,175,67,${0.02 + progress * 0.04}) 100%)`,
-              }}
-            />
-
-            {/* Centre content */}
-            <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center">
-              {/* Progress ring */}
-              <div className="relative w-28 h-28 md:w-36 md:h-36 mb-6">
-                <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                  {/* Track */}
-                  <circle
-                    cx="50" cy="50" r="44"
-                    fill="none"
-                    stroke="#ccdde8"
-                    strokeWidth="2"
-                  />
-                  {/* Progress */}
-                  <circle
-                    cx="50" cy="50" r="44"
-                    fill="none"
-                    stroke="#1a82a2"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeDasharray={`${2 * Math.PI * 44}`}
-                    strokeDashoffset={`${2 * Math.PI * 44 * (1 - progress)}`}
-                    className="transition-all duration-100"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-2xl md:text-3xl font-extrabold text-navy tracking-tight">
-                    {Math.round(progress * 100)}%
-                  </span>
-                </div>
+        {/* Spline 3D scene - pointer-events disabled until sticky engages */}
+        <div
+          ref={canvasContainerRef}
+          className="flex-1 relative"
+          style={{ pointerEvents: stickyEngaged ? 'auto' : 'none' }}
+        >
+          <Suspense fallback={
+            <div className="absolute inset-0 flex items-center justify-center bg-light">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-2 border-blue border-t-transparent rounded-full animate-spin" />
+                <p className="text-sm text-muted font-medium">Loading 3D scene...</p>
               </div>
-
-              {/* Active keyframe label */}
-              <p className="text-lg md:text-xl font-bold text-ink tracking-tight">
-                {activeKf.label}
-              </p>
-              <p className="text-sm text-muted mt-2 max-w-sm leading-relaxed">
-                {activeKf.description}
-              </p>
-
-              {/* Video placeholder note */}
-              <p className="text-[10px] font-medium text-muted/40 uppercase tracking-widest mt-6">
-                Video renders will play here
-              </p>
             </div>
-          </div>
+          }>
+            <Spline
+              scene="https://prod.spline.design/Dkbe-Ih1j2SJ2yN5/scene.splinecode"
+              style={{ width: '100%', height: '100%' }}
+              onLoad={onSplineLoad}
+            />
+          </Suspense>
         </div>
 
         {/* Bottom timeline */}
@@ -173,7 +156,6 @@ export function ScrollVideoSection() {
                     transform: 'translateX(-50%)',
                   }}
                 >
-                  {/* Dot */}
                   <div
                     className={`w-2.5 h-2.5 rounded-full border-2 transition-all duration-200 -mt-[9px] ${
                       i === activeIndex
@@ -183,7 +165,6 @@ export function ScrollVideoSection() {
                           : 'bg-white border-border'
                     }`}
                   />
-                  {/* Label - only show on md+ to avoid crowding */}
                   <span
                     className={`hidden md:block text-[10px] font-semibold mt-2 whitespace-nowrap transition-colors duration-200 ${
                       i === activeIndex ? 'text-navy' : 'text-muted/50'
