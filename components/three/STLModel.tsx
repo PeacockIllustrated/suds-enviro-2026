@@ -15,6 +15,8 @@ interface STLModelProps {
   position?: [number, number, number]
   rotation?: [number, number, number]
   scale?: number | [number, number, number]
+  /** When false, geometry keeps its original position from the STL file */
+  center?: boolean
 }
 
 export function STLModel({
@@ -26,15 +28,16 @@ export function STLModel({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
   scale = 1,
+  center = true,
 }: STLModelProps) {
   const rawGeometry = useLoader(STLLoader, url) as BufferGeometry
 
   const geometry = useMemo(() => {
     const geo = rawGeometry.clone()
-    geo.center()
+    if (center) geo.center()
     geo.computeVertexNormals()
     return geo
-  }, [rawGeometry])
+  }, [rawGeometry, center])
 
   const resolvedFillColor = fillColor ?? color
   const scaleArray: [number, number, number] =

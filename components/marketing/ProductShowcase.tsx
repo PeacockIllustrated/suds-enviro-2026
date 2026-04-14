@@ -1,5 +1,13 @@
+'use client'
+
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { ArrowRight } from 'lucide-react'
+
+const InspectionChamberCanvas = dynamic(
+  () => import('@/components/three/InspectionChamberCanvas'),
+  { ssr: false }
+)
 
 interface ProductFeature {
   category: string
@@ -8,6 +16,7 @@ interface ProductFeature {
   href: string
   gradient: string
   shadowColor: string
+  has3D?: boolean
 }
 
 const PRODUCTS: ProductFeature[] = [
@@ -28,6 +37,7 @@ const PRODUCTS: ProductFeature[] = [
     href: '/products#category-chambers',
     gradient: 'from-navy/20 to-blue/10',
     shadowColor: 'rgba(0,77,112,0.15)',
+    has3D: true,
   },
   {
     category: 'Stormwater',
@@ -87,14 +97,20 @@ export function ProductShowcase() {
                   </Link>
                 </div>
 
-                {/* Sphere placeholder */}
+                {/* Visual: 3D model or gradient sphere */}
                 <div className="flex-1 flex items-center justify-center">
-                  <div
-                    className={`h-48 w-48 md:h-64 md:w-64 rounded-full bg-gradient-to-br ${product.gradient} border border-border/30`}
-                    style={{
-                      boxShadow: `0 0 80px ${product.shadowColor}`,
-                    }}
-                  />
+                  {product.has3D ? (
+                    <div className="w-64 h-64 md:w-80 md:h-80">
+                      <InspectionChamberCanvas />
+                    </div>
+                  ) : (
+                    <div
+                      className={`h-48 w-48 md:h-64 md:w-64 rounded-full bg-gradient-to-br ${product.gradient} border border-border/30`}
+                      style={{
+                        boxShadow: `0 0 80px ${product.shadowColor}`,
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             )
