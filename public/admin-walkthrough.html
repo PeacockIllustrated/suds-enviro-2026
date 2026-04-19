@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SuDS Enviro Admin Portal - Capabilities Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #004d70;
+    --navy-d: #003a55;
+    --blue: #1a82a2;
+    --green: #44af43;
+    --green-d: #339932;
+    --amber: #d68a00;
+    --light: #f0f6fa;
+    --border: #ccdde8;
+    --ink: #0f2535;
+    --muted: #5a7a90;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Montserrat', -apple-system, sans-serif;
+    color: var(--ink);
+    background: #e8eef3;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    margin: 16px auto;
+    padding: 22mm 20mm;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    page-break-after: always;
+  }
+
+  .page:last-child { page-break-after: auto; }
+
+  @media print {
+    body { background: #fff; }
+    .page {
+      margin: 0;
+      box-shadow: none;
+      width: 210mm;
+      height: 297mm;
+    }
+  }
+
+  /* ======= COVER ======= */
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-d) 50%, #002a40 100%);
+    color: #fff;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cover-decoration {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .cover-decoration::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(68, 175, 67, 0.2) 0%, transparent 70%);
+  }
+
+  .cover-decoration::after {
+    content: '';
+    position: absolute;
+    bottom: -300px;
+    left: -300px;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26, 130, 162, 0.18) 0%, transparent 70%);
+  }
+
+  .cover-inner {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 22mm 20mm 18mm;
+  }
+
+  .cover-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .cover-logo {
+    width: 90px;
+    height: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  .cover-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    border-left: 2px solid var(--green);
+    padding-left: 14px;
+    line-height: 1.5;
+  }
+
+  .cover-middle {
+    margin-top: 60px;
+  }
+
+  .cover-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 18px;
+  }
+
+  .cover-title {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    margin-bottom: 18px;
+  }
+
+  .cover-title .accent { color: var(--green); }
+
+  .cover-subtitle {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 380px;
+  }
+
+  .cover-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .cover-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cover-meta-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .cover-meta-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* ======= GENERIC PAGE ======= */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    margin-bottom: 26px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .page-header-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  .page-header-text {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .page-header-num {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  .page-footer {
+    position: absolute;
+    bottom: 14mm;
+    left: 20mm;
+    right: 20mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .page-footer .green-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    margin: 0 8px;
+  }
+
+  /* ======= SECTION TITLES ======= */
+  .section-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--green-d);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+
+  .section-title .accent { color: var(--green); }
+
+  .section-lead {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    max-width: 480px;
+    margin-bottom: 22px;
+  }
+
+  /* ======= SCREEN PREVIEW (mock UI) ======= */
+  .screen {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 6px 24px rgba(0, 77, 112, 0.08);
+    margin-bottom: 22px;
+  }
+
+  .screen-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 12px;
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-d) 100%);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .screen-bar .dots {
+    display: inline-flex;
+    gap: 4px;
+    margin-right: 6px;
+  }
+
+  .screen-bar .dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.32);
+  }
+
+  .screen-bar .url {
+    font-size: 9.5px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.65);
+    margin-left: auto;
+    letter-spacing: 0.06em;
+  }
+
+  .screen-body {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    min-height: 220px;
+  }
+
+  .mock-sidebar {
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-d) 100%);
+    color: rgba(255, 255, 255, 0.78);
+    padding: 14px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mock-nav {
+    font-size: 8.5px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.55);
+    padding: 8px 6px;
+    border-radius: 5px;
+    text-align: center;
+    letter-spacing: 0.06em;
+  }
+
+  .mock-nav.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  .mock-content {
+    padding: 16px 18px;
+    background: #fafcfd;
+  }
+
+  .mock-h1 {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .mock-h1-sub {
+    font-size: 9.5px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+
+  /* ======= STAT CARDS in mock ======= */
+  .mock-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .mock-stat {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 9px;
+    background: #fff;
+  }
+
+  .mock-stat-val {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1;
+  }
+
+  .mock-stat-lbl {
+    margin-top: 4px;
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .mock-stat .delta {
+    font-size: 7.5px;
+    font-weight: 700;
+    color: var(--green-d);
+    margin-left: 4px;
+  }
+
+  /* ======= MOCK TABLE ======= */
+  .mock-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .mock-table th {
+    background: var(--light);
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 7.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mock-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--light);
+    color: var(--ink);
+  }
+
+  .mock-table tr:last-child td { border-bottom: none; }
+
+  .mock-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .mock-badge.new      { background: rgba(26, 130, 162, 0.14); color: var(--blue); }
+  .mock-badge.review   { background: rgba(214, 138, 0, 0.14); color: var(--amber); }
+  .mock-badge.quoted   { background: rgba(68, 175, 67, 0.14); color: var(--green-d); }
+  .mock-badge.draft    { background: rgba(90, 122, 144, 0.14); color: var(--muted); }
+  .mock-badge.sent     { background: rgba(26, 130, 162, 0.14); color: var(--blue); }
+  .mock-badge.accepted { background: rgba(68, 175, 67, 0.14); color: var(--green-d); }
+  .mock-badge.high     { background: rgba(220, 60, 60, 0.14); color: #c12d2d; }
+  .mock-badge.med      { background: rgba(214, 138, 0, 0.14); color: var(--amber); }
+
+  /* ======= MOCK FILTER BAR ======= */
+  .mock-filterbar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 9px;
+    align-items: center;
+  }
+
+  .mock-search {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 5px 8px;
+    background: #fff;
+    font-size: 8.5px;
+    color: var(--muted);
+  }
+
+  .mock-pill {
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 5px 9px;
+    background: #fff;
+    font-size: 8.5px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .mock-pill.primary {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+
+  /* ======= FEATURE LISTS (the "what it does" content) ======= */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .feature {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 14px 16px;
+    background: #fff;
+    position: relative;
+  }
+
+  .feature-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--green-d);
+    background: rgba(68, 175, 67, 0.12);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 9px;
+  }
+
+  .feature-badge.blue {
+    color: var(--blue);
+    background: rgba(26, 130, 162, 0.12);
+  }
+
+  .feature-badge.amber {
+    color: var(--amber);
+    background: rgba(214, 138, 0, 0.14);
+  }
+
+  .feature-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 5px;
+  }
+
+  .feature-desc {
+    font-size: 10.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  /* ======= INLINE LIST ======= */
+  .inline-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+  }
+
+  .inline-list li {
+    font-size: 11px;
+    line-height: 1.55;
+    padding: 6px 0 6px 18px;
+    color: var(--ink);
+    position: relative;
+    border-bottom: 1px solid var(--light);
+  }
+
+  .inline-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 13px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--green);
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-top: 16px;
+  }
+
+  .col-block h4 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green-d);
+    margin-bottom: 8px;
+  }
+
+  /* ======= STEP LIST ======= */
+  .steps {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--navy);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .step-body {
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .step-body strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+
+  /* ======= CLOSING ======= */
+  .closing {
+    background: linear-gradient(135deg, var(--light) 0%, #fff 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .closing-mark {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+  }
+
+  .closing-mark svg {
+    width: 28px;
+    height: 28px;
+    fill: #fff;
+  }
+
+  .closing-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--green-d);
+    margin-bottom: 14px;
+  }
+
+  .closing-title {
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--navy);
+    margin-bottom: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .closing-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink);
+    max-width: 460px;
+    margin: 0 auto 32px;
+  }
+
+  .closing-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--navy);
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+
+  /* ======= PRINT BUTTON ======= */
+  .print-bar {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+  }
+
+  .print-btn {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 77, 112, 0.3);
+  }
+
+  .print-btn.green { background: var(--green); box-shadow: 0 4px 12px rgba(68, 175, 67, 0.3); }
+
+  @media print { .print-bar { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button class="print-btn green" onclick="window.print()">Save as PDF</button>
+</div>
+
+<!-- ============================ COVER ============================ -->
+<div class="page cover">
+  <div class="cover-decoration"></div>
+  <div class="cover-inner">
+
+    <div class="cover-top">
+      <img src="/logos/suds/icon-white.png" alt="SuDS Enviro" class="cover-logo">
+      <div class="cover-tag">Capabilities Walkthrough<br>Admin Portal</div>
+    </div>
+
+    <div class="cover-middle">
+      <div class="cover-eyebrow">SuDS Enviro Configurator</div>
+      <h1 class="cover-title">Admin<br>Portal<br><span class="accent">Walkthrough</span></h1>
+      <p class="cover-subtitle">A guided tour of the back-office tools that power your enquiries, configurations, quotes and customer feedback loop.</p>
+    </div>
+
+    <div class="cover-bottom">
+      <div class="cover-meta">
+        <span class="cover-meta-label">Audience</span>
+        <span class="cover-meta-value">SuDS Enviro Team</span>
+      </div>
+      <div class="cover-meta">
+        <span class="cover-meta-label">Section</span>
+        <span class="cover-meta-value">/admin</span>
+      </div>
+      <div class="cover-meta">
+        <span class="cover-meta-label">Version</span>
+        <span class="cover-meta-value">Phase 3 - Live</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================ OVERVIEW ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">01</div>
+      <div class="page-header-text">Overview</div>
+    </div>
+    <div class="page-header-num">SECTION ONE</div>
+  </div>
+
+  <div class="section-eyebrow">What the admin portal is for</div>
+  <h2 class="section-title">A single back office for<br>every customer <span class="accent">touchpoint.</span></h2>
+
+  <p class="section-lead">The admin portal sits behind <strong>/admin</strong> and is the operational home for every enquiry, configuration, quote and feedback comment that flows through the SuDS Enviro Configurator.</p>
+
+  <div class="feature-grid">
+    <div class="feature">
+      <span class="feature-badge blue">Manage</span>
+      <div class="feature-title">Six Workspaces</div>
+      <div class="feature-desc">Dashboard, Enquiries, Configurations, Quotes, Feedback and Settings - each tailored to a single job and built around table, panel and modal patterns the team already knows.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge">Convert</span>
+      <div class="feature-title">Enquiry to Quote in Minutes</div>
+      <div class="feature-desc">A new enquiry lands with the customer's full configuration attached. Open it, draft the quote inside the portal, send the PDF, and watch the status flip as the customer interacts.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge amber">Improve</span>
+      <div class="feature-title">Built-in Feedback Loop</div>
+      <div class="feature-desc">The reviewer tool at /review lets your team drop pinned comments anywhere in the live app. Every comment lands here with status, priority, and dev notes for triage.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge blue">Secure</span>
+      <div class="feature-title">Single Password Gate</div>
+      <div class="feature-desc">A single ADMIN_PASSWORD environment variable protects the portal. Sessions last 24 hours and are httpOnly cookies. No accounts to manage, no users to onboard.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Admin Portal</span>
+    <span class="green-dot"></span>
+    <span>Page 02</span>
+  </div>
+</div>
+
+<!-- ============================ DASHBOARD ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">02</div>
+      <div class="page-header-text">Dashboard</div>
+    </div>
+    <div class="page-header-num">/admin/dashboard</div>
+  </div>
+
+  <div class="section-eyebrow">Your daily home base</div>
+  <h2 class="section-title">A glanceable view of the<br>whole <span class="accent">pipeline.</span></h2>
+
+  <div class="screen">
+    <div class="screen-bar">
+      <span class="dots"><span></span><span></span><span></span></span>
+      Dashboard
+      <span class="url">sudsenviro.com/admin/dashboard</span>
+    </div>
+    <div class="screen-body">
+      <div class="mock-sidebar">
+        <div class="mock-nav active">DASH</div>
+        <div class="mock-nav">ENQ</div>
+        <div class="mock-nav">CFG</div>
+        <div class="mock-nav">QTE</div>
+        <div class="mock-nav">FBK</div>
+        <div class="mock-nav">SET</div>
+      </div>
+      <div class="mock-content">
+        <div class="mock-h1">Welcome back</div>
+        <div class="mock-h1-sub">Pipeline snapshot - last 30 days</div>
+        <div class="mock-stats">
+          <div class="mock-stat"><div class="mock-stat-val">142</div><div class="mock-stat-lbl">Configurations</div></div>
+          <div class="mock-stat"><div class="mock-stat-val">38</div><div class="mock-stat-lbl">Enquiries</div></div>
+          <div class="mock-stat"><div class="mock-stat-val">12</div><div class="mock-stat-lbl">Awaiting Quote</div></div>
+          <div class="mock-stat"><div class="mock-stat-val">8</div><div class="mock-stat-lbl">Quoted</div></div>
+        </div>
+        <table class="mock-table">
+          <thead><tr><th>Recent Enquiry</th><th>Product Code</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>J. Patel - Highways UK</td><td>IC-1050-3000-S-S104</td><td><span class="mock-badge new">New</span></td></tr>
+            <tr><td>S. Hughes - Acme Build</td><td>SERS-450-2000-PRIV</td><td><span class="mock-badge review">Reviewed</span></td></tr>
+            <tr><td>R. Khan - Persimmon</td><td>SEHDS-1200-A180</td><td><span class="mock-badge quoted">Quoted</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <ul class="inline-list">
+    <li><strong>Four headline stat cards</strong> - total configurations, total enquiries, status breakdown, and the breakdown by product type.</li>
+    <li><strong>Configurations-by-product chart</strong> - a horizontal bar chart across all eleven product categories, colour-coded so trends are obvious at a glance.</li>
+    <li><strong>Recent Enquiries</strong> table (latest five) - name, product code, status badge, timestamp - one click to open the detail panel.</li>
+    <li><strong>Recent Configurations</strong> table (latest five) - product, code, status, time - jumps straight into the configuration detail view.</li>
+    <li><strong>Activity feed</strong> with the last eight events across the portal so a returning team member can scan what changed overnight.</li>
+    <li><strong>Quick action buttons</strong> - new configuration, export enquiries, and shortcuts into the full Enquiries and Configurations lists.</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Admin Portal</span>
+    <span class="green-dot"></span>
+    <span>Page 03</span>
+  </div>
+</div>
+
+<!-- ============================ ENQUIRIES ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">03</div>
+      <div class="page-header-text">Enquiries</div>
+    </div>
+    <div class="page-header-num">/admin/enquiries</div>
+  </div>
+
+  <div class="section-eyebrow">From specifier to sale</div>
+  <h2 class="section-title">Every enquiry, with the<br>full configuration <span class="accent">attached.</span></h2>
+
+  <div class="screen">
+    <div class="screen-bar">
+      <span class="dots"><span></span><span></span><span></span></span>
+      Enquiries
+      <span class="url">sudsenviro.com/admin/enquiries</span>
+    </div>
+    <div class="screen-body">
+      <div class="mock-sidebar">
+        <div class="mock-nav">DASH</div>
+        <div class="mock-nav active">ENQ</div>
+        <div class="mock-nav">CFG</div>
+        <div class="mock-nav">QTE</div>
+        <div class="mock-nav">FBK</div>
+        <div class="mock-nav">SET</div>
+      </div>
+      <div class="mock-content">
+        <div class="mock-filterbar">
+          <div class="mock-search">Search by name, email, code...</div>
+          <div class="mock-pill primary">All Status</div>
+          <div class="mock-pill">All Products</div>
+          <div class="mock-pill">Sort: Newest</div>
+        </div>
+        <table class="mock-table">
+          <thead><tr><th>Date</th><th>Name</th><th>Company</th><th>Product Code</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>19 Apr</td><td>J. Patel</td><td>Highways UK</td><td>IC-1050-3000-S-S104</td><td><span class="mock-badge new">New</span></td></tr>
+            <tr><td>18 Apr</td><td>S. Hughes</td><td>Acme Build</td><td>SERS-450-2000-PRIV</td><td><span class="mock-badge review">Reviewed</span></td></tr>
+            <tr><td>17 Apr</td><td>R. Khan</td><td>Persimmon</td><td>SEHDS-1200-A180</td><td><span class="mock-badge quoted">Quoted</span></td></tr>
+            <tr><td>16 Apr</td><td>L. Foster</td><td>Skanska</td><td>RHINOLIFT-2P-1050-3000</td><td><span class="mock-badge review">Reviewed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col-block">
+      <h4>What it does</h4>
+      <ul class="inline-list">
+        <li>Paginated list, 20 per page, sorted newest-first.</li>
+        <li>Full-text search across name, email and product code.</li>
+        <li>Filter by status and by product type.</li>
+        <li>Bulk-select with a sticky action bar - mark Reviewed or Quoted in one shot.</li>
+      </ul>
+    </div>
+    <div class="col-block">
+      <h4>Detail panel</h4>
+      <ul class="inline-list">
+        <li>Customer details, message, and the linked configuration.</li>
+        <li>Edit status inline.</li>
+        <li>Internal notes field for team-only context.</li>
+        <li>Direct link to open the matching quote or generate a new one.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Admin Portal</span>
+    <span class="green-dot"></span>
+    <span>Page 04</span>
+  </div>
+</div>
+
+<!-- ============================ CONFIGURATIONS ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">04</div>
+      <div class="page-header-text">Configurations</div>
+    </div>
+    <div class="page-header-num">/admin/configurations</div>
+  </div>
+
+  <div class="section-eyebrow">Every spec a customer has built</div>
+  <h2 class="section-title">Browse the full library of<br>customer <span class="accent">configurations.</span></h2>
+
+  <p class="section-lead">Every wizard journey - finished or in-progress - is auto-saved. The configurations workspace is the searchable archive of everything customers have built, ready to revisit, duplicate, or quote.</p>
+
+  <div class="two-col">
+    <div class="col-block">
+      <h4>List & grid views</h4>
+      <ul class="inline-list">
+        <li>Toggle between a card grid (3 wide on desktop) and a dense list view.</li>
+        <li>Filter by product, status (draft / submitted / complete) and free-text product code.</li>
+        <li>Each card / row shows product, generated code, status and creation date.</li>
+        <li>Pagination at 18 per page; reset filters in a single click.</li>
+      </ul>
+    </div>
+    <div class="col-block">
+      <h4>Detail side panel</h4>
+      <ul class="inline-list">
+        <li>Full wizard state - every selection the customer made, in plain English.</li>
+        <li>Generated product code and matching brochure shortcut.</li>
+        <li>Direct link to download the engineering drawing PDF.</li>
+        <li>Shareable URL the customer used so the team can replay the journey.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="screen" style="margin-top: 18px;">
+    <div class="screen-bar">
+      <span class="dots"><span></span><span></span><span></span></span>
+      Configurations - Grid view
+      <span class="url">sudsenviro.com/admin/configurations</span>
+    </div>
+    <div class="screen-body">
+      <div class="mock-sidebar">
+        <div class="mock-nav">DASH</div>
+        <div class="mock-nav">ENQ</div>
+        <div class="mock-nav active">CFG</div>
+        <div class="mock-nav">QTE</div>
+        <div class="mock-nav">FBK</div>
+        <div class="mock-nav">SET</div>
+      </div>
+      <div class="mock-content">
+        <div class="mock-stats" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="mock-stat">
+            <div class="mock-stat-val" style="font-size: 11px;">IC-1050-3000-S-S104</div>
+            <div class="mock-stat-lbl" style="margin-top: 6px;">Inspection Chamber</div>
+            <div style="margin-top: 6px;"><span class="mock-badge quoted">Submitted</span></div>
+          </div>
+          <div class="mock-stat">
+            <div class="mock-stat-val" style="font-size: 11px;">SERS-600-2000-PRIV</div>
+            <div class="mock-stat-lbl" style="margin-top: 6px;">SERS Catchpit</div>
+            <div style="margin-top: 6px;"><span class="mock-badge draft">Draft</span></div>
+          </div>
+          <div class="mock-stat">
+            <div class="mock-stat-val" style="font-size: 11px;">SEHDS-1800-A045</div>
+            <div class="mock-stat-lbl" style="margin-top: 6px;">SEHDS Separator</div>
+            <div style="margin-top: 6px;"><span class="mock-badge new">Submitted</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Admin Portal</span>
+    <span class="green-dot"></span>
+    <span>Page 05</span>
+  </div>
+</div>
+
+<!-- ============================ QUOTES ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">05</div>
+      <div class="page-header-text">Quotes</div>
+    </div>
+    <div class="page-header-num">/admin/quotes</div>
+  </div>
+
+  <div class="section-eyebrow">Built-in quoting</div>
+  <h2 class="section-title">Draft, send and track<br>customer <span class="accent">quotes.</span></h2>
+
+  <div class="screen">
+    <div class="screen-bar">
+      <span class="dots"><span></span><span></span><span></span></span>
+      Quotes
+      <span class="url">sudsenviro.com/admin/quotes</span>
+    </div>
+    <div class="screen-body">
+      <div class="mock-sidebar">
+        <div class="mock-nav">DASH</div>
+        <div class="mock-nav">ENQ</div>
+        <div class="mock-nav">CFG</div>
+        <div class="mock-nav active">QTE</div>
+        <div class="mock-nav">FBK</div>
+        <div class="mock-nav">SET</div>
+      </div>
+      <div class="mock-content">
+        <div class="mock-filterbar">
+          <div class="mock-search">Search quotes...</div>
+          <div class="mock-pill">All Status</div>
+          <div class="mock-pill primary">+ New Quote</div>
+        </div>
+        <table class="mock-table">
+          <thead><tr><th>Ref</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>QT-2026-0042</td><td>Highways UK</td><td>&pound;14,250.00</td><td><span class="mock-badge sent">Sent</span></td></tr>
+            <tr><td>QT-2026-0041</td><td>Acme Build</td><td>&pound;3,890.00</td><td><span class="mock-badge accepted">Accepted</span></td></tr>
+            <tr><td>QT-2026-0040</td><td>Persimmon</td><td>&pound;28,600.00</td><td><span class="mock-badge draft">Draft</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col-block">
+      <h4>Quote builder</h4>
+      <ul class="inline-list">
+        <li>Modal form to draft a quote against any saved configuration.</li>
+        <li>Add line items, set unit prices, and totals calculate automatically.</li>
+        <li>Customer info pre-fills from the linked enquiry where available.</li>
+        <li>Save as draft or send straight to the customer.</li>
+      </ul>
+    </div>
+    <div class="col-block">
+      <h4>Status tracking</h4>
+      <ul class="inline-list">
+        <li>Lifecycle: <strong>Draft &rarr; Sent &rarr; Viewed &rarr; Accepted / Declined / Expired</strong>.</li>
+        <li>One-click to open the generated quote PDF in a new tab.</li>
+        <li>Send icon (drafts only) - confirmation prompt before email goes out.</li>
+        <li>Search by reference or customer; filter by status from the table header.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Admin Portal</span>
+    <span class="green-dot"></span>
+    <span>Page 06</span>
+  </div>
+</div>
+
+<!-- ============================ FEEDBACK ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">06</div>
+      <div class="page-header-text">Feedback</div>
+    </div>
+    <div class="page-header-num">/admin/feedback</div>
+  </div>
+
+  <div class="section-eyebrow">Closing the loop</div>
+  <h2 class="section-title">Pin-point feedback,<br>structured for <span class="accent">triage.</span></h2>
+
+  <p class="section-lead">Sean and Mark use the reviewer tool at <strong>/review</strong> to browse the live app inside a phone frame and drop pinned comments anywhere on the page. Every comment lands in this workspace ready for triage.</p>
+
+  <div class="screen">
+    <div class="screen-bar">
+      <span class="dots"><span></span><span></span><span></span></span>
+      Feedback
+      <span class="url">sudsenviro.com/admin/feedback</span>
+    </div>
+    <div class="screen-body">
+      <div class="mock-sidebar">
+        <div class="mock-nav">DASH</div>
+        <div class="mock-nav">ENQ</div>
+        <div class="mock-nav">CFG</div>
+        <div class="mock-nav">QTE</div>
+        <div class="mock-nav active">FBK</div>
+        <div class="mock-nav">SET</div>
+      </div>
+      <div class="mock-content">
+        <div class="mock-stats">
+          <div class="mock-stat"><div class="mock-stat-val">42</div><div class="mock-stat-lbl">Total</div></div>
+          <div class="mock-stat"><div class="mock-stat-val">7</div><div class="mock-stat-lbl">New</div></div>
+          <div class="mock-stat"><div class="mock-stat-val">15</div><div class="mock-stat-lbl">In Progress</div></div>
+          <div class="mock-stat"><div class="mock-stat-val">20</div><div class="mock-stat-lbl">Resolved</div></div>
+        </div>
+        <table class="mock-table">
+          <thead><tr><th>Page</th><th>Comment</th><th>Priority</th><th>Author</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>/configurator</td><td>Add Foul preset to System Type</td><td><span class="mock-badge high">High</span></td><td>Sean</td><td><span class="mock-badge new">New</span></td></tr>
+            <tr><td>/products/inspection-chamber</td><td>Show 1200mm diameter in hero</td><td><span class="mock-badge med">Med</span></td><td>Mark</td><td><span class="mock-badge review">In Prog</span></td></tr>
+            <tr><td>/configurator (Step 4)</td><td>Reorder inlets clockwise from 12</td><td><span class="mock-badge high">High</span></td><td>Sean</td><td><span class="mock-badge quoted">Resolved</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="col-block">
+      <h4>What lands here</h4>
+      <ul class="inline-list">
+        <li>Pin position (X / Y) on the captured page.</li>
+        <li>Comment text and category (design / content / bug / feature).</li>
+        <li>Priority (low / medium / high / critical).</li>
+        <li>Optional structured suggestions (field, current value, suggested value).</li>
+      </ul>
+    </div>
+    <div class="col-block">
+      <h4>Triage workflow</h4>
+      <ul class="inline-list">
+        <li>Status pills filter the table at a glance.</li>
+        <li>Expand a row to read the full comment and add dev notes.</li>
+        <li>Status flow: <strong>New &rarr; In Progress &rarr; Resolved &rarr; Closed</strong>.</li>
+        <li>Resolved items time-stamp automatically for accountability.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Admin Portal</span>
+    <span class="green-dot"></span>
+    <span>Page 07</span>
+  </div>
+</div>
+
+<!-- ============================ SETTINGS + AUTH ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">07</div>
+      <div class="page-header-text">Settings & Access</div>
+    </div>
+    <div class="page-header-num">/admin/settings</div>
+  </div>
+
+  <div class="section-eyebrow">Account, system and housekeeping</div>
+  <h2 class="section-title">Quiet controls in the<br><span class="accent">background.</span></h2>
+
+  <div class="two-col">
+    <div class="col-block">
+      <h4>Account</h4>
+      <ul class="inline-list">
+        <li>Update the admin password (current password required, 6-character minimum).</li>
+        <li>Inline validation, success and error messaging.</li>
+      </ul>
+      <h4 style="margin-top: 18px;">System info</h4>
+      <ul class="inline-list">
+        <li>App version and Supabase connection indicator (live colour status).</li>
+        <li>Total configuration and enquiry counts.</li>
+        <li>Last backup timestamp.</li>
+      </ul>
+    </div>
+    <div class="col-block">
+      <h4>Danger zone</h4>
+      <ul class="inline-list">
+        <li>Archive draft configurations older than 30 days.</li>
+        <li>Confirmation modal shows the exact count that will be archived.</li>
+        <li>Reversible only via the database - guarded by a red call-to-action.</li>
+      </ul>
+      <h4 style="margin-top: 18px;">Authentication</h4>
+      <ul class="inline-list">
+        <li>Single password gate driven by the <strong>ADMIN_PASSWORD</strong> environment variable.</li>
+        <li>HTTP-only session cookie, 24 hour expiry.</li>
+        <li>No user accounts to manage - one shared password.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-top: 28px;">Day-in-the-life flow</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body"><strong>Sign in at /admin</strong> - one shared password gives the whole team access.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body"><strong>Land on the dashboard</strong> - scan the headline stats and the recent enquiry / configuration tables.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body"><strong>Open a new enquiry</strong> - read the customer's message and the auto-attached configuration in one panel.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body"><strong>Click "New Quote"</strong> - the quote builder opens pre-filled with customer data; add line items, save and send.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body"><strong>Triage feedback</strong> in the Feedback workspace - move pins from New through to Resolved as the dev team works through them.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Admin Portal</span>
+    <span class="green-dot"></span>
+    <span>Page 08</span>
+  </div>
+</div>
+
+<!-- ============================ CLOSING ============================ -->
+<div class="page closing">
+
+  <div class="closing-mark">
+    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+  </div>
+
+  <div class="closing-eyebrow">Ready to use</div>
+  <h2 class="closing-title">Six workspaces.<br>One shared<br>operations hub.</h2>
+
+  <p class="closing-text">The admin portal is live alongside the public configurator. Sign in at <strong>/admin</strong> with the team password to see your enquiries, configurations, quotes and feedback in real time.</p>
+
+  <div class="closing-cta">SIGN IN AT /admin</div>
+
+</div>
+
+</body>
+</html>

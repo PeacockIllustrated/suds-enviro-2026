@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SuDS Enviro Configurator - Project Specification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #004d70;
+    --navy-d: #003a55;
+    --blue: #1a82a2;
+    --green: #44af43;
+    --green-d: #339932;
+    --light: #f0f6fa;
+    --border: #ccdde8;
+    --ink: #0f2535;
+    --muted: #5a7a90;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Montserrat', -apple-system, sans-serif;
+    color: var(--ink);
+    background: #e8eef3;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    margin: 16px auto;
+    padding: 22mm 20mm;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    page-break-after: always;
+  }
+
+  .page:last-child { page-break-after: auto; }
+
+  @media print {
+    body { background: #fff; }
+    .page {
+      margin: 0;
+      box-shadow: none;
+      width: 210mm;
+      height: 297mm;
+    }
+  }
+
+  /* ======= COVER PAGE ======= */
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-d) 50%, #002a40 100%);
+    color: #fff;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cover-decoration {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .cover-decoration::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(68, 175, 67, 0.2) 0%, transparent 70%);
+  }
+
+  .cover-decoration::after {
+    content: '';
+    position: absolute;
+    bottom: -300px;
+    left: -300px;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26, 130, 162, 0.18) 0%, transparent 70%);
+  }
+
+  .cover-inner {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 22mm 20mm 18mm;
+  }
+
+  .cover-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .cover-logo {
+    width: 90px;
+    height: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  .cover-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    border-left: 2px solid var(--green);
+    padding-left: 14px;
+    line-height: 1.5;
+  }
+
+  .cover-middle {
+    margin-top: 60px;
+  }
+
+  .cover-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 18px;
+  }
+
+  .cover-title {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    margin-bottom: 18px;
+  }
+
+  .cover-title .accent {
+    color: var(--green);
+  }
+
+  .cover-subtitle {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 360px;
+  }
+
+  .cover-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .cover-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cover-meta-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .cover-meta-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* ======= GENERIC PAGE ======= */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .page-header-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  .page-header-text {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .page-header-num {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  .page-footer {
+    position: absolute;
+    bottom: 14mm;
+    left: 20mm;
+    right: 20mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .page-footer .green-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    margin: 0 8px;
+  }
+
+  /* ======= SECTION TITLES ======= */
+  .section-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--green-d);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--navy);
+    margin-bottom: 18px;
+  }
+
+  .section-title .accent {
+    color: var(--green);
+  }
+
+  .section-lead {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+    max-width: 480px;
+    margin-bottom: 28px;
+  }
+
+  /* ======= BODY TEXT ======= */
+  .body-text {
+    font-size: 11.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .body-text + .body-text { margin-top: 10px; }
+
+  /* ======= STATS ROW ======= */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 28px 0;
+  }
+
+  .stat-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 14px;
+    background: var(--light);
+  }
+
+  .stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-value .unit {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-left: 2px;
+  }
+
+  .stat-label {
+    margin-top: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ======= FEATURE GRID ======= */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+  }
+
+  .feature {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 16px 18px;
+    background: #fff;
+    position: relative;
+  }
+
+  .feature-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--green-d);
+    background: rgba(68, 175, 67, 0.12);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  .feature-badge.blue {
+    color: var(--blue);
+    background: rgba(26, 130, 162, 0.12);
+  }
+
+  .feature-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .feature-desc {
+    font-size: 10.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  /* ======= WIZARD STEPS LIST ======= */
+  .wizard-flow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--navy);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .step-text { flex: 1; min-width: 0; }
+
+  .step-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+
+  .step-desc {
+    font-size: 9.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ======= RULE TABLE ======= */
+  .rule-list { margin-top: 12px; }
+
+  .rule-item {
+    display: grid;
+    grid-template-columns: 36px 100px 1fr;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rule-item:first-child { border-top: 1px solid var(--border); }
+
+  .rule-id {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--green);
+    letter-spacing: -0.01em;
+  }
+
+  .rule-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .rule-desc {
+    font-size: 10.5px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  /* ======= PHASE TIMELINE ======= */
+  .phase-list {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .phase-card {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+  }
+
+  .phase-card.complete {
+    background: linear-gradient(135deg, rgba(68, 175, 67, 0.06) 0%, rgba(68, 175, 67, 0.02) 100%);
+    border-color: rgba(68, 175, 67, 0.4);
+  }
+
+  .phase-card.upcoming {
+    background: var(--light);
+  }
+
+  .phase-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .phase-info { min-width: 0; }
+
+  .phase-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .phase-desc {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .phase-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-radius: 4px;
+  }
+
+  .phase-status.done {
+    color: var(--green-d);
+    background: rgba(68, 175, 67, 0.15);
+  }
+
+  .phase-status.next {
+    color: var(--blue);
+    background: rgba(26, 130, 162, 0.12);
+  }
+
+  .phase-status.future {
+    color: var(--muted);
+    background: rgba(204, 221, 232, 0.5);
+  }
+
+  .phase-status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ======= TWO COLUMN ======= */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 18px;
+  }
+
+  .col-block h4 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green-d);
+    margin-bottom: 10px;
+  }
+
+  .col-block ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .col-block li {
+    font-size: 11px;
+    line-height: 1.55;
+    padding: 6px 0 6px 18px;
+    color: var(--ink);
+    position: relative;
+    border-bottom: 1px solid var(--light);
+  }
+
+  .col-block li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 13px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--green);
+  }
+
+  /* ======= CLOSING PAGE ======= */
+  .closing {
+    background: linear-gradient(135deg, var(--light) 0%, #fff 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .closing-mark {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+  }
+
+  .closing-mark svg {
+    width: 28px;
+    height: 28px;
+    fill: #fff;
+  }
+
+  .closing-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--green-d);
+    margin-bottom: 14px;
+  }
+
+  .closing-title {
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--navy);
+    margin-bottom: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .closing-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink);
+    max-width: 440px;
+    margin: 0 auto 36px;
+  }
+
+  .signoff-card {
+    max-width: 380px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: left;
+  }
+
+  .signoff-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--light);
+    font-size: 11px;
+  }
+
+  .signoff-row:last-child { border: none; }
+
+  .signoff-row .label {
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .signoff-row .value {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .signoff-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 18px 0;
+  }
+
+  .signoff-line {
+    margin-top: 8px;
+    border-top: 1px solid var(--ink);
+    padding-top: 6px;
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  /* ======= PRINT BUTTON ======= */
+  .print-bar {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+  }
+
+  .print-btn {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 77, 112, 0.3);
+  }
+
+  .print-btn.green { background: var(--green); box-shadow: 0 4px 12px rgba(68, 175, 67, 0.3); }
+
+  @media print { .print-bar { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button class="print-btn green" onclick="window.print()">Save as PDF</button>
+</div>
+
+<!-- ============================ COVER ============================ -->
+<div class="page cover">
+  <div class="cover-decoration"></div>
+  <div class="cover-inner">
+
+    <div class="cover-top">
+      <img src="/logos/suds/icon-white.png" alt="SuDS Enviro" class="cover-logo">
+      <div class="cover-tag">Project Specification<br>2026 Edition</div>
+    </div>
+
+    <div class="cover-middle">
+      <div class="cover-eyebrow">SuDS Enviro Ltd</div>
+      <h1 class="cover-title">Online<br>Chamber<br><span class="accent">Configurator</span></h1>
+      <p class="cover-subtitle">A guided specification, visualisation and quoting tool for HDPE drainage chambers.</p>
+    </div>
+
+    <div class="cover-bottom">
+      <div class="cover-meta">
+        <span class="cover-meta-label">Prepared for</span>
+        <span class="cover-meta-value">Sean Taylor</span>
+      </div>
+      <div class="cover-meta">
+        <span class="cover-meta-label">Status</span>
+        <span class="cover-meta-value">Phase 3 Complete</span>
+      </div>
+      <div class="cover-meta">
+        <span class="cover-meta-label">Document</span>
+        <span class="cover-meta-value">Scope Overview</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================ OVERVIEW ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">01</div>
+      <div class="page-header-text">Project Overview</div>
+    </div>
+    <div class="page-header-num">SECTION ONE</div>
+  </div>
+
+  <div class="section-eyebrow">Executive Summary</div>
+  <h2 class="section-title">A specification tool that<br>does the engineering <span class="accent">for you.</span></h2>
+
+  <p class="section-lead">The SuDS Enviro Configurator turns the deep technical knowledge required to specify a drainage chamber into a guided, ten-step experience that anyone in the supply chain can confidently complete in minutes.</p>
+
+  <div class="body-text">
+    <p>The platform combines a real-time rule engine, a live three-dimensional preview and an automated drawing and specification output. Every selection is validated against physical constraints and adoption standards before the user can proceed, so the chamber that is quoted is the chamber that can be manufactured.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">10<span class="unit">steps</span></div>
+      <div class="stat-label">Wizard Flow</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">7<span class="unit">rules</span></div>
+      <div class="stat-label">Rule Engine</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">4<span class="unit">products</span></div>
+      <div class="stat-label">Catalogue</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">2<span class="unit">page</span></div>
+      <div class="stat-label">PDF Output</div>
+    </div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-top: 28px;">Built On</div>
+
+  <div class="feature-grid">
+    <div class="feature">
+      <span class="feature-badge blue">Frontend</span>
+      <div class="feature-title">Next.js 14 + TypeScript</div>
+      <div class="feature-desc">App Router, server components, strict types throughout. Tailwind styling with the SuDS Enviro brand system.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge blue">Backend</span>
+      <div class="feature-title">Supabase + Vercel</div>
+      <div class="feature-desc">Postgres with row-level security, anonymous session save, instant preview deployments per branch.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge">Engineering</span>
+      <div class="feature-title">React Three Fiber</div>
+      <div class="feature-desc">Live 3D chamber preview that updates in real time as the user makes selections.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge">Output</span>
+      <div class="feature-title">HTML to PDF Engine</div>
+      <div class="feature-desc">Headless Chromium renders engineering drawings and specification sheets as binary PDF on demand.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Configurator</span>
+    <span class="green-dot"></span>
+    <span>Page 02</span>
+  </div>
+</div>
+
+<!-- ============================ THE WIZARD ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">02</div>
+      <div class="page-header-text">The Configurator</div>
+    </div>
+    <div class="page-header-num">SECTION TWO</div>
+  </div>
+
+  <div class="section-eyebrow">User Journey</div>
+  <h2 class="section-title">Ten guided steps from<br>blank canvas to <span class="accent">quote.</span></h2>
+
+  <p class="section-lead">Every screen is purpose-built. Constraints are applied as the user moves through the flow, so impossible configurations are blocked before they can be specified.</p>
+
+  <div class="wizard-flow">
+    <div class="step-row">
+      <div class="step-num">0</div>
+      <div class="step-text">
+        <div class="step-title">Product Select</div>
+        <div class="step-desc">Choose chamber, catchpit, flow control or RhinoCeptor</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <div class="step-title">System Type</div>
+        <div class="step-desc">Surface water, foul or combined drainage</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <div class="step-title">Diameter</div>
+        <div class="step-desc">450, 600, 750 or 1050 mm chamber body</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <div class="step-title">Inlet Count</div>
+        <div class="step-desc">One to six inlets, capped by Rule R1</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        <div class="step-title">Clock Positions</div>
+        <div class="step-desc">Interactive clock face with blocked-position logic</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">5</div>
+      <div class="step-text">
+        <div class="step-title">Pipe Sizes</div>
+        <div class="step-desc">Per-inlet picker with outlet auto-lock</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">6</div>
+      <div class="step-text">
+        <div class="step-title">Flow Control</div>
+        <div class="step-desc">Vortex or orifice plate with rate input</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">7</div>
+      <div class="step-text">
+        <div class="step-title">Depth</div>
+        <div class="step-desc">Adoptable status drives available depths</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">8</div>
+      <div class="step-text">
+        <div class="step-title">Review</div>
+        <div class="step-desc">Full summary plus compliance check</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">9</div>
+      <div class="step-text">
+        <div class="step-title">Output</div>
+        <div class="step-desc">PDF download, enquiry form, share link</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Configurator</span>
+    <span class="green-dot"></span>
+    <span>Page 03</span>
+  </div>
+</div>
+
+<!-- ============================ RULE ENGINE ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">03</div>
+      <div class="page-header-text">The Rule Engine</div>
+    </div>
+    <div class="page-header-num">SECTION THREE</div>
+  </div>
+
+  <div class="section-eyebrow">Manufacturing Constraints, Encoded</div>
+  <h2 class="section-title">Seven rules that<br>guarantee <span class="accent">buildability.</span></h2>
+
+  <p class="section-lead">The rule engine runs client-side and applies in real time. The user cannot move forward with a configuration that breaches a physical or regulatory constraint.</p>
+
+  <div class="rule-list">
+    <div class="rule-item">
+      <div class="rule-id">R1</div>
+      <div class="rule-name">Inlet Limits</div>
+      <div class="rule-desc">Maximum inlet count is determined by chamber diameter. 450mm allows 2 inlets, 1050mm allows 6.</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-id">R2</div>
+      <div class="rule-name">Outlet Sizing</div>
+      <div class="rule-desc">Three or more inlets on a 600mm chamber, or four on any chamber, locks the outlet to a minimum of 225mm twinwall.</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-id">R3</div>
+      <div class="rule-name">Blocked Positions</div>
+      <div class="rule-desc">A 225mm twinwall outlet physically blocks the 5 and 7 o'clock inlet positions adjacent to the outlet stub.</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-id">R4</div>
+      <div class="rule-name">Maximum Depth</div>
+      <div class="rule-desc">Adoptable chambers are capped at 2000mm under SfA7. Non-adoptable chambers may go to 3000mm.</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-id">R5</div>
+      <div class="rule-name">Outlet Position</div>
+      <div class="rule-desc">The outlet is fixed at 6 o'clock for every chamber. Displayed as a locked node on the clock face.</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-id">R6</div>
+      <div class="rule-name">Flow Increase</div>
+      <div class="rule-desc">Inlet pipes cannot exceed the outlet pipe size. Hydraulic flow can never increase on exit from the chamber.</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-id">R7</div>
+      <div class="rule-name">Pipe Size Cap</div>
+      <div class="rule-desc">Maximum inlet pipe size is determined by chamber diameter. 450mm caps at 160mm; 1050mm allows up to 450mm.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Configurator</span>
+    <span class="green-dot"></span>
+    <span>Page 04</span>
+  </div>
+</div>
+
+<!-- ============================ FEATURES ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">04</div>
+      <div class="page-header-text">Capabilities</div>
+    </div>
+    <div class="page-header-num">SECTION FOUR</div>
+  </div>
+
+  <div class="section-eyebrow">What the Platform Does</div>
+  <h2 class="section-title">Built for the whole<br><span class="accent">order journey.</span></h2>
+
+  <p class="section-lead">The configurator is more than a wizard. It is a full operations platform that captures enquiries, generates engineering documents and gives the SuDS Enviro team a single place to manage every quote.</p>
+
+  <div class="two-col">
+    <div class="col-block">
+      <h4>Specifier-facing</h4>
+      <ul>
+        <li>Guided ten-step configuration wizard</li>
+        <li>Real-time 3D chamber preview</li>
+        <li>Live rule validation with inline warnings</li>
+        <li>Auto-saved configurations with shareable URLs</li>
+        <li>Two-page engineering specification PDF</li>
+        <li>Enquiry form with instant email confirmation</li>
+        <li>Mobile-first responsive design</li>
+      </ul>
+    </div>
+    <div class="col-block">
+      <h4>SuDS Enviro Team</h4>
+      <ul>
+        <li>Password-gated admin portal</li>
+        <li>Enquiry inbox with status workflow</li>
+        <li>Saved configuration browser</li>
+        <li>Quote dashboard with send-and-track</li>
+        <li>Resend-powered transactional email</li>
+        <li>Reviewer feedback tool with pin-drop comments</li>
+        <li>Full configuration audit trail</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top: 36px;">
+    <div class="section-eyebrow">Highlight</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px;">
+      <div class="feature">
+        <span class="feature-badge">Live Preview</span>
+        <div class="feature-title">Three-Dimensional Chamber Viewer</div>
+        <div class="feature-desc">A floating button reveals a full-screen 3D model that updates as inlets, depth and pipe sizes are selected. The user can rotate, pinch and inspect from any angle.</div>
+      </div>
+      <div class="feature">
+        <span class="feature-badge">Document Output</span>
+        <div class="feature-title">Specification + Drawing PDF</div>
+        <div class="feature-desc">A single PDF combines the technical specification table, compliance check and a scale engineering drawing rendered mathematically from the configuration.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Configurator</span>
+    <span class="green-dot"></span>
+    <span>Page 05</span>
+  </div>
+</div>
+
+<!-- ============================ PHASES ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">05</div>
+      <div class="page-header-text">Delivery Phases</div>
+    </div>
+    <div class="page-header-num">SECTION FIVE</div>
+  </div>
+
+  <div class="section-eyebrow">Project Status</div>
+  <h2 class="section-title">Three phases delivered.<br>One on the <span class="accent">horizon.</span></h2>
+
+  <p class="section-lead">The project has been built in deliberate phases so that every milestone is testable in isolation and the platform is always in a working state.</p>
+
+  <div class="phase-list">
+    <div class="phase-card complete">
+      <div class="phase-num">01</div>
+      <div class="phase-info">
+        <div class="phase-name">Wizard MVP</div>
+        <div class="phase-desc">Full ten-step wizard, rule engine, 3D preview, output step with enquiry form. Branded and responsive.</div>
+      </div>
+      <div class="phase-status done"><span class="dot"></span>Complete</div>
+    </div>
+
+    <div class="phase-card complete">
+      <div class="phase-num">02</div>
+      <div class="phase-info">
+        <div class="phase-name">Backend Integration</div>
+        <div class="phase-desc">Supabase schema, anonymous auto-save, shareable configuration URLs, enquiry submissions, transactional email and PDF generation.</div>
+      </div>
+      <div class="phase-status done"><span class="dot"></span>Complete</div>
+    </div>
+
+    <div class="phase-card complete">
+      <div class="phase-num">03</div>
+      <div class="phase-info">
+        <div class="phase-name">Admin and Marketing</div>
+        <div class="phase-desc">Authenticated admin portal with enquiries, configurations, quotes and feedback. Marketing landing site with product pages and 3D scroll experience.</div>
+      </div>
+      <div class="phase-status done"><span class="dot"></span>Complete</div>
+    </div>
+
+    <div class="phase-card upcoming">
+      <div class="phase-num">04</div>
+      <div class="phase-info">
+        <div class="phase-name">Additional Products</div>
+        <div class="phase-desc">Catchpit and silt trap configurator, RhinoCeptor oil separator, dedicated flow control wizard, and a multi-product quote basket.</div>
+      </div>
+      <div class="phase-status next"><span class="dot"></span>Next</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Configurator</span>
+    <span class="green-dot"></span>
+    <span>Page 06</span>
+  </div>
+</div>
+
+<!-- ============================ NEXT STEPS ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">06</div>
+      <div class="page-header-text">Next Steps</div>
+    </div>
+    <div class="page-header-num">SECTION SIX</div>
+  </div>
+
+  <div class="section-eyebrow">Roadmap</div>
+  <h2 class="section-title">The path to<br><span class="accent">launch.</span></h2>
+
+  <p class="section-lead">With the core platform delivered, the focus moves to client review, content polish, and final pre-launch hardening before opening the configurator to the wider supply chain.</p>
+
+  <div class="two-col">
+    <div class="col-block">
+      <h4>Pre-Launch</h4>
+      <ul>
+        <li>Reviewer feedback round with Sean and Mark</li>
+        <li>Production environment configuration</li>
+        <li>Custom domain configuration on Vercel</li>
+        <li>Real Supabase production credentials</li>
+        <li>Resend domain verification for email</li>
+        <li>Final brand and copy review</li>
+      </ul>
+    </div>
+    <div class="col-block">
+      <h4>Post-Launch (Phase 4)</h4>
+      <ul>
+        <li>Catchpit and silt trap wizard</li>
+        <li>RhinoCeptor oil separator path</li>
+        <li>Dedicated flow control configuration</li>
+        <li>Multi-product quote basket</li>
+        <li>Analytics dashboard integration</li>
+        <li>Distributor and installer accounts</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top: 36px;">
+    <div class="section-eyebrow">Reviewer Tool</div>
+    <div class="feature" style="margin-top: 12px;">
+      <span class="feature-badge">Now Live</span>
+      <div class="feature-title">Pin-and-Comment Feedback Platform</div>
+      <div class="feature-desc">Sean and Mark can browse the live application inside a phone-frame interface and drop pins anywhere on the page to attach comments, priorities, and structured suggestions. All feedback is collected in the admin dashboard with a status workflow for triage.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro Configurator</span>
+    <span class="green-dot"></span>
+    <span>Page 07</span>
+  </div>
+</div>
+
+<!-- ============================ CLOSING ============================ -->
+<div class="page closing">
+
+  <div class="closing-mark">
+    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+  </div>
+
+  <div class="closing-eyebrow">Ready for Approval</div>
+  <h2 class="closing-title">Phases One,<br>Two and Three<br>delivered.</h2>
+
+  <p class="closing-text">The SuDS Enviro Configurator is feature-complete across the agreed scope. This document accompanies the live preview and the reviewer tool for client sign-off ahead of production launch.</p>
+
+  <div class="signoff-card">
+    <div class="signoff-row">
+      <span class="label">Project</span>
+      <span class="value">Online Configurator</span>
+    </div>
+    <div class="signoff-row">
+      <span class="label">Client</span>
+      <span class="value">SuDS Enviro Ltd</span>
+    </div>
+    <div class="signoff-row">
+      <span class="label">Status</span>
+      <span class="value">Phase 3 Complete</span>
+    </div>
+    <div class="signoff-row">
+      <span class="label">Awaiting</span>
+      <span class="value">Client Sign-off</span>
+    </div>
+
+    <div class="signoff-divider"></div>
+
+    <div class="signoff-line">Signed - Client</div>
+    <div style="height: 30px;"></div>
+
+    <div class="signoff-line">Date</div>
+  </div>
+
+</div>
+
+</body>
+</html>

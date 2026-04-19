@@ -39,9 +39,9 @@ yarn-error.log*
 # product reference files (not part of the app)
 /Product Descriptions/
 
-# project specification doc (not deployed publicly)
-/public/project-brochure.html
 # Note: /public/brochures/ ARE committed - they are linked from product pages
+# Note: /public/project-brochure.html, admin-walkthrough.html and punch-list.html
+# ARE committed - they are linked from the gated /welcome client hub.
 
 # vercel
 .vercel

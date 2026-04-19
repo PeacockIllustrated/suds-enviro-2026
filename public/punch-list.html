@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SuDS Enviro Configurator - Punch List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #004d70;
+    --navy-d: #003a55;
+    --blue: #1a82a2;
+    --green: #44af43;
+    --green-d: #339932;
+    --amber: #d68a00;
+    --red: #c12d2d;
+    --light: #f0f6fa;
+    --border: #ccdde8;
+    --ink: #0f2535;
+    --muted: #5a7a90;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Montserrat', -apple-system, sans-serif;
+    color: var(--ink);
+    background: #e8eef3;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page { size: A4 portrait; margin: 0; }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    margin: 16px auto;
+    padding: 22mm 20mm;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    page-break-after: always;
+  }
+
+  .page:last-child { page-break-after: auto; }
+
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; box-shadow: none; width: 210mm; height: 297mm; }
+  }
+
+  /* ======= COVER ======= */
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-d) 50%, #002a40 100%);
+    color: #fff;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cover-decoration { position: absolute; inset: 0; overflow: hidden; }
+  .cover-decoration::before {
+    content: ''; position: absolute; top: -200px; right: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(68, 175, 67, 0.2) 0%, transparent 70%);
+  }
+  .cover-decoration::after {
+    content: ''; position: absolute; bottom: -300px; left: -300px;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(26, 130, 162, 0.18) 0%, transparent 70%);
+  }
+
+  .cover-inner {
+    position: relative; z-index: 2; flex: 1;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 22mm 20mm 18mm;
+  }
+
+  .cover-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .cover-logo { width: 90px; height: auto; filter: brightness(0) invert(1); }
+  .cover-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3em;
+    text-transform: uppercase; color: rgba(255, 255, 255, 0.6);
+    border-left: 2px solid var(--green); padding-left: 14px; line-height: 1.5;
+  }
+
+  .cover-middle { margin-top: 60px; }
+  .cover-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--green); margin-bottom: 18px;
+  }
+  .cover-title {
+    font-size: 64px; font-weight: 800; line-height: 0.98;
+    letter-spacing: -0.02em; margin-bottom: 18px;
+  }
+  .cover-title .accent { color: var(--green); }
+  .cover-subtitle {
+    font-size: 22px; font-weight: 400; line-height: 1.4;
+    color: rgba(255, 255, 255, 0.78); max-width: 380px;
+  }
+
+  .cover-bottom {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .cover-meta { display: flex; flex-direction: column; gap: 4px; }
+  .cover-meta-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: rgba(255, 255, 255, 0.45);
+  }
+  .cover-meta-value { font-size: 13px; font-weight: 600; color: #fff; }
+
+  /* ======= GENERIC PAGE ======= */
+  .page-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 14px; margin-bottom: 26px; border-bottom: 1px solid var(--border);
+  }
+  .page-header-left { display: flex; align-items: center; gap: 12px; }
+  .page-header-mark {
+    width: 28px; height: 28px; border-radius: 6px; background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 13px;
+  }
+  .page-header-text {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink);
+  }
+  .page-header-num {
+    font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.15em;
+  }
+
+  .page-footer {
+    position: absolute; bottom: 14mm; left: 20mm; right: 20mm;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 9px; color: var(--muted); font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding-top: 10px; border-top: 1px solid var(--border);
+  }
+  .page-footer .green-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--green); margin: 0 8px;
+  }
+
+  .section-eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--green-d); margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 32px; font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.015em; color: var(--navy); margin-bottom: 14px;
+  }
+  .section-title .accent { color: var(--green); }
+  .section-lead {
+    font-size: 12.5px; line-height: 1.55; color: var(--ink);
+    max-width: 520px; margin-bottom: 18px;
+  }
+
+  /* ======= STATUS SUMMARY STRIP ======= */
+  .status-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    margin-bottom: 22px;
+  }
+  .status-card {
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 12px 14px; background: #fff; position: relative; overflow: hidden;
+  }
+  .status-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  }
+  .status-card.ok::before    { background: var(--green); }
+  .status-card.warn::before  { background: var(--amber); }
+  .status-card.todo::before  { background: var(--blue); }
+  .status-card.block::before { background: var(--red); }
+
+  .status-num {
+    font-size: 28px; font-weight: 800; color: var(--navy);
+    line-height: 1; letter-spacing: -0.02em;
+  }
+  .status-lbl {
+    margin-top: 6px; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+  .status-sub {
+    margin-top: 2px; font-size: 10px; color: var(--ink); font-weight: 600;
+  }
+
+  /* ======= ITEM ROW (the punch-list items) ======= */
+  .items { display: flex; flex-direction: column; gap: 8px; }
+
+  .item {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .pri {
+    font-size: 8.5px; font-weight: 800; letter-spacing: 0.15em;
+    text-transform: uppercase; padding: 4px 8px; border-radius: 4px;
+    text-align: center; white-space: nowrap;
+  }
+  .pri.p0 { background: rgba(193, 45, 45, 0.12); color: var(--red); }
+  .pri.p1 { background: rgba(214, 138, 0, 0.14); color: var(--amber); }
+  .pri.p2 { background: rgba(26, 130, 162, 0.12); color: var(--blue); }
+  .pri.p3 { background: rgba(90, 122, 144, 0.12); color: var(--muted); }
+
+  .item-body { min-width: 0; }
+  .item-title {
+    font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.3;
+  }
+  .item-detail {
+    font-size: 10px; color: var(--muted); line-height: 1.5; margin-top: 2px;
+  }
+  .item-detail code {
+    background: var(--light); padding: 1px 5px; border-radius: 3px;
+    font-family: 'SF Mono', Menlo, monospace; font-size: 9.5px; color: var(--ink);
+  }
+
+  .effort {
+    font-size: 9px; font-weight: 800; color: var(--green-d);
+    background: rgba(68, 175, 67, 0.10); padding: 4px 8px; border-radius: 4px;
+    letter-spacing: 0.1em;
+  }
+  .effort.med { color: var(--amber); background: rgba(214, 138, 0, 0.12); }
+  .effort.big { color: var(--red); background: rgba(193, 45, 45, 0.10); }
+
+  /* ======= TABLE ======= */
+  .table-wrap {
+    border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; margin-top: 12px;
+  }
+  .ptable {
+    width: 100%; border-collapse: collapse; font-size: 11px;
+  }
+  .ptable th {
+    background: var(--light); padding: 8px 12px; text-align: left;
+    font-weight: 700; color: var(--muted); font-size: 9px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .ptable td {
+    padding: 9px 12px; border-bottom: 1px solid var(--light); color: var(--ink);
+  }
+  .ptable tr:last-child td { border-bottom: none; }
+
+  .pill {
+    display: inline-block; padding: 2px 7px; border-radius: 3px;
+    font-size: 8.5px; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .pill.done { background: rgba(68, 175, 67, 0.14); color: var(--green-d); }
+  .pill.todo { background: rgba(214, 138, 0, 0.14); color: var(--amber); }
+  .pill.miss { background: rgba(193, 45, 45, 0.10); color: var(--red); }
+
+  .legend {
+    display: flex; gap: 16px; margin-top: 14px; padding: 10px 14px;
+    background: var(--light); border-radius: 8px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10px; color: var(--muted); font-weight: 600;
+  }
+  .legend-item .swatch {
+    width: 10px; height: 10px; border-radius: 2px;
+  }
+
+  /* ======= CLOSING ======= */
+  .closing {
+    background: linear-gradient(135deg, var(--light) 0%, #fff 100%);
+    display: flex; flex-direction: column; justify-content: center; text-align: center;
+  }
+
+  .closing-mark {
+    width: 60px; height: 60px; border-radius: 50%; background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px; color: #fff; font-weight: 800; font-size: 24px;
+  }
+
+  .closing-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--green-d); margin-bottom: 14px;
+  }
+
+  .closing-title {
+    font-size: 44px; font-weight: 800; line-height: 1.05;
+    color: var(--navy); margin-bottom: 18px; letter-spacing: -0.02em;
+  }
+
+  .closing-text {
+    font-size: 14px; line-height: 1.7; color: var(--ink);
+    max-width: 500px; margin: 0 auto 36px;
+  }
+
+  .summary-card {
+    max-width: 460px; margin: 0 auto;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px; text-align: left;
+  }
+
+  .summary-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid var(--light); font-size: 12px;
+  }
+  .summary-row:last-child { border: none; }
+  .summary-row .label { color: var(--muted); font-weight: 600; }
+  .summary-row .value { color: var(--ink); font-weight: 800; }
+
+  /* ======= PRINT BUTTON ======= */
+  .print-bar { position: fixed; top: 16px; right: 16px; z-index: 1000; }
+  .print-btn {
+    background: var(--green); color: #fff; border: none;
+    padding: 10px 18px; border-radius: 8px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 12px; letter-spacing: 0.05em; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(68, 175, 67, 0.3);
+  }
+  @media print { .print-bar { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button class="print-btn" onclick="window.print()">Save as PDF</button>
+</div>
+
+<!-- ============================ COVER ============================ -->
+<div class="page cover">
+  <div class="cover-decoration"></div>
+  <div class="cover-inner">
+
+    <div class="cover-top">
+      <img src="/logos/suds/icon-white.png" alt="SuDS Enviro" class="cover-logo">
+      <div class="cover-tag">Internal Punch List<br>Updated after Phase 3+ push</div>
+    </div>
+
+    <div class="cover-middle">
+      <div class="cover-eyebrow">SuDS Enviro Configurator</div>
+      <h1 class="cover-title">What's<br>left to<br><span class="accent">ship.</span></h1>
+      <p class="cover-subtitle">All P0 launch blockers cleared. Remaining work is back-office hardening, content verification and the Spline integration.</p>
+    </div>
+
+    <div class="cover-bottom">
+      <div class="cover-meta">
+        <span class="cover-meta-label">P0 Blockers</span>
+        <span class="cover-meta-value">All clear</span>
+      </div>
+      <div class="cover-meta">
+        <span class="cover-meta-label">Brochures</span>
+        <span class="cover-meta-value">11 of 11 (6 drafts)</span>
+      </div>
+      <div class="cover-meta">
+        <span class="cover-meta-label">Last updated</span>
+        <span class="cover-meta-value">After commit b47accc</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================ STATUS + BLOCKERS ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">01</div>
+      <div class="page-header-text">Where We Are</div>
+    </div>
+    <div class="page-header-num">SNAPSHOT</div>
+  </div>
+
+  <div class="status-strip">
+    <div class="status-card ok">
+      <div class="status-num">3 / 4</div>
+      <div class="status-lbl">Phases Complete</div>
+      <div class="status-sub">Phase 4 in flight</div>
+    </div>
+    <div class="status-card ok">
+      <div class="status-num">11 / 11</div>
+      <div class="status-lbl">Products with Brochure</div>
+      <div class="status-sub">6 drafts to verify</div>
+    </div>
+    <div class="status-card ok">
+      <div class="status-num">0</div>
+      <div class="status-lbl">Launch Blockers</div>
+      <div class="status-sub">All P0s cleared</div>
+    </div>
+    <div class="status-card warn">
+      <div class="status-num">7</div>
+      <div class="status-lbl">P1 / P2 Items</div>
+      <div class="status-sub">Pre-launch hardening</div>
+    </div>
+  </div>
+
+  <div class="section-eyebrow">Recently shipped</div>
+  <h2 class="section-title">Cleared since the last<br>punch list <span class="accent">update.</span></h2>
+
+  <div class="items">
+    <div class="item">
+      <div class="pri p3" style="background: rgba(68, 175, 67, 0.14); color: var(--green-d);">DONE</div>
+      <div class="item-body">
+        <div class="item-title">All 3 P0 launch blockers cleared (commit 5ebc351)</div>
+        <div class="item-detail">
+          <code>env.example</code> sanitised, Spline packages installed, and
+          <code>lib/product-catalog.ts</code> rewritten so all five product
+          spec tables match the official data sheets.
+        </div>
+      </div>
+      <div class="effort">17 MIN</div>
+    </div>
+    <div class="item">
+      <div class="pri p3" style="background: rgba(68, 175, 67, 0.14); color: var(--green-d);">DONE</div>
+      <div class="item-body">
+        <div class="item-title">RhinoCeptor product page rebranded to RHINO SEHDS</div>
+        <div class="item-detail">
+          Catalog entry rewritten: GRP material, 750/1200/1800/2500 mm,
+          5-4-5 mitigation indices, optional RHINO POD add-on. Live at
+          <code>/products/rhinoceptor</code>.
+        </div>
+      </div>
+      <div class="effort">10 MIN</div>
+    </div>
+    <div class="item">
+      <div class="pri p3" style="background: rgba(68, 175, 67, 0.14); color: var(--green-d);">DONE</div>
+      <div class="item-body">
+        <div class="item-title">6 placeholder brochures + dev stamp (commit b47accc)</div>
+        <div class="item-detail">
+          GT, grease separator, RHINO POD, rainwater, septic, drawpit -
+          all 4-page A4 datasheets, wired into the catalog and the
+          brochures index. Each carries a persistent amber "In
+          Development" banner and "Draft - Verify" cover watermark.
+          Now needs verification against authoritative data sheets.
+        </div>
+      </div>
+      <div class="effort">2 HRS</div>
+    </div>
+    <div class="item">
+      <div class="pri p3" style="background: rgba(68, 175, 67, 0.14); color: var(--green-d);">DONE</div>
+      <div class="item-body">
+        <div class="item-title">Brochure library link added to marketing footer</div>
+        <div class="item-detail">
+          New "Brochures" entry in the Company column opens
+          <code>/brochures/index.html</code> in a new tab.
+        </div>
+      </div>
+      <div class="effort">2 MIN</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro - Punch List</span>
+    <span class="green-dot"></span>
+    <span>Page 02</span>
+  </div>
+</div>
+
+<!-- ============================ MARKETING + CONTENT ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">02</div>
+      <div class="page-header-text">Marketing &amp; Content</div>
+    </div>
+    <div class="page-header-num">PRE-LAUNCH</div>
+  </div>
+
+  <div class="section-eyebrow">Customer-facing polish</div>
+  <h2 class="section-title">Verify drafts and<br>wire <span class="accent">Spline.</span></h2>
+
+  <div class="items">
+    <div class="item">
+      <div class="pri p1">P1 / Verify</div>
+      <div class="item-body">
+        <div class="item-title">Rewrite 6 draft brochures from authoritative data sheets</div>
+        <div class="item-detail">
+          The placeholder brochures for grease trap, grease separator, RHINO POD,
+          rainwater, septic and drawpit are visible to customers but stamped
+          "In Development". Source the real product data sheets from Sean / Mark,
+          then rewrite the body copy, spec tables and compliance lists.
+          When done, remove <code>body class="dev"</code> from each file to drop
+          the banner and watermark.
+        </div>
+      </div>
+      <div class="effort big">3 HRS</div>
+    </div>
+    <div class="item">
+      <div class="pri p2">P2 / When ready</div>
+      <div class="item-body">
+        <div class="item-title">Wire Spline scenes per product page</div>
+        <div class="item-detail">
+          Scene names captured in <code>reference/spline-links.md</code>. Need the actual
+          Spline URLs and exposed variables. Once filled, the integration is one component per page.
+        </div>
+      </div>
+      <div class="effort med">1 DAY</div>
+    </div>
+    <div class="item">
+      <div class="pri p2">P2 / When ready</div>
+      <div class="item-body">
+        <div class="item-title">Marketing landing video / hero scroll scene</div>
+        <div class="item-detail">
+          Hero scene placeholder is in place. Once a primary Spline scene is
+          finalised, drop it into <code>ScrollVideoSection</code> and remove the
+          placeholder copy.
+        </div>
+      </div>
+      <div class="effort med">2 HRS</div>
+    </div>
+    <div class="item">
+      <div class="pri p3">P3 / Polish</div>
+      <div class="item-body">
+        <div class="item-title">Per-product hero scenes (one Spline per page)</div>
+        <div class="item-detail">
+          Each product page can have its own hero scroll experience using the
+          dedicated scenes (SERSIC Breakout, SERFIC Breakout, SERSD Breakout
+          etc). Per-page React component pattern is the same as the marketing
+          landing scene.
+        </div>
+      </div>
+      <div class="effort med">2 HRS / page</div>
+    </div>
+    <div class="item">
+      <div class="pri p3">P3 / Polish</div>
+      <div class="item-body">
+        <div class="item-title">Top-nav "Brochures" link (footer is done)</div>
+        <div class="item-detail">
+          Footer link to <code>/brochures/index.html</code> is live. Adding a
+          top-nav entry would surface the library more prominently for spec
+          writers who land on the home page.
+        </div>
+      </div>
+      <div class="effort">5 MIN</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro - Punch List</span>
+    <span class="green-dot"></span>
+    <span>Page 03</span>
+  </div>
+</div>
+
+<!-- ============================ SECURITY + CODE QUALITY ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">03</div>
+      <div class="page-header-text">Security &amp; Code Quality</div>
+    </div>
+    <div class="page-header-num">PRE-LAUNCH</div>
+  </div>
+
+  <div class="section-eyebrow">Cleanups before public launch</div>
+  <h2 class="section-title">Tighten the screws<br>before you flip<br>the <span class="accent">switch.</span></h2>
+
+  <div class="items">
+    <div class="item">
+      <div class="pri p1">P1 / Soon</div>
+      <div class="item-body">
+        <div class="item-title">Upgrade auth tokens from base64 to HMAC</div>
+        <div class="item-detail">
+          <code>lib/admin-auth.ts</code> + <code>lib/review-auth.ts</code> use <code>base64(password:timestamp)</code>.
+          Fine for soft launch, but swap to HMAC-SHA256 with a server secret before going public.
+        </div>
+      </div>
+      <div class="effort med">1 HR</div>
+    </div>
+    <div class="item">
+      <div class="pri p2">P2 / When ready</div>
+      <div class="item-body">
+        <div class="item-title">Strip console.log / console.error from API routes</div>
+        <div class="item-detail">
+          6 console statements still in <code>app/api/**</code>. Replace with structured logging or remove entirely.
+        </div>
+      </div>
+      <div class="effort">15 MIN</div>
+    </div>
+    <div class="item">
+      <div class="pri p1">P1 / Soon</div>
+      <div class="item-body">
+        <div class="item-title">Production Supabase project</div>
+        <div class="item-detail">
+          Currently sharing the Onesign instance. Spin up a dedicated SuDS Enviro Supabase project,
+          run <code>schema.sql</code> + <code>migration-feedback.sql</code>, swap env vars in Vercel.
+        </div>
+      </div>
+      <div class="effort med">1 HR</div>
+    </div>
+    <div class="item">
+      <div class="pri p1">P1 / Soon</div>
+      <div class="item-body">
+        <div class="item-title">Resend domain verification</div>
+        <div class="item-detail">
+          Enquiry confirmation emails currently send via the default Resend sender.
+          Verify <code>sudsenviro.com</code> in Resend so emails come from the right domain.
+        </div>
+      </div>
+      <div class="effort">30 MIN</div>
+    </div>
+    <div class="item">
+      <div class="pri p1">P1 / Soon</div>
+      <div class="item-body">
+        <div class="item-title">Vercel custom domain setup</div>
+        <div class="item-detail">
+          Project deploys to a Vercel preview URL. Point the production domain
+          (<code>sudsenviro.com</code> or chosen subdomain) at the Vercel project + set as primary.
+        </div>
+      </div>
+      <div class="effort">30 MIN</div>
+    </div>
+    <div class="item">
+      <div class="pri p3">P3 / Polish</div>
+      <div class="item-body">
+        <div class="item-title">Migrate legacy RhinoCeptor configs (if any)</div>
+        <div class="item-detail">
+          Old saved configs use the EN858 schema (variant / class). New schema is SEHDS-shaped.
+          Either nullable defaults will work fine, or write a one-off migration script.
+        </div>
+      </div>
+      <div class="effort med">1 HR</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro - Punch List</span>
+    <span class="green-dot"></span>
+    <span>Page 04</span>
+  </div>
+</div>
+
+<!-- ============================ PRODUCT MATRIX ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">04</div>
+      <div class="page-header-text">Product Coverage</div>
+    </div>
+    <div class="page-header-num">STATUS MATRIX</div>
+  </div>
+
+  <div class="section-eyebrow">Where each product stands</div>
+  <h2 class="section-title">Eleven products,<br>tracked at a <span class="accent">glance.</span></h2>
+
+  <div class="table-wrap">
+    <table class="ptable">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Wizard</th>
+          <th>Rules</th>
+          <th>Brochure</th>
+          <th>Spline</th>
+          <th>Catalog Page</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Inspection Chamber (SERSIC / SERFIC)</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">2 brochures</span></td>
+          <td><span class="pill todo">Names only</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>Catchpit - SERS</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Linked</span></td>
+          <td><span class="pill todo">Name only</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>Catchpit - SERDS</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Linked</span></td>
+          <td><span class="pill todo">Name only</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>Flow Control - SERF</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Linked</span></td>
+          <td><span class="pill todo">Name only</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>Flow Control - ROTEX</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Linked</span></td>
+          <td><span class="pill todo">Name only</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>SEHDS Hydrodynamic Separator</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Linked</span></td>
+          <td><span class="pill todo">Name only</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>RHINOLIFT Pumping Station</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Linked</span></td>
+          <td><span class="pill todo">3 names</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>RhinoPod (polishing filter)</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill todo">Draft - verify</span></td>
+          <td><span class="pill todo">Names only</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>Grease Trap</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill todo">Draft - verify</span></td>
+          <td><span class="pill todo">Scene names</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>Grease Separator</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill todo">Draft - verify</span></td>
+          <td><span class="pill miss">No scenes</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>Rainwater Harvesting</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill todo">Draft - verify</span></td>
+          <td><span class="pill miss">No scenes</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>Septic Tank</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill todo">Draft - verify</span></td>
+          <td><span class="pill miss">No scenes</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+        <tr>
+          <td>Drawpit</td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill done">Live</span></td>
+          <td><span class="pill todo">Draft - verify</span></td>
+          <td><span class="pill miss">No scenes</span></td>
+          <td><span class="pill done">Live</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="swatch" style="background: rgba(68, 175, 67, 0.6);"></span>Live / done</div>
+    <div class="legend-item"><span class="swatch" style="background: rgba(214, 138, 0, 0.6);"></span>Started, needs work</div>
+    <div class="legend-item"><span class="swatch" style="background: rgba(193, 45, 45, 0.5);"></span>Missing entirely</div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro - Punch List</span>
+    <span class="green-dot"></span>
+    <span>Page 05</span>
+  </div>
+</div>
+
+<!-- ============================ NICE-TO-HAVES + PHASE 4 ============================ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">05</div>
+      <div class="page-header-text">Phase 4 &amp; Beyond</div>
+    </div>
+    <div class="page-header-num">BACKLOG</div>
+  </div>
+
+  <div class="section-eyebrow">Not blocking launch</div>
+  <h2 class="section-title">After we go live -<br>the <span class="accent">backlog.</span></h2>
+
+  <p class="section-lead">These are the post-launch ideas worth keeping on the radar. None of them block shipping today.</p>
+
+  <div class="items">
+    <div class="item">
+      <div class="pri p2">P2 / Phase 4</div>
+      <div class="item-body">
+        <div class="item-title">Multi-product quote basket</div>
+        <div class="item-detail">
+          A specifier often needs a chamber + catchpit + flow control on the same project.
+          Add a basket so configurations group into a single enquiry / quote.
+        </div>
+      </div>
+      <div class="effort big">3 DAYS</div>
+    </div>
+    <div class="item">
+      <div class="pri p2">P2 / Phase 4</div>
+      <div class="item-body">
+        <div class="item-title">Distributor / installer accounts</div>
+        <div class="item-detail">
+          Trade users with their own pricing, saved projects, and bulk download.
+          Currently the configurator is fully anonymous.
+        </div>
+      </div>
+      <div class="effort big">1 WEEK</div>
+    </div>
+    <div class="item">
+      <div class="pri p3">P3 / Polish</div>
+      <div class="item-body">
+        <div class="item-title">Analytics integration (Odysseus)</div>
+        <div class="item-detail">
+          Mentioned in the Phase 3 plan but not wired. Drop the Odysseus snippet into
+          <code>app/layout.tsx</code> and define event names per wizard step / brochure download.
+        </div>
+      </div>
+      <div class="effort">30 MIN</div>
+    </div>
+    <div class="item">
+      <div class="pri p3">P3 / Polish</div>
+      <div class="item-body">
+        <div class="item-title">Dedicated marketing site for /products</div>
+        <div class="item-detail">
+          Each product page already exists. Phase 4 nice-to-have: per-product hero scroll
+          experience using the dedicated Spline scenes.
+        </div>
+      </div>
+      <div class="effort med">2 HRS / page</div>
+    </div>
+    <div class="item">
+      <div class="pri p3">P3 / Polish</div>
+      <div class="item-body">
+        <div class="item-title">Per-product engineering drawing PDFs</div>
+        <div class="item-detail">
+          PDF route currently only generates the inspection chamber drawing. Templates
+          for catchpit, SEHDS, RHINOLIFT etc would round out the deliverables.
+        </div>
+      </div>
+      <div class="effort big">1 DAY / template</div>
+    </div>
+    <div class="item">
+      <div class="pri p3">P3 / Polish</div>
+      <div class="item-body">
+        <div class="item-title">Email templates for status changes</div>
+        <div class="item-detail">
+          Currently only the initial enquiry triggers an email. Add notifications on
+          status flips: Reviewed -> Quoted -> Sent -> Accepted.
+        </div>
+      </div>
+      <div class="effort med">2 HRS</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>SuDS Enviro - Punch List</span>
+    <span class="green-dot"></span>
+    <span>Page 06</span>
+  </div>
+</div>
+
+<!-- ============================ CLOSING ============================ -->
+<div class="page closing">
+
+  <div class="closing-mark">&#x2713;</div>
+
+  <div class="closing-eyebrow">Bottom line</div>
+  <h2 class="closing-title">All P0s clear.<br>One verification<br>pass to go.</h2>
+
+  <p class="closing-text">Customer-facing polish is shipped. The big remaining piece is rewriting the 6 draft brochures from real data sheets, then the back-office hardening and the Spline wiring as those scene URLs land.</p>
+
+  <div class="summary-card">
+    <div class="summary-row">
+      <span class="label">P0 launch blockers</span>
+      <span class="value">0 - all cleared</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">P1 verify drafts</span>
+      <span class="value">1 item - ~3 hrs</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">P1 hardening</span>
+      <span class="value">5 items - ~4 hrs</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">P2 when ready</span>
+      <span class="value">3 items - flexible</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">P3 polish</span>
+      <span class="value">4 items - flexible</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">Phase 4 backlog</span>
+      <span class="value">6 items - post-launch</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
