@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, FileDown, ExternalLink } from 'lucide-react'
 import { getProductBySlug, PRODUCT_CATALOG } from '@/lib/product-catalog'
 import { Section } from '@/components/marketing/Section'
 import { CTABanner } from '@/components/marketing/CTABanner'
@@ -56,12 +56,25 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <h1 className="text-4xl font-extrabold text-ink tracking-tight">{product.name}</h1>
             <p className="text-lg text-muted mt-4 leading-relaxed max-w-lg">{product.description}</p>
 
-            <Link
-              href={`/configurator?product=${product.id}`}
-              className="inline-flex mt-8 rounded-full bg-green hover:bg-green-d text-white px-8 py-4 text-base font-bold transition-colors shadow-lg shadow-green/20"
-            >
-              Configure This Product
-            </Link>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link
+                href={`/configurator?product=${product.id}`}
+                className="inline-flex rounded-full bg-green hover:bg-green-d text-white px-8 py-4 text-base font-bold transition-colors shadow-lg shadow-green/20"
+              >
+                Configure This Product
+              </Link>
+              {product.brochures && product.brochures.length > 0 && (
+                <a
+                  href={product.brochures[0].href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-navy/20 bg-white text-navy hover:bg-light px-6 py-4 text-base font-bold transition-colors"
+                >
+                  <FileDown size={18} />
+                  Download Datasheet
+                </a>
+              )}
+            </div>
           </div>
 
           {/* Right: 3D model or placeholder */}
@@ -116,6 +129,43 @@ export default async function ProductPage({ params }: ProductPageProps) {
           ))}
         </ul>
       </Section>
+
+      {/* Brochures / Datasheets */}
+      {product.brochures && product.brochures.length > 0 && (
+        <Section>
+          <h2 className="text-2xl font-extrabold text-ink mb-2 tracking-tight">Datasheets</h2>
+          <p className="text-sm text-muted mb-8 max-w-xl">
+            Download the official product datasheet. Each opens in a new tab and
+            includes a one-click Save as PDF option.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {product.brochures.map((brochure) => (
+              <a
+                key={brochure.href}
+                href={brochure.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between gap-4 rounded-xl border border-border/70 bg-white p-5 transition-all hover:border-navy/40 hover:shadow-[0_4px_16px_rgba(0,77,112,0.10)]"
+              >
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy/8 text-navy group-hover:bg-navy group-hover:text-white transition-colors">
+                    <FileDown size={18} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-ink leading-snug">
+                      {brochure.label}
+                    </div>
+                    <div className="mt-1 text-[11px] font-semibold uppercase tracking-widest text-muted">
+                      HTML datasheet - Save as PDF
+                    </div>
+                  </div>
+                </div>
+                <ExternalLink size={16} className="shrink-0 text-muted group-hover:text-navy transition-colors" />
+              </a>
+            ))}
+          </div>
+        </Section>
+      )}
 
       {/* Applications */}
       <Section>

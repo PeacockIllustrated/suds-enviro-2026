@@ -1,5 +1,12 @@
 import type { ProductId, ProductCategory } from '@/lib/types'
 
+export interface BrochureLink {
+  /** Display label, e.g. "SERSIC - Surface Water Inspection Chamber" */
+  label: string
+  /** Public URL of the HTML brochure (opens in a new tab; has Save-as-PDF) */
+  href: string
+}
+
 export interface ProductCatalogEntry {
   id: ProductId
   slug: string
@@ -10,6 +17,8 @@ export interface ProductCatalogEntry {
   specifications: { label: string; value: string }[]
   compliance: string[]
   applications: string[]
+  /** Optional list of downloadable HTML brochures (each has Save-as-PDF) */
+  brochures?: BrochureLink[]
   category: ProductCategory
   categoryLabel: string
 }
@@ -52,6 +61,10 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'S104 adoptable sewer networks',
       'Private drainage installations',
     ],
+    brochures: [
+      { label: 'RHINO SERSIC - Surface Water Inspection Chamber', href: '/brochures/rhino-sersic.html' },
+      { label: 'RHINO SERFIC - Foul Water Inspection Chamber', href: '/brochures/rhino-serfic.html' },
+    ],
     category: 'chambers',
     categoryLabel: 'Chambers',
   },
@@ -90,6 +103,10 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Upstream of attenuation tanks',
       'Industrial yard drainage',
       'Construction site temporary drainage',
+    ],
+    brochures: [
+      { label: 'SERS - Catchpit with Silt Bucket (300/450/600)', href: '/brochures/rhino-sers.html' },
+      { label: 'SERDS - Catchpit with Built-in Settling (450-1200)', href: '/brochures/rhino-serds.html' },
     ],
     category: 'silt',
     categoryLabel: 'Silt Management',
@@ -131,6 +148,9 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Vehicle wash facilities',
       'Workshop and depot drainage',
     ],
+    brochures: [
+      { label: 'RHINO SEHDS - Hydrodynamic Separator', href: '/brochures/rhino-sehds.html' },
+    ],
     category: 'stormwater',
     categoryLabel: 'Stormwater Treatment',
   },
@@ -167,6 +187,10 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Swale and detention basin outlets',
       'Pond and wetland outflow regulation',
       'S104 adoptable drainage systems',
+    ],
+    brochures: [
+      { label: 'SERF - Orifice Flow Control (300/450/600)', href: '/brochures/rhino-serf.html' },
+      { label: 'ROTEX - Vortex Flow Control (600-1200)', href: '/brochures/rhino-rotex.html' },
     ],
     category: 'flow',
     categoryLabel: 'Flow Control',
@@ -207,6 +231,9 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Surface water pumping where gravity outfall is unavailable',
       'Adoptable pumping stations under S104',
       'Commercial and industrial waste pumping',
+    ],
+    brochures: [
+      { label: 'RHINOLIFT - Packaged Pumping Station', href: '/brochures/rhinolift.html' },
     ],
     category: 'pumps',
     categoryLabel: 'Pumping',

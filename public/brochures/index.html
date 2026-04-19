@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SuDS Enviro Product Brochures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #004d70;
+    --navy-d: #003a55;
+    --blue: #1a82a2;
+    --green: #44af43;
+    --green-d: #339932;
+    --light: #f0f6fa;
+    --border: #ccdde8;
+    --ink: #0f2535;
+    --muted: #5a7a90;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Montserrat', -apple-system, sans-serif;
+    color: var(--ink);
+    background: #e8eef3;
+    min-height: 100vh;
+  }
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-d) 50%, #002a40 100%);
+    color: #fff;
+    padding: 80px 40px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -200px; right: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(68, 175, 67, 0.22) 0%, transparent 70%);
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -300px; left: -200px;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(26, 130, 162, 0.2) 0%, transparent 70%);
+  }
+  .hero-inner {
+    position: relative; z-index: 2;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .hero-logo { height: 70px; width: auto; margin-bottom: 36px; }
+  .hero-eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--green); margin-bottom: 18px;
+  }
+  .hero-title {
+    font-size: 56px; font-weight: 800; line-height: 1;
+    letter-spacing: -0.02em; margin-bottom: 22px;
+  }
+  .hero-title .accent { color: var(--green); }
+  .hero-subtitle {
+    font-size: 18px; font-weight: 400; line-height: 1.5;
+    color: rgba(255, 255, 255, 0.82); max-width: 560px;
+  }
+  .container { max-width: 1280px; margin: 0 auto; padding: 64px 48px 88px; }
+  .grid-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--green-d); margin-bottom: 24px;
+    padding-top: 8px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 30px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 40px rgba(0, 77, 112, 0.12);
+    border-color: rgba(68, 175, 67, 0.5);
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; background: var(--navy);
+    transition: background 0.2s ease;
+  }
+  .card:hover::before { background: var(--green); }
+  .card-badge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--green-d);
+    background: rgba(68, 175, 67, 0.12);
+    padding: 6px 10px; border-radius: 4px;
+    align-self: flex-start; margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 22px; font-weight: 800; color: var(--navy);
+    line-height: 1.18; letter-spacing: -0.01em; margin-bottom: 10px;
+  }
+  .card-series {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
+  }
+  .card-desc {
+    font-size: 13px; line-height: 1.6; color: var(--ink);
+    margin-bottom: 24px; flex: 1;
+  }
+  .card-meta {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px;
+  }
+  .card-chip {
+    font-size: 10px; font-weight: 700; color: var(--navy);
+    background: var(--light); padding: 6px 11px; border-radius: 5px;
+    letter-spacing: 0.03em;
+  }
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 20px; border-top: 1px solid var(--light);
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--green-d);
+  }
+  .card-footer svg { width: 14px; height: 14px; transition: transform 0.2s ease; }
+  .card:hover .card-footer svg { transform: translateX(4px); }
+  .footer {
+    text-align: center; padding: 40px 20px;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 0.15em; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <img src="../logos/suds/logo-slogan-white.png" alt="SuDS Enviro" class="hero-logo">
+    <div class="hero-eyebrow">Product Brochures &middot; 2026 Edition</div>
+    <h1 class="hero-title">The full <span class="accent">RHINO</span> range,<br>one document each.</h1>
+    <p class="hero-subtitle">Branded specification brochures for every product in the SuDS Enviro catalogue. Click any card to open the full brochure, then use the Save as PDF button to export.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="grid-label">Inspection Chambers</div>
+  <div class="grid" style="margin-bottom: 52px;">
+
+    <a class="card" href="rhino-sersic.html">
+      <div class="card-badge">Surface Water</div>
+      <div class="card-series">RHINO SERSIC Series</div>
+      <div class="card-title">Surface Water Benched Channelled Inspection Chambers</div>
+      <div class="card-desc">Prefabricated HDPE chambers for stormwater drainage, fully assembled, with benched channels for optimal hydraulic flow.</div>
+      <div class="card-meta">
+        <span class="card-chip">450-1200mm</span>
+        <span class="card-chip">EN 13598-2</span>
+        <span class="card-chip">HDPE</span>
+      </div>
+      <div class="card-footer">
+        <span>Open Brochure</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+    <a class="card" href="rhino-serfic.html">
+      <div class="card-badge">Foul Water</div>
+      <div class="card-series">RHINO SERFIC Series</div>
+      <div class="card-title">Foul Water Benched Channelled Inspection Chambers</div>
+      <div class="card-desc">HDPE foul water inspection chambers with channelled bases that resist sediment build-up and support long maintenance intervals.</div>
+      <div class="card-meta">
+        <span class="card-chip">450-1200mm</span>
+        <span class="card-chip">EN 13598-2</span>
+        <span class="card-chip">HDPE</span>
+      </div>
+      <div class="card-footer">
+        <span>Open Brochure</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="grid-label">Catch-Pit Chambers</div>
+  <div class="grid" style="margin-bottom: 52px;">
+
+    <a class="card" href="rhino-sers.html">
+      <div class="card-badge">Silt Bucket</div>
+      <div class="card-series">RHINO SERS Series</div>
+      <div class="card-title">Catch-Pit Chambers with Silt Bucket</div>
+      <div class="card-desc">Dual-stage filtration catch-pits with a removable silt bucket for fast, ground-level maintenance of fine sediment capture.</div>
+      <div class="card-meta">
+        <span class="card-chip">300-600mm</span>
+        <span class="card-chip">Dual Filtration</span>
+        <span class="card-chip">SfA7</span>
+      </div>
+      <div class="card-footer">
+        <span>Open Brochure</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+    <a class="card" href="rhino-serds.html">
+      <div class="card-badge">Advanced Plus</div>
+      <div class="card-series">RHINO SERDS Advanced Plus 600</div>
+      <div class="card-title">Advanced Plus 600 Series Catch-Pits</div>
+      <div class="card-desc">Full-traffic dual filtration catch-pits scaling from residential to highway drainage, with custom sump depth options.</div>
+      <div class="card-meta">
+        <span class="card-chip">450-1200mm</span>
+        <span class="card-chip">Full Traffic</span>
+        <span class="card-chip">SuDS</span>
+      </div>
+      <div class="card-footer">
+        <span>Open Brochure</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="grid-label">Flow Control</div>
+  <div class="grid" style="margin-bottom: 52px;">
+
+    <a class="card" href="rhino-serf.html">
+      <div class="card-badge">Orifice Plate</div>
+      <div class="card-series">RHINO SERF Series</div>
+      <div class="card-title">Orifice Flow Control Chambers</div>
+      <div class="card-desc">Factory-fitted HDPE flow control chambers with integral ground-level drain down and precision-sized orifice plates.</div>
+      <div class="card-meta">
+        <span class="card-chip">300-600mm</span>
+        <span class="card-chip">Design Head</span>
+        <span class="card-chip">DCG D/E</span>
+      </div>
+      <div class="card-footer">
+        <span>Open Brochure</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+    <a class="card" href="rhino-rotex.html">
+      <div class="card-badge">Vortex</div>
+      <div class="card-series">RHINO ROTEX</div>
+      <div class="card-title">Vortex Flow Control</div>
+      <div class="card-desc">Passive hydraulic flow control with zero moving parts. Factory-fitted in HDPE or supplied for concrete chamber retrofit.</div>
+      <div class="card-meta">
+        <span class="card-chip">600-1200mm</span>
+        <span class="card-chip">Zero Parts</span>
+        <span class="card-chip">Passive</span>
+      </div>
+      <div class="card-footer">
+        <span>Open Brochure</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="grid-label">Treatment &amp; Pumping</div>
+  <div class="grid">
+
+    <a class="card" href="rhino-sehds.html">
+      <div class="card-badge">Hydrodynamic</div>
+      <div class="card-series">RHINO SEHDS Series</div>
+      <div class="card-title">Hydrodynamic Separator</div>
+      <div class="card-desc">Patented vortex separation in a one-piece GRP vessel. Mitigation indices of 5-4-5 with optional Rhino Pod polishing filter.</div>
+      <div class="card-meta">
+        <span class="card-chip">750-2500mm</span>
+        <span class="card-chip">5-4-5</span>
+        <span class="card-chip">GRP</span>
+      </div>
+      <div class="card-footer">
+        <span>Open Brochure</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+    <a class="card" href="rhinolift.html">
+      <div class="card-badge">Pumping Station</div>
+      <div class="card-series">RHINOLIFT</div>
+      <div class="card-title">Packaged Pumping Stations</div>
+      <div class="card-desc">Custom-built MDPE and GRP packaged pumping stations for foul water, stormwater and grey water. 24-48 hour lead time.</div>
+      <div class="card-meta">
+        <span class="card-chip">600-1200mm</span>
+        <span class="card-chip">Vortex / Macerator</span>
+        <span class="card-chip">EN 12050-1</span>
+      </div>
+      <div class="card-footer">
+        <span>Open Brochure</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="footer">
+  SuDS Enviro Ltd &middot; Product Brochures 2026 Edition
+</div>
+
+</body>
+</html>

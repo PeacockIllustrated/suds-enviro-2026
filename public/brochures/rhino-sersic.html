@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RHINO SERSIC - Surface Water Benched Channelled Inspection Chambers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #004d70;
+    --navy-d: #003a55;
+    --blue: #1a82a2;
+    --green: #44af43;
+    --green-d: #339932;
+    --light: #f0f6fa;
+    --border: #ccdde8;
+    --ink: #0f2535;
+    --muted: #5a7a90;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Montserrat', -apple-system, sans-serif;
+    color: var(--ink);
+    background: #e8eef3;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page { size: A4 portrait; margin: 0; }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    margin: 16px auto;
+    padding: 22mm 20mm;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    page-break-after: always;
+  }
+  .page:last-child { page-break-after: auto; }
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; box-shadow: none; width: 210mm; height: 297mm; }
+  }
+  .cover {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-d) 50%, #002a40 100%);
+    color: #fff;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .cover-decoration { position: absolute; inset: 0; overflow: hidden; }
+  .cover-decoration::before {
+    content: ''; position: absolute; top: -200px; right: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(68, 175, 67, 0.2) 0%, transparent 70%);
+  }
+  .cover-decoration::after {
+    content: ''; position: absolute; bottom: -300px; left: -300px;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(26, 130, 162, 0.18) 0%, transparent 70%);
+  }
+  .cover-inner {
+    position: relative; z-index: 2; flex: 1;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 22mm 20mm 18mm;
+  }
+  .cover-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .cover-logo { width: 150px; height: auto; }
+  .cover-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3em;
+    text-transform: uppercase; color: rgba(255, 255, 255, 0.6);
+    border-left: 2px solid var(--green); padding-left: 14px; line-height: 1.5;
+  }
+  .cover-middle { margin-top: 40px; }
+  .cover-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--green); margin-bottom: 18px;
+  }
+  .cover-title {
+    font-size: 58px; font-weight: 800; line-height: 0.98;
+    letter-spacing: -0.02em; margin-bottom: 18px;
+  }
+  .cover-title .accent { color: var(--green); }
+  .cover-subtitle {
+    font-size: 20px; font-weight: 400; line-height: 1.4;
+    color: rgba(255, 255, 255, 0.82); max-width: 420px;
+  }
+  .cover-bottom {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px; padding-top: 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .cover-meta { display: flex; flex-direction: column; gap: 4px; }
+  .cover-meta-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: rgba(255, 255, 255, 0.45);
+  }
+  .cover-meta-value { font-size: 13px; font-weight: 600; color: #fff; }
+  .page-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 14px; margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header-left { display: flex; align-items: center; gap: 12px; }
+  .page-header-mark {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: var(--navy); display: flex; align-items: center;
+    justify-content: center; color: #fff; font-weight: 800; font-size: 13px;
+  }
+  .page-header-text {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink);
+  }
+  .page-header-num {
+    font-size: 10px; font-weight: 600; color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+  .page-footer {
+    position: absolute; bottom: 14mm; left: 20mm; right: 20mm;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 9px; color: var(--muted); font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding-top: 10px; border-top: 1px solid var(--border);
+  }
+  .page-footer .green-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--green); margin: 0 8px;
+  }
+  .section-eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--green-d); margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 34px; font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.015em; color: var(--navy); margin-bottom: 18px;
+  }
+  .section-title .accent { color: var(--green); }
+  .section-lead {
+    font-size: 14px; line-height: 1.6; color: var(--ink);
+    max-width: 520px; margin-bottom: 26px;
+  }
+  .body-text { font-size: 11.5px; line-height: 1.65; color: var(--ink); }
+  .body-text + .body-text { margin-top: 10px; }
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin: 26px 0;
+  }
+  .stat-card {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 14px; background: var(--light);
+  }
+  .stat-value {
+    font-size: 30px; font-weight: 800; color: var(--navy);
+    line-height: 1; letter-spacing: -0.02em;
+  }
+  .stat-value .unit {
+    font-size: 13px; color: var(--muted); font-weight: 600; margin-left: 2px;
+  }
+  .stat-label {
+    margin-top: 8px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+  .feature-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px; margin-top: 12px;
+  }
+  .feature {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 16px 18px; background: #fff; position: relative;
+  }
+  .feature-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 8.5px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--green-d);
+    background: rgba(68, 175, 67, 0.12);
+    padding: 4px 8px; border-radius: 4px; margin-bottom: 10px;
+  }
+  .feature-badge.blue { color: var(--blue); background: rgba(26, 130, 162, 0.12); }
+  .feature-title {
+    font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px;
+  }
+  .feature-desc { font-size: 10.5px; line-height: 1.55; color: var(--muted); }
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 24px; margin-top: 18px;
+  }
+  .col-block h4 {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--green-d); margin-bottom: 10px;
+  }
+  .col-block ul { list-style: none; padding: 0; }
+  .col-block li {
+    font-size: 11px; line-height: 1.5; padding: 4px 0 4px 18px;
+    color: var(--ink); position: relative; border-bottom: 1px solid var(--light);
+  }
+  .col-block li::before {
+    content: ''; position: absolute; left: 0; top: 11px;
+    width: 8px; height: 8px; border-radius: 2px; background: var(--green);
+  }
+  .two-col { page-break-inside: avoid; break-inside: avoid; }
+  .feature { page-break-inside: avoid; break-inside: avoid; }
+  .callout { page-break-inside: avoid; break-inside: avoid; }
+  .spec-table {
+    width: 100%; border-collapse: collapse; margin-top: 10px;
+    font-size: 11px;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .spec-table th, .spec-table td {
+    padding: 7px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .spec-table th {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted); background: var(--light);
+  }
+  .spec-table td { color: var(--ink); }
+  .spec-table td:first-child { font-weight: 700; color: var(--navy); width: 38%; }
+  .size-strip {
+    display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;
+  }
+  .size-chip {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 78px; padding: 14px 14px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-d) 100%);
+    color: #fff; font-weight: 800; font-size: 16px; letter-spacing: -0.01em;
+  }
+  .size-chip .suffix {
+    font-size: 10px; font-weight: 600; opacity: 0.7; margin-left: 2px;
+  }
+  .callout {
+    margin-top: 22px; padding: 18px 20px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(26, 130, 162, 0.08) 0%, rgba(68, 175, 67, 0.06) 100%);
+    border-left: 3px solid var(--green);
+  }
+  .callout-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--green-d); margin-bottom: 6px;
+  }
+  .callout-text { font-size: 12px; line-height: 1.6; color: var(--ink); }
+  .compliance-list { margin-top: 10px; page-break-inside: avoid; break-inside: avoid; }
+  .compliance-row {
+    display: grid; grid-template-columns: 180px 1fr;
+    gap: 14px; padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .compliance-row:first-child { border-top: 1px solid var(--border); }
+  .compliance-code {
+    font-size: 11px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em;
+  }
+  .compliance-desc { font-size: 10.5px; color: var(--ink); line-height: 1.5; }
+  .closing {
+    background: linear-gradient(135deg, var(--light) 0%, #fff 100%);
+    display: flex; flex-direction: column;
+    justify-content: center; text-align: center;
+  }
+  .closing-brand {
+    width: 170px; height: auto;
+    display: block; margin: 0 auto 34px;
+  }
+  .closing-mark {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--green); display: flex; align-items: center;
+    justify-content: center; margin: 0 auto 24px;
+  }
+  .closing-mark svg { width: 28px; height: 28px; fill: #fff; }
+  .closing-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--green-d); margin-bottom: 14px;
+  }
+  .closing-title {
+    font-size: 42px; font-weight: 800; line-height: 1.05;
+    color: var(--navy); margin-bottom: 18px; letter-spacing: -0.02em;
+  }
+  .closing-text {
+    font-size: 14px; line-height: 1.7; color: var(--ink);
+    max-width: 460px; margin: 0 auto 36px;
+  }
+  .contact-card {
+    max-width: 400px; margin: 0 auto; background: #fff;
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; text-align: left;
+  }
+  .contact-row {
+    display: flex; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--light); font-size: 11px;
+  }
+  .contact-row:last-child { border: none; }
+  .contact-row .label { color: var(--muted); font-weight: 600; letter-spacing: 0.05em; }
+  .contact-row .value { color: var(--ink); font-weight: 700; }
+  .print-bar {
+    position: fixed; top: 16px; right: 16px; z-index: 1000;
+    display: flex; gap: 8px;
+  }
+  .print-btn {
+    background: var(--green); color: #fff; border: none;
+    padding: 10px 18px; border-radius: 8px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    font-size: 12px; letter-spacing: 0.05em; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(68, 175, 67, 0.3);
+  }
+  @media print {
+    .print-bar { display: none; }
+    .page { padding: 18mm 18mm 20mm; }
+    .page-header { margin-bottom: 20px; padding-bottom: 10px; }
+    .section-title { font-size: 30px; margin-bottom: 14px; }
+    .section-lead { margin-bottom: 20px; font-size: 13px; }
+    .spec-table th, .spec-table td { padding: 6px 12px; }
+    .compliance-row { padding: 7px 14px; }
+    .col-block li { padding: 3px 0 3px 18px; }
+    .page-footer { bottom: 10mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button class="print-btn" onclick="window.print()">Save as PDF</button>
+</div>
+
+<!-- COVER -->
+<div class="page cover">
+  <div class="cover-decoration"></div>
+  <div class="cover-inner">
+    <div class="cover-top">
+      <img src="../logos/suds/logo-slogan-white.png" alt="SuDS Enviro" class="cover-logo">
+      <div class="cover-tag">Product Data Sheet<br>2026 Edition</div>
+    </div>
+    <div class="cover-middle">
+      <div class="cover-eyebrow">RHINO SERSIC Series</div>
+      <h1 class="cover-title">Surface Water<br>Benched Channelled<br><span class="accent">Inspection Chambers</span></h1>
+      <p class="cover-subtitle">Prefabricated HDPE chambers engineered for efficient stormwater and drainage management, delivered fully assembled and ready to install.</p>
+    </div>
+    <div class="cover-bottom">
+      <div class="cover-meta">
+        <span class="cover-meta-label">Product Range</span>
+        <span class="cover-meta-value">Inspection Chambers</span>
+      </div>
+      <div class="cover-meta">
+        <span class="cover-meta-label">Application</span>
+        <span class="cover-meta-value">Surface Water</span>
+      </div>
+      <div class="cover-meta">
+        <span class="cover-meta-label">Material</span>
+        <span class="cover-meta-value">HDPE One-Piece</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">01</div>
+      <div class="page-header-text">Product Overview</div>
+    </div>
+    <div class="page-header-num">SECTION ONE</div>
+  </div>
+
+  <div class="section-eyebrow">Engineered For Surface Water</div>
+  <h2 class="section-title">A prefabricated chamber<br>for <span class="accent">stormwater that works.</span></h2>
+
+  <p class="section-lead">The RHINO SERSIC Series are prefabricated, factory-built HDPE chambers engineered for efficient stormwater and drainage management. Each chamber features a main channelled base with optional side connections, seamlessly integrating with the wider RHINO adaptor range.</p>
+
+  <div class="body-text">
+    <p>Constructed from High-Density Polyethylene using advanced extrusion and thermoforming technologies, every chamber arrives fully assembled. Suitable for both light-duty and full-traffic loading applications, the range flexes to numerous project requirements without sacrificing structural integrity or hydraulic performance.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">6<span class="unit">sizes</span></div>
+      <div class="stat-label">Chamber Diameters</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">70<span class="unit">% faster</span></div>
+      <div class="stat-label">Vs Sectioned</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">6m<span class="unit">deep</span></div>
+      <div class="stat-label">Max Non-Adopt.</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">300<span class="unit">mm</span></div>
+      <div class="stat-label">Max Pipe Size</div>
+    </div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-top: 22px;">Available Diameters</div>
+  <div class="size-strip">
+    <div class="size-chip">450<span class="suffix">mm</span></div>
+    <div class="size-chip">600<span class="suffix">mm</span></div>
+    <div class="size-chip">750<span class="suffix">mm</span></div>
+    <div class="size-chip">900<span class="suffix">mm</span></div>
+    <div class="size-chip">1050<span class="suffix">mm</span></div>
+    <div class="size-chip">1200<span class="suffix">mm</span></div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">Pipe Compatibility</div>
+    <div class="callout-text">Main channels available in 110, 150, 225 and 300mm. Optional side connections for pipe systems from 110 to 300mm. Full integration with the complete RHINO Base Pipe Adaptor range.</div>
+  </div>
+
+  <div class="page-footer">
+    <span>RHINO SERSIC Series</span>
+    <span class="green-dot"></span>
+    <span>Page 02</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">02</div>
+      <div class="page-header-text">How It Works</div>
+    </div>
+    <div class="page-header-num">SECTION TWO</div>
+  </div>
+
+  <div class="section-eyebrow">Benched Channel Design</div>
+  <h2 class="section-title">Sloped benches guide<br>flow, <span class="accent">not blockages.</span></h2>
+
+  <p class="section-lead">The benched base has sloped surfaces that guide water into the central flow channel, ensuring debris and sediment are directed into the main drainage path rather than settling in corners. The result is smooth, uninterrupted flow and far less maintenance over the chamber's service life.</p>
+
+  <div class="body-text">
+    <p>The central channel follows the profile of the connected drainage pipes, minimising turbulence and enhancing hydraulic efficiency. Stormwater can flow freely through the chamber, even under heavy load, without the risk of sediment buildup. The benched design also makes inspection and cleaning straightforward for maintenance crews.</p>
+  </div>
+
+  <div class="section-eyebrow" style="margin-top: 26px;">Why Specify SERSIC</div>
+
+  <div class="feature-grid">
+    <div class="feature">
+      <span class="feature-badge">Installation</span>
+      <div class="feature-title">Rapid One-Piece Delivery</div>
+      <div class="feature-desc">Factory-assembled units arrive ready for connection and backfill. Up to 70% faster to install than traditional sectioned chambers.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge blue">Connectivity</span>
+      <div class="feature-title">Multi-Inlet Flexibility</div>
+      <div class="feature-desc">Side inlets expand the chamber's role from inspection point to flexible junction for complex drainage networks.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge">Durability</span>
+      <div class="feature-title">Anti-Fracture HDPE Base</div>
+      <div class="feature-desc">Thermoformed base minimises the risk of fractures under load and enables deeper, trouble-free installation.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge blue">Hydraulics</span>
+      <div class="feature-title">Optimised Internal Surfaces</div>
+      <div class="feature-desc">Engineered flow profile reduces blockage risk and keeps the system performing through long service intervals.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge">Resilience</span>
+      <div class="feature-title">Chemical Resistance</div>
+      <div class="feature-desc">Resistant to hydrogen sulphide and a broad range of corrosive acids and bases, for long-term subterranean performance.</div>
+    </div>
+    <div class="feature">
+      <span class="feature-badge blue">Access</span>
+      <div class="feature-title">Above-Ground Maintenance</div>
+      <div class="feature-desc">Minimises the need for deep excavation, making inspection and maintenance safer, quicker and cheaper.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>RHINO SERSIC Series</span>
+    <span class="green-dot"></span>
+    <span>Page 03</span>
+  </div>
+</div>
+
+<!-- SPECS + COMPLIANCE -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-mark">03</div>
+      <div class="page-header-text">Specification and Compliance</div>
+    </div>
+    <div class="page-header-num">SECTION THREE</div>
+  </div>
+
+  <div class="section-eyebrow">Technical Specifications</div>
+  <h2 class="section-title">Every dimension and<br>rating, <span class="accent">on one page.</span></h2>
+
+  <table class="spec-table">
+    <thead>
+      <tr><th>Parameter</th><th>Specification</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Chamber Sizes</td><td>450mm, 600mm, 750mm, 900mm, 1050mm, 1200mm</td></tr>
+      <tr><td>Material</td><td>High-Density Polyethylene (HDPE), extrusion and thermoformed</td></tr>
+      <tr><td>Main Channel Sizes</td><td>110mm, 150mm, 225mm, 300mm</td></tr>
+      <tr><td>Side Connection Range</td><td>110mm to 300mm</td></tr>
+      <tr><td>Load Rating</td><td>Light-duty to full-traffic applications</td></tr>
+      <tr><td>Adoptable Depth</td><td>Up to 3000mm to pipe soffit (DCG / SfA7)</td></tr>
+      <tr><td>Non-Adoptable Depth</td><td>Up to 6000mm to pipe soffit</td></tr>
+      <tr><td>Minimum Fall</td><td>50mm from side inlets to main channel (DCG B &amp; C)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="two-col" style="margin-top: 30px;">
+    <div class="col-block">
+      <h4>Applications</h4>
+      <ul>
+        <li>Surface water drainage inspection</li>
+        <li>Adoptable stormwater systems</li>
+        <li>Non-adoptable residential drainage</li>
+        <li>Commercial and industrial developments</li>
+        <li>Junction for multi-pipe networks</li>
+        <li>Above-ground access and maintenance</li>
+      </ul>
+    </div>
+    <div class="col-block">
+      <h4>Key Benefits</h4>
+      <ul>
+        <li>70% faster installation</li>
+        <li>Anti-fracture thermoformed base</li>
+        <li>Chemical and corrosion resistant</li>
+        <li>Full RHINO adaptor compatibility</li>
+        <li>Light-duty to full-traffic rated</li>
+        <li>Hydraulically optimised flow</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-top: 30px;">Compliance</div>
+
+  <div class="compliance-list">
+    <div class="compliance-row">
+      <div class="compliance-code">EN 13598 Part 2</div>
+      <div class="compliance-desc">European standard for thermoplastic inspection chambers, edition 2009. Full compliance.</div>
+    </div>
+    <div class="compliance-row">
+      <div class="compliance-code">DCG</div>
+      <div class="compliance-desc">Design and Construction Guidance. Suitable for adoptable and non-adoptable drainage systems.</div>
+    </div>
+    <div class="compliance-row">
+      <div class="compliance-code">SfA 7th Edition</div>
+      <div class="compliance-desc">Sewers for Adoption 7th Edition. Compliant for adoptable sewer applications.</div>
+    </div>
+    <div class="compliance-row">
+      <div class="compliance-code">Building Regs Part H1</div>
+      <div class="compliance-desc">UK Building Regulations Part H1 for drainage systems. Fully compliant.</div>
+    </div>
+    <div class="compliance-row">
+      <div class="compliance-code">DCG Parts B &amp; C</div>
+      <div class="compliance-desc">Including minimum 50mm fall from side inlets to the main channel.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>RHINO SERSIC Series</span>
+    <span class="green-dot"></span>
+    <span>Page 04</span>
+  </div>
+</div>
+
+<!-- CLOSING -->
+<div class="page closing">
+  <img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro" class="closing-brand">
+  <div class="closing-mark">
+    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+  </div>
+  <div class="closing-eyebrow">Specify With Confidence</div>
+  <h2 class="closing-title">Engineered, adopted,<br>installed in a day.</h2>
+  <p class="closing-text">The RHINO SERSIC Series delivers fully assembled HDPE inspection chambers that meet every applicable UK and European standard for surface water drainage. Contact our technical team to discuss project-specific configurations.</p>
+  <div class="contact-card">
+    <div class="contact-row">
+      <span class="label">Product</span>
+      <span class="value">RHINO SERSIC Series</span>
+    </div>
+    <div class="contact-row">
+      <span class="label">Manufacturer</span>
+      <span class="value">SuDS Enviro Ltd</span>
+    </div>
+    <div class="contact-row">
+      <span class="label">Enquiries</span>
+      <span class="value">hello@sudsenviro.com</span>
+    </div>
+    <div class="contact-row">
+      <span class="label">Configurator</span>
+      <span class="value">sudsenviro.com</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
