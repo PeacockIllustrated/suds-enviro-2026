@@ -36,6 +36,13 @@ yarn-error.log*
 # spline exports
 /sersic_breakout_scroll
 
+# product reference files (not part of the app)
+/Product Descriptions/
+
+# generated/draft brochures (not committed)
+/public/brochures/
+/public/project-brochure.html
+
 # vercel
 .vercel
 

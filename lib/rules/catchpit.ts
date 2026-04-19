@@ -16,12 +16,13 @@ import type {
   ComplianceResult,
 } from '@/lib/types'
 
-// Re-export chamber rules since catchpit uses the same physical constraints
+// Re-export the position/inlet rules from chamber - shared physical constraints.
+// getMaxDepth is overridden below since SERS/SERDS catchpit data sheets cap
+// depth at 2000mm adoptable / 3000mm non-adoptable (lower than inspection chambers).
 export {
   getMaxInlets,
   getOutletMinSize,
   getBlockedPositions,
-  getMaxDepth,
   getMaxInletPipeSize,
   getAvailableInletSizes,
 } from '@/lib/rules/chamber'
@@ -29,8 +30,15 @@ export {
 import {
   getMaxInlets,
   getOutletMinSize,
-  getMaxDepth,
 } from '@/lib/rules/chamber'
+
+// ── R4: Catchpit Maximum Depth (per SERS/SERDS data sheets) ──
+// Catchpits are capped lower than inspection chambers because of the
+// silt bucket / sediment chamber requiring access for cleaning.
+
+export function getMaxDepth(adoptable: boolean): number {
+  return adoptable ? 2000 : 3000
+}
 
 // ── PIPE SIZE ORDER (ascending) ──────────────────────────────
 
@@ -45,16 +53,21 @@ const PIPE_SIZES: PipeSize[] = [
 const pipeSizeRank = (size: PipeSize): number => PIPE_SIZES.indexOf(size)
 
 // ── CATCHPIT-SPECIFIC: Minimum Sump Depth ────────────────────
+// Bespoke per data sheets - these are sensible defaults shown in the configurator.
+// SERS catchpits (300/450/600 with bucket) have shallower sumps than SERDS.
 
-const SUMP_DEPTH_MAP: Record<Diameter, number> = {
+const SUMP_DEPTH_MAP: Partial<Record<Diameter, number>> = {
+  300: 350,
   450: 450,
   600: 500,
   750: 600,
+  900: 700,
   1050: 750,
+  1200: 800,
 }
 
 export function getMinSumpDepth(diameter: Diameter): number {
-  return SUMP_DEPTH_MAP[diameter]
+  return SUMP_DEPTH_MAP[diameter] ?? 500
 }
 
 // ── HELPER: Extract CatchpitData from WizardState ───────────

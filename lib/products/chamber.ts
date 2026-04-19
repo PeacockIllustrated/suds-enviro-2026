@@ -36,6 +36,7 @@ export const CHAMBER_INITIAL_DATA: ProductData = {
     positions: [],
     pipeSizes: {},
     outletLocked: null,
+    outletPosition: '6',
     flowControl: null,
     flowType: null,
     flowRate: '',
@@ -258,11 +259,12 @@ export function chamberReducer(
         : null
 
       // If outlet was locked, blocked positions may have changed (R3)
-      const blocked = getBlockedPositions(outletLocked)
+      // Use the current outletPosition for accurate blocking.
+      const blocked = getBlockedPositions(outletLocked, data.outletPosition)
 
-      // Filter out any positions that are now blocked
+      // Filter out any positions that are now blocked or sit on the outlet hour
       const validPositions = data.positions.filter(
-        (pos) => !blocked.includes(pos)
+        (pos) => !blocked.includes(pos) && pos !== data.outletPosition
       )
 
       // If reducing inlet count, trim positions to new count
@@ -293,8 +295,28 @@ export function chamberReducer(
       }
     }
 
+    case 'CHAMBER_SET_OUTLET_POSITION': {
+      const newOutletPos = action.payload
+      // Recompute blocked positions for the new outlet location
+      const blocked = getBlockedPositions(data.outletLocked, newOutletPos)
+      // Drop any inlet that now sits on the outlet hour or an adjacent blocked hour
+      const validPositions = data.positions.filter(
+        (pos) => pos !== newOutletPos && !blocked.includes(pos)
+      )
+      return {
+        kind: 'chamber',
+        data: {
+          ...data,
+          outletPosition: newOutletPos,
+          positions: validPositions,
+        },
+      }
+    }
+
     case 'CHAMBER_TOGGLE_POSITION': {
       const pos = action.payload
+      // Outlet hour cannot be selected as an inlet
+      if (pos === data.outletPosition) return productData
       const existing = data.positions.indexOf(pos)
 
       if (existing >= 0) {
@@ -406,9 +428,14 @@ function getSummaryFields(state: WizardState): SummaryField[] {
       value: d.positions.map((p) => `${p} o'clock`).join(', '),
     })
   }
-  if (d.outletLocked) {
-    fields.push({ label: 'Outlet', value: d.outletLocked, locked: true })
-  }
+  // Always show the outlet position. If R2 has locked the size, mark it.
+  fields.push({
+    label: 'Outlet',
+    value: d.outletLocked
+      ? `${d.outletPosition} o'clock - ${d.outletLocked}`
+      : `${d.outletPosition} o'clock`,
+    locked: d.outletLocked !== null,
+  })
   if (d.flowControl !== null) {
     fields.push({
       label: 'Flow Control',
@@ -481,8 +508,8 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
         rows.push({
           label: 'Outlet',
           value: d.outletLocked
-            ? `6 o'clock - ${d.outletLocked} (locked)`
-            : `6 o'clock - Standard`,
+            ? `${d.outletPosition} o'clock - ${d.outletLocked} (locked)`
+            : `${d.outletPosition} o'clock - Standard`,
           highlight: d.outletLocked !== null,
         })
 

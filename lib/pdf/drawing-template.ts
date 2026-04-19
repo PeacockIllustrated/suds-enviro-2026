@@ -15,6 +15,8 @@ export interface DrawingParams {
   pipeSizes: Record<string, string>
   outletSize: string
   outletLocked: boolean
+  // Outlet clock position (one of '3', '5', '6', '7', '9'). Defaults to '6'.
+  outletPosition: string
   systemType: string
   adoptable: boolean
   flowControl: boolean
@@ -253,37 +255,63 @@ function generatePlanView(p: DrawingParams): string {
     lines.push(`<text x="${lblX.toFixed(3)}" y="${(lblY + 3.5).toFixed(3)}" text-anchor="middle" font-size="2.0" class="id-lbl">IN${idx + 1}</text>`)
   })
 
-  // Outlet pipe at 6 o'clock (180 degrees)
+  // Outlet pipe - position derived from outletPosition (default 6 o'clock)
   {
+    const outletHour = parseInt(p.outletPosition || '6')
+    const outletDeg = clockToDegrees(outletHour)
+    const outletAngle = clockToRadians(outletHour)
+    const outletDx = Math.sin(outletAngle)
+    const outletDy = -Math.cos(outletAngle)
+
     const outletMm = pipeSizeMm(p.outletSize)
     const outletR = (outletMm / 2) * scale
     const outLabel = pipeSizeLabel(p.outletSize)
 
-    const startX = cx
-    const startY = cy + extR
+    const startX = cx + outletDx * extR
+    const startY = cy + outletDy * extR
     const pipeLen = 8
-    const endX = cx
-    const endY = startY + pipeLen
+    const endX = startX + outletDx * pipeLen
+    const endY = startY + outletDy * pipeLen
 
-    lines.push(`<line x1="${(cx - outletR).toFixed(3)}" y1="${startY.toFixed(3)}" x2="${(cx - outletR).toFixed(3)}" y2="${endY.toFixed(3)}" class="pw outlet-c"/>`)
-    lines.push(`<line x1="${(cx + outletR).toFixed(3)}" y1="${startY.toFixed(3)}" x2="${(cx + outletR).toFixed(3)}" y2="${endY.toFixed(3)}" class="pw outlet-c"/>`)
-    lines.push(`<line x1="${(cx - outletR).toFixed(3)}" y1="${endY.toFixed(3)}" x2="${(cx + outletR).toFixed(3)}" y2="${endY.toFixed(3)}" class="pw-cap outlet-c"/>`)
+    // Perpendicular direction for pipe walls
+    const px = -outletDy
+    const py = outletDx
+
+    const w1sx = startX + px * outletR
+    const w1sy = startY + py * outletR
+    const w1ex = endX + px * outletR
+    const w1ey = endY + py * outletR
+    const w2sx = startX - px * outletR
+    const w2sy = startY - py * outletR
+    const w2ex = endX - px * outletR
+    const w2ey = endY - py * outletR
+
+    lines.push(`<line x1="${w1sx.toFixed(3)}" y1="${w1sy.toFixed(3)}" x2="${w1ex.toFixed(3)}" y2="${w1ey.toFixed(3)}" class="pw outlet-c"/>`)
+    lines.push(`<line x1="${w2sx.toFixed(3)}" y1="${w2sy.toFixed(3)}" x2="${w2ex.toFixed(3)}" y2="${w2ey.toFixed(3)}" class="pw outlet-c"/>`)
+    lines.push(`<line x1="${w1ex.toFixed(3)}" y1="${w1ey.toFixed(3)}" x2="${w2ex.toFixed(3)}" y2="${w2ey.toFixed(3)}" class="pw-cap outlet-c"/>`)
 
     // Centre line
-    lines.push(`<line x1="${cx}" y1="${(cy + intR - 5).toFixed(3)}" x2="${cx}" y2="${(endY + 22).toFixed(3)}" class="pcl outlet-cl"/>`)
+    const clLen = pipeLen + 22
+    const clEndX = startX + outletDx * clLen
+    const clEndY = startY + outletDy * clLen
+    const clStartX = cx + outletDx * (intR - 5)
+    const clStartY = cy + outletDy * (intR - 5)
+    lines.push(`<line x1="${clStartX.toFixed(3)}" y1="${clStartY.toFixed(3)}" x2="${clEndX.toFixed(3)}" y2="${clEndY.toFixed(3)}" class="pcl outlet-cl"/>`)
 
     // Callout badge
-    const badgeY = endY + 14
+    const badgeX = endX + outletDx * 14
+    const badgeY = endY + outletDy * 14
     const badgeW = 32
     const badgeH = 10.5
-    lines.push(`<rect x="${(cx - badgeW / 2).toFixed(3)}" y="${(badgeY - badgeH / 2).toFixed(3)}" width="${badgeW}" height="${badgeH}" rx="1.5" class="cb-outlet"/>`)
-    lines.push(`<text x="${cx}" y="${(badgeY + 0.8).toFixed(3)}" text-anchor="middle" font-size="3.0" class="cb-dia">${outLabel.diameter}</text>`)
-    lines.push(`<text x="${cx}" y="${(badgeY + 4.5).toFixed(3)}" text-anchor="middle" font-size="2.0" class="cb-std">${outLabel.standard}${p.outletLocked ? '  LOCKED' : ''}</text>`)
+    lines.push(`<rect x="${(badgeX - badgeW / 2).toFixed(3)}" y="${(badgeY - badgeH / 2).toFixed(3)}" width="${badgeW}" height="${badgeH}" rx="1.5" class="cb-outlet"/>`)
+    lines.push(`<text x="${badgeX.toFixed(3)}" y="${(badgeY + 0.8).toFixed(3)}" text-anchor="middle" font-size="3.0" class="cb-dia">${outLabel.diameter}</text>`)
+    lines.push(`<text x="${badgeX.toFixed(3)}" y="${(badgeY + 4.5).toFixed(3)}" text-anchor="middle" font-size="2.0" class="cb-std">${outLabel.standard}${p.outletLocked ? '  LOCKED' : ''}</text>`)
 
-    // Angle and ID labels
-    const lblY = endY + 2
-    lines.push(`<text x="${cx}" y="${lblY.toFixed(3)}" text-anchor="middle" font-size="2.2" class="ang-lbl outlet-t">180\u00B0</text>`)
-    lines.push(`<text x="${cx}" y="${(lblY + 3.5).toFixed(3)}" text-anchor="middle" font-size="2.0" class="id-lbl outlet-t">OUT</text>`)
+    // Angle and ID labels near pipe
+    const lblX = startX + outletDx * 2
+    const lblY = startY + outletDy * 2
+    lines.push(`<text x="${lblX.toFixed(3)}" y="${lblY.toFixed(3)}" text-anchor="middle" font-size="2.2" class="ang-lbl outlet-t">${outletDeg.toFixed(0)}\u00B0</text>`)
+    lines.push(`<text x="${lblX.toFixed(3)}" y="${(lblY + 3.5).toFixed(3)}" text-anchor="middle" font-size="2.0" class="id-lbl outlet-t">OUT</text>`)
   }
 
   // Section line A-A
@@ -468,8 +496,9 @@ function generateElevation(p: DrawingParams): string {
     lines.push(`<line x1="${(wallLeft - 8).toFixed(3)}" y1="${outletCentreY.toFixed(3)}" x2="${(wallLeft - 13).toFixed(3)}" y2="${outletCentreY.toFixed(3)}" class="farr"/>`)
     lines.push(`<polygon points="${(wallLeft - 15.5).toFixed(3)},${outletCentreY} ${(wallLeft - 13).toFixed(3)},${(outletCentreY - 0.8).toFixed(3)} ${(wallLeft - 13).toFixed(3)},${(outletCentreY + 0.8).toFixed(3)}" class="darrow"/>`)
 
-    // Label
-    lines.push(`<text x="${(wallLeft - 11).toFixed(3)}" y="${(outletCentreY + 1).toFixed(3)}" text-anchor="end" font-size="2.4" class="out-lbl">OUT  \u00D8${outletMm} ${p.outletSize.includes('Twinwall') ? 'TW' : 'EN1401'}</text>`)
+    // Label - includes the chosen outlet clock position
+    const outPos = p.outletPosition || '6'
+    lines.push(`<text x="${(wallLeft - 11).toFixed(3)}" y="${(outletCentreY + 1).toFixed(3)}" text-anchor="end" font-size="2.4" class="out-lbl">OUT  \u00D8${outletMm} ${p.outletSize.includes('Twinwall') ? 'TW' : 'EN1401'}  @ ${outPos} O'CLOCK</text>`)
     lines.push(`<text x="${(wallLeft - 11).toFixed(3)}" y="${(outletCentreY + 5).toFixed(3)}" text-anchor="end" font-size="2.0" class="out-sub">${p.outletLocked ? 'RULE-ENGINE LOCKED' : ''}</text>`)
   }
 

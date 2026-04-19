@@ -12,6 +12,7 @@ import type {
   DepthMm,
   PipeSize,
   ClockPosition,
+  OutletPosition,
   FlowType,
   ChamberBaseFields,
 } from '@/lib/types'
@@ -106,6 +107,15 @@ export function getOutletLockedValue(state: WizardState): PipeSize | null {
   return null
 }
 
+export function getOutletPositionValue(state: WizardState): OutletPosition {
+  const d = asRecord(state)
+  if (!d) return '6'
+  if ('outletPosition' in d && d.outletPosition !== undefined) {
+    return d.outletPosition as OutletPosition
+  }
+  return '6'
+}
+
 export function getPipeSizesValue(state: WizardState): Record<string, PipeSize> {
   const d = asRecord(state)
   if (!d) return {}
@@ -193,6 +203,17 @@ export function getTogglePositionActionType(product: ProductId | null): TogglePo
   switch (product) {
     case 'catchpit': return 'CATCHPIT_TOGGLE_POSITION'
     default: return 'CHAMBER_TOGGLE_POSITION'
+  }
+}
+
+type OutletPositionActionType =
+  | 'CHAMBER_SET_OUTLET_POSITION'
+  | 'CATCHPIT_SET_OUTLET_POSITION'
+
+export function getOutletPositionActionType(product: ProductId | null): OutletPositionActionType {
+  switch (product) {
+    case 'catchpit': return 'CATCHPIT_SET_OUTLET_POSITION'
+    default: return 'CHAMBER_SET_OUTLET_POSITION'
   }
 }
 

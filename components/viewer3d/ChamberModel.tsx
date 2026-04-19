@@ -9,6 +9,7 @@ import {
   getPositionsValue,
   getPipeSizesValue,
   getOutletLockedValue,
+  getOutletPositionValue,
 } from '@/components/wizard/steps/helpers'
 
 // Scale factor: 1 unit = 100mm
@@ -37,6 +38,7 @@ export function ChamberModel() {
   const positions = getPositionsValue(state)
   const pipeSizes = getPipeSizesValue(state)
   const outletLocked = getOutletLockedValue(state)
+  const outletPosition = getOutletPositionValue(state)
 
   const diameter = diameterVal * SCALE
   const radius = diameter / 2
@@ -156,9 +158,10 @@ export function ChamberModel() {
         )
       })}
 
-      {/* Outlet pipe at 6 o'clock */}
+      {/* Outlet pipe at the chosen outlet position */}
       {(() => {
-        const angle = clockToAngle(6)
+        const outletHour = parseInt(outletPosition)
+        const angle = clockToAngle(outletHour)
         const dx = Math.sin(angle)
         const dz = Math.cos(angle)
         const pipeY = -totalHeight / 2 + SUMP_HEIGHT + 50 * SCALE

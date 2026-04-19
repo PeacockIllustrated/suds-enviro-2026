@@ -7,19 +7,25 @@ import {
   getInletCountValue,
   getPositionsValue,
   getOutletLockedValue,
+  getOutletPositionValue,
   getTogglePositionActionType,
+  getOutletPositionActionType,
 } from './helpers'
-import type { ClockPosition, WizardAction } from '@/lib/types'
+import type { ClockPosition, OutletPosition, WizardAction } from '@/lib/types'
 
-// All positions except 6 (outlet)
-const ALL_POSITIONS: ClockPosition[] = [
-  '12', '1', '2', '3', '4', '5', '7', '8', '9', '10', '11',
+// All 12 clock hours - the outlet hour is excluded dynamically based on
+// the user's outlet position selection.
+const ALL_HOURS: ClockPosition[] = [
+  '12', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
 ]
 
-const CLOCK_SIZE = 210
+// Outlet is offered at five manufactured positions only.
+const OUTLET_OPTIONS: OutletPosition[] = ['3', '5', '6', '7', '9']
+
+const CLOCK_SIZE = 230
 const CENTER = CLOCK_SIZE / 2
-const RING_RADIUS = 72
-const NODE_SIZE = 40
+const RING_RADIUS = 80
+const NODE_SIZE = 38
 
 function getNodePosition(hour: number): { left: string; top: string } {
   const angleRad = ((hour / 12) * 360) * (Math.PI / 180)
@@ -37,17 +43,49 @@ export function ClockFace() {
   const inletCount = getInletCountValue(state) ?? 0
   const positions = getPositionsValue(state)
   const outletLocked = getOutletLockedValue(state)
-  const actionType = getTogglePositionActionType(state.product)
+  const outletPosition = getOutletPositionValue(state)
+  const toggleAction = getTogglePositionActionType(state.product)
+  const outletAction = getOutletPositionActionType(state.product)
   const placed = positions.length
-  const blocked = getBlockedPositions(outletLocked)
-
-  const subheading = `Tap ${inletCount} position${inletCount > 1 ? 's' : ''} on the clock face.`
+  const blocked = getBlockedPositions(outletLocked, outletPosition)
 
   return (
     <>
-      <p className="mb-5 -mt-4 text-xs font-normal leading-relaxed text-muted">
-        {subheading}
+      <p className="mb-4 -mt-4 text-xs font-normal leading-relaxed text-muted">
+        Choose where the outlet exits, then place each inlet on the clock face.
       </p>
+
+      {/* Outlet position selector */}
+      <div className="mb-4">
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-muted">
+          Outlet position
+        </div>
+        <div className="grid grid-cols-5 gap-1.5">
+          {OUTLET_OPTIONS.map((opt) => {
+            const selected = outletPosition === opt
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() =>
+                  dispatch({
+                    type: outletAction,
+                    payload: opt,
+                  } as WizardAction)
+                }
+                className={`rounded-lg border-[1.5px] py-2 text-center text-xs font-bold transition-all
+                  ${selected
+                    ? 'border-green border-2 bg-green/10 text-green-d shadow-[0_2px_8px_rgba(68,175,67,0.2)]'
+                    : 'border-border bg-white text-muted hover:border-green/40'
+                  }
+                `}
+              >
+                {opt} o&apos;clock
+              </button>
+            )
+          })}
+        </div>
+      </div>
 
       <div className="flex flex-col items-center">
         {/* Counter badge */}
@@ -71,9 +109,7 @@ export function ClockFace() {
           {/* Dashed inner ring */}
           <div
             className="absolute rounded-full border border-dashed border-navy/12"
-            style={{
-              inset: 16,
-            }}
+            style={{ inset: 16 }}
           />
 
           {/* Centre hub */}
@@ -85,8 +121,8 @@ export function ClockFace() {
             </span>
           </div>
 
-          {/* Position nodes */}
-          {ALL_POSITIONS.map((pos) => {
+          {/* Position nodes - render all 12 except the outlet hour */}
+          {ALL_HOURS.filter((h) => h !== outletPosition).map((pos) => {
             const hour = parseInt(pos)
             const { left, top } = getNodePosition(hour)
             const isInlet = positions.includes(pos)
@@ -98,7 +134,7 @@ export function ClockFace() {
                 type="button"
                 onClick={() =>
                   dispatch({
-                    type: actionType,
+                    type: toggleAction,
                     payload: pos,
                   } as WizardAction)
                 }
@@ -125,9 +161,9 @@ export function ClockFace() {
             )
           })}
 
-          {/* Outlet node at 6 o'clock */}
+          {/* Outlet node at the chosen position */}
           {(() => {
-            const { left, top } = getNodePosition(6)
+            const { left, top } = getNodePosition(parseInt(outletPosition))
             return (
               <div
                 className="absolute flex items-center justify-center rounded-full border-green-d bg-green text-[8px] font-bold text-white shadow-[0_2px_8px_rgba(68,175,67,0.35)]"
@@ -159,6 +195,12 @@ export function ClockFace() {
             <div className="h-3 w-3 rounded-full border-green-d bg-green" />
             Outlet
           </div>
+          {blocked.length > 0 && (
+            <div className="flex items-center gap-1.5 text-[11px] text-muted">
+              <div className="h-3 w-3 rounded-full border-border bg-light" />
+              Blocked
+            </div>
+          )}
         </div>
       </div>
     </>

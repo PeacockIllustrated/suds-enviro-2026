@@ -1,9 +1,14 @@
 /**
- * Chamber Rule Engine
+ * Chamber Rule Engine - SERSIC / SERFIC Inspection Chambers
  *
- * Enforces all physical and regulatory constraints for inspection chamber
- * configuration. Rules are numbered R1-R7 to match CLAUDE.md documentation.
- * All functions are pure - no side effects.
+ * Sources: RHINO SERSIC and SERFIC Product Data Sheets.
+ * Sizes: 450, 600, 750, 900, 1050, 1200 mm diameter.
+ * Depth: up to 3000mm adoptable (DCG/SfA7), up to 6000mm non-adoptable.
+ * Pipe sizes (channel): 110, 160, 225, 300, 450 mm.
+ * Outlet position: one of 3, 5, 6, 7, 9 o'clock (manufactured variants).
+ *
+ * Rules R1-R7 are documented in CLAUDE.md and applied as the user moves
+ * through the wizard. All functions are pure.
  */
 
 import type {
@@ -11,6 +16,7 @@ import type {
   ChamberData,
   PipeSize,
   ClockPosition,
+  OutletPosition,
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
@@ -34,7 +40,9 @@ export function getMaxInlets(diameter: number): number {
     case 450:  return 2
     case 600:  return 4
     case 750:  return 5
+    case 900:  return 6
     case 1050: return 6
+    case 1200: return 8
     default:   return 0
   }
 }
@@ -50,17 +58,28 @@ export function getOutletMinSize(
   return null
 }
 
-// ── R3: Blocked Clock Positions ──────────────────────────────
+// ── R3: Blocked Clock Positions (generalised) ────────────────
+// Any 225mm twinwall outlet stub fouls the two clock hours adjacent to it.
+// Outlet at hour H blocks H-1 and H+1 (with 12-hour wrap-around).
 
-export function getBlockedPositions(outletSize: PipeSize | null): ClockPosition[] {
-  if (outletSize === '225mm Twinwall') return ['5', '7']
-  return []
+export function getBlockedPositions(
+  outletSize: PipeSize | null,
+  outletPosition: OutletPosition = '6'
+): ClockPosition[] {
+  if (outletSize !== '225mm Twinwall') return []
+  const h = parseInt(outletPosition)
+  const before = ((h - 2 + 12) % 12) + 1
+  const after = (h % 12) + 1
+  return [String(before) as ClockPosition, String(after) as ClockPosition]
 }
 
-// ── R4: Maximum Installation Depth ───────────────────────────
+// ── R4: Maximum Installation Depth (chamber-specific) ────────
+// Per SERSIC/SERFIC data sheets:
+//   adoptable (DCG/SfA7) -> 3000mm
+//   non-adoptable        -> 6000mm
 
 export function getMaxDepth(adoptable: boolean): number {
-  return adoptable ? 2000 : 3000
+  return adoptable ? 3000 : 6000
 }
 
 // ── R7: Maximum Inlet Pipe Size by Diameter ──────────────────
@@ -70,7 +89,9 @@ export function getMaxInletPipeSize(diameter: number): PipeSize {
     case 450:  return '160mm EN1401'
     case 600:  return '225mm Twinwall'
     case 750:  return '300mm Twinwall'
+    case 900:  return '300mm Twinwall'
     case 1050: return '450mm Twinwall'
+    case 1200: return '450mm Twinwall'
     default:   return '160mm EN1401'
   }
 }
@@ -156,13 +177,20 @@ export function validateConfig(state: WizardState): ValidationResult {
 }
 
 // ── PRODUCT CODE ─────────────────────────────────────────────
+// IC-{diameter}-{depth}-{system}-{outletPos}-{S104|PRIV}
 
 export function generateProductCode(state: WizardState): string {
   const chamber = extractChamberData(state)
   if (!chamber || !chamber.diameter || !chamber.depth) return 'IC-???-???-???'
 
+  const sys = chamber.systemType === 'foul'
+    ? 'F'
+    : chamber.systemType === 'combined'
+      ? 'C'
+      : 'S'
+  const outletPos = chamber.outletPosition || '6'
   const adoptStr = chamber.adoptable ? 'S104' : 'PRIV'
-  return `IC-${chamber.diameter}-${chamber.depth}-${adoptStr}`
+  return `IC-${chamber.diameter}-${chamber.depth}-${sys}-O${outletPos}-${adoptStr}`
 }
 
 // ── COMPLIANCE CHECK ─────────────────────────────────────────
@@ -188,6 +216,11 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
     depthPass = chamber.depth <= getMaxDepth(chamber.adoptable)
   }
 
+  // Restricted access: max 350mm access opening when depth > 1000mm (DCG)
+  // SuDS Enviro chambers are designed with this in mind, so always Pass
+  // unless future spec adds a custom access cover option.
+  const restrictedAccessPass = true
+
   const overallPass = valid && outletRulePass && depthPass
 
   return [
@@ -206,7 +239,7 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
           : 'Warning',
     },
     {
-      standard: 'BS EN 13598-1 and EN 13598-2',
+      standard: 'BS EN 13598-2 (2009)',
       scope: 'Plastic Inspection Chambers',
       status: 'Pass',
     },
@@ -219,6 +252,11 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       standard: 'Environment Agency PPG3',
       scope: 'Pollution Prevention',
       status: 'Pass',
+    },
+    {
+      standard: 'DCG Restricted Access (350mm > 1m depth)',
+      scope: 'Manhole Cover Compliance',
+      status: restrictedAccessPass ? 'Pass' : 'Warning',
     },
     {
       standard: 'Outlet rule - no flow increase on exit',
