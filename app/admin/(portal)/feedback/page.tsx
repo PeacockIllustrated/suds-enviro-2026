@@ -86,7 +86,7 @@ const CATEGORY_OPTIONS = [
   'feature',
   'general',
 ]
-const AUTHOR_OPTIONS = ['', 'Sean', 'Mark']
+const AUTHOR_OPTIONS = ['', 'Sean', 'Mark', 'Test']
 
 function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString('en-GB', {

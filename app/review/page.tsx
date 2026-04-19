@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Lock, User } from 'lucide-react'
 
-const REVIEWERS = ['Sean', 'Mark']
+const REVIEWERS = ['Sean', 'Mark', 'Test']
 
 export default function ReviewLoginPage() {
   const router = useRouter()
