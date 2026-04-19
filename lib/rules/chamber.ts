@@ -5,7 +5,10 @@
  * Sizes: 450, 600, 750, 900, 1050, 1200 mm diameter.
  * Depth: up to 3000mm adoptable (DCG/SfA7), up to 6000mm non-adoptable.
  * Pipe sizes (channel): 110, 160, 225, 300, 450 mm.
- * Outlet position: one of 3, 5, 6, 7, 9 o'clock (manufactured variants).
+ *
+ * Outlet position is fixed at 12 o'clock (north).
+ * Inlets are physically manufactured at 5 clock positions only:
+ *   3, 5, 6, 7, 9 o'clock - so an inlet count cannot exceed 5.
  *
  * Rules R1-R7 are documented in CLAUDE.md and applied as the user moves
  * through the wizard. All functions are pure.
@@ -16,10 +19,15 @@ import type {
   ChamberData,
   PipeSize,
   ClockPosition,
-  OutletPosition,
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
+
+// ── INLET POSITION CONSTRAINT ────────────────────────────────
+// Only 5 manufactured inlet positions. Outlet is fixed at 12.
+
+export const VALID_INLET_POSITIONS: ClockPosition[] = ['3', '5', '6', '7', '9']
+export const MAX_INLETS_PHYSICAL = VALID_INLET_POSITIONS.length
 
 // ── PIPE SIZE ORDER (ascending) ──────────────────────────────
 
@@ -34,17 +42,21 @@ const PIPE_SIZES: PipeSize[] = [
 const pipeSizeRank = (size: PipeSize): number => PIPE_SIZES.indexOf(size)
 
 // ── R1: Maximum Inlets by Diameter ───────────────────────────
+// Capped by both the diameter (data sheet) and the physical limit of
+// 5 manufactured inlet positions on the chamber wall.
 
 export function getMaxInlets(diameter: number): number {
+  let byDiameter: number
   switch (diameter) {
-    case 450:  return 2
-    case 600:  return 4
-    case 750:  return 5
-    case 900:  return 6
-    case 1050: return 6
-    case 1200: return 8
-    default:   return 0
+    case 450:  byDiameter = 2; break
+    case 600:  byDiameter = 4; break
+    case 750:  byDiameter = 5; break
+    case 900:  byDiameter = 5; break
+    case 1050: byDiameter = 5; break
+    case 1200: byDiameter = 5; break
+    default:   byDiameter = 0
   }
+  return Math.min(byDiameter, MAX_INLETS_PHYSICAL)
 }
 
 // ── R2: Outlet Minimum Size ──────────────────────────────────
@@ -58,19 +70,16 @@ export function getOutletMinSize(
   return null
 }
 
-// ── R3: Blocked Clock Positions (generalised) ────────────────
-// Any 225mm twinwall outlet stub fouls the two clock hours adjacent to it.
-// Outlet at hour H blocks H-1 and H+1 (with 12-hour wrap-around).
+// ── R3: Blocked Clock Positions (no-op) ──────────────────────
+// Outlet is fixed at 12 o'clock; the five valid inlet positions
+// (3, 5, 6, 7, 9) are all in the lower half of the chamber and are not
+// physically affected by the outlet stub size. Retained as a hook for
+// future product variants.
 
 export function getBlockedPositions(
-  outletSize: PipeSize | null,
-  outletPosition: OutletPosition = '6'
+  _outletSize: PipeSize | null
 ): ClockPosition[] {
-  if (outletSize !== '225mm Twinwall') return []
-  const h = parseInt(outletPosition)
-  const before = ((h - 2 + 12) % 12) + 1
-  const after = (h % 12) + 1
-  return [String(before) as ClockPosition, String(after) as ClockPosition]
+  return []
 }
 
 // ── R4: Maximum Installation Depth (chamber-specific) ────────
@@ -177,7 +186,7 @@ export function validateConfig(state: WizardState): ValidationResult {
 }
 
 // ── PRODUCT CODE ─────────────────────────────────────────────
-// IC-{diameter}-{depth}-{system}-{outletPos}-{S104|PRIV}
+// IC-{diameter}-{depth}-{system}-{S104|PRIV}
 
 export function generateProductCode(state: WizardState): string {
   const chamber = extractChamberData(state)
@@ -188,9 +197,8 @@ export function generateProductCode(state: WizardState): string {
     : chamber.systemType === 'combined'
       ? 'C'
       : 'S'
-  const outletPos = chamber.outletPosition || '6'
   const adoptStr = chamber.adoptable ? 'S104' : 'PRIV'
-  return `IC-${chamber.diameter}-${chamber.depth}-${sys}-O${outletPos}-${adoptStr}`
+  return `IC-${chamber.diameter}-${chamber.depth}-${sys}-${adoptStr}`
 }
 
 // ── COMPLIANCE CHECK ─────────────────────────────────────────

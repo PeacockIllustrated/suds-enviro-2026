@@ -15,8 +15,6 @@ export interface DrawingParams {
   pipeSizes: Record<string, string>
   outletSize: string
   outletLocked: boolean
-  // Outlet clock position (one of '3', '5', '6', '7', '9'). Defaults to '6'.
-  outletPosition: string
   systemType: string
   adoptable: boolean
   flowControl: boolean
@@ -255,9 +253,9 @@ function generatePlanView(p: DrawingParams): string {
     lines.push(`<text x="${lblX.toFixed(3)}" y="${(lblY + 3.5).toFixed(3)}" text-anchor="middle" font-size="2.0" class="id-lbl">IN${idx + 1}</text>`)
   })
 
-  // Outlet pipe - position derived from outletPosition (default 6 o'clock)
+  // Outlet pipe fixed at 12 o'clock (north)
   {
-    const outletHour = parseInt(p.outletPosition || '6')
+    const outletHour = 12
     const outletDeg = clockToDegrees(outletHour)
     const outletAngle = clockToRadians(outletHour)
     const outletDx = Math.sin(outletAngle)
@@ -496,9 +494,8 @@ function generateElevation(p: DrawingParams): string {
     lines.push(`<line x1="${(wallLeft - 8).toFixed(3)}" y1="${outletCentreY.toFixed(3)}" x2="${(wallLeft - 13).toFixed(3)}" y2="${outletCentreY.toFixed(3)}" class="farr"/>`)
     lines.push(`<polygon points="${(wallLeft - 15.5).toFixed(3)},${outletCentreY} ${(wallLeft - 13).toFixed(3)},${(outletCentreY - 0.8).toFixed(3)} ${(wallLeft - 13).toFixed(3)},${(outletCentreY + 0.8).toFixed(3)}" class="darrow"/>`)
 
-    // Label - includes the chosen outlet clock position
-    const outPos = p.outletPosition || '6'
-    lines.push(`<text x="${(wallLeft - 11).toFixed(3)}" y="${(outletCentreY + 1).toFixed(3)}" text-anchor="end" font-size="2.4" class="out-lbl">OUT  \u00D8${outletMm} ${p.outletSize.includes('Twinwall') ? 'TW' : 'EN1401'}  @ ${outPos} O'CLOCK</text>`)
+    // Label - outlet is fixed at 12 o'clock
+    lines.push(`<text x="${(wallLeft - 11).toFixed(3)}" y="${(outletCentreY + 1).toFixed(3)}" text-anchor="end" font-size="2.4" class="out-lbl">OUT  \u00D8${outletMm} ${p.outletSize.includes('Twinwall') ? 'TW' : 'EN1401'}  @ 12 O'CLOCK</text>`)
     lines.push(`<text x="${(wallLeft - 11).toFixed(3)}" y="${(outletCentreY + 5).toFixed(3)}" text-anchor="end" font-size="2.0" class="out-sub">${p.outletLocked ? 'RULE-ENGINE LOCKED' : ''}</text>`)
   }
 

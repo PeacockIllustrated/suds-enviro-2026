@@ -62,7 +62,6 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     pipeSizes: (chamberData.pipeSizes || {}) as Record<string, string>,
     outletSize,
     outletLocked: chamberData.outletLocked !== null && chamberData.outletLocked !== undefined,
-    outletPosition: (chamberData.outletPosition || '6') as string,
     systemType: chamberData.systemType || 'surface',
     adoptable: chamberData.adoptable ?? false,
     flowControl: chamberData.flowControl ?? false,

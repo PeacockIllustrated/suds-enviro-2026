@@ -73,10 +73,10 @@ SuDS Enviro manufactures HDPE / GRP / MDPE drainage products. The configurator h
 
 | Term | Definition |
 |---|---|
-| Diameter | External chamber diameter (mm): 450, 600, 750, 1050 |
-| Depth | Shaft depth to pipe soffit (mm): 1000, 1500, 2000, 2500, 3000 |
-| Inlet | Incoming pipe connection (multiple allowed) |
-| Outlet | Outgoing pipe connection (always 1, always at 6 o'clock) |
+| Diameter | External chamber diameter (mm): 450, 600, 750, 900, 1050, 1200 (per SERSIC/SERFIC data sheets) |
+| Depth | Shaft depth to pipe soffit (mm): 1000-6000 in 500mm increments |
+| Inlet | Incoming pipe connection - manufactured at 5 clock positions only (3, 5, 6, 7, 9). Max 5 inlets total |
+| Outlet | Outgoing pipe connection (always 1, fixed at 12 o'clock / north) |
 | Sump | Sediment collection zone below outlet (always 350mm) |
 | Clock position | Pipe position expressed as hour on a clock face (12 = North) |
 | Angle from North | Clock position converted to degrees clockwise from 12 o'clock |
@@ -97,10 +97,12 @@ The rule engine runs client-side and enforces physical and regulatory constraint
 450mm  → max 2 inlets
 600mm  → max 4 inlets
 750mm  → max 5 inlets
-900mm  → max 6 inlets
-1050mm → max 6 inlets
-1200mm → max 8 inlets
+900mm  → max 5 inlets   (diameter cap higher, but capped to 5 by physical positions)
+1050mm → max 5 inlets   (diameter cap higher, but capped to 5 by physical positions)
+1200mm → max 5 inlets   (diameter cap higher, but capped to 5 by physical positions)
 ```
+Hard ceiling of **5** total inlets because only 5 inlet positions are
+manufactured on the chamber wall (3, 5, 6, 7, 9 o'clock).
 When diameter changes, if current inletCount exceeds new max: reset inletCount, positions, pipeSizes, outletLocked.
 
 #### R2: Outlet Minimum Size
@@ -110,15 +112,12 @@ inletCount >= 4 (any diameter)        → outlet min Ø225mm Twinwall
 ```
 Trigger: on inletCount selection. Lock outlet size. Show inline warning before user proceeds.
 
-#### R3: Blocked Clock Positions (generalised)
-```
-outlet === Ø225mm Twinwall → block the two clock hours adjacent to the outlet
-                              (e.g. outlet at 6 -> blocks 5 and 7;
-                                    outlet at 3 -> blocks 2 and 4;
-                                    outlet at 9 -> blocks 8 and 10)
-```
-Positions adjacent to the outlet stub are physically blocked by the pipe body.
-The function signature is `getBlockedPositions(outletSize, outletPosition)`.
+#### R3: Blocked Clock Positions (no-op for current product range)
+With the outlet fixed at 12 o'clock and inlets only manufactured at 3, 5, 6,
+7, 9 o'clock, no inlet position is physically affected by a 225mm twinwall
+outlet stub. `getBlockedPositions(outletSize)` returns an empty array. The
+hook is retained so future product variants with a different outlet location
+can plug in their own blocking logic.
 
 #### R4: Max Installation Depth (per data sheets, product-specific)
 ```
@@ -133,12 +132,11 @@ Catchpit (SERS/SERDS):
 Each product's rule module exports its own `getMaxDepth`. Disable depth options
 that exceed the limit for the selected product and adoption status.
 
-#### R5: Outlet Position (manufactured variants)
-The outlet exits at one of five clock positions: **3, 5, 6, 7, or 9 o'clock**.
-6 o'clock (straight through) is the default. The user picks the outlet position
-on the clock-face step before selecting inlet positions. Display the outlet as a
-green locked node at the chosen hour. Inlets cannot be placed on the outlet hour
-or on positions blocked by R3.
+#### R5: Outlet Position (fixed)
+The outlet is fixed at **12 o'clock** (north / 0 degrees) for every chamber.
+It is not user-selectable. Display it on the clock face as a green locked node.
+Inlet positions are constrained to **3, 5, 6, 7, 9** o'clock - the outlet hour
+is never an inlet candidate.
 
 #### R6: No Flow Increase on Exit
 Inlet pipe sizes cannot exceed the outlet pipe size. If the outlet is locked to Ø225mm, inlets cannot be set to Ø300mm or Ø450mm. Enforce in the pipe size picker.
@@ -159,7 +157,7 @@ Inlet pipe sizes cannot exceed the outlet pipe size. If the outlet is locked to 
 // lib/rule-engine.ts
 export function getMaxInlets(diameter: number): number
 export function getOutletMinSize(inletCount: number, diameter: number): PipeSize | null
-export function getBlockedPositions(outletSize: PipeSize | null, outletPosition?: OutletPosition): ClockPosition[]
+export function getBlockedPositions(outletSize: PipeSize | null): ClockPosition[]
 export function getMaxDepth(adoptable: boolean): number  // product-specific
 export function getMaxInletPipeSize(diameter: number): PipeSize
 export function validateConfig(state: WizardState): ValidationResult

@@ -38,14 +38,12 @@ export type Diameter = 300 | 450 | 600 | 750 | 900 | 1050 | 1200 | 1800 | 2500
 // non-adoptable per SERSIC/SERFIC data sheets. Other products cap lower.
 export type DepthMm = 1000 | 1500 | 2000 | 2500 | 3000 | 3500 | 4000 | 4500 | 5000 | 5500 | 6000
 
-// All 12 clock hours. Outlet may sit at any one of OutletPosition.
-export type ClockPosition =
-  | '1' | '2' | '3' | '4' | '5' | '6'
-  | '7' | '8' | '9' | '10' | '11' | '12'
+// Inlets are physically manufactured at five clock positions only.
+// The outlet is fixed at 12 o'clock (north) and is not part of this set.
+export type ClockPosition = '3' | '5' | '6' | '7' | '9'
 
-// Outlet is constrained to these five positions per manufacturing options:
-// straight through (6), 30 deg either side (5/7), perpendicular (3/9).
-export type OutletPosition = '3' | '5' | '6' | '7' | '9'
+// Constant for the fixed outlet hour - kept as a clock-face reference.
+export const OUTLET_HOUR = 12
 
 export type PipeSize =
   | '110mm EN1401'
@@ -58,7 +56,8 @@ export type FlowType = 'Vortex' | 'Orifice plate'
 
 // ── PRODUCT-SPECIFIC DATA ────────────────────────────────────
 
-// Shared base for chamber-like products (chamber + catchpit)
+// Shared base for chamber-like products (chamber + catchpit).
+// Outlet is fixed at 12 o'clock - not part of the data model.
 export interface ChamberBaseFields {
   systemType: SystemType | null
   diameter: Diameter | null
@@ -66,9 +65,6 @@ export interface ChamberBaseFields {
   positions: ClockPosition[]
   pipeSizes: Record<string, PipeSize>
   outletLocked: PipeSize | null
-  // Outlet position on the clock face. Defaults to 6 o'clock (straight through).
-  // Constrained to the five manufactured outlet variants.
-  outletPosition: OutletPosition
   flowControl: boolean | null
   flowType: FlowType | null
   flowRate: string
@@ -253,7 +249,6 @@ export type ChamberAction =
   | { type: 'CHAMBER_SET_DIAMETER'; payload: Diameter }
   | { type: 'CHAMBER_SET_INLET_COUNT'; payload: number }
   | { type: 'CHAMBER_TOGGLE_POSITION'; payload: ClockPosition }
-  | { type: 'CHAMBER_SET_OUTLET_POSITION'; payload: OutletPosition }
   | { type: 'CHAMBER_SET_PIPE_SIZE'; payload: { slot: string; size: PipeSize } }
   | { type: 'CHAMBER_SET_FLOW_CONTROL'; payload: boolean }
   | { type: 'CHAMBER_SET_FLOW_TYPE'; payload: FlowType }
@@ -268,7 +263,6 @@ export type CatchpitAction =
   | { type: 'CATCHPIT_SET_DIAMETER'; payload: Diameter }
   | { type: 'CATCHPIT_SET_INLET_COUNT'; payload: number }
   | { type: 'CATCHPIT_TOGGLE_POSITION'; payload: ClockPosition }
-  | { type: 'CATCHPIT_SET_OUTLET_POSITION'; payload: OutletPosition }
   | { type: 'CATCHPIT_SET_PIPE_SIZE'; payload: { slot: string; size: PipeSize } }
   | { type: 'CATCHPIT_SET_DEPTH'; payload: DepthMm }
   | { type: 'CATCHPIT_SET_ADOPTABLE'; payload: boolean }

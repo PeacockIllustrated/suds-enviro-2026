@@ -39,7 +39,6 @@ export const CATCHPIT_INITIAL_DATA: ProductData = {
     positions: [],
     pipeSizes: {},
     outletLocked: null,
-    outletPosition: '6',
     flowControl: null,
     flowType: null,
     flowRate: '',
@@ -316,11 +315,9 @@ export function catchpitReducer(
         ? getOutletMinSize(newCount, data.diameter)
         : null
 
-      // R3: blocked positions may have changed (account for outlet position)
-      const blocked = getBlockedPositions(outletLocked, data.outletPosition)
-      const validPositions = data.positions.filter(
-        (pos) => !blocked.includes(pos) && pos !== data.outletPosition
-      )
+      // R3 is a no-op when outlet is fixed at 12
+      const blocked = getBlockedPositions(outletLocked)
+      const validPositions = data.positions.filter((pos) => !blocked.includes(pos))
       const trimmedPositions = validPositions.slice(0, newCount)
 
       // Clean pipe sizes
@@ -347,25 +344,8 @@ export function catchpitReducer(
       }
     }
 
-    case 'CATCHPIT_SET_OUTLET_POSITION': {
-      const newOutletPos = action.payload
-      const blocked = getBlockedPositions(data.outletLocked, newOutletPos)
-      const validPositions = data.positions.filter(
-        (pos) => pos !== newOutletPos && !blocked.includes(pos)
-      )
-      return {
-        kind: 'catchpit',
-        data: {
-          ...data,
-          outletPosition: newOutletPos,
-          positions: validPositions,
-        },
-      }
-    }
-
     case 'CATCHPIT_TOGGLE_POSITION': {
       const pos = action.payload
-      if (pos === data.outletPosition) return productData
       const existing = data.positions.indexOf(pos)
 
       if (existing >= 0) {
@@ -465,8 +445,8 @@ function getSummaryFields(state: WizardState): SummaryField[] {
   fields.push({
     label: 'Outlet',
     value: d.outletLocked
-      ? `${d.outletPosition} o'clock - ${d.outletLocked}`
-      : `${d.outletPosition} o'clock`,
+      ? `12 o'clock - ${d.outletLocked}`
+      : `12 o'clock`,
     locked: d.outletLocked !== null,
   })
   if (d.baffleType) {
@@ -539,8 +519,8 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
         rows.push({
           label: 'Outlet',
           value: d.outletLocked
-            ? `${d.outletPosition} o'clock - ${d.outletLocked} (locked)`
-            : `${d.outletPosition} o'clock - Standard`,
+            ? `12 o'clock - ${d.outletLocked} (locked)`
+            : `12 o'clock - Standard`,
           highlight: d.outletLocked !== null,
         })
 
