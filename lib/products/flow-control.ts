@@ -16,6 +16,7 @@ import type {
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
 import {
+  isVariantDiameter,
   generateProductCode as fcGenerateProductCode,
   generateCompliance as fcGenerateCompliance,
 } from '@/lib/rules/flow-control'
@@ -25,6 +26,7 @@ import {
 export const FLOW_CONTROL_INITIAL_DATA: ProductData = {
   kind: 'flow-control',
   data: {
+    variant: null,
     systemType: null,
     application: null,
     headDepthMm: '',
@@ -36,6 +38,7 @@ export const FLOW_CONTROL_INITIAL_DATA: ProductData = {
 // -- STEP IDS ---------------------------------------------------------
 
 export const FLOW_CONTROL_STEP_IDS = [
+  'fc-variant',
   'fc-system-type',
   'fc-application',
   'head-depth',
@@ -63,6 +66,16 @@ function systemTypeLabel(val: string | null): string {
   }
 }
 
+// -- HELPER: Variant display label ------------------------------------
+
+function variantLabel(val: string | null): string {
+  switch (val) {
+    case 'SERF':  return 'SERF - Orifice (300/450/600mm)'
+    case 'ROTEX': return 'ROTEX - Vortex (600-1200mm)'
+    default:      return '-'
+  }
+}
+
 // -- HELPER: Application display label --------------------------------
 
 function applicationLabel(val: string | null): string {
@@ -78,6 +91,17 @@ function applicationLabel(val: string | null): string {
 // -- STEP DEFINITIONS -------------------------------------------------
 
 const flowControlSteps: StepDefinition[] = [
+  {
+    id: 'fc-variant',
+    label: 'Series',
+    heading: 'Flow Control Series',
+    subheading: 'SERF uses a fixed orifice plate (300-600mm). ROTEX uses a passive vortex regulator (600-1200mm).',
+    component: null as unknown as ComponentType,
+    canProceed: (state: WizardState) => {
+      const d = getFlowControlData(state)
+      return d !== null && d.variant !== null
+    },
+  },
   {
     id: 'fc-system-type',
     label: 'System Type',
@@ -115,11 +139,15 @@ const flowControlSteps: StepDefinition[] = [
     id: 'discharge-rate',
     label: 'Discharge Rate',
     heading: 'Discharge Rate',
-    subheading: 'Enter the required discharge rate in litres per second.',
+    subheading:
+      'For ROTEX, enter the required discharge rate. For SERF this is calculated from head and orifice and may be left blank.',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getFlowControlData(state)
-      return d !== null && d.dischargeRateLs !== ''
+      if (!d) return false
+      // SERF derives discharge from head + orifice, so it's optional
+      if (d.variant === 'SERF') return true
+      return d.dischargeRateLs !== ''
     },
   },
   {
@@ -146,6 +174,21 @@ export function flowControlReducer(
   const data = productData.data
 
   switch (action.type) {
+    case 'FC_SET_VARIANT': {
+      const newVariant = action.payload
+      // Reset diameter if it's no longer valid for the new variant
+      const keepDiameter = data.chamberDiameter !== null
+        && isVariantDiameter(newVariant, data.chamberDiameter)
+      return {
+        kind: 'flow-control',
+        data: {
+          ...data,
+          variant: newVariant,
+          chamberDiameter: keepDiameter ? data.chamberDiameter : null,
+        },
+      }
+    }
+
     case 'FC_SET_SYSTEM':
       return {
         kind: 'flow-control',
@@ -189,6 +232,9 @@ function getSummaryFields(state: WizardState): SummaryField[] {
 
   const fields: SummaryField[] = []
 
+  if (d.variant) {
+    fields.push({ label: 'Series', value: d.variant })
+  }
   if (d.systemType) {
     fields.push({ label: 'System', value: systemTypeLabel(d.systemType) })
   }
@@ -196,7 +242,7 @@ function getSummaryFields(state: WizardState): SummaryField[] {
     fields.push({ label: 'Application', value: applicationLabel(d.application) })
   }
   if (d.headDepthMm) {
-    fields.push({ label: 'Head Depth', value: `${d.headDepthMm}mm` })
+    fields.push({ label: 'Design Head', value: `${d.headDepthMm}mm` })
   }
   if (d.dischargeRateLs) {
     fields.push({ label: 'Discharge Rate', value: `${d.dischargeRateLs} L/s` })
@@ -219,10 +265,11 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
         const d = getFlowControlData(s)
         if (!d) return []
         return [
+          { label: 'Series', value: variantLabel(d.variant) },
           { label: 'System Type', value: systemTypeLabel(d.systemType) },
           { label: 'Application', value: applicationLabel(d.application) },
-          { label: 'Head Depth', value: d.headDepthMm ? `${d.headDepthMm}mm` : '-' },
-          { label: 'Discharge Rate', value: d.dischargeRateLs ? `${d.dischargeRateLs} L/s` : '-' },
+          { label: 'Design Head', value: d.headDepthMm ? `${d.headDepthMm}mm` : '-' },
+          { label: 'Discharge Rate', value: d.dischargeRateLs ? `${d.dischargeRateLs} L/s` : (d.variant === 'SERF' ? 'Calculated from head' : '-') },
           { label: 'Chamber Diameter', value: d.chamberDiameter ? `${d.chamberDiameter}mm` : '-' },
         ]
       },

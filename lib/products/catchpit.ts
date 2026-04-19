@@ -22,6 +22,7 @@ import {
   getBlockedPositions,
   getMaxDepth,
   getAvailableInletSizes,
+  isVariantDiameter,
   generateProductCode as catchpitGenerateProductCode,
   generateCompliance as catchpitGenerateCompliance,
 } from '@/lib/rules/catchpit'
@@ -31,6 +32,7 @@ import {
 export const CATCHPIT_INITIAL_DATA: ProductData = {
   kind: 'catchpit',
   data: {
+    variant: null,
     systemType: null,
     diameter: null,
     inletCount: null,
@@ -51,6 +53,7 @@ export const CATCHPIT_INITIAL_DATA: ProductData = {
 // -- STEP IDS ---------------------------------------------------------
 
 export const CATCHPIT_STEP_IDS = [
+  'catchpit-variant',
   'system-type',
   'diameter',
   'inlet-count',
@@ -67,6 +70,16 @@ export type CatchpitStepId = (typeof CATCHPIT_STEP_IDS)[number]
 function getCatchpitData(state: WizardState): CatchpitData | null {
   if (!state.productData || state.productData.kind !== 'catchpit') return null
   return state.productData.data
+}
+
+// -- HELPER: Variant display label -----------------------------------
+
+function variantLabel(val: string | null): string {
+  switch (val) {
+    case 'SERS':  return 'SERS - With Silt Bucket (300/450/600mm)'
+    case 'SERDS': return 'SERDS - Built-in Settling (450-1200mm)'
+    default:      return '-'
+  }
 }
 
 // -- HELPER: System type display label --------------------------------
@@ -104,6 +117,17 @@ function grateTypeLabel(val: string | null): string {
 // -- STEP DEFINITIONS -------------------------------------------------
 
 const catchpitSteps: StepDefinition[] = [
+  {
+    id: 'catchpit-variant',
+    label: 'Series',
+    heading: 'Catchpit Series',
+    subheading: 'SERS uses a removable silt bucket (300-600mm). SERDS uses built-in settling chambers (450-1200mm).',
+    component: null as unknown as ComponentType,
+    canProceed: (state: WizardState) => {
+      const d = getCatchpitData(state)
+      return d !== null && d.variant !== null
+    },
+  },
   {
     id: 'system-type',
     label: 'System Type',
@@ -209,6 +233,31 @@ export function catchpitReducer(
   const data = productData.data
 
   switch (action.type) {
+    case 'CATCHPIT_SET_VARIANT': {
+      const newVariant = action.payload
+      // If the current diameter isn't valid for the new variant, reset
+      // diameter and downstream pipework state.
+      const keepDiameter = data.diameter !== null && isVariantDiameter(newVariant, data.diameter)
+      if (!keepDiameter && data.diameter !== null) {
+        return {
+          kind: 'catchpit',
+          data: {
+            ...data,
+            variant: newVariant,
+            diameter: null,
+            inletCount: null,
+            positions: [],
+            pipeSizes: {},
+            outletLocked: null,
+          },
+        }
+      }
+      return {
+        kind: 'catchpit',
+        data: { ...data, variant: newVariant },
+      }
+    }
+
     case 'CATCHPIT_SET_SYSTEM':
       return {
         kind: 'catchpit',
@@ -395,6 +444,9 @@ function getSummaryFields(state: WizardState): SummaryField[] {
 
   const fields: SummaryField[] = []
 
+  if (d.variant) {
+    fields.push({ label: 'Series', value: d.variant })
+  }
   if (d.systemType) {
     fields.push({ label: 'System', value: systemTypeLabel(d.systemType) })
   }
@@ -441,12 +493,13 @@ function getSummaryFields(state: WizardState): SummaryField[] {
 function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
   return [
     {
-      title: 'Chamber',
+      title: 'Catchpit',
       editStep: 1,
       fields: (s: WizardState) => {
         const d = getCatchpitData(s)
         if (!d) return []
         return [
+          { label: 'Series', value: variantLabel(d.variant) },
           { label: 'System Type', value: systemTypeLabel(d.systemType) },
           { label: 'Diameter', value: d.diameter ? `${d.diameter}mm` : '-' },
           {

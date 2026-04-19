@@ -4,14 +4,21 @@ import { useWizardContext } from '../WizardContext'
 import { SizeCard } from '@/components/ui/SizeCard'
 import { AlertBox } from '@/components/ui/AlertBox'
 import { getDiameterValue, getDiameterActionType } from './helpers'
-import type { Diameter as DiameterVal, WizardAction } from '@/lib/types'
+import { getVariantDiameters as getCatchpitVariantDiameters } from '@/lib/rules/catchpit'
+import { getVariantDiameters as getFCVariantDiameters } from '@/lib/rules/flow-control'
+import type {
+  Diameter as DiameterVal,
+  WizardAction,
+  CatchpitVariant,
+  FlowControlVariant,
+} from '@/lib/types'
 
-const diameters: DiameterVal[] = [450, 600, 750, 900, 1050, 1200]
 
 const diameterInfo: Partial<Record<
   DiameterVal,
   { maxInlets: number; maxPipe: string }
 >> = {
+  300:  { maxInlets: 1, maxPipe: '110mm' },
   450:  { maxInlets: 2, maxPipe: '160mm' },
   600:  { maxInlets: 4, maxPipe: '225mm' },
   750:  { maxInlets: 5, maxPipe: '300mm' },
@@ -20,10 +27,23 @@ const diameterInfo: Partial<Record<
   1200: { maxInlets: 8, maxPipe: '450mm' },
 }
 
+// Default chamber diameters (no SERS-style 300mm)
+const chamberDiameters: DiameterVal[] = [450, 600, 750, 900, 1050, 1200]
+
 export function Diameter() {
   const { state, dispatch } = useWizardContext()
   const diameter = getDiameterValue(state)
   const actionType = getDiameterActionType(state.product)
+
+  // Available diameters depend on product (and variant where applicable).
+  let diameters: DiameterVal[] = chamberDiameters
+  if (state.product === 'catchpit' && state.productData?.kind === 'catchpit') {
+    const variant = state.productData.data.variant as CatchpitVariant | null
+    diameters = getCatchpitVariantDiameters(variant)
+  } else if (state.product === 'flow-control' && state.productData?.kind === 'flow-control') {
+    const variant = state.productData.data.variant as FlowControlVariant | null
+    diameters = getFCVariantDiameters(variant)
+  }
 
   return (
     <>

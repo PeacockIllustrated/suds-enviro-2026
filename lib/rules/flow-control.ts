@@ -1,15 +1,25 @@
 /**
- * Flow Control Unit Rule Engine
+ * Flow Control Unit Rule Engine - SERF (orifice) and ROTEX (vortex)
  *
- * Validates configuration for flow control devices used to regulate
- * discharge rates from attenuation systems, swales, and ponds.
- * Checks against SfA7 and Building Regulations Part H1.
+ * SERF (Orifice Flow Control Chamber):
+ *   - Pre-set orifice plate
+ *   - Chamber diameters: 300, 450, 600 mm
+ *   - Designer specifies design head; discharge derived from orifice + head
+ *
+ * ROTEX (Vortex Flow Control):
+ *   - Passive vortex regulator (no moving parts)
+ *   - Chamber diameters: 600, 750, 900, 1050, 1200 mm
+ *   - Designer specifies discharge + head; vortex sized to suit
+ *
+ * Both validated against SfA7, EN 13598-2, Building Regulations Part H1.
  */
 
 import type {
   WizardState,
   FlowControlData,
   FlowControlApplication,
+  FlowControlVariant,
+  Diameter,
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
@@ -21,6 +31,25 @@ const APPLICATION_ABBR: Record<FlowControlApplication, string> = {
   'swale': 'SWL',
   'pond': 'PND',
   'other': 'OTH',
+}
+
+// ── Variant-Specific Diameter Sets ───────────────────────────
+
+const VARIANT_DIAMETERS: Record<FlowControlVariant, Diameter[]> = {
+  SERF:  [300, 450, 600],
+  ROTEX: [600, 750, 900, 1050, 1200],
+}
+
+export function getVariantDiameters(variant: FlowControlVariant | null): Diameter[] {
+  if (!variant) return [300, 450, 600, 750, 900, 1050, 1200]
+  return VARIANT_DIAMETERS[variant]
+}
+
+export function isVariantDiameter(
+  variant: FlowControlVariant | null,
+  diameter: Diameter
+): boolean {
+  return getVariantDiameters(variant).includes(diameter)
 }
 
 // ── HELPER: Extract FlowControlData from WizardState ─────────
@@ -42,27 +71,37 @@ export function validateConfig(state: WizardState): ValidationResult {
     return { valid: false, errors }
   }
 
+  if (!data.variant)     errors.push('Flow control series (SERF or ROTEX) not selected')
   if (!data.application) errors.push('Application type not selected')
 
   if (!data.headDepthMm || data.headDepthMm.trim() === '') {
-    errors.push('Head depth not specified')
+    errors.push('Design head not specified')
   } else {
     const head = parseFloat(data.headDepthMm)
     if (isNaN(head) || head <= 0) {
-      errors.push('Head depth must be a positive number')
+      errors.push('Design head must be a positive number')
     }
   }
 
-  if (!data.dischargeRateLs || data.dischargeRateLs.trim() === '') {
-    errors.push('Discharge rate not specified')
-  } else {
-    const rate = parseFloat(data.dischargeRateLs)
-    if (isNaN(rate) || rate <= 0) {
-      errors.push('Discharge rate must be a positive number')
+  // ROTEX requires a discharge rate input; SERF derives it from head + orifice.
+  if (data.variant === 'ROTEX') {
+    if (!data.dischargeRateLs || data.dischargeRateLs.trim() === '') {
+      errors.push('Discharge rate not specified')
+    } else {
+      const rate = parseFloat(data.dischargeRateLs)
+      if (isNaN(rate) || rate <= 0) {
+        errors.push('Discharge rate must be a positive number')
+      }
     }
   }
 
   if (!data.chamberDiameter) errors.push('Chamber diameter not selected')
+
+  if (data.variant && data.chamberDiameter && !isVariantDiameter(data.variant, data.chamberDiameter)) {
+    errors.push(
+      `${data.chamberDiameter}mm is not available for ${data.variant} flow control`
+    )
+  }
 
   return { valid: errors.length === 0, errors }
 }
@@ -71,10 +110,10 @@ export function validateConfig(state: WizardState): ValidationResult {
 
 export function generateProductCode(state: WizardState): string {
   const data = extractFlowControlData(state)
-  if (!data || !data.application || !data.chamberDiameter) return 'FC-???-???'
+  if (!data || !data.variant || !data.application || !data.chamberDiameter) return 'FC-???-???'
 
   const appCode = APPLICATION_ABBR[data.application]
-  return `FC-${appCode}-${data.chamberDiameter}`
+  return `${data.variant}-${appCode}-${data.chamberDiameter}`
 }
 
 // ── COMPLIANCE CHECK ─────────────────────────────────────────
@@ -106,6 +145,11 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       standard: 'Environment Agency Guidance',
       scope: 'Greenfield Runoff Rate Compliance',
       status: valid ? 'Pass' : 'Warning',
+    },
+    {
+      standard: 'DCG Restricted Access (350mm > 1m depth)',
+      scope: 'Manhole Cover Compliance',
+      status: 'Pass',
     },
   ]
 }

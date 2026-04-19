@@ -60,12 +60,14 @@ No emojis anywhere. Use SVG icons (Lucide React) throughout.
 
 ## Product Domain
 
-SuDS Enviro manufactures HDPE rotationally moulded drainage chambers. The configurator handles:
+SuDS Enviro manufactures HDPE / GRP / MDPE drainage products. The configurator handles:
 
-- **Inspection Chamber** (primary product, fully built in Phase 1)
-- **Catchpit / Silt Trap** (Phase 4)
-- **RhinoCeptor** oil separator (Phase 4)
-- **Flow Control** unit (Phase 4)
+- **Inspection Chamber** (RHINO SERSIC / SERFIC) - HDPE, 450/600/750/900/1050/1200 mm
+- **Catchpit / Silt Trap** - SERS (300/450/600 with bucket) and SERDS (450-1200 with built-in settling)
+- **Flow Control** - SERF (orifice, 300/450/600 mm) and ROTEX (vortex, 600-1200 mm)
+- **RHINO SEHDS Hydrodynamic Separator** - GRP, 750/1200/1800/2500 mm, 360-degree inlet, optional RHINO POD
+- **RHINOLIFT Pumping Station** - MDPE/GRP, 600-1200 mm wet wells, EN 12050-1
+- **Grease Trap, Grease Separator, RhinoPod, Rainwater, Septic Tank, Drawpit** - additional product paths
 
 ### Chamber Terminology
 

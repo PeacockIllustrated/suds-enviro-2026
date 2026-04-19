@@ -1,8 +1,12 @@
 /**
- * RhinoCeptor Oil Separator Product Configuration
+ * RHINO SEHDS Hydrodynamic Separator Product Configuration
  *
- * Defines the product config, sub-reducer, and step definitions
- * for the RhinoCeptor oil/water separator product.
+ * One-piece GRP separator for stormwater pollutant removal.
+ * Diameters 750/1200/1800/2500 mm. 360-degree inlet positioning.
+ * Optional RHINO POD polishing filter.
+ *
+ * Internal product id retained as `rhinoceptor` for backward compatibility
+ * with saved configurations and admin URLs.
  */
 
 import type { ComponentType } from 'react'
@@ -13,11 +17,14 @@ import type {
   WizardAction,
   SummaryField,
   ReviewBlockDef,
+  SEHDSApplication,
+  SEHDSDiameter,
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
 import {
   generateProductCode as rhinoGenerateProductCode,
   generateCompliance as rhinoGenerateCompliance,
+  SEHDS_MITIGATION,
 } from '@/lib/rules/rhinoceptor'
 
 // -- INITIAL DATA -----------------------------------------------------
@@ -26,8 +33,11 @@ export const RHINOCEPTOR_INITIAL_DATA: ProductData = {
   kind: 'rhinoceptor',
   data: {
     variant: null,
+    sehdsDiameter: null,
+    inletAngleDeg: null,
     drainageAreaM2: '',
     flowRateLs: '',
+    rhinoPodAddOn: null,
     retentionVolumeLitres: '',
     rhinoClass: null,
   },
@@ -36,29 +46,33 @@ export const RHINOCEPTOR_INITIAL_DATA: ProductData = {
 // -- STEP IDS ---------------------------------------------------------
 
 export const RHINOCEPTOR_STEP_IDS = [
-  'variant-select',
-  'drainage-area',
-  'flow-sizing',
-  'class-select',
+  'sehds-application',
+  'sehds-diameter',
+  'sehds-inlet-angle',
+  'sehds-drainage-area',
+  'sehds-flow-rate',
+  'sehds-pod-addon',
 ] as const
 
 export type RhinoCeptorStepId = (typeof RHINOCEPTOR_STEP_IDS)[number]
 
-// -- HELPER: Extract RhinoCeptorData ----------------------------------
+// -- HELPER: Extract data --------------------------------------------
 
 function getRhinoData(state: WizardState): RhinoCeptorData | null {
   if (!state.productData || state.productData.kind !== 'rhinoceptor') return null
   return state.productData.data
 }
 
-// -- HELPER: Variant display label ------------------------------------
+// -- HELPER: Application display label --------------------------------
 
-function variantLabel(val: string | null): string {
+function applicationLabel(val: string | null): string {
   switch (val) {
-    case 'forecourt':       return 'Forecourt'
-    case 'full-retention':  return 'Full Retention'
-    case 'bypass':          return 'Bypass'
-    default:                return '-'
+    case 'highway':     return 'Highway Drainage'
+    case 'commercial':  return 'Commercial / Retail'
+    case 'industrial':  return 'Industrial Site'
+    case 'forecourt':   return 'Petrol Forecourt'
+    case 'other':       return 'Other'
+    default:            return '-'
   }
 }
 
@@ -66,10 +80,10 @@ function variantLabel(val: string | null): string {
 
 const rhinoSteps: StepDefinition[] = [
   {
-    id: 'variant-select',
-    label: 'Variant',
-    heading: 'RhinoCeptor Variant',
-    subheading: 'Select the type of oil separator required.',
+    id: 'sehds-application',
+    label: 'Application',
+    heading: 'Application Context',
+    subheading: 'Where will this hydrodynamic separator be installed?',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRhinoData(state)
@@ -77,10 +91,32 @@ const rhinoSteps: StepDefinition[] = [
     },
   },
   {
-    id: 'drainage-area',
+    id: 'sehds-diameter',
+    label: 'Diameter',
+    heading: 'Separator Diameter',
+    subheading: 'Choose the GRP separator diameter (750-2500 mm).',
+    component: null as unknown as ComponentType,
+    canProceed: (state: WizardState) => {
+      const d = getRhinoData(state)
+      return d !== null && d.sehdsDiameter !== null
+    },
+  },
+  {
+    id: 'sehds-inlet-angle',
+    label: 'Inlet',
+    heading: 'Inlet Angle',
+    subheading: 'SEHDS supports 360-degree inlet positioning. Enter the angle clockwise from north (0-359 degrees).',
+    component: null as unknown as ComponentType,
+    canProceed: (state: WizardState) => {
+      const d = getRhinoData(state)
+      return d !== null && d.inletAngleDeg !== null
+    },
+  },
+  {
+    id: 'sehds-drainage-area',
     label: 'Drainage Area',
     heading: 'Drainage Area',
-    subheading: 'Enter the total impermeable drainage area in square metres.',
+    subheading: 'Enter the total impermeable area discharging to this separator (m2).',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRhinoData(state)
@@ -88,10 +124,10 @@ const rhinoSteps: StepDefinition[] = [
     },
   },
   {
-    id: 'flow-sizing',
-    label: 'Flow Sizing',
-    heading: 'Flow Rate and Retention',
-    subheading: 'Enter the design flow rate for the separator.',
+    id: 'sehds-flow-rate',
+    label: 'Flow Rate',
+    heading: 'Treatment Flow Rate',
+    subheading: 'Enter the design treatment flow rate (L/s).',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRhinoData(state)
@@ -99,14 +135,14 @@ const rhinoSteps: StepDefinition[] = [
     },
   },
   {
-    id: 'class-select',
-    label: 'Class',
-    heading: 'Separator Class',
-    subheading: 'Select the environmental class for this installation.',
+    id: 'sehds-pod-addon',
+    label: 'POD Add-on',
+    heading: 'RHINO POD Add-on',
+    subheading: 'Add a RHINO POD polishing filter for removal of 33 WFD priority substances?',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRhinoData(state)
-      return d !== null && d.rhinoClass !== null
+      return d !== null && d.rhinoPodAddOn !== null
     },
   },
 ]
@@ -125,8 +161,23 @@ export function rhinoceptorReducer(
     case 'RHINO_SET_VARIANT':
       return {
         kind: 'rhinoceptor',
-        data: { ...data, variant: action.payload },
+        data: { ...data, variant: action.payload as SEHDSApplication },
       }
+
+    case 'RHINO_SET_DIAMETER':
+      return {
+        kind: 'rhinoceptor',
+        data: { ...data, sehdsDiameter: action.payload as SEHDSDiameter },
+      }
+
+    case 'RHINO_SET_INLET_ANGLE': {
+      const raw = action.payload
+      const norm = ((raw % 360) + 360) % 360 // wrap to 0-359
+      return {
+        kind: 'rhinoceptor',
+        data: { ...data, inletAngleDeg: norm },
+      }
+    }
 
     case 'RHINO_SET_DRAINAGE_AREA':
       return {
@@ -140,6 +191,13 @@ export function rhinoceptorReducer(
         data: { ...data, flowRateLs: action.payload },
       }
 
+    case 'RHINO_SET_POD_ADDON':
+      return {
+        kind: 'rhinoceptor',
+        data: { ...data, rhinoPodAddOn: action.payload },
+      }
+
+    // Legacy actions accepted but no-op (data fields removed from wizard).
     case 'RHINO_SET_RETENTION':
       return {
         kind: 'rhinoceptor',
@@ -166,17 +224,27 @@ function getSummaryFields(state: WizardState): SummaryField[] {
   const fields: SummaryField[] = []
 
   if (d.variant) {
-    fields.push({ label: 'Variant', value: variantLabel(d.variant) })
+    fields.push({ label: 'Application', value: applicationLabel(d.variant) })
+  }
+  if (d.sehdsDiameter) {
+    fields.push({ label: 'Diameter', value: `${d.sehdsDiameter}mm GRP` })
+  }
+  if (d.inletAngleDeg !== null) {
+    fields.push({ label: 'Inlet Angle', value: `${d.inletAngleDeg}\u00B0 from N` })
   }
   if (d.drainageAreaM2) {
     fields.push({ label: 'Drainage Area', value: `${d.drainageAreaM2} m2` })
   }
   if (d.flowRateLs) {
-    fields.push({ label: 'Flow Rate', value: `${d.flowRateLs} L/s` })
+    fields.push({ label: 'Treatment Flow', value: `${d.flowRateLs} L/s` })
   }
-  if (d.rhinoClass !== null) {
-    fields.push({ label: 'Class', value: `Class ${d.rhinoClass}` })
+  if (d.rhinoPodAddOn !== null) {
+    fields.push({ label: 'RHINO POD', value: d.rhinoPodAddOn ? 'Included' : 'Not included' })
   }
+  fields.push({
+    label: 'Mitigation Index',
+    value: `${SEHDS_MITIGATION.suspendedSolids}-${SEHDS_MITIGATION.hydrocarbons}-${SEHDS_MITIGATION.debris} (SS/HC/Debris)`,
+  })
 
   return fields
 }
@@ -186,17 +254,26 @@ function getSummaryFields(state: WizardState): SummaryField[] {
 function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
   return [
     {
-      title: 'RhinoCeptor Configuration',
+      title: 'Hydrodynamic Separator',
       editStep: 1,
       fields: (s: WizardState) => {
         const d = getRhinoData(s)
         if (!d) return []
         return [
-          { label: 'Variant', value: variantLabel(d.variant) },
+          { label: 'Application', value: applicationLabel(d.variant) },
+          { label: 'Diameter (GRP)', value: d.sehdsDiameter ? `${d.sehdsDiameter}mm` : '-' },
+          { label: 'Inlet Angle', value: d.inletAngleDeg !== null ? `${d.inletAngleDeg}\u00B0 from N` : '-' },
           { label: 'Drainage Area', value: d.drainageAreaM2 ? `${d.drainageAreaM2} m2` : '-' },
-          { label: 'Flow Rate', value: d.flowRateLs ? `${d.flowRateLs} L/s` : '-' },
-          { label: 'Retention Volume', value: d.retentionVolumeLitres ? `${d.retentionVolumeLitres} L` : '-' },
-          { label: 'Class', value: d.rhinoClass !== null ? `Class ${d.rhinoClass}` : '-' },
+          { label: 'Treatment Flow', value: d.flowRateLs ? `${d.flowRateLs} L/s` : '-' },
+          {
+            label: 'RHINO POD',
+            value: d.rhinoPodAddOn === null ? '-' : d.rhinoPodAddOn ? 'Included' : 'Not included',
+            highlight: d.rhinoPodAddOn === true,
+          },
+          {
+            label: 'Mitigation Indices',
+            value: `SS ${SEHDS_MITIGATION.suspendedSolids} | HC ${SEHDS_MITIGATION.hydrocarbons} | Debris ${SEHDS_MITIGATION.debris}`,
+          },
         ]
       },
     },
@@ -207,8 +284,8 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 
 export const rhinoceptorConfig: ProductConfig = {
   id: 'rhinoceptor',
-  name: 'RhinoCeptor',
-  subtitle: 'Oil/water separator for pollution prevention',
+  name: 'RHINO SEHDS Hydrodynamic Separator',
+  subtitle: 'GRP stormwater pollutant removal (SS/HC/Debris)',
   category: 'stormwater',
   icon: 'rhinoceptor',
   steps: rhinoSteps,

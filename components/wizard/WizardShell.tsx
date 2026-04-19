@@ -27,12 +27,17 @@ import { Output } from './steps/Output'
 
 // Product-specific step components
 import { SiltOptions } from './steps/catchpit/SiltOptions'
-import { VariantSelect } from './steps/rhinoceptor/VariantSelect'
-import { DrainageArea } from './steps/rhinoceptor/DrainageArea'
-import { ClassSelect } from './steps/rhinoceptor/ClassSelect'
+import { CatchpitVariantSelect } from './steps/catchpit/CatchpitVariantSelect'
+import { SEHDSApplicationSelect } from './steps/rhinoceptor/SEHDSApplicationSelect'
+import { SEHDSDiameter } from './steps/rhinoceptor/SEHDSDiameter'
+import { SEHDSInletAngle } from './steps/rhinoceptor/SEHDSInletAngle'
+import { SEHDSDrainageArea } from './steps/rhinoceptor/SEHDSDrainageArea'
+import { SEHDSFlowRate } from './steps/rhinoceptor/SEHDSFlowRate'
+import { SEHDSPodAddon } from './steps/rhinoceptor/SEHDSPodAddon'
 import { ApplicationType } from './steps/flow-control/ApplicationType'
 import { HeadDepth } from './steps/flow-control/HeadDepth'
 import { DischargeRate } from './steps/flow-control/DischargeRate'
+import { FCVariantSelect } from './steps/flow-control/FCVariantSelect'
 import { PumpFlow } from './steps/pump-station/PumpFlow'
 import { PumpHead } from './steps/pump-station/PumpHead'
 import { ControllerConfig } from './steps/pump-station/ControllerConfig'
@@ -97,14 +102,18 @@ const STEP_COMPONENT_MAP: Record<string, ComponentType | null> = {
 
   // Catchpit-specific
   'silt-options': SiltOptions,
+  'catchpit-variant': CatchpitVariantSelect,
 
-  // RhinoCeptor-specific
-  'variant-select': VariantSelect,
-  'drainage-area': DrainageArea,
-  'flow-sizing': ClassSelect,
-  'class-select': ClassSelect,
+  // RHINO SEHDS Hydrodynamic Separator
+  'sehds-application': SEHDSApplicationSelect,
+  'sehds-diameter': SEHDSDiameter,
+  'sehds-inlet-angle': SEHDSInletAngle,
+  'sehds-drainage-area': SEHDSDrainageArea,
+  'sehds-flow-rate': SEHDSFlowRate,
+  'sehds-pod-addon': SEHDSPodAddon,
 
   // Flow Control product-specific
+  'fc-variant': FCVariantSelect,
   'fc-system-type': SystemType,
   'fc-application': ApplicationType,
   'head-depth': HeadDepth,

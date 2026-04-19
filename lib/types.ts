@@ -81,25 +81,55 @@ export interface ChamberData extends ChamberBaseFields {}
 export type BaffleType = 'none' | 'internal' | 'external'
 export type GrateType = 'hinged' | 'sealed'
 
+// Catchpit product variants per data sheets:
+// SERS  - 300/450/600 mm with removable silt bucket (primary + secondary)
+// SERDS - 450/600/750/900/1050/1200 mm with built-in settling chambers
+export type CatchpitVariant = 'SERS' | 'SERDS'
+
 export interface CatchpitData extends ChamberBaseFields {
+  variant: CatchpitVariant | null
   baffleType: BaffleType | null
   grateType: GrateType | null
 }
 
-export type RhinoVariant = 'forecourt' | 'full-retention' | 'bypass'
+// SEHDS Hydrodynamic Separator - per RHINO SEHDS data sheet.
+// One-piece GRP unit with 360-degree inlet positioning.
+// Mitigation indices: 5-4-5 (SS / Hydrocarbons / Debris).
+export type SEHDSDiameter = 750 | 1200 | 1800 | 2500
+// Inlet position is a free angle in degrees (0-359) clockwise from north,
+// per the data sheet's 360-degree inlet positioning capability.
+export type SEHDSApplication = 'highway' | 'commercial' | 'industrial' | 'forecourt' | 'other'
+
+// Type aliases retained for legacy saved configs.
+export type RhinoVariant = SEHDSApplication
 export type RhinoClass = 1 | 2
 
 export interface RhinoCeptorData {
-  variant: RhinoVariant | null
+  // Application context (was variant in legacy form)
+  variant: SEHDSApplication | null
+  // External diameter of the GRP separator
+  sehdsDiameter: SEHDSDiameter | null
+  // Inlet angle in degrees clockwise from North (0-359)
+  inletAngleDeg: number | null
   drainageAreaM2: string
   flowRateLs: string
+  // Optional Rhino Pod polishing filter add-on
+  rhinoPodAddOn: boolean | null
+  // Legacy fields - kept for backward compatibility with old saved configs.
+  // No longer surfaced in the wizard.
   retentionVolumeLitres: string
   rhinoClass: RhinoClass | null
 }
 
 export type FlowControlApplication = 'attenuation' | 'swale' | 'pond' | 'other'
 
+// Flow control variants per data sheets:
+// SERF  - Orifice plate, smaller chamber: 300 / 450 / 600 mm
+// ROTEX - Vortex, larger chamber: 600 / 750 / 900 / 1050 / 1200 mm
+export type FlowControlVariant = 'SERF' | 'ROTEX'
+
 export interface FlowControlData {
+  variant: FlowControlVariant | null
   systemType: SystemType | null
   application: FlowControlApplication | null
   headDepthMm: string
@@ -233,6 +263,7 @@ export type ChamberAction =
 
 // Catchpit actions (inherits most chamber actions via prefix)
 export type CatchpitAction =
+  | { type: 'CATCHPIT_SET_VARIANT'; payload: CatchpitVariant }
   | { type: 'CATCHPIT_SET_SYSTEM'; payload: SystemType }
   | { type: 'CATCHPIT_SET_DIAMETER'; payload: Diameter }
   | { type: 'CATCHPIT_SET_INLET_COUNT'; payload: number }
@@ -244,16 +275,21 @@ export type CatchpitAction =
   | { type: 'CATCHPIT_SET_BAFFLE'; payload: BaffleType }
   | { type: 'CATCHPIT_SET_GRATE'; payload: GrateType }
 
-// RhinoCeptor actions
+// RhinoCeptor (SEHDS) actions
 export type RhinoCeptorAction =
-  | { type: 'RHINO_SET_VARIANT'; payload: RhinoVariant }
+  | { type: 'RHINO_SET_VARIANT'; payload: SEHDSApplication }
+  | { type: 'RHINO_SET_DIAMETER'; payload: SEHDSDiameter }
+  | { type: 'RHINO_SET_INLET_ANGLE'; payload: number }
   | { type: 'RHINO_SET_DRAINAGE_AREA'; payload: string }
   | { type: 'RHINO_SET_FLOW_RATE'; payload: string }
+  | { type: 'RHINO_SET_POD_ADDON'; payload: boolean }
+  // Legacy actions retained for compatibility:
   | { type: 'RHINO_SET_RETENTION'; payload: string }
   | { type: 'RHINO_SET_CLASS'; payload: RhinoClass }
 
 // Flow Control actions
 export type FlowControlAction =
+  | { type: 'FC_SET_VARIANT'; payload: FlowControlVariant }
   | { type: 'FC_SET_SYSTEM'; payload: SystemType }
   | { type: 'FC_SET_APPLICATION'; payload: FlowControlApplication }
   | { type: 'FC_SET_HEAD_DEPTH'; payload: string }

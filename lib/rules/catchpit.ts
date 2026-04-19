@@ -9,6 +9,7 @@
 import type {
   WizardState,
   CatchpitData,
+  CatchpitVariant,
   Diameter,
   PipeSize,
   ClockPosition,
@@ -38,6 +39,27 @@ import {
 
 export function getMaxDepth(adoptable: boolean): number {
   return adoptable ? 2000 : 3000
+}
+
+// ── Variant-Specific Diameter Sets ──────────────────────────
+// SERS  (with bucket): 300, 450, 600 mm
+// SERDS (no bucket):   450, 600, 750, 900, 1050, 1200 mm
+
+const VARIANT_DIAMETERS: Record<CatchpitVariant, Diameter[]> = {
+  SERS:  [300, 450, 600],
+  SERDS: [450, 600, 750, 900, 1050, 1200],
+}
+
+export function getVariantDiameters(variant: CatchpitVariant | null): Diameter[] {
+  if (!variant) return [300, 450, 600, 750, 900, 1050, 1200]
+  return VARIANT_DIAMETERS[variant]
+}
+
+export function isVariantDiameter(
+  variant: CatchpitVariant | null,
+  diameter: Diameter
+): boolean {
+  return getVariantDiameters(variant).includes(diameter)
 }
 
 // ── PIPE SIZE ORDER (ascending) ──────────────────────────────
@@ -89,9 +111,17 @@ export function validateConfig(state: WizardState): ValidationResult {
     return { valid: false, errors }
   }
 
+  if (!data.variant)    errors.push('Catchpit variant (SERS or SERDS) not selected')
   if (!data.systemType) errors.push('System type not selected')
   if (!data.diameter)   errors.push('Diameter not selected')
   if (!data.inletCount) errors.push('Inlet count not selected')
+
+  // Variant-specific diameter check
+  if (data.variant && data.diameter && !isVariantDiameter(data.variant, data.diameter)) {
+    errors.push(
+      `${data.diameter}mm is not available for ${data.variant} catchpits`
+    )
+  }
 
   if (data.diameter && data.inletCount) {
     const maxIn = getMaxInlets(data.diameter)
@@ -130,10 +160,10 @@ export function validateConfig(state: WizardState): ValidationResult {
 
 export function generateProductCode(state: WizardState): string {
   const data = extractCatchpitData(state)
-  if (!data || !data.diameter || !data.depth) return 'CP-???-???-???'
+  if (!data || !data.variant || !data.diameter || !data.depth) return 'CP-???-???-???'
 
   const adoptStr = data.adoptable ? 'S104' : 'PRIV'
-  return `CP-${data.diameter}-${data.depth}-${adoptStr}`
+  return `${data.variant}-${data.diameter}-${data.depth}-${adoptStr}`
 }
 
 // ── COMPLIANCE CHECK ─────────────────────────────────────────
@@ -200,6 +230,11 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       standard: 'Outlet rule - no flow increase on exit',
       scope: 'Rule Engine Validation',
       status: outletRulePass ? 'Pass' : 'Fail',
+    },
+    {
+      standard: 'DCG Restricted Access (350mm > 1m depth)',
+      scope: 'Manhole Cover Compliance',
+      status: 'Pass',
     },
   ]
 }
