@@ -95,15 +95,6 @@ const DOC_CARDS: DocCard[] = [
     external: true,
   },
   {
-    href: '/punch-list.html',
-    title: 'Internal Punch List',
-    description:
-      'Live status of remaining work, broken down by priority. Updated each time something ships.',
-    icon: ListChecks,
-    meta: '7-page status report',
-    external: true,
-  },
-  {
     href: '/brochures/index.html',
     title: 'Product Brochure Library',
     description:
