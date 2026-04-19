@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { loginReviewer, logoutReviewer } from '@/lib/review-auth'
+import { loginReviewer, logoutReviewer, getReviewerName } from '@/lib/review-auth'
+
+/**
+ * GET /api/review/auth
+ * Returns the current reviewer's name from the session cookie,
+ * or 401 if the cookie is missing or expired. Used by the review tool
+ * to verify the session is still alive on page load.
+ */
+export async function GET() {
+  const name = await getReviewerName()
+  if (!name) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+  return NextResponse.json({ author: name })
+}
 
 interface LoginBody {
   password: string

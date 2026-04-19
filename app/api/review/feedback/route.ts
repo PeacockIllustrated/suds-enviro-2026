@@ -105,6 +105,30 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // Pin coordinates: either both present or neither - no orphans allowed
+  const hasX = body.pin_x !== undefined && body.pin_x !== null
+  const hasY = body.pin_y !== undefined && body.pin_y !== null
+  if (hasX !== hasY) {
+    return NextResponse.json(
+      { error: 'pin_x and pin_y must both be provided or both omitted' },
+      { status: 400 }
+    )
+  }
+  if (hasX && hasY) {
+    if (typeof body.pin_x !== 'number' || typeof body.pin_y !== 'number') {
+      return NextResponse.json(
+        { error: 'pin_x and pin_y must be numbers' },
+        { status: 400 }
+      )
+    }
+    if (body.pin_x < 0 || body.pin_x > 100 || body.pin_y < 0 || body.pin_y > 100) {
+      return NextResponse.json(
+        { error: 'pin_x and pin_y must be between 0 and 100' },
+        { status: 400 }
+      )
+    }
+  }
+
   const supabase = getSupabase()
   if (!supabase) {
     return NextResponse.json(

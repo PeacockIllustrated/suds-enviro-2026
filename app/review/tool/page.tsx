@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { LogOut } from 'lucide-react'
+import { LogOut, AlertTriangle } from 'lucide-react'
 import { PhoneFrame } from '@/components/review/PhoneFrame'
 import { FeedbackPanel } from '@/components/review/FeedbackPanel'
 import { CommentForm } from '@/components/review/CommentForm'
@@ -43,6 +43,11 @@ interface FeedbackSubmission {
   }> | null
 }
 
+interface Toast {
+  message: string
+  type: 'error' | 'success'
+}
+
 export default function ReviewToolPage() {
   const router = useRouter()
   const [author, setAuthor] = useState<string | null>(null)
@@ -51,36 +56,66 @@ export default function ReviewToolPage() {
   const [commentMode, setCommentMode] = useState(false)
   const [feedback, setFeedback] = useState<FeedbackItem[]>([])
   const [showCommentForm, setShowCommentForm] = useState(false)
-  const [pendingPin, setPendingPin] = useState<{
-    x: number
-    y: number
-  } | null>(null)
+  const [pendingPin, setPendingPin] = useState<{ x: number; y: number } | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [toast, setToast] = useState<Toast | null>(null)
 
-  // Auth check: reviewer name is stored in sessionStorage on login
+  // Auto-dismiss toasts after 4s
   useEffect(() => {
-    const storedAuthor = sessionStorage.getItem('se-reviewer-name')
-    if (!storedAuthor) {
-      router.push('/review')
-      return
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 4000)
+    return () => clearTimeout(t)
+  }, [toast])
+
+  // Server-verified auth check (cookie is the source of truth, not sessionStorage)
+  useEffect(() => {
+    let cancelled = false
+    const verify = async () => {
+      try {
+        const res = await fetch('/api/review/auth')
+        if (cancelled) return
+        if (!res.ok) {
+          sessionStorage.removeItem('se-reviewer-name')
+          router.push('/review')
+          return
+        }
+        const data: { author?: string } = await res.json().catch(() => ({}))
+        if (!data.author) {
+          router.push('/review')
+          return
+        }
+        setAuthor(data.author)
+        // Keep sessionStorage in sync for the login page UX
+        sessionStorage.setItem('se-reviewer-name', data.author)
+        setLoading(false)
+      } catch {
+        if (!cancelled) router.push('/review')
+      }
     }
-    setAuthor(storedAuthor)
-    setLoading(false)
+    void verify()
+    return () => {
+      cancelled = true
+    }
   }, [router])
 
   const fetchFeedback = useCallback(async () => {
     try {
       const res = await fetch('/api/review/feedback')
+      if (res.status === 401) {
+        router.push('/review')
+        return
+      }
       if (!res.ok) return
       const data: { feedback: FeedbackItem[] } = await res.json()
       setFeedback(data.feedback)
     } catch {
       // Silent
     }
-  }, [])
+  }, [router])
 
   useEffect(() => {
     if (!loading && author) {
-      fetchFeedback()
+      void fetchFeedback()
     }
   }, [loading, author, fetchFeedback])
 
@@ -88,56 +123,95 @@ export default function ReviewToolPage() {
     setPendingPin({ x, y })
     setShowCommentForm(true)
     setCommentMode(false)
+    setExpandedId(null)
   }
 
   const handleUrlChange = useCallback((url: string) => {
     setCurrentUrl(url)
+    // Clear any selected pin when navigating to a new page
+    setExpandedId(null)
   }, [])
 
   const handleToggleCommentMode = () => {
-    setCommentMode(!commentMode)
+    setCommentMode((prev) => !prev)
     if (showCommentForm) {
       setShowCommentForm(false)
       setPendingPin(null)
     }
+    if (!commentMode) setExpandedId(null)
   }
 
-  const handleCommentSubmit = async (data: FeedbackSubmission) => {
-    if (!author) return
+  const handlePinClick = (id: string) => {
+    setExpandedId(id)
+    setShowCommentForm(false)
+  }
 
-    try {
-      const res = await fetch('/api/review/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          author,
-        }),
-      })
+  const handleCommentSubmit = useCallback(
+    async (data: FeedbackSubmission): Promise<boolean> => {
+      if (!author) return false
+      try {
+        const res = await fetch('/api/review/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, author }),
+        })
 
-      if (res.ok) {
-        setShowCommentForm(false)
-        setPendingPin(null)
-        await fetchFeedback()
-      } else {
+        if (res.status === 401) {
+          router.push('/review')
+          return false
+        }
+        if (res.ok) {
+          setShowCommentForm(false)
+          setPendingPin(null)
+          setToast({ message: 'Comment saved', type: 'success' })
+          await fetchFeedback()
+          return true
+        }
         const errData = await res.json().catch(() => ({ error: 'Unknown error' }))
-        alert(errData.error || 'Failed to save feedback')
+        setToast({ message: errData.error || 'Failed to save comment', type: 'error' })
+        return false
+      } catch {
+        setToast({ message: 'Network error - could not save comment', type: 'error' })
+        return false
       }
-    } catch (err) {
-      alert('Network error - could not save feedback')
-    }
-  }
+    },
+    [author, fetchFeedback, router]
+  )
 
   const handleCommentCancel = () => {
     setShowCommentForm(false)
     setPendingPin(null)
   }
 
+  const handleDelete = useCallback(
+    async (id: string): Promise<boolean> => {
+      try {
+        const res = await fetch(`/api/review/feedback/${id}`, { method: 'DELETE' })
+        if (res.status === 401) {
+          router.push('/review')
+          return false
+        }
+        if (res.ok) {
+          setToast({ message: 'Comment deleted', type: 'success' })
+          await fetchFeedback()
+          return true
+        }
+        const errData = await res.json().catch(() => ({ error: 'Unknown error' }))
+        setToast({ message: errData.error || 'Failed to delete', type: 'error' })
+        return false
+      } catch {
+        setToast({ message: 'Network error - could not delete', type: 'error' })
+        return false
+      }
+    },
+    [fetchFeedback, router]
+  )
+
   const handleLogout = async () => {
     try {
       await fetch('/api/review/auth', { method: 'DELETE' })
     } catch {
-      // Proceed to redirect even on fetch error
+      // Proceed regardless
     }
     sessionStorage.removeItem('se-reviewer-name')
     router.push('/review')
@@ -210,7 +284,9 @@ export default function ReviewToolPage() {
             src="/"
             commentMode={commentMode}
             pins={phonePins}
+            selectedPinId={expandedId}
             onPinPlace={handlePinPlace}
+            onPinClick={handlePinClick}
             onUrlChange={handleUrlChange}
           />
         </div>
@@ -225,12 +301,16 @@ export default function ReviewToolPage() {
               onToggleCommentMode={handleToggleCommentMode}
               pins={feedback}
               onRefresh={fetchFeedback}
+              expandedId={expandedId}
+              onSetExpandedId={setExpandedId}
+              onDelete={handleDelete}
             />
           </div>
 
           {/* Comment form (slides up from bottom of panel) */}
           {showCommentForm && pendingPin && author && (
             <CommentForm
+              key={`${pendingPin.x}-${pendingPin.y}`}
               pageUrl={currentUrl}
               pinX={pendingPin.x}
               pinY={pendingPin.y}
@@ -241,6 +321,23 @@ export default function ReviewToolPage() {
           )}
         </div>
       </div>
+
+      {/* Toast notification */}
+      {toast && (
+        <div
+          role="status"
+          className={`pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 transform rounded-lg px-4 py-2.5 shadow-lg
+            ${toast.type === 'error'
+              ? 'border border-red-200 bg-red-50 text-red-700'
+              : 'border border-green/30 bg-green/10 text-green-d'}
+          `}
+        >
+          <div className="flex items-center gap-2 text-[13px] font-semibold">
+            {toast.type === 'error' && <AlertTriangle className="h-4 w-4" />}
+            {toast.message}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

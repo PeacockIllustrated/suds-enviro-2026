@@ -6,6 +6,7 @@ import {
   ArrowRight,
   RotateCcw,
 } from 'lucide-react'
+import { getPriorityStyle } from '@/lib/review-colors'
 
 interface FeedbackPin {
   id: string
@@ -18,34 +19,38 @@ interface PhoneFrameProps {
   src: string
   commentMode: boolean
   pins: FeedbackPin[]
+  selectedPinId: string | null
   onPinPlace: (x: number, y: number) => void
+  onPinClick: (id: string) => void
   onUrlChange: (url: string) => void
 }
 
-const PIN_COLOURS: Record<string, string> = {
-  low: 'bg-blue border-blue',
-  medium: 'bg-amber-400 border-amber-500',
-  high: 'bg-red-500 border-red-600',
-  critical: 'bg-purple-500 border-purple-600',
-}
+const PHONE_W = 390
+const PHONE_H = 780
+const STATUS_BAR_H = 50
+const HOME_BAR_H = 22
+const CONTENT_H = PHONE_H - STATUS_BAR_H - HOME_BAR_H // viewport height of the iframe
 
 export function PhoneFrame({
   src,
   commentMode,
   pins,
+  selectedPinId,
   onPinPlace,
+  onPinClick,
   onUrlChange,
 }: PhoneFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
+  // Hold latest callbacks in refs so the URL-tracking effect doesn't restart
+  // every time the parent re-renders.
   const onUrlChangeRef = useRef(onUrlChange)
   onUrlChangeRef.current = onUrlChange
-  // Only use src for initial load - don't let currentUrl changes reload the iframe
+  // Initial src is locked once - parent currentUrl changes shouldn't reload the iframe.
   const initialSrc = useRef(src)
   const [displayUrl, setDisplayUrl] = useState(src)
   const [scrollY, setScrollY] = useState(0)
-  const [contentHeight, setContentHeight] = useState(0)
-  const [viewportHeight, setViewportHeight] = useState(0)
+  const [contentHeight, setContentHeight] = useState(CONTENT_H)
 
   // Track iframe scroll position and detect client-side navigation
   useEffect(() => {
@@ -55,6 +60,15 @@ export function PhoneFrame({
     let animFrame: number
     let scrollCleanup: (() => void) | null = null
 
+    const measureContent = (doc: Document | null): number => {
+      if (!doc) return CONTENT_H
+      // scrollHeight reflects total content; clientHeight is the viewport.
+      // Use the larger so a page that doesn't scroll still places pins relative
+      // to its visible area.
+      const sh = doc.documentElement.scrollHeight || 0
+      return Math.max(sh, CONTENT_H)
+    }
+
     const attachScrollListener = () => {
       try {
         const win = iframe.contentWindow
@@ -62,44 +76,48 @@ export function PhoneFrame({
         if (!win || !doc) return
 
         const onScroll = () => {
+          if (animFrame) cancelAnimationFrame(animFrame)
           animFrame = requestAnimationFrame(() => {
             setScrollY(win.scrollY || 0)
-            setContentHeight(doc.documentElement.scrollHeight || 0)
-            setViewportHeight(win.innerHeight || 0)
+            setContentHeight(measureContent(doc))
           })
         }
 
         win.addEventListener('scroll', onScroll, { passive: true })
+        // Re-measure content height on resize (lazy images, dynamic content reflow)
+        win.addEventListener('resize', onScroll, { passive: true })
         onScroll()
 
         scrollCleanup = () => {
           win.removeEventListener('scroll', onScroll)
+          win.removeEventListener('resize', onScroll)
           if (animFrame) cancelAnimationFrame(animFrame)
         }
       } catch {
-        // Cross-origin
+        // Cross-origin - can't observe
       }
     }
 
-    // Read wizard step from iframe DOM (e.g. "Step 1" -> "#step-1")
+    // Read wizard step from iframe DOM. Looks for an element matching the
+    // wizard's "STEP N" label, which is rendered as a small uppercase tag.
     const getStepSuffix = (doc: Document | null): string => {
       if (!doc) return ''
       try {
-        const stepEls = doc.querySelectorAll('div, span')
-        for (let i = 0; i < stepEls.length; i++) {
-          const el = stepEls[i]
-          if (el.children.length === 0) {
-            const match = el.textContent?.trim().match(/^Step\s+(\d+)$/i)
-            if (match) return `#step-${match[1]}`
-          }
+        // Heuristic: walk small leaf elements looking for "Step N" or "STEP N"
+        const nodes = doc.querySelectorAll('div, span, p')
+        for (let i = 0; i < nodes.length && i < 200; i++) {
+          const el = nodes[i]
+          if (el.children.length !== 0) continue
+          const txt = el.textContent?.trim() || ''
+          const match = txt.match(/^step\s+(\d+)$/i)
+          if (match) return `#step-${match[1]}`
         }
       } catch { /* ignore */ }
       return ''
     }
 
-    // Poll iframe URL + wizard step to catch client-side navigation
     let lastFullPath = ''
-    const pollInterval = setInterval(() => {
+    const checkUrl = () => {
       try {
         const win = iframe.contentWindow
         const doc = iframe.contentDocument
@@ -114,87 +132,98 @@ export function PhoneFrame({
           setDisplayUrl(pathname)
           onUrlChangeRef.current(fullPath)
           setScrollY(0)
-          if (doc) {
-            setContentHeight(doc.documentElement.scrollHeight || 0)
-            setViewportHeight(win?.innerHeight || 0)
-          }
+          setContentHeight(measureContent(doc))
           if (scrollCleanup) scrollCleanup()
           attachScrollListener()
         }
       } catch {
         // Cross-origin
       }
-    }, 300)
+    }
 
-    iframe.addEventListener('load', attachScrollListener)
+    // Poll every 400ms (covers App Router client-nav + dynamic step changes)
+    const pollInterval = setInterval(checkUrl, 400)
+
+    // Also listen for hashchange and popstate inside the iframe for instant
+    // detection where the browser fires events.
+    const attachNavListeners = () => {
+      try {
+        const win = iframe.contentWindow
+        if (!win) return
+        win.addEventListener('hashchange', checkUrl)
+        win.addEventListener('popstate', checkUrl)
+      } catch { /* cross-origin */ }
+    }
+
+    iframe.addEventListener('load', () => {
+      attachScrollListener()
+      attachNavListeners()
+      checkUrl()
+    })
+    // Initial pass for already-loaded iframe (HMR, SSR cache)
     attachScrollListener()
+    attachNavListeners()
+    checkUrl()
 
     return () => {
       clearInterval(pollInterval)
-      iframe.removeEventListener('load', attachScrollListener)
       if (scrollCleanup) scrollCleanup()
       if (animFrame) cancelAnimationFrame(animFrame)
     }
-  }, [src])
+  }, [])
 
+  // Place a pin. Always re-measure content height at click time so we never
+  // store coordinates against a stale or zero contentHeight.
   const handleOverlayClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!commentMode || !overlayRef.current) return
 
       const rect = overlayRef.current.getBoundingClientRect()
-      // X is a percentage of viewport width (doesn't scroll horizontally)
-      const x = ((e.clientX - rect.left) / rect.width) * 100
-      // Y needs to account for scroll: convert click position to content position
+      const xPct = ((e.clientX - rect.left) / rect.width) * 100
+
+      // Live-measure content height at click time
+      let liveContent = contentHeight
+      try {
+        const doc = iframeRef.current?.contentDocument
+        if (doc) {
+          liveContent = Math.max(doc.documentElement.scrollHeight || 0, CONTENT_H)
+        }
+      } catch { /* cross-origin */ }
+
       const clickYInViewport = e.clientY - rect.top
       const clickYInContent = clickYInViewport + scrollY
-      // Store as pixel offset from top of content, not percentage of viewport
-      // We'll use negative values as a sentinel that this is a px-based pin
-      // Actually, let's store as percentage of total content height for consistency
-      const totalHeight = contentHeight > 0 ? contentHeight : rect.height
-      const y = (clickYInContent / totalHeight) * 100
+      const yPct = (clickYInContent / liveContent) * 100
+
+      // Clamp to safe range
+      const cx = Math.max(0, Math.min(100, xPct))
+      const cy = Math.max(0, Math.min(100, yPct))
 
       onPinPlace(
-        Math.round(x * 100) / 100,
-        Math.round(y * 100) / 100
+        Math.round(cx * 100) / 100,
+        Math.round(cy * 100) / 100
       )
     },
     [commentMode, onPinPlace, scrollY, contentHeight]
   )
 
   const handleIframeLoad = useCallback(() => {
-    // Full page loads are handled by the poll interval above,
-    // but we reset scroll on load to avoid stale values
     setScrollY(0)
   }, [])
 
   const handleBack = () => {
-    try {
-      iframeRef.current?.contentWindow?.history.back()
-    } catch {
-      // Ignore cross-origin errors
-    }
+    try { iframeRef.current?.contentWindow?.history.back() } catch { /* */ }
   }
-
   const handleForward = () => {
-    try {
-      iframeRef.current?.contentWindow?.history.forward()
-    } catch {
-      // Ignore cross-origin errors
-    }
+    try { iframeRef.current?.contentWindow?.history.forward() } catch { /* */ }
   }
-
   const handleReload = () => {
-    try {
-      iframeRef.current?.contentWindow?.location.reload()
-    } catch {
-      // Ignore cross-origin errors
-    }
+    try { iframeRef.current?.contentWindow?.location.reload() } catch { /* */ }
   }
 
-  // Convert a pin's content-based Y% to a pixel offset in the overlay,
-  // accounting for current scroll position
+  // Convert a pin's content-based Y% to a pixel offset within the viewport,
+  // accounting for current scroll position.
   const pinTopPx = (pinYPercent: number): number => {
-    const totalHeight = contentHeight > 0 ? contentHeight : viewportHeight || 700
+    const totalHeight = contentHeight > 0 ? contentHeight : CONTENT_H
     const contentPx = (pinYPercent / 100) * totalHeight
     return contentPx - scrollY
   }
@@ -205,8 +234,8 @@ export function PhoneFrame({
       <div
         className="relative overflow-hidden rounded-[46px] border-[3px] shadow-2xl"
         style={{
-          width: 390,
-          height: 780,
+          width: PHONE_W,
+          height: PHONE_H,
           borderColor: '#1a3a50',
           backgroundColor: '#000',
         }}
@@ -215,11 +244,12 @@ export function PhoneFrame({
         <div className="absolute left-1/2 top-0 z-20 h-[30px] w-[150px] -translate-x-1/2 rounded-b-2xl bg-black" />
 
         {/* Status bar */}
-        <div className="relative z-10 flex h-[50px] items-end justify-between bg-navy px-6 pb-1.5">
+        <div
+          className="relative z-10 flex items-end justify-between bg-navy px-6 pb-1.5"
+          style={{ height: STATUS_BAR_H }}
+        >
           <span className="text-[12px] font-semibold text-white">9:41</span>
-          <span className="text-[11px] font-bold text-white/80">
-            SuDS Enviro
-          </span>
+          <span className="text-[11px] font-bold text-white/80">SuDS Enviro</span>
           <div className="flex items-center gap-1">
             <div className="h-[10px] w-[10px] rounded-full border border-white/60" />
             <div className="h-[10px] w-[10px] rounded-full border border-white/60" />
@@ -227,7 +257,7 @@ export function PhoneFrame({
         </div>
 
         {/* Content area (iframe + pin overlay) */}
-        <div className="relative" style={{ height: 'calc(100% - 72px)' }}>
+        <div className="relative" style={{ height: CONTENT_H }}>
           <iframe
             ref={iframeRef}
             src={initialSrc.current}
@@ -246,22 +276,34 @@ export function PhoneFrame({
                 : 'pointer-events-none'
             }`}
           >
-            {/* Render existing pins positioned relative to content */}
-            {pins.map((pin) => {
+            {/* Existing pins - clickable when not in comment mode */}
+            {pins.map((pin, idx) => {
               const topPx = pinTopPx(pin.y)
-              // Hide pins that are scrolled out of view
-              if (topPx < -10 || topPx > (viewportHeight || 700) + 10) return null
+              if (topPx < -16 || topPx > CONTENT_H + 16) return null
+              const isSelected = selectedPinId === pin.id
+              const style = getPriorityStyle(pin.priority)
               return (
-                <div
+                <button
                   key={pin.id}
-                  className={`absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 shadow-md ${
-                    PIN_COLOURS[pin.priority] || PIN_COLOURS.medium
-                  }`}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (commentMode) return
+                    onPinClick(pin.id)
+                  }}
+                  title={`Pin ${idx + 1} - ${pin.priority}`}
+                  className={`absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 text-[10px] font-extrabold text-white shadow-md transition-all hover:scale-110
+                    ${style.pin}
+                    ${commentMode ? 'pointer-events-none opacity-60' : 'pointer-events-auto cursor-pointer'}
+                    ${isSelected ? 'ring-2 ring-white ring-offset-2 ring-offset-navy scale-125' : ''}
+                  `}
                   style={{
                     left: `${pin.x}%`,
                     top: `${topPx}px`,
                   }}
-                />
+                >
+                  {idx + 1}
+                </button>
               )
             })}
 
@@ -273,7 +315,7 @@ export function PhoneFrame({
         </div>
 
         {/* Home indicator */}
-        <div className="flex h-[22px] items-center justify-center bg-black">
+        <div className="flex items-center justify-center bg-black" style={{ height: HOME_BAR_H }}>
           <div className="h-[4px] w-[100px] rounded-full bg-white/30" />
         </div>
       </div>
@@ -304,7 +346,10 @@ export function PhoneFrame({
         >
           <RotateCcw className="h-4 w-4" />
         </button>
-        <div className="ml-1 rounded-lg border border-border bg-white px-3 py-2 text-[12px] font-medium text-muted">
+        <div
+          className="ml-1 max-w-[180px] truncate rounded-lg border border-border bg-white px-3 py-2 text-[12px] font-medium text-muted"
+          title={displayUrl}
+        >
           {displayUrl}
         </div>
       </div>

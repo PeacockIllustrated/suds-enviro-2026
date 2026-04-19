@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabase'
+import { isReviewerAuthenticated } from '@/lib/review-auth'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -103,4 +104,36 @@ export async function PATCH(
   }
 
   return NextResponse.json({ feedback: data })
+}
+
+/**
+ * DELETE /api/review/feedback/[id]
+ * Permanently delete a feedback item. Reviewer-only - requires the reviewer
+ * session cookie. The admin dashboard goes through a different code path.
+ */
+export async function DELETE(
+  _request: NextRequest,
+  { params }: RouteParams
+) {
+  const authed = await isReviewerAuthenticated()
+  if (!authed) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  const { id } = await params
+  const supabase = getSupabaseServer()
+
+  const { error } = await supabase
+    .from('se_feedback')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    return NextResponse.json(
+      { error: 'Failed to delete feedback' },
+      { status: 500 }
+    )
+  }
+
+  return NextResponse.json({ success: true })
 }
