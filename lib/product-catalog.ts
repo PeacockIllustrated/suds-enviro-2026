@@ -282,6 +282,9 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Food preparation areas',
       'Canteen and staff kitchen facilities',
     ],
+    brochures: [
+      { label: 'RHINO GT - Grease Trap', href: '/brochures/rhino-gt.html' },
+    ],
     category: 'silt',
     categoryLabel: 'Silt Management',
   },
@@ -319,6 +322,9 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Hospital and institutional catering',
       'Event and festival catering operations',
     ],
+    brochures: [
+      { label: 'RHINO Grease Separator', href: '/brochures/rhino-grease-separator.html' },
+    ],
     category: 'silt',
     categoryLabel: 'Silt Management',
   },
@@ -355,6 +361,9 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Construction site temporary treatment',
       'Retrofit pollution control for existing systems',
       'Industrial yard surface water management',
+    ],
+    brochures: [
+      { label: 'RHINO POD - Polishing Filter', href: '/brochures/rhino-pod.html' },
     ],
     category: 'stormwater',
     categoryLabel: 'Stormwater Treatment',
@@ -395,6 +404,9 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Laundry and non-potable domestic use',
       'Commercial building water reduction strategies',
     ],
+    brochures: [
+      { label: 'RHINO Rainwater Harvesting', href: '/brochures/rhino-rainwater.html' },
+    ],
     category: 'stormwater',
     categoryLabel: 'Stormwater Treatment',
   },
@@ -433,6 +445,9 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Holiday homes and lodges',
       'Small commercial premises in rural areas',
     ],
+    brochures: [
+      { label: 'RHINO Septic Tank', href: '/brochures/rhino-septic.html' },
+    ],
     category: 'bespoke',
     categoryLabel: 'Bespoke Solutions',
   },
@@ -469,6 +484,9 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Highway and pavement service chambers',
       'Airport and airfield infrastructure',
       'Railway and tramway utility access',
+    ],
+    brochures: [
+      { label: 'RHINO Drawpit', href: '/brochures/rhino-drawpit.html' },
     ],
     category: 'drawpits',
     categoryLabel: 'Drawpits',

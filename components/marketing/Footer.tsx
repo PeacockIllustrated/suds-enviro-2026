@@ -78,6 +78,16 @@ export function Footer() {
                   Configurator
                 </Link>
               </li>
+              <li>
+                <a
+                  href="/brochures/index.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-white/55 hover:text-white transition-colors duration-200"
+                >
+                  Brochures
+                </a>
+              </li>
             </ul>
           </div>
 
