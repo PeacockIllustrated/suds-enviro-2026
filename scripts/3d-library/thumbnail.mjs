@@ -2,10 +2,10 @@
 //
 //   node thumbnail.mjs <in.glb> <out.png> '<json roles>'
 //
-// roles maps part node names to "body" or "accent". It is only used when
-// the glb carries no materials of its own: then body parts take ink-600
-// and accent parts take brand-blue #1E80BA, per the brand tokens. When the
-// source had materials they are rendered as they are.
+// roles maps part node names to "body" or "accent". Parts with no material
+// of their own take ink-600 (body) or brand-blue #1E80BA (accent), per the
+// brand tokens; parts that carry a source material, or the x-ray shell,
+// render as they are.
 //
 // Rendering the finished file in three.js, rather than in Blender, is also
 // the check that it decodes the way a web viewer will load it (Meshopt,
@@ -41,15 +41,16 @@ const rim = new THREE.DirectionalLight(0xffffff, 0.8); rim.position.set(-1.2, 0.
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder)
 loader.load('/model.glb', (gltf) => {
   const hasMaterials = (gltf.parser.json.materials || []).length > 0
-  const body = new THREE.MeshStandardMaterial({ color: 0x4d5760, roughness: 0.55, metalness: 0.05 })
-  const accent = new THREE.MeshStandardMaterial({ color: 0x1e80ba, roughness: 0.45, metalness: 0.05 })
+  const body = new THREE.MeshStandardMaterial({ color: 0x4d5760, roughness: 0.55, metalness: 0.05, side: THREE.DoubleSide })
+  const accent = new THREE.MeshStandardMaterial({ color: 0x1e80ba, roughness: 0.45, metalness: 0.05, side: THREE.DoubleSide })
+  // A mesh with no material in the file gets GLTFLoader's unnamed default
+  // (metalness 1, roughness 1); only those take the brand colours.
+  const isDefault = (m) => m && !m.name && m.metalness === 1 && m.roughness === 1
   gltf.scene.traverse((o) => {
-    if (!o.isMesh) return
-    if (!hasMaterials) {
-      let n = o, role
-      while (n && !role) { role = roles[n.name]; n = n.parent }
-      o.material = role === 'accent' ? accent : body
-    }
+    if (!o.isMesh || !isDefault(o.material)) return
+    let n = o, role
+    while (n && !role) { role = roles[n.name]; n = n.parent }
+    o.material = role === 'accent' ? accent : body
   })
   scene.add(gltf.scene)
   const box = new THREE.Box3().setFromObject(gltf.scene)

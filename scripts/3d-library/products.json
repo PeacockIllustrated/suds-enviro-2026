@@ -130,8 +130,7 @@
       "toMm": 10,
       "toMmReason": "Blender-made, 1 unit = 1 cm",
       "degradedBecause": [
-        "scale unverified: at 1 unit = 1 cm the pod is 307 mm across. If SERPOD1850 means an 1850 mm pod the parts are about 6 times too small. The Rhinopod.stl master is 21.5 MB, over the download limit",
-        "missing parts that could not be downloaded from Drive: Rhinopod-Casing.fbx"
+        "scale unverified: at 1 unit = 1 cm the pod is 307 mm across. If SERPOD1850 means an 1850 mm pod the parts are about 6 times too small. The Rhinopod.stl master is 21.5 MB, over the download limit"
       ],
       "notes": [],
       "variants": [
@@ -149,6 +148,12 @@
           "role": "accent",
           "driveId": "11SDV4HhBTCWE6WVBpnM4L9Tw7P7b6Lf3",
           "sourcePath": "SuDS 3D Assets/Rhino Pod/Rhinopod-Mid.fbx"
+        },
+        {
+          "name": "casing",
+          "role": "body",
+          "driveId": "11TxghHkKkx88LXU7uG-i4AJPNXLQCA5X",
+          "sourcePath": "SuDS 3D Assets/Rhino Pod/Rhinopod-Casing.fbx"
         },
         {
           "name": "bottom",
@@ -172,7 +177,11 @@
       },
       "toMm": 10,
       "toMmReason": "1 unit = 1 cm, confirmed: tubing is 696 mm across against 708 mm on the SERPT600160-2.stl master",
+      "sceneRoles": {
+        "cube": "xray"
+      },
       "notes": [
+        "The box in the SERPT Breakdown scene is an x-ray shell for presentation; it is exported as a translucent material",
         "built from SERPT/SERPT Breakdown.blend because these parts could not be downloaded on their own: SERPT Base.fbx"
       ],
       "variants": [
@@ -190,7 +199,8 @@
             "base": "body",
             "tubing": "body",
             "inlet": "accent",
-            "outlet": "accent"
+            "outlet": "accent",
+            "cube": "xray"
           }
         }
       ]
@@ -364,8 +374,7 @@
       "toMm": 10,
       "toMmReason": "Blender-made, 1 unit = 1 cm",
       "degradedBecause": [
-        "scale unverified: at 1 unit = 1 cm it is 642 mm across, which does not obviously match C1200. The RoTex-C1200-2.stl master is 12.8 MB, over the download limit",
-        "missing parts that could not be downloaded from Drive: RoTex BaseFunc.stl"
+        "scale unverified: at 1 unit = 1 cm it is 642 mm across, which does not obviously match C1200. The RoTex-C1200-2.stl master is 12.8 MB, over the download limit"
       ],
       "notes": [],
       "variants": [
@@ -378,6 +387,12 @@
           "role": "accent",
           "driveId": "1mHa_PRg1xfm_GiJjBd1dk5U56T8lJ5ti",
           "sourcePath": "SuDS 3D Assets/Vortex Flow Control/RoTexFunc.fbx"
+        },
+        {
+          "name": "base",
+          "role": "body",
+          "driveId": "1mH81rmvkPZDDs7ahlJmfI5g5oHsa30uC",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/RoTex BaseFunc.stl"
         }
       ]
     },
@@ -392,9 +407,6 @@
       },
       "toMm": null,
       "notes": [],
-      "degradedBecause": [
-        "missing parts that could not be downloaded from Drive: Siphn pipe.stl"
-      ],
       "parts": [
         {
           "name": "back-case",
@@ -425,6 +437,12 @@
           "role": "accent",
           "driveId": "1tC1KuRkhbkZm2YeZue30U2bdpOz1HzAo",
           "sourcePath": "SuDS 3D Assets/Vortex Flow Control/Bypass Cap.stl"
+        },
+        {
+          "name": "siphon-pipe",
+          "role": "accent",
+          "driveId": "1huTazwz_lpszSE2TmNov2qD5IWQgmRmm",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/Siphn pipe.stl"
         },
         {
           "name": "outlet-pipe",
@@ -603,9 +621,6 @@
       "variants": [
         "Pumping Stations/Pump Tank/PS-50-1.85-5-HS.stl (31.8 MB, Drive 1VPlHeBj4oCYT3VJJytBBhSOqKM4Y2b8o)"
       ],
-      "degradedBecause": [
-        "missing parts that could not be downloaded from Drive: Pump Tank Insides.fbx, Pump Tank Lid.fbx"
-      ],
       "parts": [
         {
           "name": "casing",
@@ -614,10 +629,22 @@
           "sourcePath": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Casing.fbx"
         },
         {
+          "name": "insides",
+          "role": "accent",
+          "driveId": "1VU_Wv8HbEw-0KeEaTqWIs9z1EclpswPW",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Insides.fbx"
+        },
+        {
           "name": "insides-2",
           "role": "accent",
           "driveId": "1XejtlP4AUck1M2l_qQpChptqwKnTbEam",
           "sourcePath": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Insides 2.fbx"
+        },
+        {
+          "name": "lid",
+          "role": "body",
+          "driveId": "1V_3GRY1PmFswVJTTkzlQumA0a4hQW800",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Lid.fbx"
         }
       ]
     },

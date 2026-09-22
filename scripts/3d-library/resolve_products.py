@@ -54,7 +54,7 @@ for p in src['products']:
                 f"built from {blend['path'].split('/', 1)[1]} because these parts could not be downloaded on their own: "
                 + ', '.join(m['sourcePath'].rsplit('/', 1)[1] for m in missing))
             parts = [{'name': 'from-blend', 'role': 'body', 'driveId': blend['driveId'],
-                      'sourcePath': blend['path'], 'split': True, 'roles': {x['name']: x['role'] for x in parts}}]
+                      'sourcePath': blend['path'], 'split': True, 'roles': {**{x['name']: x['role'] for x in parts}, **p.get('sceneRoles', {})}}]
             missing = []
     if missing and len(missing) < len(parts):
         # Build what arrived and say what is absent, rather than show nothing.

@@ -225,6 +225,12 @@
       "variantPaths": [
         "SERPT/SERPT600160-2\\.stl$",
         "SERPT/SERPT600150-1\\.5\\.stl$"
+      ],
+      "sceneRoles": {
+        "cube": "xray"
+      },
+      "notes": [
+        "The box in the SERPT Breakdown scene is an x-ray shell for presentation; it is exported as a translucent material"
       ]
     },
     {

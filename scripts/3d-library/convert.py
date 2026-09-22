@@ -148,6 +148,35 @@ def slug(name: str) -> str:
     return re.sub(r'[^a-z0-9]+', '-', name.lower().split('.')[0]).strip('-') or 'part'
 
 
+def fix_normals(ob: bpy.types.Object) -> int:
+    """Recalculate face normals to point outward; returns faces flipped.
+
+    CAD exports and hand-joined Blender parts often carry inverted faces,
+    which a web viewer shows as holes or black patches."""
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    before = [f.normal.copy() for f in bm.faces]
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.faces.ensure_lookup_table()
+    flipped = sum(1 for f, n in zip(bm.faces, before) if f.normal.dot(n) < 0)
+    bm.to_mesh(ob.data)
+    bm.free()
+    return flipped
+
+
+def xray_material() -> bpy.types.Material:
+    # A presentation shell: tint-sky at low opacity so the parts inside show.
+    mat = bpy.data.materials.get('xray') or bpy.data.materials.new('xray')
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes.get('Principled BSDF')
+    bsdf.inputs['Base Color'].default_value = (0.117, 0.451, 0.776, 1)  # #5FB3E4 in linear
+    bsdf.inputs['Alpha'].default_value = 0.18
+    bsdf.inputs['Roughness'].default_value = 0.2
+    mat.blend_method = 'BLEND'
+    mat.use_backface_culling = False
+    return mat
+
+
 def tri_count(ob: bpy.types.Object) -> int:
     ob.data.calc_loop_triangles()
     return len(ob.data.loop_triangles)
@@ -251,6 +280,10 @@ def main() -> None:
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
         if src.suffix.lower() in ('.stl',):
             weld(ob, 0.01)
+        e['normalsFlipped'] = fix_normals(ob)
+        if e['role'] == 'xray':
+            ob.data.materials.clear()
+            ob.data.materials.append(xray_material())
 
     # Base the product at the origin: centred in plan, sitting on z = 0.
     objs = [ob for ob, _, _ in parts]

@@ -377,11 +377,12 @@ window.openViewer = async (slug) => {
     const bin = Uint8Array.from(atob(b64.trim()), (c) => c.charCodeAt(0)).buffer
     const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(bin, '')
     model = gltf.scene
-    const noMats = !(gltf.parser.json.materials || []).length
-    const body = new THREE.MeshStandardMaterial({ color: 0x4d5760, roughness: 0.55 })
-    const accent = new THREE.MeshStandardMaterial({ color: 0x1e80ba, roughness: 0.45 })
+    const body = new THREE.MeshStandardMaterial({ color: 0x4d5760, roughness: 0.55, side: THREE.DoubleSide })
+    const accent = new THREE.MeshStandardMaterial({ color: 0x1e80ba, roughness: 0.45, side: THREE.DoubleSide })
     const roles = Object.fromEntries((it.parts || []).map((p) => [p.name, p.role]))
-    model.traverse((o) => { if (o.isMesh && noMats) { let n = o, r; while (n && !r) { r = roles[n.name]; n = n.parent } o.material = r === 'accent' ? accent : body } })
+    // Only meshes without a material in the file (GLTFLoader's unnamed default) take brand colours.
+    const isDefault = (m) => m && !m.name && m.metalness === 1 && m.roughness === 1
+    model.traverse((o) => { if (o.isMesh && isDefault(o.material)) { let n = o, r; while (n && !r) { r = roles[n.name]; n = n.parent } o.material = r === 'accent' ? accent : body } })
     scene.add(model)
     const box = new THREE.Box3().setFromObject(model)
     const sph = box.getBoundingSphere(new THREE.Sphere()); radius = sph.radius
