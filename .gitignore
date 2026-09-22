@@ -56,3 +56,4 @@ next-env.d.ts
 
 # local screenshot output from scripts/screenshot.mjs
 /.screenshots/
+.content-overrides/

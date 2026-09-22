@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { HERO, INNOVATION_SLIDES, RHINO_RANGE, WATER_STREAMS } from '@/lib/content/home'
+import type { HomeContent } from '@/lib/site-content/defaults'
 import { RichText, HEADING_VOICES } from './RichText'
 import { SiteButton } from './SiteButton'
 
@@ -24,9 +24,6 @@ const WaterJourneyScene = dynamic(() => import('./WaterJourneyScene'), { ssr: fa
  * are screens of white space. Many phones set reduced motion system-wide.
  */
 
-const multiFlo = INNOVATION_SLIDES.find((s) => s.id === 'multiflo')
-const autoFlo = INNOVATION_SLIDES.find((s) => s.id === 'autoflo')
-
 function Beat({ children, align = 'left' }: { children: React.ReactNode; align?: 'left' | 'right' | 'centre' }) {
   const side =
     align === 'right' ? 'md:ml-auto md:text-right' : align === 'centre' ? 'mx-auto text-center' : 'md:mr-auto'
@@ -37,7 +34,10 @@ function Beat({ children, align = 'left' }: { children: React.ReactNode; align?:
   )
 }
 
-export function WaterJourney() {
+export function WaterJourney({ content }: { content: Pick<HomeContent, 'HERO' | 'INNOVATION_SLIDES' | 'RHINO_RANGE' | 'WATER_STREAMS'> }) {
+  const { HERO, INNOVATION_SLIDES, RHINO_RANGE, WATER_STREAMS } = content
+  const multiFlo = INNOVATION_SLIDES.find((s) => s.id === 'multiflo')
+  const autoFlo = INNOVATION_SLIDES.find((s) => s.id === 'autoflo')
   const section = useRef<HTMLElement>(null)
   const progress = useRef(0)
   const [mount, setMount] = useState(false)

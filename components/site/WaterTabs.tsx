@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { WATER_TABS } from '@/lib/content/home'
+import type { HomeContent } from '@/lib/site-content/defaults'
 import { RichText } from './RichText'
 
 /**
@@ -10,7 +10,8 @@ import { RichText } from './RichText'
  * wrap to a 2 x 2 grid of whole pills above the panel, since a wrapped row
  * cannot meet the panel edge.
  */
-export function WaterTabs() {
+export function WaterTabs({ content }: { content: Pick<HomeContent, 'WATER_TABS'> }) {
+  const { WATER_TABS } = content
   const [active, setActive] = useState(WATER_TABS[0].id)
   const current = WATER_TABS.find((tab) => tab.id === active) ?? WATER_TABS[0]
 

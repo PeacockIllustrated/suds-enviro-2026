@@ -1,12 +1,13 @@
 import Image from 'next/image'
-import { PRODUCT_TILES } from '@/lib/content/home'
+import type { HomeContent } from '@/lib/site-content/defaults'
 import { SiteButton } from './SiteButton'
 
 /**
  * The "more from" card grid. Image panel with a large corner radius, a
  * two-voice uppercase heading, then a row of small chevron pills.
  */
-export function ProductTiles() {
+export function ProductTiles({ content }: { content: Pick<HomeContent, 'PRODUCT_TILES'> }) {
+  const { PRODUCT_TILES } = content
   return (
     <section className="bg-white pb-20 md:pb-28">
       <div className="mx-auto grid max-w-[1400px] gap-x-8 gap-y-14 px-5 sm:grid-cols-2 lg:grid-cols-3">

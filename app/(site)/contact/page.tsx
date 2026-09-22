@@ -2,19 +2,15 @@ import type { Metadata } from 'next'
 import { SiteButton } from '@/components/site/SiteButton'
 import { ContactForm } from '@/components/site/ContactForm'
 import { RichText, BODY_VOICES } from '@/components/site/RichText'
-import {
-  CONTACT_FORM,
-  CONTACT_HERO,
-  EXISTING_CUSTOMER,
-  SUPPORT_CARDS,
-} from '@/lib/content/contact'
+import { getSection } from '@/lib/site-content/store'
 
 export const metadata: Metadata = {
   title: 'Contact - SuDS Enviro',
 }
 
 /** Rebuild of the Webflow `Contact` page. */
-export default function ContactPreviewPage() {
+export default async function ContactPage() {
+  const { CONTACT_FORM, CONTACT_HERO, EXISTING_CUSTOMER, SUPPORT_CARDS } = await getSection('contact')
   return (
     <>
       <section className="bg-white py-16 text-center md:py-24">
@@ -75,7 +71,7 @@ export default function ContactPreviewPage() {
           </h2>
 
           <div className="mt-10">
-            <ContactForm />
+            <ContactForm content={{ CONTACT_FORM }} />
           </div>
         </div>
       </section>

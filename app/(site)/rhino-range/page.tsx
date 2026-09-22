@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { SolutionRoutes } from '@/components/site/SolutionRoutes'
 import { ProductTiles } from '@/components/site/ProductTiles'
 import { BuilderCTA } from '@/components/site/BuilderCTA'
+import { getSection } from '@/lib/site-content/store'
 
 export const metadata: Metadata = {
   title: 'The RHINO Range - SuDS Enviro',
@@ -11,7 +12,8 @@ export const metadata: Metadata = {
  * Rebuild of the Webflow `RHINO | Product Catalogue` page, which is the
  * foul-water / surface-water split shown full page.
  */
-export default function RhinoRangePreviewPage() {
+export default async function RhinoRangePage() {
+  const home = await getSection('home')
   return (
     <>
       <section className="bg-white pt-14 text-center">
@@ -20,9 +22,9 @@ export default function RhinoRangePreviewPage() {
           <span className="font-bold text-site-blue">RHINO Range</span>
         </h1>
       </section>
-      <SolutionRoutes />
-      <ProductTiles />
-      <BuilderCTA />
+      <SolutionRoutes content={home} />
+      <ProductTiles content={home} />
+      <BuilderCTA content={home} />
     </>
   )
 }

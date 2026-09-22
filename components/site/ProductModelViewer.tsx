@@ -53,7 +53,7 @@ function hasCasing(model: ProductModel): boolean {
 
 /**
  * True once `ref` has come within a screen of the viewport and the
- * browser has had an idle moment, following HeroChamberMount.
+ * browser has had an idle moment, as the home page scene does.
  */
 function useNearAndIdle(ref: React.RefObject<HTMLElement | null>, enabled: boolean): boolean {
   const [ready, setReady] = useState(false)

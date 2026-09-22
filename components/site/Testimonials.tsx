@@ -1,11 +1,12 @@
 'use client'
 
-import { TESTIMONIALS, TESTIMONIALS_HEADING } from '@/lib/content/home'
+import type { HomeContent } from '@/lib/site-content/defaults'
 import { RichText, BODY_VOICES, HEADING_VOICES_INVERTED } from './RichText'
 import { Carousel } from './Carousel'
 
 /** "tried, tested and trusted" - the customer quote slider. */
-export function Testimonials() {
+export function Testimonials({ content }: { content: Pick<HomeContent, 'TESTIMONIALS' | 'TESTIMONIALS_HEADING'> }) {
+  const { TESTIMONIALS, TESTIMONIALS_HEADING } = content
   return (
     <section className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-[1100px] px-5">

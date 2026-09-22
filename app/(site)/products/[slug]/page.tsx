@@ -6,7 +6,7 @@ import { SiteButton } from '@/components/site/SiteButton'
 import { BuilderCTA } from '@/components/site/BuilderCTA'
 import { InletClock } from '@/components/site/InletClock'
 import { ProductModelViewer } from '@/components/site/ProductModelViewer'
-import { PRODUCT_NARRATIVE } from '@/lib/content/products'
+import { getSection } from '@/lib/site-content/store'
 import { PRODUCT_MODELS } from '@/lib/content/product-models'
 
 interface ProductPageProps {
@@ -61,7 +61,7 @@ function SectionHeading({ lead, trail }: { lead?: string; trail: string }) {
  * existing lib/product-catalog.ts entries - those already carry the real
  * specifications, compliance list and applications.
  */
-export default async function ProductPreviewPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
   const product = getProductBySlug(slug)
 
@@ -70,7 +70,7 @@ export default async function ProductPreviewPage({ params }: ProductPageProps) {
   }
 
   const datasheet = product.brochures?.[0]
-  const narrative = PRODUCT_NARRATIVE[product.id]
+  const narrative = (await getSection('products'))[product.id]
   const models = PRODUCT_MODELS[slug]
   const heroModel = models?.hero
   const moreModels = models?.more ?? []
@@ -294,7 +294,7 @@ export default async function ProductPreviewPage({ params }: ProductPageProps) {
         </section>
       ) : null}
 
-      <BuilderCTA />
+      <BuilderCTA content={await getSection('home')} />
     </>
   )
 }

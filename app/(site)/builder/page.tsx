@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { BUILDER_CARDS, BUILDER_HUB } from '@/lib/content/builder-hub'
+import { getSection } from '@/lib/site-content/store'
 import { RichText } from '@/components/site/RichText'
 import { SiteButton } from '@/components/site/SiteButton'
 
@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 }
 
 /** Rebuild of the Webflow `SuDS Builder | Hub` page. */
-export default function BuilderHubPreviewPage() {
+export default async function BuilderHubPage() {
+  const { BUILDER_CARDS, BUILDER_HUB } = await getSection('builderHub')
   return (
     <section className="bg-white py-14 md:py-20">
       <div className="mx-auto max-w-[1400px] px-5">
