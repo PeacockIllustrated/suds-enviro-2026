@@ -1,0 +1,55 @@
+# Webflow extraction - SuDS Enviro
+
+Source of truth for the 2026 rebuild of the public marketing site. Everything
+here was pulled from the live Webflow project (`SuDS Enviro`,
+site `6662e401ea62d861a416088f`) via the Webflow MCP Data API on 2026-09-22.
+
+## What is here
+
+| File | Contents |
+|---|---|
+| `pages.json` | All 27 Webflow pages: id, title, published path, grouping, whether public |
+| `page-home.elements.json` | Full element tree for the Home page (raw MCP `get_all_elements` output) |
+| `page-home.outline.txt` | The same tree flattened to a readable outline with all copy inline |
+| `assets.index.json` | Asset id to filename map, with display name, MIME type and alt text |
+| `assets.raw.json` | Raw asset listing including S3 hosted URLs and responsive variants |
+| `styles.classlist.json` | All 712 Webflow class names and their CSS selectors |
+| `flatten.py` | Turns a raw element tree into the readable outline format |
+
+Every image asset (93 files, 6.4 MB) is downloaded to `public/webflow/`,
+keyed by the filenames in `assets.index.json`.
+
+```bash
+python3 reference/webflow/flatten.py reference/webflow/page-home.elements.json
+```
+
+## What is NOT here, and why
+
+**The CSS.** Webflow's Data API returns class names but never property
+values - fonts, colours, type scale, spacing all live behind the Designer
+API, which requires the Webflow Designer to be open with the MCP app running.
+The published site could be read instead, except this build container's
+egress policy blocks `suds-enviro.webflow.io`, `*.website-files.com` and
+`webflow.com` (403 at the proxy). Only `s3.amazonaws.com` is reachable,
+which is how the images were retrieved.
+
+**Spline scene URLs.** The Home, Contact and Product Catalogue pages each
+embed `Spline` elements (classes `Spline Scene Desktop`,
+`Spline Scene SideSquare`, `Spline Scene 3`, `Spline Scene 14`). The API
+exposes the element but not the scene URL.
+
+Both gaps close with a **Webflow code export** (`Share > Export Code`),
+which ships the compiled stylesheet and the full rendered HTML for every
+page. Unpack it to `reference/webflow-export/`.
+
+## Notes on the Webflow content itself
+
+- The **Contact page is unfinished**: the three cards (Sales, Help & Support,
+  More info) all still carry lorem ipsum. Real copy is needed from the client.
+- Several nav entries are placeholders: the Hydrodynamic Separator and
+  Oil/Water Separator dropdown items read `*****` and are marked `disabled`.
+- Six of the Home page product-card images are AI-generated stand-ins
+  (`assets_task_*.webp`), not product photography. The line-drawing product
+  renders (`SERSIC.png`, `SERFIC.png` and siblings) are genuine brand assets.
+- The site has no custom fonts uploaded, so the typeface is a Google or
+  Webflow-hosted family. The export names it.

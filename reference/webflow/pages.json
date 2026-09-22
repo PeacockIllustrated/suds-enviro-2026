@@ -1,0 +1,41 @@
+{
+  "siteId": "6662e401ea62d861a416088f",
+  "displayName": "SuDS Enviro",
+  "shortName": "suds-enviro",
+  "workspaceId": "63a0b8c4d66a3bde50e88d45",
+  "customDomains": [],
+  "extractedOn": "2026-09-22",
+  "pages": [
+    { "id": "667930f03666e2d91d185fa8", "title": "Home",                                   "path": "/",                                  "group": "marketing", "public": true },
+    { "id": "6673fa98d23d455b913986a7", "title": "Contact",                                "path": "/contact",                           "group": "marketing", "public": true },
+    { "id": "670fda87b14b845213755a14", "title": "RHINO | Product Catalogue",              "path": "/rhino-product-catalogue",           "group": "marketing", "public": true },
+    { "id": "66e6187d5306378ae712d3ca", "title": "RHINO | SERSIC Inspection Chamber",      "path": "/rhino-sersic-inspection-chamber",   "group": "product",   "public": true },
+    { "id": "6707cbf4aa68b3471c730192", "title": "RHINO | SERFIC Inspection Chamber",      "path": "/rhino-serfic",                      "group": "product",   "public": true },
+    { "id": "66e5cd90dc7e4060090ce1cf", "title": "RHINO | Vortex Flow Control",            "path": "/rhino-vortex-flow-control",         "group": "product",   "public": true },
+    { "id": "670d8b745b9692b1b6404241", "title": "RHINO | Orifice Flow Control",           "path": "/rhino-orifice-flow-control",        "group": "product",   "public": true },
+    { "id": "6711298f923462d85b3e5743", "title": "RHINO | Advanced Catchpit",              "path": "/rhino-advanced-catchpit",           "group": "product",   "public": true },
+    { "id": "6712805e8887efb8c310f68e", "title": "RHINO | Pumping Stations",               "path": "/rhino-pumping-stations",            "group": "product",   "public": true },
+    { "id": "66f407c7e93be1c1f4c9dddd", "title": "ProductPage Inspection Chambers",        "path": "/productpageinspection-chambers",    "group": "product",   "public": true },
+    { "id": "67e31fb5d20cfea68f906841", "title": "SuDS Builder | Hub",                     "path": "/suds-builder-hub",                  "group": "builder",   "public": true },
+    { "id": "67fd6167d167e6872485f258", "title": "SuDS | Site Planner",                    "path": "/suds-site-planner",                 "group": "builder",   "public": true },
+    { "id": "681d04a65b8950d42e335dc4", "title": "SuDS | Site Dynamic Planner",            "path": "/suds-site-dynamic-planner",         "group": "builder",   "public": true },
+    { "id": "681ce06b7ae7132fc56b67ac", "title": "SuDS Builder | Hydro-Dynamic Separator", "path": "/suds-builder-hydro-dynamic-separator", "group": "builder", "public": true },
+    { "id": "681cdcc4c1a37706682e9b2b", "title": "SuDS Builder | Inspection Chambers",     "path": "/suds-builder-inspection-chambers",  "group": "builder",   "public": true },
+    { "id": "67f7ca0471fb35849e1506a1", "title": "SuDS Builder | SERSIC",                  "path": "/suds-builder-sersic",               "group": "builder",   "public": true },
+    { "id": "6689b6ba3d36c919e6fc7e10", "title": "SuDS Builder | SIC",                     "path": "/builder-sic",                       "group": "builder",   "public": true },
+    { "id": "6808f0cd68ce24edce38a7a2", "title": "SuDS Builder | Catchpits",               "path": "/suds-builder-catchpits",            "group": "builder",   "public": true },
+    { "id": "680905dffb7cc8fa29edaf54", "title": "SuDS Builder | Vortex Flow Control",     "path": "/suds-builder-vortex-flow-control",  "group": "builder",   "public": true },
+    { "id": "68093f67965dc23bbc757b22", "title": "SuDS Builder | Orifice Flow Control",    "path": "/suds-builder-orifice-flow-control", "group": "builder",   "public": true },
+    { "id": "67f919b7680affe195159e4f", "title": "Sign In",                                "path": "/sign-in",                           "group": "auth",      "public": false },
+    { "id": "67f918b464210336f6e21814", "title": "Password",                               "path": "/401",                               "group": "auth",      "public": false },
+    { "id": "681ca3678a04166309e174c7", "title": "Form Test",                              "path": "/form-test",                         "group": "scratch",   "public": false },
+    { "id": "681b564104f8d3fcac1651ea", "title": "Coming Soon",                            "path": "/coming-soon",                       "group": "scratch",   "public": false },
+    { "id": "66e413cdcbd9f8297e9c5e27", "title": "Product Highlight (draft)",              "path": "/untitled",                          "group": "scratch",   "public": false },
+    { "id": "680ead927698371510c2a158", "title": "SuDS In-House | Site Plan Analysis",     "path": "/suds-in-house-site-plan-analysis",  "group": "internal",  "public": false },
+    { "id": "680e184f52c03b07f719af52", "title": "SuDS In-House | Schedule Creator",       "path": "/suds-in-house-schedule-creator",    "group": "internal",  "public": false }
+  ],
+  "components": {
+    "NavFinal":  "25c5c548-43f7-505d-482f-64ab3ebe0d8a",
+    "NewFooter": "a2e9668d-7083-440f-f06c-984cb03f8de5"
+  }
+}
