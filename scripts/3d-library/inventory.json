@@ -1,0 +1,2371 @@
+{
+  "generated": "2026-09-22",
+  "sources": {
+    "SuDS 3D Assets": "1WvecnphSfOJQLiQZ0cp0i6fTL4LmVTce",
+    "Moulded bases STEP": "1AdGuYRinP4OQXELiD208G-OtNqY6dAWe",
+    "Product Renders": "1yBYnOf6YSDi2uK3ca1jIBrP9RPwx2IJ6",
+    "STYLISED Renders": "1ZC-lFCc6JPbp0TgMEkF7VoOn8x4lCwpI"
+  },
+  "excluded": {
+    "Vortex Project 11OzVl6EghwjXkWqHV6aaHB8R4JuHLqft": "bell siphon R&D and print iterations, left alone as instructed",
+    "Big_White_Rhino_Animated_MAYA 1mtiulzzsN8x-JZtFUFQYVYcvH221rodX": "Maya scene, no render; left alone as instructed",
+    "New TrNSFER/OneDrive_2024-09-25/Renders 230223": "second copy of the render set; Product Renders treated as canonical"
+  },
+  "summary": {
+    "files": 182,
+    "bytes": 809680350,
+    "byDisposition": {
+      "failed": 3,
+      "candidate": 148,
+      "skip": 31
+    }
+  },
+  "files": [
+    {
+      "driveId": "1viNzPAE42CDpkIMhg56n9yjscfvs86Vm",
+      "path": "SuDS 3D Assets/Bell Siphon/uploads_files_3774726_Assem1.SLDASM",
+      "root": "SuDS 3D Assets",
+      "family": "Bell siphon (R&D, no settled name)",
+      "format": "sldasm",
+      "bytes": 27756634,
+      "modified": "2024-12-06T14:21:49.894Z",
+      "disposition": "failed",
+      "reason": "needs SolidWorks"
+    },
+    {
+      "driveId": "1vpiHw1DnsAkBPWTxz1wsgVtjRmuDHIsa",
+      "path": "SuDS 3D Assets/Bell Siphon/uploads_files_3774726_AutoSiphon.SLDPRT",
+      "root": "SuDS 3D Assets",
+      "family": "Bell siphon (R&D, no settled name)",
+      "format": "sldprt",
+      "bytes": 27614247,
+      "modified": "2024-12-06T14:22:19.174Z",
+      "disposition": "failed",
+      "reason": "needs SolidWorks"
+    },
+    {
+      "driveId": "1vvX69-mCXc9p4y1UVe5VtixkefCHd4P8",
+      "path": "SuDS 3D Assets/Bell Siphon/uploads_files_3774726_AutoSiphonCap.SLDPRT",
+      "root": "SuDS 3D Assets",
+      "family": "Bell siphon (R&D, no settled name)",
+      "format": "sldprt",
+      "bytes": 810310,
+      "modified": "2024-12-06T14:22:31.020Z",
+      "disposition": "failed",
+      "reason": "needs SolidWorks"
+    },
+    {
+      "driveId": "1Z5CN7Z6gwRHggowMcddXY3wuz_QbvVRr",
+      "path": "SuDS 3D Assets/Grease Traps/Jumbo Micro Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "Grease trap (no settled name)",
+      "format": "blend",
+      "bytes": 1959252,
+      "modified": "2024-10-25T14:37:47.295Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1_4n7DA5szUdVJ0dWiCW-blnHmEQ9YDRZ",
+      "path": "SuDS 3D Assets/Grease Traps/Jumbo Micro Breakdown.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "Grease trap (no settled name)",
+      "format": "blend1",
+      "bytes": 1576836,
+      "modified": "2024-10-25T14:37:35.011Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1_3Fyb8yGT0hmv1B78F3g9rQfFB6QXbcv",
+      "path": "SuDS 3D Assets/Grease Traps/Jumbo Micro Casing XRay.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Grease trap (no settled name)",
+      "format": "fbx",
+      "bytes": 414060,
+      "modified": "2024-10-25T14:37:13.472Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Yj5HVLGFZ6ku_pY_mfCnoq4sR9vbQD22",
+      "path": "SuDS 3D Assets/Grease Traps/Jumbo Micro Casing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Grease trap (no settled name)",
+      "format": "fbx",
+      "bytes": 132652,
+      "modified": "2024-10-21T17:55:30.357Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1YuiOSbx63TSDKJqG1wEZY0eUG0HdirSl",
+      "path": "SuDS 3D Assets/Grease Traps/Jumbo Micro Cover Housing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Grease trap (no settled name)",
+      "format": "fbx",
+      "bytes": 42940,
+      "modified": "2024-10-21T17:55:54.278Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1YmFh6_NzdFNj8hDX6MPO59Hz-tj2atR_",
+      "path": "SuDS 3D Assets/Grease Traps/Jumbo Micro Cover.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Grease trap (no settled name)",
+      "format": "fbx",
+      "bytes": 90892,
+      "modified": "2024-10-21T17:55:41.146Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Z-t27ZjUa-mvlJPMVUAlIvgkEFrSYa81",
+      "path": "SuDS 3D Assets/Grease Traps/Jumbo Micro Inletfbx.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Grease trap (no settled name)",
+      "format": "fbx",
+      "bytes": 24860,
+      "modified": "2024-10-21T17:56:09.096Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Z4czhBELqPn_4IxMlPrgiBHrnrOpVn2B",
+      "path": "SuDS 3D Assets/Grease Traps/Jumbo Micro Outlet.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Grease trap (no settled name)",
+      "format": "fbx",
+      "bytes": 24892,
+      "modified": "2024-10-21T17:56:22.001Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Y5oh95i9DNyaJQOoKsQ8OpM0I5o57wND",
+      "path": "SuDS 3D Assets/Grease Traps/Jumbo Micro Uncut.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Grease trap (no settled name)",
+      "format": "stl",
+      "bytes": 626984,
+      "modified": "2024-10-21T17:51:13.443Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1d7J634Vu8teUS7AA9FF3zworkzWk2SBM",
+      "path": "SuDS 3D Assets/Icon/IC150P.STL",
+      "root": "SuDS 3D Assets",
+      "family": "Icon study",
+      "format": "stl",
+      "bytes": 7655084,
+      "modified": "2024-11-08T12:59:25.838Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1dFWufNVr74btdQF1Dqg-9cOYh-tT1iNx",
+      "path": "SuDS 3D Assets/Icon/ICP150 - Step.STEP",
+      "root": "SuDS 3D Assets",
+      "family": "Icon study",
+      "format": "step",
+      "bytes": 5630172,
+      "modified": "2024-11-08T12:59:31.631Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1deh9x5JYwINRb_yBxDZ2IzIsCcFnOOLG",
+      "path": "SuDS 3D Assets/Icon/IconCenter.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Icon study",
+      "format": "fbx",
+      "bytes": 513820,
+      "modified": "2024-11-08T17:05:01.729Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1dYZEjEPUL7J5lOUhRvxQ5rRO3b2SH5tI",
+      "path": "SuDS 3D Assets/Icon/IconLeft.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Icon study",
+      "format": "fbx",
+      "bytes": 1601660,
+      "modified": "2024-11-08T17:04:29.809Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1ddSzEv5eEE6HFSPekxZHh5WIpmxLRyA4",
+      "path": "SuDS 3D Assets/Icon/IconRight.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Icon study",
+      "format": "fbx",
+      "bytes": 1542748,
+      "modified": "2024-11-08T17:04:47.681Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1YYrXEThoMcRQRSxQZ57zUlnegSiCgQr2",
+      "path": "SuDS 3D Assets/Adapters/150 TWINWALLEN110 ADAPTOR.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "stl",
+      "bytes": 1067284,
+      "modified": "2024-10-21T16:51:20Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Z6vkswE8ttV8-xWRwaoi9lB1y4AMydLq",
+      "path": "SuDS 3D Assets/Adapters/150 Twinwall EN110 Adapter.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "fbx",
+      "bytes": 484828,
+      "modified": "2024-10-21T18:02:52.182Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Z7yFyRrm6A2hBVtasnz_SWlFzKX1uhET",
+      "path": "SuDS 3D Assets/Adapters/225 Twinwall EN150 Adapter.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "fbx",
+      "bytes": 793132,
+      "modified": "2024-10-21T18:06:31.749Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Z8ecO54AmSYgjzRPH2tKSgzVUM9IPChy",
+      "path": "SuDS 3D Assets/Adapters/225 UltraRib Adapter.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "fbx",
+      "bytes": 129644,
+      "modified": "2024-10-21T18:07:01.781Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1YSynY4Gb3QG6cVEeasN-NaBf36GvvdlZ",
+      "path": "SuDS 3D Assets/Adapters/225 ultraribADAPTOR.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "stl",
+      "bytes": 263584,
+      "modified": "2024-10-21T16:51:20Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1YG2XJZ0sOy78A-db1W2_PG5tGm5dCNdv",
+      "path": "SuDS 3D Assets/Adapters/225-150 TWINWALL ADAPTOR.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "stl",
+      "bytes": 1767184,
+      "modified": "2024-10-21T16:51:20Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1ZA0lrqlq3JwUphgcqyksh_YRbkUCIoBT",
+      "path": "SuDS 3D Assets/Adapters/25 Ridgidrain Adapter.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "fbx",
+      "bytes": 44396,
+      "modified": "2024-10-21T18:07:34.319Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1YFHl4SSVLVx4BQWLzitAhMoQV6-Kf5Ft",
+      "path": "SuDS 3D Assets/Adapters/25 ridgidrain adaptor.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "stl",
+      "bytes": 84884,
+      "modified": "2024-10-21T16:51:20Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1ZB9OzGvoVyz5wcePFf628FM4S9TeC1zs",
+      "path": "SuDS 3D Assets/Adapters/Afapters.blend",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "blend",
+      "bytes": 4795896,
+      "modified": "2024-10-21T20:23:48.668Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1eqJaK378WdN0KudiZyMhkRJ7-pF4DwHt",
+      "path": "SuDS 3D Assets/Adapters/Flexseal.blend",
+      "root": "SuDS 3D Assets",
+      "family": "Pipe adapters (no settled name)",
+      "format": "blend",
+      "bytes": 9313776,
+      "modified": "2024-11-13T18:11:07.698Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1VSGgyujzgMJuypCE348J6IrxNSghwmOG",
+      "path": "SuDS 3D Assets/Vortex Flow Control/FloLock 1 of 2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino FloLock",
+      "format": "stl",
+      "bytes": 885184,
+      "modified": "2025-05-01T00:38:49.374Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1o4qFIurYThzQT1U-o4l16GofTkPij8De",
+      "path": "SuDS 3D Assets/Vortex Flow Control/FloLock 2 of 2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino FloLock",
+      "format": "stl",
+      "bytes": 96084,
+      "modified": "2025-05-01T00:39:09.029Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "11U9sMU_sxuTKAfI8i7wZL32Jm3gFm-oj",
+      "path": "SuDS 3D Assets/5 Inlet Base.3mf",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "3mf",
+      "bytes": 9364514,
+      "modified": "2024-12-11T18:00:56.841Z",
+      "disposition": "skip",
+      "reason": "slicer file"
+    },
+    {
+      "driveId": "1lod3Fh06HIRsOQuMTXTkNT5YQSFY8xcj",
+      "path": "SuDS 3D Assets/5 Inlet Base.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "stl",
+      "bytes": 605384,
+      "modified": "2024-09-16T21:43:37.769Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1mlPYUQYItEXFWtQbvFFmchWjtdpV_WTc",
+      "path": "SuDS 3D Assets/5 Inlet.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "fbx",
+      "bytes": 323372,
+      "modified": "2024-09-23T12:53:55.312Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1mlpAm32ku2ip8CFwsBOu-UibWE3zUmsT",
+      "path": "SuDS 3D Assets/BodyBase.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "fbx",
+      "bytes": 676316,
+      "modified": "2024-09-23T13:01:22.256Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1nARxUvdP6mJ0aAR98YROd5FhI-_BRRm_",
+      "path": "SuDS 3D Assets/ChamberRim.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "fbx",
+      "bytes": 41836,
+      "modified": "2024-11-18T14:51:02.956Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1X1fqLM2ClGYsKp_Cah14ADUOkZuE6L7f",
+      "path": "SuDS 3D Assets/FIC450160-2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "stl",
+      "bytes": 3768134,
+      "modified": "2024-06-07T13:11:52.439Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1mnBGansr3u5QGU1z6qJlq5INxPiG7qbt",
+      "path": "SuDS 3D Assets/InletTube.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "fbx",
+      "bytes": 471372,
+      "modified": "2024-09-23T13:28:51Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1X4y2nR38vbSuGpj3zqO6RKfqaJ0n-xJC",
+      "path": "SuDS 3D Assets/SERCIC600225-2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "stl",
+      "bytes": 5433284,
+      "modified": "2024-06-07T13:11:52.564Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1kyYiDGpoy9toGG8yqgqkGT2VhJ6VC9LI",
+      "path": "SuDS 3D Assets/SERSIC/SERSIC Base.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "stl",
+      "bytes": 367784,
+      "modified": "2024-09-12T15:32:55.256Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1l3uxLI1kkp7mTZX94bi_8ddN7zm_Wuu2",
+      "path": "SuDS 3D Assets/SERSIC/SERSIC Body.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "stl",
+      "bytes": 1976584,
+      "modified": "2024-09-13T11:00:06.350Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1lHRKRry-rJKXyHXklX0rY64Gcgbwvs3Y",
+      "path": "SuDS 3D Assets/SERSIC/SERSIC BodyBottom.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "stl",
+      "bytes": 48884,
+      "modified": "2024-09-15T18:45:17.051Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1l9y0BCr22c91-6EyHzeQafhBdRSp1Lhd",
+      "path": "SuDS 3D Assets/SERSIC/SERSIC Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "blend",
+      "bytes": 7383844,
+      "modified": "2024-09-25T14:20:29.559Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1mpZ9hYhXIDgbp1CosYcrf69AdCNNaX50",
+      "path": "SuDS 3D Assets/SERSIC/SERSIC Breakdown.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "blend1",
+      "bytes": 7449588,
+      "modified": "2024-09-25T14:20:12.112Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1krb1zwzNKKl6pFb5sFYUfEpvldev-pkm",
+      "path": "SuDS 3D Assets/SERSIC/SERSIC Inlet.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "stl",
+      "bytes": 1010584,
+      "modified": "2024-09-12T15:18:32.727Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1khauTtvFEDMvKK4or6IiguJkFBedz8WK",
+      "path": "SuDS 3D Assets/SERSIC/SERSIC Lid.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "stl",
+      "bytes": 43884,
+      "modified": "2024-09-12T15:05:06.918Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1XHKiU8JcQEc_cUzq4N57GfoXM4yDx4my",
+      "path": "SuDS 3D Assets/SERSIC/SERSIC600300-2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "stl",
+      "bytes": 4799684,
+      "modified": "2024-06-07T13:26:43.165Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1bCpevaitWsxMXnlB-cpvRXFmMQ5My0DX",
+      "path": "SuDS 3D Assets/SERSIC/SIC base Tube.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "fbx",
+      "bytes": 41708,
+      "modified": "2024-11-06T10:43:24.410Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1b2tiw35p0elPvCQEQZfOT53UeEYQAdtZ",
+      "path": "SuDS 3D Assets/SERSIC/SIC base.blend",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "blend",
+      "bytes": 1590120,
+      "modified": "2024-11-07T12:55:26.448Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1cAqBSyidoEc4IveEAYsAppNS7aG-2zta",
+      "path": "SuDS 3D Assets/SERSIC/SIC base.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "Rhino inspection chamber",
+      "format": "blend1",
+      "bytes": 1620172,
+      "modified": "2024-11-07T12:55:05.235Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1bYOsEVnGrktwpO9Qji5o-v2a7Zg7V9lG",
+      "path": "Moulded bases STEP/750 Moulded base 450-300-K1 Max_0.4_Hyper PLA_7h7m.gcode",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "gcode",
+      "bytes": 45300566,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "skip",
+      "reason": "printer toolpath"
+    },
+    {
+      "driveId": "1bs94sX2tbSvOKBgPgBcPhMv9DbaX6vcc",
+      "path": "Moulded bases STEP/750 Moulded base 450-300.cxprj",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "cxprj",
+      "bytes": 25285575,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "skip",
+      "reason": "3D-print slicer project"
+    },
+    {
+      "driveId": "1cB4qBNXvMitDxPB4Zyn5XH36B66YLG64",
+      "path": "Moulded bases STEP/750 Moulded base 450-300.stp",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "stp",
+      "bytes": 687964,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1c8yHg8RRtRF_lKifPQVVoZhjM2P12aaT",
+      "path": "Moulded bases STEP/Rhino Inlets 600225.pdf",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "pdf",
+      "bytes": 493770,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "skip",
+      "reason": "2D drawing, not geometry"
+    },
+    {
+      "driveId": "1c64yldkLUh-r9KYfX5Cz1DOGwyk-KWoB",
+      "path": "Moulded bases STEP/SEB1050-600-600.stp",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "stp",
+      "bytes": 679912,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1c2lyuW8ub_ORrEMFCjHBT33JOI8vSpzc",
+      "path": "Moulded bases STEP/SEB1200-600-600.dwg",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "dwg",
+      "bytes": 736746,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "skip",
+      "reason": "2D drawing, not geometry"
+    },
+    {
+      "driveId": "1c2QFjr-j9Lbs6cqKTKokYv0-7UA_4_mq",
+      "path": "Moulded bases STEP/SEB1200-600-600.pdf",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "pdf",
+      "bytes": 775544,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "skip",
+      "reason": "2D drawing, not geometry"
+    },
+    {
+      "driveId": "1c1LSrR4n6pCQ5h1COelafNXD4VndoMyG",
+      "path": "Moulded bases STEP/SEB600-150-150-150.pdf",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "pdf",
+      "bytes": 231543,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "skip",
+      "reason": "2D drawing, not geometry"
+    },
+    {
+      "driveId": "1c0m4zN0POF4z7vY1Bih3AEu4cMO97nct",
+      "path": "Moulded bases STEP/SEB600-150-150-150.stp",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "stp",
+      "bytes": 926502,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1c-_IP-UpHDDpXyDUakR95Q7pRQfylkE_",
+      "path": "Moulded bases STEP/SEB600-225-225.pdf",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "pdf",
+      "bytes": 223840,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "skip",
+      "reason": "2D drawing, not geometry"
+    },
+    {
+      "driveId": "1bxHpD2kzY6mus79u5pSSSgqwm-yWOkpF",
+      "path": "Moulded bases STEP/SEB600-225-225.stp",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "stp",
+      "bytes": 1791371,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1bxHLBzSXjO6HYU3PJM0VcHLnlzxB5T_M",
+      "path": "Moulded bases STEP/SEB600-300-300.pdf",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "pdf",
+      "bytes": 223132,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "skip",
+      "reason": "2D drawing, not geometry"
+    },
+    {
+      "driveId": "1bveRf-ZamWtTGJnGSHAuAFGybpb-cz6M",
+      "path": "Moulded bases STEP/SEB600-300-300.stp",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber base",
+      "format": "stp",
+      "bytes": 604233,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1cAI78uo2DvBuoLwqy2upmwvq05jGQyWg",
+      "path": "Moulded bases STEP/Cap with dust cap upstand 450.stp",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber cap",
+      "format": "stp",
+      "bytes": 19754,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1c9FXcbDTKMNfEsOVbpcPHW6Pip8e0Of2",
+      "path": "Moulded bases STEP/Cap with dust cap upstand 600.stp",
+      "root": "Moulded bases STEP",
+      "family": "Rhino inspection chamber cap",
+      "format": "stp",
+      "bytes": 18497,
+      "modified": "2024-09-12T08:38:48Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1sFu5laj-X15W3juwGudLgw8YQqaKLM4N",
+      "path": "SuDS 3D Assets/RhinoDuct.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoDuct",
+      "format": "stl",
+      "bytes": 457884,
+      "modified": "2024-10-19T11:57:35.719Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1XrEg7voro9JH9IchlltPc3oKMfBL_JmM",
+      "path": "SuDS 3D Assets/RhinoDuct/Blender.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoDuct",
+      "format": "blend",
+      "bytes": 1526864,
+      "modified": "2024-10-20T10:58:36.099Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Xq1t5WeRPY5nKhJSK63QpJ3pAdmYSlce",
+      "path": "SuDS 3D Assets/RhinoDuct/RhinoDuct Cover.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoDuct",
+      "format": "fbx",
+      "bytes": 92204,
+      "modified": "2024-10-19T12:32:45.807Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Uaiq1JU0stTyIAS1QQHPe76nbg2cA2jl",
+      "path": "SuDS 3D Assets/Pumping Stations/AQUA 190S.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend",
+      "bytes": 2160840,
+      "modified": "2024-10-14T11:28:03.081Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Wa95V06YWzbAhjSG-hgWBkoLihpv6wUh",
+      "path": "SuDS 3D Assets/Pumping Stations/AQUA/AQUA Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend",
+      "bytes": 2420928,
+      "modified": "2024-10-18T10:15:44.329Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1V9m7fglsSuyyRl_Uuej6u7y7KhAuQjJY",
+      "path": "SuDS 3D Assets/Pumping Stations/AQUA/AQUA Casing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 42428,
+      "modified": "2024-10-14T11:35:37.715Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1WK2mqjCaELKnPa3prL2KET4Uj_27nQtE",
+      "path": "SuDS 3D Assets/Pumping Stations/AQUA/AQUA Handle.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 13852,
+      "modified": "2024-10-18T10:08:38.225Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1V7FwRpiuhefnCoUL9WId7ykNd-nzoA76",
+      "path": "SuDS 3D Assets/Pumping Stations/AQUA/AQUA Insides.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 497980,
+      "modified": "2024-10-14T11:35:26.682Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1WVGiqIFFletmYEmlje_0sr1P7M0LrPWV",
+      "path": "SuDS 3D Assets/Pumping Stations/AQUA/AQUA Main.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 282892,
+      "modified": "2024-10-18T10:09:14.515Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1WKOVPzoWINfAudBQ-m1Sa8hAVWStx9LR",
+      "path": "SuDS 3D Assets/Pumping Stations/AQUA/AQUA Nut.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 27772,
+      "modified": "2024-10-18T10:08:52.081Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1WT_vnycXynQCMnVWTupIsMgCsDt7Kb8w",
+      "path": "SuDS 3D Assets/Pumping Stations/AQUA/AQUA Plastic.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 207388,
+      "modified": "2024-10-18T10:09:03.920Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1USGRjGfKptvqzxtXsqPxfpn08KHj-Vd0",
+      "path": "SuDS 3D Assets/Pumping Stations/AQUA190S.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "stl",
+      "bytes": 1119884,
+      "modified": "2024-10-14T11:26:06.992Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Ub04zlq0uCq1ESF_p2F52Z-3jnM-EsdB",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI 1600 D.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend",
+      "bytes": 14083788,
+      "modified": "2024-10-14T11:33:34.489Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1UlOyl19znaXDdRQEC_OvtrmeapMjTunp",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI 1600 D.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend1",
+      "bytes": 14839428,
+      "modified": "2024-10-14T11:33:20.400Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1Wn9A8qhIih_5hO_zxJZGOOdCEjuS8sSn",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend",
+      "bytes": 18059772,
+      "modified": "2024-10-18T10:32:21.633Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1WzByrbLgjf248WRRirAyFamApk6CWxoF",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Breakdown.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend1",
+      "bytes": 18395584,
+      "modified": "2024-10-18T10:32:00.785Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1UhN9EalIEyosLG4uXFe1qUKrYK_L65ED",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Casing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 561868,
+      "modified": "2024-10-14T11:33:11.946Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1WqHY8fQkZh4qbScvmIDF1jU_Trg-NnbG",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Floaties.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 246204,
+      "modified": "2024-10-18T10:22:05.022Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Wri_PIjj03YAVG_zJKwyEK5p_0slqQYc",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Insides 1.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 809372,
+      "modified": "2024-10-18T10:22:18.289Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1WynQnNIhZT8mh1CszpVn95KmsfbJFBnm",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Insides 2.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 4953004,
+      "modified": "2024-10-18T10:22:28.012Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1UgsYwmzrz3yeQWr9YUf88sqJO2EldZv7",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Insides.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 5985276,
+      "modified": "2024-10-14T11:33:00.630Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1UVcT0rY6QZ2bGe1XdwOO47afWzezbN9K",
+      "path": "SuDS 3D Assets/Pumping Stations/MAXI1600D.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "stl",
+      "bytes": 12251234,
+      "modified": "2024-10-14T11:26:13.294Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1UdKJGghwkIbMeECvZPpsV-Cl84D3ANBJ",
+      "path": "SuDS 3D Assets/Pumping Stations/MINI 2000 D.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend",
+      "bytes": 13986940,
+      "modified": "2024-10-14T11:34:32.991Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1UxSbx9dXmBQtiJl237XEVnF396bp2qSL",
+      "path": "SuDS 3D Assets/Pumping Stations/MINI 2000 D.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend1",
+      "bytes": 14737204,
+      "modified": "2024-10-14T11:34:18.343Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1X6a18qD3jmGDIwRdK7lsUMQsNvMS6TO0",
+      "path": "SuDS 3D Assets/Pumping Stations/MINI/MINI Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend",
+      "bytes": 17468400,
+      "modified": "2024-10-18T10:41:09.817Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1X_BvZcOHZtx9teIf4rPtP5LPQ5DZRL00",
+      "path": "SuDS 3D Assets/Pumping Stations/MINI/MINI Breakdown.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend1",
+      "bytes": 19950932,
+      "modified": "2024-10-18T10:40:48.275Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1UsDW9SvcE_ylf-OeUI7B9NLYq3vtwMRN",
+      "path": "SuDS 3D Assets/Pumping Stations/MINI/MINI Casing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 553788,
+      "modified": "2024-10-18T10:35:40.577Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1XWoNYRs7YDSdsWO9XjIJMSM_y8zIoguk",
+      "path": "SuDS 3D Assets/Pumping Stations/MINI/MINI Floats.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 246044,
+      "modified": "2024-10-18T10:35:51.690Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1XZzTDiE8rSXuxGc35xf5m5Y2-hI1j2BG",
+      "path": "SuDS 3D Assets/Pumping Stations/MINI/MINI Insides 2.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 5180620,
+      "modified": "2024-10-18T10:36:16.603Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1UyKLd9GKCvdAtOXEaq4yvRqDuln9QYbP",
+      "path": "SuDS 3D Assets/Pumping Stations/MINI/MINI Insides.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 561788,
+      "modified": "2024-10-18T10:36:10.694Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1UWayOXB-AZsR2uEdNCtPiyuBO1t1VIAo",
+      "path": "SuDS 3D Assets/Pumping Stations/MINI2000D.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "stl",
+      "bytes": 12161234,
+      "modified": "2024-10-14T11:26:18.384Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1VPlHeBj4oCYT3VJJytBBhSOqKM4Y2b8o",
+      "path": "SuDS 3D Assets/Pumping Stations/Pump Tank/PS-50-1.85-5-HS.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "stl",
+      "bytes": 33303534,
+      "modified": "2024-10-15T13:00:10.120Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1VRWFVmmi3FVYbhH9quHHGpDoxL7MNT80",
+      "path": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Casing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 5647468,
+      "modified": "2024-10-20T11:10:47.877Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1XejtlP4AUck1M2l_qQpChptqwKnTbEam",
+      "path": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Insides 2.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 1857980,
+      "modified": "2024-10-18T10:43:57.681Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1VU_Wv8HbEw-0KeEaTqWIs9z1EclpswPW",
+      "path": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Insides.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 7318044,
+      "modified": "2024-10-18T10:43:55.258Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1V_3GRY1PmFswVJTTkzlQumA0a4hQW800",
+      "path": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Lid.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "fbx",
+      "bytes": 14700,
+      "modified": "2024-10-16T10:50:19.600Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1XaYlYsDQkC8oTrmJgTkQN_GHhe88rYPR",
+      "path": "SuDS 3D Assets/Pumping Stations/Pump Tank/PumpTank Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend",
+      "bytes": 41721776,
+      "modified": "2024-10-21T17:52:41.001Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1XjNAFgPzDUJLahwCHSc6IbBbkOYOppTc",
+      "path": "SuDS 3D Assets/Pumping Stations/Pump Tank/PumpTank Breakdown.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend1",
+      "bytes": 46825008,
+      "modified": "2024-10-21T17:52:37.222Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1Vvxk30JwmBoH6X2MkAQX_tRpEPxIxikR",
+      "path": "SuDS 3D Assets/Pumping Stations/Pump Tank/PumpTankBreakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoLift",
+      "format": "blend",
+      "bytes": 36855792,
+      "modified": "2024-10-17T18:33:14.168Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Idz6Y9rKTmNzwEb-sOlfX3NGvycydLMF",
+      "path": "SuDS 3D Assets/SERPT/SERPT Base.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPit",
+      "format": "fbx",
+      "bytes": 36732,
+      "modified": "2024-10-23T16:29:40.856Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IiQeuVqzEDxdG7aVwLC66juyT31t0gy4",
+      "path": "SuDS 3D Assets/SERPT/SERPT Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPit",
+      "format": "blend",
+      "bytes": 4882792,
+      "modified": "2024-10-25T14:27:03.601Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Zvy2eI1o9p8O_TZnaNMxgkrgpRpLYbno",
+      "path": "SuDS 3D Assets/SERPT/SERPT Breakdown.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPit",
+      "format": "blend1",
+      "bytes": 4901544,
+      "modified": "2024-10-25T14:26:43.502Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1If7Kw8hPCJBkjipijxuqCixsIqqMUI_U",
+      "path": "SuDS 3D Assets/SERPT/SERPT Inlet.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPit",
+      "format": "fbx",
+      "bytes": 455788,
+      "modified": "2024-10-02T20:37:42.408Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IiK0F7DpVIQds3qXFxMoy8K5GwK0Oph_",
+      "path": "SuDS 3D Assets/SERPT/SERPT Outlet.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPit",
+      "format": "fbx",
+      "bytes": 456316,
+      "modified": "2024-10-02T20:38:04.873Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Ig3dSviGqbTKpmi2SIFQt2W7CveFSaDz",
+      "path": "SuDS 3D Assets/SERPT/SERPT Tubing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPit",
+      "format": "fbx",
+      "bytes": 658668,
+      "modified": "2024-10-23T16:29:49.418Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IFoeAqCeg1Cro4TDKO018u-Dz6jwPBuj",
+      "path": "SuDS 3D Assets/SERPT/SERPT600150-1.5.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPit",
+      "format": "stl",
+      "bytes": 4824784,
+      "modified": "2024-10-01T21:54:18.940Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1XJ-t5TpKaw_N4jdNcPRJAbf8Vf04kb6_",
+      "path": "SuDS 3D Assets/SERPT/SERPT600160-2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPit",
+      "format": "stl",
+      "bytes": 2614984,
+      "modified": "2024-06-07T13:11:52.664Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "11tVza4KJxBAWp4Tv2NtWoyNynnXfesXu",
+      "path": "SuDS 3D Assets/Rhino Pod/Rhino Pod Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPod",
+      "format": "blend",
+      "bytes": 25177376,
+      "modified": "2024-10-10T12:13:43.064Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "11ZhYrq8YUmiJoprt9MvnElZs1I7vaxJY",
+      "path": "SuDS 3D Assets/Rhino Pod/Rhinopod-Bottom.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPod",
+      "format": "fbx",
+      "bytes": 194780,
+      "modified": "2024-10-10T10:54:07.212Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "11TxghHkKkx88LXU7uG-i4AJPNXLQCA5X",
+      "path": "SuDS 3D Assets/Rhino Pod/Rhinopod-Casing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPod",
+      "format": "fbx",
+      "bytes": 6653484,
+      "modified": "2024-10-10T10:53:37.908Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "11SDV4HhBTCWE6WVBpnM4L9Tw7P7b6Lf3",
+      "path": "SuDS 3D Assets/Rhino Pod/Rhinopod-Mid.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPod",
+      "format": "fbx",
+      "bytes": 632060,
+      "modified": "2024-10-10T10:53:48.318Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "11RQ3g1SintcrVAahgV6p38vQhd1QrTJr",
+      "path": "SuDS 3D Assets/Rhino Pod/Rhinopod-Top.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPod",
+      "format": "fbx",
+      "bytes": 5165580,
+      "modified": "2024-10-10T10:53:22.001Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "11ObqNRJYbdGPhjz7U12zJEjpq65Gh2Hu",
+      "path": "SuDS 3D Assets/Rhinopod.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoPod",
+      "format": "stl",
+      "bytes": 22645034,
+      "modified": "2024-10-10T10:48:08.366Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12XNXvWVS6iWnwscsAUOxNjarSH326f54",
+      "path": "SuDS 3D Assets/Orifice Flow Control/POC Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "blend",
+      "bytes": 4025772,
+      "modified": "2024-10-10T15:29:06.396Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12XjFguybKcjWb7IoTnHXJ6EMrWEpiXi2",
+      "path": "SuDS 3D Assets/Orifice Flow Control/POC-Base.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "fbx",
+      "bytes": 33196,
+      "modified": "2024-10-10T15:47:28.863Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12lCVD1LMyJHdK-IJjIkZ4vgc2SjYO5BA",
+      "path": "SuDS 3D Assets/Orifice Flow Control/POC-Divider.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "fbx",
+      "bytes": 12396,
+      "modified": "2024-10-10T15:47:45.601Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12ooqNfaWKuIwGn8e3D_Oy4hjELKNc0SJ",
+      "path": "SuDS 3D Assets/Orifice Flow Control/POC-Orifice-Latch.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "fbx",
+      "bytes": 20764,
+      "modified": "2024-10-10T15:48:22.822Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12lR-Y3NTr_cuZDnpqdx-WafQhfjDbhZv",
+      "path": "SuDS 3D Assets/Orifice Flow Control/POC-Orifice.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "fbx",
+      "bytes": 485132,
+      "modified": "2024-10-10T15:49:19.449Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "131tDMPXwRgzV06gMR2cOq8KswF0QIs_w",
+      "path": "SuDS 3D Assets/Orifice Flow Control/POC-Tube.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "fbx",
+      "bytes": 718940,
+      "modified": "2024-10-10T15:49:35.758Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12t-ghx8jnGr9-Enk85Z9vBo_70dl7Ff6",
+      "path": "SuDS 3D Assets/Orifice Flow Control/POC-Wire-Clips.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "fbx",
+      "bytes": 141676,
+      "modified": "2024-10-10T15:49:14.114Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12rVBvA1RtCRQc8UJyjs9t6OOrMYfcHXB",
+      "path": "SuDS 3D Assets/Orifice Flow Control/POC-Wire.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "fbx",
+      "bytes": 35836,
+      "modified": "2024-10-10T15:48:36.354Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12Qb1pFcsupuDDFBOWsa-l0EgMuUlajLm",
+      "path": "SuDS 3D Assets/Orifice Flow Control/POC600-1.5.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "stl",
+      "bytes": 3268484,
+      "modified": "2024-10-10T13:41:33.752Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1X2t7grWmA-IDFA-NBRBRZyEaoIchvKj2",
+      "path": "SuDS 3D Assets/SERFP600150-2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoFlo",
+      "format": "stl",
+      "bytes": 6231384,
+      "modified": "2024-06-07T13:11:52.321Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1ICpFrAVnHXO8-CMtEvJxqdEbQ643mnVE",
+      "path": "SuDS 3D Assets/Flow Control Tank 1200 dia x 2m.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 13493234,
+      "modified": "2024-09-30T12:39:50.878Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1k8J8fA1ckGcn1k2-8sfRi3ak79mrT0x4",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Back Case.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 270684,
+      "modified": "2025-04-30T23:24:40.308Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1-lSiluC5JGmVD71SCT_A33czHlO-6JOM",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Bracket.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 60084,
+      "modified": "2025-04-30T23:30:17.344Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1d9QvzSbxLR0WAad2w-l1xWJXR81-2aTj",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Bypass Arm.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 289784,
+      "modified": "2025-04-30T23:29:41.164Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1tC1KuRkhbkZm2YeZue30U2bdpOz1HzAo",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Bypass Cap.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 240084,
+      "modified": "2025-04-30T23:29:58.810Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1fwhiSx1yR8LOloFuAjU2k4eXFHF-tQuN",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Outlet pipe.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 921184,
+      "modified": "2025-04-30T23:29:03.923Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1mH81rmvkPZDDs7ahlJmfI5g5oHsa30uC",
+      "path": "SuDS 3D Assets/Vortex Flow Control/RoTex BaseFunc.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 6808384,
+      "modified": "2024-09-20T11:56:00.283Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1lo9i2IaEKMopqExEEN7IbcC6QMhiQeig",
+      "path": "SuDS 3D Assets/Vortex Flow Control/RoTex Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "blend",
+      "bytes": 7745896,
+      "modified": "2024-09-16T21:41:16.375Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1X712YGc8CHqfxe5WrCIpr9hdH3tX5wrj",
+      "path": "SuDS 3D Assets/Vortex Flow Control/RoTex-C1200-2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 13427584,
+      "modified": "2024-09-25T21:36:10.589Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1mHa_PRg1xfm_GiJjBd1dk5U56T8lJ5ti",
+      "path": "SuDS 3D Assets/Vortex Flow Control/RoTexFunc.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "fbx",
+      "bytes": 1691372,
+      "modified": "2024-09-20T11:56:59.609Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1huTazwz_lpszSE2TmNov2qD5IWQgmRmm",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Siphn pipe.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 25684,
+      "modified": "2025-04-30T23:30:43.003Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1uwBwsyiWNF6jEv97GuIJ68aiAsT29YiB",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Snail 1-2 Rear Box flat face full flange.mtl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "mtl",
+      "bytes": 210,
+      "modified": "2025-04-30T22:37:10Z",
+      "disposition": "skip",
+      "reason": "OBJ material sidecar, read with its OBJ"
+    },
+    {
+      "driveId": "1c4Pxq2awB_LPZzC0t6kzqurAAUyHp8Qk",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Snail 1-2 Rear Box flat face full flange.obj",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "obj",
+      "bytes": 582531,
+      "modified": "2025-04-30T22:37:10Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1PTXCMMneBBrkb50icWFAbv2tgyUxCuX5",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Snail 1-2 Rear Box flat face full flange.stp",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stp",
+      "bytes": 128249,
+      "modified": "2025-04-30T22:48:27.497Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1l0IJVJd62FAdAqdkw3jDDbRI2_ril71N",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Snail 1-2 Rear Box flat face full flange.zip",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "zip",
+      "bytes": 119113,
+      "modified": "2025-04-30T22:37:17.868Z",
+      "disposition": "skip",
+      "reason": "archive duplicating the STP/OBJ beside it"
+    },
+    {
+      "driveId": "1wrTwjMxq6HN5p0Wk12_SSKszKyIflRfN",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Snail 3-4 Rear Box flat face full flange.stp",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stp",
+      "bytes": 127048,
+      "modified": "2025-04-30T22:48:12.245Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1RrbiAKYkIyQrVFeoyNo_AbQlXm0uw1nH",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Snail 3-4 Rear Box flat face full flange.zip",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "zip",
+      "bytes": 128609,
+      "modified": "2025-04-30T22:49:04.761Z",
+      "disposition": "skip",
+      "reason": "archive duplicating the STP/OBJ beside it"
+    },
+    {
+      "driveId": "1HT-Zq2LRlq0twIw1JBOqIRXfjSWywKOP",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Snail 3-4 Rear Box flat face full flange/Snail 3-4 Rear Box flat face full flange.mtl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "mtl",
+      "bytes": 210,
+      "modified": "2025-04-30T22:48:26Z",
+      "disposition": "skip",
+      "reason": "OBJ material sidecar, read with its OBJ"
+    },
+    {
+      "driveId": "1QbAjhL9WHuTJAOYdeZJURYKm5R4ucLCF",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Snail 3-4 Rear Box flat face full flange/Snail 3-4 Rear Box flat face full flange.obj",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "obj",
+      "bytes": 604971,
+      "modified": "2025-04-30T22:48:26Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1QS5e1K2EbzKUVmtH4jUjM1H9YpYFem2l",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Snail 3-4.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "stl",
+      "bytes": 252384,
+      "modified": "2025-04-30T23:55:20.910Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IGfPWfKZLL1rnaF1voVqm6RNQrelYPt_",
+      "path": "SuDS 3D Assets/Vortex Flow Control/Vortex Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoRoTex",
+      "format": "blend",
+      "bytes": 15485488,
+      "modified": "2024-10-01T21:56:51.898Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IWwTdyNqI-DuIUlQPPT728WRg7cjKHee",
+      "path": "SuDS 3D Assets/SERSD/SERSD Base Tubing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "fbx",
+      "bytes": 642108,
+      "modified": "2024-10-02T20:18:02.860Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1ISqSxfsKRXjmZ8-IzbZJDEzWxf-3koQv",
+      "path": "SuDS 3D Assets/SERSD/SERSD Base.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "fbx",
+      "bytes": 100572,
+      "modified": "2024-10-02T20:17:46.740Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IQafNNUQ_qHT80oKM2IqaPy1ggqI9FTv",
+      "path": "SuDS 3D Assets/SERSD/SERSD Breakdown.blend",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "blend",
+      "bytes": 12062612,
+      "modified": "2024-10-02T20:31:34.450Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IR9e8_qHpeL_l6muH2Be4nZpDALQtl7u",
+      "path": "SuDS 3D Assets/SERSD/SERSD Breakdown.blend1",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "blend1",
+      "bytes": 12062628,
+      "modified": "2024-10-02T20:31:39.789Z",
+      "disposition": "skip",
+      "reason": "Blender backup"
+    },
+    {
+      "driveId": "1IXNVk1991Xe1FTgUZI3zyT-emp9VvdJC",
+      "path": "SuDS 3D Assets/SERSD/SERSD Filter Holder.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "fbx",
+      "bytes": 120396,
+      "modified": "2024-10-02T20:18:20.392Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IZEgfZZBwwCn71u1amJ0_QMXDMgtD4oN",
+      "path": "SuDS 3D Assets/SERSD/SERSD Filter Long.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "fbx",
+      "bytes": 1477596,
+      "modified": "2024-10-02T20:19:08.098Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IXv_S9cCQ7WXX5bdc0QF6nJUJM_icDqR",
+      "path": "SuDS 3D Assets/SERSD/SERSD Filter Short.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "fbx",
+      "bytes": 849964,
+      "modified": "2024-10-02T20:19:26.119Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IZgOIFtVC-FPlwNcr62PdmWewWBaaEE6",
+      "path": "SuDS 3D Assets/SERSD/SERSD Top Level 1.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "fbx",
+      "bytes": 356700,
+      "modified": "2024-10-02T20:19:35.941Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1Ia5EaxOtHbkbVe4B2zGXW0_VXCIdOmh4",
+      "path": "SuDS 3D Assets/SERSD/SERSD Top Level 2.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "fbx",
+      "bytes": 357852,
+      "modified": "2024-10-02T20:19:48.518Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1IG64oSkPGghqafeLW9fMQvhq8bzZ-oum",
+      "path": "SuDS 3D Assets/SERSD/SERSD500160-2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "RhinoShield",
+      "format": "stl",
+      "bytes": 10656584,
+      "modified": "2024-10-01T21:54:05.665Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "121btxwvnGA5NwTJtHbAwvpEodMk_DSdP",
+      "path": "SuDS 3D Assets/Siphon Housing/First Test 2.3mf",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "3mf",
+      "bytes": 8201,
+      "modified": "2024-12-16T13:13:12.072Z",
+      "disposition": "skip",
+      "reason": "slicer file"
+    },
+    {
+      "driveId": "121g0rjQjufe9AD6WMChcoZEQyI32av-q",
+      "path": "SuDS 3D Assets/Siphon Housing/First Test 2.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "stl",
+      "bytes": 2085084,
+      "modified": "2024-12-16T15:33:47.872Z",
+      "disposition": "skip",
+      "reason": "print test iteration"
+    },
+    {
+      "driveId": "120pupZ4Vs4BEAd-5jAn4WjtOAHLHV31h",
+      "path": "SuDS 3D Assets/Siphon Housing/First Test.3mf",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "3mf",
+      "bytes": 110354,
+      "modified": "2024-12-16T13:16:27.243Z",
+      "disposition": "skip",
+      "reason": "slicer file"
+    },
+    {
+      "driveId": "12Wfu-gOnh7uR_K661DaicYYGrqQztkrT",
+      "path": "SuDS 3D Assets/Siphon Housing/Grill SVG.svg",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "svg",
+      "bytes": 2254,
+      "modified": "2024-12-19T12:19:39.208Z",
+      "disposition": "skip",
+      "reason": "2D artwork"
+    },
+    {
+      "driveId": "126r4mA_6u3LOAoCcdixb3ED6jHNg7QQ3",
+      "path": "SuDS 3D Assets/Siphon Housing/Housing-Body.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "stl",
+      "bytes": 2085084,
+      "modified": "2024-12-16T20:52:55.637Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12dGaVnpiBtVSrZi8LWJaMk3oHMcoaI3I",
+      "path": "SuDS 3D Assets/Siphon Housing/Housing.20241216-200659.FCBak",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "fcbak",
+      "bytes": 343255,
+      "modified": "2024-12-19T18:34:52.273Z",
+      "disposition": "skip",
+      "reason": "FreeCAD backup"
+    },
+    {
+      "driveId": "126Hc1vsEp6g34NaoANIDHtJAFsqyLDN3",
+      "path": "SuDS 3D Assets/Siphon Housing/Housing.FCStd",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "fcstd",
+      "bytes": 485028,
+      "modified": "2024-12-19T18:35:05.714Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12QkDGd282kLaOqAqUvoshCtydyxR4qbh",
+      "path": "SuDS 3D Assets/Siphon Housing/Housing.obj",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "obj",
+      "bytes": 7510596,
+      "modified": "2024-12-18T11:46:08.206Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12PaYpZoKfNG0ZykpHGeGtXdbiNH5JdOq",
+      "path": "SuDS 3D Assets/Siphon Housing/Housing.stl",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "stl",
+      "bytes": 4265584,
+      "modified": "2024-12-18T11:44:58.103Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "12gxqNlxfKPD3I4Pnsf06krrh3IDULJh9",
+      "path": "SuDS 3D Assets/Siphon Housing/Housing2.20241219-183441.FCBak",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "fcbak",
+      "bytes": 172427,
+      "modified": "2024-12-20T10:57:55.308Z",
+      "disposition": "skip",
+      "reason": "FreeCAD backup"
+    },
+    {
+      "driveId": "12YQ6cBoea2AyiVfGbBYQgBnP2aMg8mu6",
+      "path": "SuDS 3D Assets/Siphon Housing/Housing2.FCStd",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "fcstd",
+      "bytes": 79890,
+      "modified": "2024-12-20T10:47:41.657Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "11rfMUnPW5XXEzacXHmZGTAixUVRIgl3g",
+      "path": "SuDS 3D Assets/Siphon Housing/Unnamed-BodyPad.3mf",
+      "root": "SuDS 3D Assets",
+      "family": "Siphon housing (R&D, no settled name)",
+      "format": "3mf",
+      "bytes": 5421,
+      "modified": "2024-12-16T11:10:25.777Z",
+      "disposition": "skip",
+      "reason": "slicer file"
+    },
+    {
+      "driveId": "1Wh-xS4oqYpKnJ0s6pYWpS8daEoNtLQYs",
+      "path": "SuDS 3D Assets/Nurs And Bolts/uploads_files_3426466_Nuts+And+Bolts.obj",
+      "root": "SuDS 3D Assets",
+      "family": "Stock hardware",
+      "format": "obj",
+      "bytes": 2913963,
+      "modified": "2025-04-30T12:58:11.949Z",
+      "disposition": "skip",
+      "reason": "third-party marketplace download (uploads_files_ prefix), not a SuDS Enviro product model"
+    },
+    {
+      "driveId": "1cKWfCBy8gu4VLyRlNtBWmBWD0Of722kB",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/1.8 dia Hydro Sep.stl",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "stl",
+      "bytes": 1032834,
+      "modified": "2024-11-07T17:06:29.295Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1cKua_NotazTP18cGetAk5TsrOkH1IEek",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/Bottom Bowl.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "fbx",
+      "bytes": 200540,
+      "modified": "2024-11-07T17:59:20.227Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/Breakout.blend",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "blend",
+      "bytes": 2039012,
+      "modified": "2024-11-08T13:00:15.104Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1cVt6q5uRqlCqmjdmh7O8WEzhIOgIOIBe",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/Casing.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "fbx",
+      "bytes": 260108,
+      "modified": "2024-11-07T17:59:31.212Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1cYSuwD_EoS9t5O15cv3jgTNwUVJCTCps",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/Centre Pipe.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "fbx",
+      "bytes": 20300,
+      "modified": "2024-11-07T17:59:42.936Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1ce8snSq1pePXk5952GCeqxbZhCFonlgj",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/Inner Curved Baffle#.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "fbx",
+      "bytes": 13612,
+      "modified": "2024-11-07T18:00:15.240Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1cjGFmoV2A8625TvBAJjB-u0JKiUlXgzm",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/Outer Curved Baffle#.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "fbx",
+      "bytes": 14028,
+      "modified": "2024-11-07T18:00:25.216Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1coXkKJk2ehu1tmIvcuupxaAAt3SnOcS-",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/Outlet.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "fbx",
+      "bytes": 23628,
+      "modified": "2024-11-07T18:00:34.411Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1cyB8ImN1Dm_GqCBlT9Y5RDXwOn3VUMWC",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/Stand.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "fbx",
+      "bytes": 39804,
+      "modified": "2024-11-07T18:00:47.877Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1d3Jd8MIsggMfXK8NWz6MnlovN5UZqktA",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/Water Track.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "fbx",
+      "bytes": 28348,
+      "modified": "2024-11-07T18:01:00.032Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1cbnEQfyf7pyrZloM9V3PxMHRwO0CfwTZ",
+      "path": "SuDS 3D Assets/Hydrdynamic Separaters/inlet.fbx",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "fbx",
+      "bytes": 25996,
+      "modified": "2024-11-07T17:59:52.085Z",
+      "disposition": "candidate"
+    },
+    {
+      "driveId": "1c8Vnb0D4ybW1lpLRpB2L0lItT_2oYmE8",
+      "path": "SuDS 3D Assets/SEHDS/SEHDS1200225-1-6-2.9.stl",
+      "root": "SuDS 3D Assets",
+      "family": "SudSceptor",
+      "format": "stl",
+      "bytes": 10364084,
+      "modified": "2024-11-07T12:53:53.230Z",
+      "disposition": "candidate"
+    }
+  ],
+  "renders": [
+    {
+      "root": "Product Renders",
+      "id": "1yBYnOf6YSDi2uK3ca1jIBrP9RPwx2IJ6",
+      "title": "Product Renders (loose files)",
+      "path": "Product Renders (loose files)",
+      "fileCount": 3,
+      "totalBytes": 11914558,
+      "examples": [
+        {
+          "title": "RHINO Vortex Flow Control c1.png",
+          "id": "1liO-QB-c4kxKvIBYIaNrFTJ68jxMGlgq"
+        },
+        {
+          "title": "RHINO Vortex Flow Control c2.png",
+          "id": "1liGOE0qjW-4Bh0K8LbVc5_vMHEdCezAR"
+        },
+        {
+          "title": "RHINO Vortex Flow Control.png",
+          "id": "1yDsdK016Oid4s0Mq27rDQWhnlVK7Pfve"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "root": "Product Renders",
+      "id": "15gyqw4zwDYQZFtcXYwBnqnEZ-ohdf-a8",
+      "title": "Renders",
+      "path": "Product Renders/Renders",
+      "fileCount": 51,
+      "totalBytes": 33062161,
+      "examples": [
+        {
+          "title": "FVC750-1.5 CUT AWAY.png",
+          "id": "1E2fwMTaBgjUGYqqYxQaPjXFUT1UrjgL1"
+        },
+        {
+          "title": "SIC600225-2.png",
+          "id": "1EbztEjQxQkG882lMyGareJGjoayrj4AU"
+        },
+        {
+          "title": "CP600150-2.png",
+          "id": "1D4n1vgLPBHPDD1Vzxf5K-y9JyE45-pJk"
+        }
+      ],
+      "note": "50 png + 1 jpg; flat"
+    },
+    {
+      "root": "Product Renders",
+      "id": "13ANkOsCjp1hpTqXO5j5GZH5vAkSTgFuk",
+      "title": "Renders 2",
+      "path": "Product Renders/Renders 2",
+      "fileCount": 51,
+      "totalBytes": 33062161,
+      "examples": [
+        {
+          "title": "CP750225-2.png",
+          "id": "13kzorVib7vrex3Kpav4BWNJaKSs-ddVU"
+        },
+        {
+          "title": "SIC600225-2.png",
+          "id": "1652Km4Xy5pb7GpfSRtJvYq5vmV36BS9L"
+        },
+        {
+          "title": "FVC750-1.5.png",
+          "id": "15CUwPdXlIF7akvqqW_-vApehbj31M_3Z"
+        }
+      ],
+      "note": "exact duplicate of Renders (same 51 names and sizes)"
+    },
+    {
+      "root": "Product Renders",
+      "id": "1GpA4-ZW7CkBzddazhwtyCrKZPNaCEAtv",
+      "title": "XXX - Renders 2",
+      "path": "Product Renders/Renders 1/XXX - Renders 2",
+      "fileCount": 52,
+      "totalBytes": 33760131,
+      "examples": [
+        {
+          "title": "FVC750-1.5.png",
+          "id": "1K5XXw_jOrB50JfF8XJwzCn_ftUuoHwNs"
+        },
+        {
+          "title": "SIC600225-2.png",
+          "id": "1N8XL-9Mxj-XXEjOJMenlJe03CCCMIAmv"
+        },
+        {
+          "title": "foulpump.jpg",
+          "id": "1I7HliSSJUJWS00ppbA93W-48iyQimcFD"
+        }
+      ],
+      "note": "duplicate of Renders + foulpump.jpg"
+    },
+    {
+      "root": "Product Renders",
+      "id": "16gbKb8bDuBjXEZoFe51DwbglTnnATYqp",
+      "title": "Renders 1 (loose files)",
+      "path": "Product Renders/Renders 1 (loose files)",
+      "fileCount": 3,
+      "totalBytes": 1316618,
+      "examples": [
+        {
+          "title": "roylist-render-data.docx",
+          "id": "1759DtRuKgXwZlQPzX623X6Kxuj69zOK7"
+        },
+        {
+          "title": "roylist-render-data.pdf",
+          "id": "174SKOrsIi9mqn9N--bMk78NgTH3CHvYe"
+        },
+        {
+          "title": "example renders.docx",
+          "id": "17BrkfZLSSwh6EfpJBjpJdBVC9NOXTY4T"
+        }
+      ],
+      "note": "docx/pdf render data lists"
+    },
+    {
+      "root": "STYLISED Renders",
+      "id": "1ZC-lFCc6JPbp0TgMEkF7VoOn8x4lCwpI",
+      "title": "STYLISED Renders",
+      "path": "STYLISED Renders",
+      "fileCount": 9,
+      "totalBytes": 951949,
+      "examples": [
+        {
+          "title": "SERSIC.png",
+          "id": "1ZHxZM6xdJWH50fHMPSqlbZ4ImXIak-g8"
+        },
+        {
+          "title": "SERFIC.png",
+          "id": "1ZlLBxkzG7slwPr1Ex6i_-jJpOKBkhaPD"
+        },
+        {
+          "title": "Vortex.png",
+          "id": "1ZlzwrealUA9ZxlYIJV3qcZYGmNRkw-_N"
+        }
+      ],
+      "note": "flat; also: Pump-Tank, Orifice, MINI, MAXI#, AQUA, Pump Tank"
+    },
+    {
+      "root": "Product Renders",
+      "id": "1GtTaJP3be2Z-4xgmIOL342aDyGN-4bKi",
+      "title": "VFC",
+      "path": "Product Renders/Renders 1/VFC",
+      "fileCount": 4,
+      "totalBytes": 3804335,
+      "examples": [
+        {
+          "title": "VFC750 - CUT AWAY.png",
+          "id": "1SzSPvEpZtqzJ66lIva7NH3bgMqBhCHie"
+        },
+        {
+          "title": "VFC750 - CLOSED.png",
+          "id": "1SzfCOxEvfLtQ_BEKlI3rFafEiSgKDgk5"
+        },
+        {
+          "title": "VFC1050 - CLOSED.png",
+          "id": "1T0LrGd_Hz6zJq--vEmRgKFpI2zKj1p3C"
+        }
+      ],
+      "note": "nested VFC/VFC750/{VFC750,VFC1050}; VFC/VFC1050 empty"
+    },
+    {
+      "root": "Product Renders",
+      "id": "1GB2xY0TPy2qvhWadV-hbfknldxhlHumy",
+      "title": "SIC",
+      "path": "Product Renders/Renders 1/SIC",
+      "fileCount": 17,
+      "totalBytes": 10111523,
+      "examples": [
+        {
+          "title": "SIC600225-2.png",
+          "id": "1OTEPeeE6wQScZ24uQ3H7GoCEtrl0jwjV"
+        },
+        {
+          "title": "SIC450150A2.png",
+          "id": "1Ow2v9BXIXmZh7pcEq4s6-G4l7rxOl0b3"
+        },
+        {
+          "title": "SIC600-90-150-2.png",
+          "id": "1O590m05tlhelbezzKuZe7RKu-WsuHxlq"
+        }
+      ],
+      "note": "subfolders SIC600 (9), SIC450 (8)"
+    },
+    {
+      "root": "Product Renders",
+      "id": "1CCMYB5t4w4M1gYLA_730NkXT-NVDPfbH",
+      "title": "RSIC",
+      "path": "Product Renders/Renders 1/RSIC",
+      "fileCount": 32,
+      "totalBytes": 1702180,
+      "examples": [
+        {
+          "title": "RSIC600150-A4-CLOSED.png",
+          "id": "1Nw6AqHwGEFGDRrZ0hzuvmOyoU4ssL2p4"
+        },
+        {
+          "title": "RSIC450100-A2-CLOSED.png",
+          "id": "1LGNheTOGNGdKmv7tY6uYB8ifF1OOTLAg"
+        },
+        {
+          "title": "RIC600225-CLOSED.png",
+          "id": "1K_UFpGGx5U7lK9kBk590bilsSiNuYjuI"
+        }
+      ],
+      "note": "6 size subfolders, A2/A4 variants; 20 of 32 in 'obsolete' subfolders; small (~50KB) stylised PNGs"
+    },
+    {
+      "root": "Product Renders",
+      "id": "1CDUxAtnL_99GQ23AJKDKAhU4moMyHUIF",
+      "title": "RIC",
+      "path": "Product Renders/Renders 1/RIC",
+      "fileCount": 8,
+      "totalBytes": 433736,
+      "examples": [
+        {
+          "title": "RIC600_CLOSED.png",
+          "id": "1K4Nwz_NsXGqkh_Sdwt2ynsEsFte63xbV"
+        },
+        {
+          "title": "RIC600225_CUTAWAY.png",
+          "id": "1JjZvmqa8-qaGGKYeEAfLbAHFXX-BMcck"
+        },
+        {
+          "title": "RIC600300_CLOSED.png",
+          "id": "1JgH074e34rL_XwvpCFRnU9UN8PftiRZ6"
+        }
+      ],
+      "note": "subfolders RIC600, RIC600150, RIC600225, RIC600300; CLOSED/CUTAWAY pairs"
+    },
+    {
+      "root": "Product Renders",
+      "id": "1Bo3asryqvXbKDV9wsQZcV9l39slZgM8u",
+      "title": "RhinoPod",
+      "path": "Product Renders/Renders 1/RhinoPod",
+      "fileCount": 1,
+      "totalBytes": 116484,
+      "examples": [
+        {
+          "title": "RhinoPod.png",
+          "id": "1NNkEpq-sI91q8i8bZFN9MDXYhydGeMn6"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "root": "Product Renders",
+      "id": "17g5_1ixWdKktLGsTXdv_2SvBx9Djod4-",
+      "title": "RFIC",
+      "path": "Product Renders/Renders 1/RFIC",
+      "fileCount": 16,
+      "totalBytes": 817483,
+      "examples": [
+        {
+          "title": "RFIC600300_CLOSED.png",
+          "id": "1CRt3i5rhX1rS6ie9GLakACB85y4_uVhj"
+        },
+        {
+          "title": "RFIC600225_CUTAWAY.png",
+          "id": "1PSvmQuVG6ihUS-wHT06pEdr9bASjhuKC"
+        },
+        {
+          "title": "RFIC450110.png",
+          "id": "1PBzWYmNn5DMwTK2ulKdut5CzPmDwgWx2"
+        }
+      ],
+      "note": "6 size subfolders; 8 files in 'obsolete'"
+    },
+    {
+      "root": "Product Renders",
+      "id": "17F1QgrA6u36yVBvw-eExjt2vCTxabjlQ",
+      "title": "Reduction Cap",
+      "path": "Product Renders/Renders 1/Reduction Cap",
+      "fileCount": 1,
+      "totalBytes": 44698,
+      "examples": [
+        {
+          "title": "REDUCTION CAP PICTURE.png",
+          "id": "1BqR9g4BUF3xli_1nWHHtqd081Y9b1XSg"
+        }
+      ],
+      "note": ""
+    },
+    {
+      "root": "Product Renders",
+      "id": "17GnRLJR6GkzfE0r3YpgUEBOyOZ3QWM2m",
+      "title": "Pump Stations",
+      "path": "Product Renders/Renders 1/Pump Stations",
+      "fileCount": 12,
+      "totalBytes": 13730262,
+      "examples": [
+        {
+          "title": "Horizontal Pump Tank 2.png",
+          "id": "1AzoWywLS6bwrMOArHWBlVxYqNH9TIrBT"
+        },
+        {
+          "title": "MINI2000D.591-removebg-preview.png",
+          "id": "1BucQa48S-6pl9rGgmg6CqVwqRG0Eq_8c"
+        },
+        {
+          "title": "AQUA190S.597-removebg-preview.png",
+          "id": "1B1Na80V4BE0PN8lmHHmPe0UkNxmVLmJ_"
+        }
+      ],
+      "note": "flat; several *-removebg-preview cutouts"
+    },
+    {
+      "root": "Product Renders",
+      "id": "17LWaUSQQaa9gQHOHxq0Q5YsRVbuzF5CX",
+      "title": "POC",
+      "path": "Product Renders/Renders 1/POC",
+      "fileCount": 10,
+      "totalBytes": 3409848,
+      "examples": [
+        {
+          "title": "POC600-CUTAWAY.png",
+          "id": "1Ra_lO9K3OI0NXZu0ddJVo-l4ZrQK3Mhh"
+        },
+        {
+          "title": "POC450-CLOSED.png",
+          "id": "1RjRxptBOZnRNnEhsfSGal8jB44zCGVWU"
+        },
+        {
+          "title": "POC600.png",
+          "id": "1SI7mqE6BAwdktXelCG0a4lkMah9jBli_"
+        }
+      ],
+      "note": "subfolders POC600, POC450 (+obsolete)"
+    },
+    {
+      "root": "Product Renders",
+      "id": "17PK_V1LCm9H1INixzd8maqzlwFsQ7a1U",
+      "title": "OC",
+      "path": "Product Renders/Renders 1/OC",
+      "fileCount": 8,
+      "totalBytes": 486557,
+      "examples": [
+        {
+          "title": "OC600-CUTAWAY 1.png",
+          "id": "1RxBeJmPj_z6_piWD8-c591nB4sFYwZmv"
+        },
+        {
+          "title": "OC450-CLOSED.png",
+          "id": "1SGrGvVvAFKQpBN5_iarXRH3YAdOnCnju"
+        },
+        {
+          "title": "OC600_CUTAWAY.png",
+          "id": "1S_sP50rmPoDjT7SY38tdLx2PATXvXsZ-"
+        }
+      ],
+      "note": "subfolders OC600, OC450 (+obsolete)"
+    },
+    {
+      "root": "Product Renders",
+      "id": "17UrBTU9L-Mbpo1Xw-bHbNWisc_9YBpaa",
+      "title": "Grease Traps",
+      "path": "Product Renders/Renders 1/Grease Traps",
+      "fileCount": 4,
+      "totalBytes": 3256469,
+      "examples": [
+        {
+          "title": "Jumbo Micro\u00ae.jpg",
+          "id": "1Bhrz0ZdaqZBZJoPovKFLVv3-H3nA9kaJ"
+        },
+        {
+          "title": "Jumbo Mini\u00ae.jpg",
+          "id": "1BUYfWI4TT98Prfskzb3QxD25Enxvx_uc"
+        },
+        {
+          "title": "Jumbo Midi\u00ae.jpg",
+          "id": "1B_0_7dX6FgqtsvVdNYgawRDaSxG2ehLz"
+        }
+      ],
+      "note": "jpg only"
+    },
+    {
+      "root": "Product Renders",
+      "id": "17XbOXBrTJIR_9icjfXdpkFSgXRwI22WZ",
+      "title": "FIC",
+      "path": "Product Renders/Renders 1/FIC",
+      "fileCount": 12,
+      "totalBytes": 4786885,
+      "examples": [
+        {
+          "title": "FIC600_CLOSED.png",
+          "id": "1RMmdDu_1U4K6vurcOMeWIOb-f2vwlMG9"
+        },
+        {
+          "title": "FIC450 CUTAWAY.png",
+          "id": "1PuCofb326bg3RUnzo-fzcjQFfi5IFjiP"
+        },
+        {
+          "title": "FIC600160-2 UPDATED.png",
+          "id": "1QyTFRach4h2EhzBK6YhF73CHcVNJYnpT"
+        }
+      ],
+      "note": "subfolders FIC600 (6), FIC450 (6)"
+    },
+    {
+      "root": "Product Renders",
+      "id": "17ceMNObJuVpYkUHtXDd1V7bmc4dJePGg",
+      "title": "CSP",
+      "path": "Product Renders/Renders 1/CSP",
+      "fileCount": 4,
+      "totalBytes": 608583,
+      "examples": [
+        {
+          "title": "CSP450_CLOSED.png",
+          "id": "1Q-OdSOkaQgzWoW0NT37hfHitW2kJbEbV"
+        },
+        {
+          "title": "CSP300-CLOSED.png",
+          "id": "1Q5Q2pN6V1jRPOGF1MnsTyo0TfhxHJNkr"
+        },
+        {
+          "title": "CSP300_CUTAWAY.png",
+          "id": "1QD9gcmC5uSzKJdv5S5waVZ-V2CnvTOEN"
+        }
+      ],
+      "note": "subfolders CSP450, CSP300"
+    },
+    {
+      "root": "Product Renders",
+      "id": "16keFilM2yX-JsLEkwVo98AWb_Qe5dUqW",
+      "title": "CP",
+      "path": "Product Renders/Renders 1/CP",
+      "fileCount": 25,
+      "totalBytes": 11540565,
+      "examples": [
+        {
+          "title": "CP750-CLOSED.png",
+          "id": "1ARbHcoY3MH6DXl5JcL68rsjy8jlVFIFb"
+        },
+        {
+          "title": "CP600_CUTAWAY.png",
+          "id": "196dMmZnyhTTJlvROXqfw1jll6voIMGbr"
+        },
+        {
+          "title": "CP1050-CLOSED.png",
+          "id": "19rILGoKvErnP58B0Ii2sohd8-UPVs--J"
+        }
+      ],
+      "note": "subfolders CP750, CP600, CP450, CP1050"
+    },
+    {
+      "root": "Product Renders",
+      "id": "171sr6kthBvuLPYSnJH27bYqpJg3vyGki",
+      "title": "Bases",
+      "path": "Product Renders/Renders 1/Bases",
+      "fileCount": 10,
+      "totalBytes": 525562,
+      "examples": [
+        {
+          "title": "Rhino 300 Base Plan.png",
+          "id": "1QcqFjV74gCZf-PCzmdM60ok0U_8mk-7a"
+        },
+        {
+          "title": "Rhino 225 Base Side.png",
+          "id": "1QiHi66C8yu6gODMrAsaYBzUbcGE_zCML"
+        },
+        {
+          "title": "160 Base.png",
+          "id": "1QEYc7zsuT0-JDOgr9GU9z7uTNPOtAg_N"
+        }
+      ],
+      "note": "subfolders Traditional (4), Rhino (6)"
+    },
+    {
+      "root": "Product Renders",
+      "id": "173ywitF2zxVbQP9V-jfzEL6bRhIgeCiH",
+      "title": "Adapters",
+      "path": "Product Renders/Renders 1/Adapters",
+      "fileCount": 13,
+      "totalBytes": 11920343,
+      "examples": [
+        {
+          "title": "TWINWALL A.png",
+          "id": "18x-HBbcRKTA2PO6Fw-OgRLEitL1VFn5n"
+        },
+        {
+          "title": "RIGIDRAIN B.png",
+          "id": "18yhL6qgCQ9T6vvpkvhvQfUlWedhfftHG"
+        },
+        {
+          "title": "RIC600 PIPE VARIANTS 1.png",
+          "id": "190XkIPBw9NNjBQ5-fmIN2damCt7Tr_zD"
+        }
+      ],
+      "note": "6 jpg + 7 png, flat"
+    }
+  ]
+}
