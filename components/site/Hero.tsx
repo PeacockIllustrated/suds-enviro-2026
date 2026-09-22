@@ -12,9 +12,16 @@ import { RichText, HEADING_VOICES } from './RichText'
 export function Hero({ children }: { children?: React.ReactNode }) {
   return (
     <section className="relative overflow-hidden bg-white">
-      {children ? <div className="absolute inset-0">{children}</div> : null}
+      {/* The chamber sits off to the right rather than behind the
+          headline, so neither has to fight the other for legibility.
+          On narrow screens it drops back further still. */}
+      {children ? (
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-full opacity-30 lg:w-[55%] lg:opacity-60">
+          {children}
+        </div>
+      ) : null}
 
-      <div className="relative mx-auto max-w-[1400px] px-5 pt-16 pb-10 text-center md:pt-24">
+      <div className="relative z-10 mx-auto flex min-h-[520px] max-w-[1400px] flex-col justify-center px-5 pt-16 pb-10 text-center md:min-h-[600px] md:pt-24">
         <Image
           src={HERO.logo}
           alt="SuDS Enviro - Bespoke, Standardised"

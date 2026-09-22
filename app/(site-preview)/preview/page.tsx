@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Hero } from '@/components/site/Hero'
+import { HeroChamberMount } from '@/components/site/HeroChamberMount'
 import { WaterTabs } from '@/components/site/WaterTabs'
 import { InnovationSlider } from '@/components/site/InnovationSlider'
 import { Testimonials } from '@/components/site/Testimonials'
@@ -22,7 +23,9 @@ export const metadata: Metadata = {
 export default function HomePreviewPage() {
   return (
     <>
-      <Hero />
+      <Hero>
+        <HeroChamberMount />
+      </Hero>
       <WaterTabs />
       <InnovationSlider />
       <Testimonials />
