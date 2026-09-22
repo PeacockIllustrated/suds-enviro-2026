@@ -153,6 +153,14 @@ def fix_normals(ob: bpy.types.Object) -> int:
 
     CAD exports and hand-joined Blender parts often carry inverted faces,
     which a web viewer shows as holes or black patches."""
+    # FBX parts carry custom split normals that the glTF exporter writes out
+    # verbatim, inverted or not; drop them so shading follows the geometry.
+    if ob.data.has_custom_normals:
+        bpy.ops.object.select_all(action='DESELECT')
+        ob.select_set(True)
+        bpy.context.view_layer.objects.active = ob
+        bpy.ops.mesh.customdata_custom_splitnormals_clear()
+        ob['hadCustomNormals'] = True
     bm = bmesh.new()
     bm.from_mesh(ob.data)
     before = [f.normal.copy() for f in bm.faces]
@@ -281,6 +289,7 @@ def main() -> None:
         if src.suffix.lower() in ('.stl',):
             weld(ob, 0.01)
         e['normalsFlipped'] = fix_normals(ob)
+        e['customNormalsCleared'] = bool(ob.get('hadCustomNormals'))
         if e['role'] == 'xray':
             ob.data.materials.clear()
             ob.data.materials.append(xray_material())

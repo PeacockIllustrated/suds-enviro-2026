@@ -128,6 +128,7 @@ def build(product: dict) -> dict:
             'path': str(dst.relative_to(LIB)), 'bytes': po['bytes'], 'triangles': po['tris'],
             'bboxMm': p['bboxMm'], 'sourceUnit': p['declaredUnit'], 'unitResolution': p['unitSource'],
             'materialsInSource': p['materials'],
+            'normalsFlipped': p.get('normalsFlipped', 0), 'customNormalsCleared': p.get('customNormalsCleared', False),
         })
 
     roles = {p['name']: p['role'] for p in rep['parts']}
