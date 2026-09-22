@@ -15,8 +15,10 @@ import type {
   ReviewBlockDef,
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
   isVariantDiameter,
+  FLOW_CONTROL_SYSTEM_TYPES,
   generateProductCode as fcGenerateProductCode,
   generateCompliance as fcGenerateCompliance,
 } from '@/lib/rules/flow-control'
@@ -132,7 +134,7 @@ const flowControlSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getFlowControlData(state)
-      return d !== null && d.headDepthMm !== ''
+      return d !== null && isPositiveNumber(d.headDepthMm)
     },
   },
   {
@@ -145,9 +147,12 @@ const flowControlSteps: StepDefinition[] = [
     canProceed: (state: WizardState) => {
       const d = getFlowControlData(state)
       if (!d) return false
-      // SERF derives discharge from head + orifice, so it's optional
-      if (d.variant === 'SERF') return true
-      return d.dischargeRateLs !== ''
+      // SERF derives discharge from head + orifice, so it's optional -
+      // but anything typed must still be a usable number
+      if (d.variant === 'SERF') {
+        return d.dischargeRateLs.trim() === '' || isPositiveNumber(d.dischargeRateLs)
+      }
+      return isPositiveNumber(d.dischargeRateLs)
     },
   },
   {
@@ -190,6 +195,7 @@ export function flowControlReducer(
     }
 
     case 'FC_SET_SYSTEM':
+      if (!FLOW_CONTROL_SYSTEM_TYPES.includes(action.payload)) return productData
       return {
         kind: 'flow-control',
         data: { ...data, systemType: action.payload },
@@ -214,6 +220,7 @@ export function flowControlReducer(
       }
 
     case 'FC_SET_CHAMBER_DIAMETER':
+      if (!isVariantDiameter(data.variant, action.payload)) return productData
       return {
         kind: 'flow-control',
         data: { ...data, chamberDiameter: action.payload },

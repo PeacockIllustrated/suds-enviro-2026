@@ -13,6 +13,7 @@ import type {
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 
 // ── TREATMENT ABBREVIATIONS ──────────────────────────────────
 
@@ -44,11 +45,13 @@ export function validateConfig(state: WizardState): ValidationResult {
 
   if (!data.populationEquivalent || data.populationEquivalent.trim() === '') {
     errors.push('Population equivalent not specified')
-  } else {
-    const pe = parseFloat(data.populationEquivalent)
-    if (isNaN(pe) || pe <= 0) {
-      errors.push('Population equivalent must be a positive number')
-    }
+  } else if (!isPositiveNumber(data.populationEquivalent)) {
+    errors.push('Population equivalent must be a positive number')
+  }
+
+  // Daily flow is optional, but anything entered must be usable
+  if (data.dailyFlowLitres.trim() !== '' && !isPositiveNumber(data.dailyFlowLitres)) {
+    errors.push('Daily flow must be a positive number')
   }
 
   if (!data.dischargePoint) errors.push('Discharge point not selected')
@@ -77,9 +80,7 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
   const data = extractSepticData(state)
   const { valid } = validateConfig(state)
 
-  const hasValidPE = data?.populationEquivalent
-    ? parseFloat(data.populationEquivalent) > 0
-    : false
+  const hasValidPE = isPositiveNumber(data?.populationEquivalent)
 
   // Secondary treatment is required for discharge to watercourse
   const watercourseOk = data?.dischargePoint === 'watercourse'

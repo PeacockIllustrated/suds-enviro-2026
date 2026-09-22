@@ -15,7 +15,11 @@ import type {
   ReviewBlockDef,
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
+  getMaxDepth,
+  isAllowedDiameter,
+  PUMP_OUTLET_SIZES,
   generateProductCode as pumpGenerateProductCode,
   generateCompliance as pumpGenerateCompliance,
 } from '@/lib/rules/pump-station'
@@ -29,9 +33,11 @@ export const PUMP_STATION_INITIAL_DATA: ProductData = {
     flowRateLs: '',
     totalHeadM: '',
     pumpCount: null,
+    pumpType: null,
     pipeSizeOutlet: null,
     controllerType: null,
     wetWellDiameter: null,
+    adoptable: null,
     depth: null,
   },
 }
@@ -79,6 +85,20 @@ function controllerLabel(val: string | null): string {
   }
 }
 
+// -- HELPER: Pump labels ----------------------------------------------
+
+function pumpCountLabel(count: 1 | 2): string {
+  return count === 2 ? '2 (duty / standby)' : '1 (single)'
+}
+
+function pumpTypeLabel(val: string | null): string {
+  switch (val) {
+    case 'vortex':    return 'Vortex (solids to 50mm)'
+    case 'macerator': return 'Macerator'
+    default:          return '-'
+  }
+}
+
 // -- STEP DEFINITIONS -------------------------------------------------
 
 const pumpSteps: StepDefinition[] = [
@@ -101,7 +121,7 @@ const pumpSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getPumpData(state)
-      return d !== null && d.flowRateLs !== ''
+      return d !== null && isPositiveNumber(d.flowRateLs)
     },
   },
   {
@@ -112,29 +132,36 @@ const pumpSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getPumpData(state)
-      return d !== null && d.totalHeadM !== ''
+      return d !== null && isPositiveNumber(d.totalHeadM)
     },
   },
   {
     id: 'pump-config',
     label: 'Pump Config',
     heading: 'Pump Configuration',
-    subheading: 'Select the number of pumps and controller type.',
+    subheading: 'Select the number of pumps, pump type and controller.',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getPumpData(state)
-      return d !== null && d.pumpCount !== null && d.controllerType !== null
+      return (
+        d !== null &&
+        d.pumpCount !== null &&
+        (d.pumpType ?? null) !== null &&
+        d.controllerType !== null
+      )
     },
   },
   {
     id: 'pump-well-sizing',
     label: 'Well Sizing',
     heading: 'Wet Well Sizing',
-    subheading: 'Select the wet well diameter and installation depth.',
+    subheading: 'Select the wet well diameter, adoption status and installation depth.',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getPumpData(state)
-      return d !== null && d.wetWellDiameter !== null && d.depth !== null
+      if (!d || d.wetWellDiameter === null || d.depth === null) return false
+      if (d.adoptable === null || d.adoptable === undefined) return false
+      return d.depth <= getMaxDepth(d.adoptable)
     },
   },
   {
@@ -145,7 +172,7 @@ const pumpSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getPumpData(state)
-      return d !== null && d.pipeSizeOutlet !== null
+      return d !== null && d.pipeSizeOutlet !== null && PUMP_OUTLET_SIZES.includes(d.pipeSizeOutlet)
     },
   },
 ]
@@ -185,6 +212,26 @@ export function pumpStationReducer(
         data: { ...data, pumpCount: action.payload },
       }
 
+    case 'PUMP_SET_PUMP_TYPE':
+      return {
+        kind: 'pump-station',
+        data: { ...data, pumpType: action.payload },
+      }
+
+    case 'PUMP_SET_ADOPTABLE': {
+      // R4 (RHINOLIFT data sheet): 2000mm adoptable / 3000mm non-adoptable.
+      // Clear a depth that the new status no longer allows.
+      const maxD = getMaxDepth(action.payload)
+      return {
+        kind: 'pump-station',
+        data: {
+          ...data,
+          adoptable: action.payload,
+          depth: data.depth !== null && data.depth > maxD ? null : data.depth,
+        },
+      }
+    }
+
     case 'PUMP_SET_CONTROLLER':
       return {
         kind: 'pump-station',
@@ -192,18 +239,23 @@ export function pumpStationReducer(
       }
 
     case 'PUMP_SET_DIAMETER':
+      if (!isAllowedDiameter(action.payload)) return productData
       return {
         kind: 'pump-station',
         data: { ...data, wetWellDiameter: action.payload },
       }
 
     case 'PUMP_SET_DEPTH':
+      if (data.adoptable !== null && data.adoptable !== undefined && action.payload > getMaxDepth(data.adoptable)) {
+        return productData
+      }
       return {
         kind: 'pump-station',
         data: { ...data, depth: action.payload },
       }
 
     case 'PUMP_SET_PIPE_SIZE':
+      if (!PUMP_OUTLET_SIZES.includes(action.payload)) return productData
       return {
         kind: 'pump-station',
         data: { ...data, pipeSizeOutlet: action.payload },
@@ -232,13 +284,19 @@ function getSummaryFields(state: WizardState): SummaryField[] {
     fields.push({ label: 'Total Head', value: `${d.totalHeadM}m` })
   }
   if (d.pumpCount !== null) {
-    fields.push({ label: 'Pumps', value: `${d.pumpCount}` })
+    fields.push({ label: 'Pumps', value: pumpCountLabel(d.pumpCount) })
+  }
+  if (d.pumpType) {
+    fields.push({ label: 'Pump Type', value: pumpTypeLabel(d.pumpType) })
   }
   if (d.controllerType) {
     fields.push({ label: 'Controller', value: controllerLabel(d.controllerType) })
   }
   if (d.wetWellDiameter) {
     fields.push({ label: 'Well Diameter', value: `${d.wetWellDiameter}mm` })
+  }
+  if (d.adoptable !== null && d.adoptable !== undefined) {
+    fields.push({ label: 'Adoption', value: d.adoptable ? 'Adoptable (S104)' : 'Private' })
   }
   if (d.depth) {
     fields.push({ label: 'Depth', value: `${d.depth}mm` })
@@ -261,9 +319,16 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
           { label: 'System Type', value: systemTypeLabel(d.systemType) },
           { label: 'Flow Rate', value: d.flowRateLs ? `${d.flowRateLs} L/s` : '-' },
           { label: 'Total Head', value: d.totalHeadM ? `${d.totalHeadM}m` : '-' },
-          { label: 'Pump Count', value: d.pumpCount !== null ? `${d.pumpCount}` : '-' },
+          { label: 'Pump Count', value: d.pumpCount !== null ? pumpCountLabel(d.pumpCount) : '-' },
+          { label: 'Pump Type', value: pumpTypeLabel(d.pumpType ?? null) },
           { label: 'Controller', value: controllerLabel(d.controllerType) },
           { label: 'Well Diameter', value: d.wetWellDiameter ? `${d.wetWellDiameter}mm` : '-' },
+          {
+            label: 'Adoption Status',
+            value: d.adoptable === null || d.adoptable === undefined
+              ? '-'
+              : d.adoptable ? 'Adoptable (S104)' : 'Private',
+          },
           { label: 'Depth', value: d.depth ? `${d.depth}mm` : '-' },
           { label: 'Outlet Pipe', value: d.pipeSizeOutlet ?? '-' },
         ]
@@ -276,8 +341,8 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 
 export const pumpStationConfig: ProductConfig = {
   id: 'pump-station',
-  name: 'Package Pump Station',
-  subtitle: 'Wet well pumping stations for wastewater distribution',
+  name: 'RHINOLIFT Pumping Station',
+  subtitle: 'Packaged MDPE or GRP pumping station, vortex or macerator',
   category: 'pumps',
   icon: 'pump-station',
   steps: pumpSteps,

@@ -15,6 +15,7 @@ import type {
   ReviewBlockDef,
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
   generateProductCode as gsGenerateProductCode,
   generateCompliance as gsGenerateCompliance,
@@ -82,7 +83,7 @@ const greaseSepSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getGreaseSepData(state)
-      return d !== null && d.peakCoversPerDay !== ''
+      return d !== null && isPositiveNumber(d.peakCoversPerDay)
     },
   },
   {
@@ -93,7 +94,7 @@ const greaseSepSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getGreaseSepData(state)
-      return d !== null && d.flowRateLs !== ''
+      return d !== null && isPositiveNumber(d.flowRateLs)
     },
   },
 ]

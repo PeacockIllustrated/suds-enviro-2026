@@ -11,7 +11,11 @@
  *   - Chamber diameters: 600, 750, 900, 1050, 1200 mm
  *   - Designer specifies discharge + head; vortex sized to suit
  *
- * Both validated against SfA7, EN 13598-2, Building Regulations Part H1.
+ * Both are stormwater (surface water) products per their data sheets.
+ * Compliance follows each data sheet's own list:
+ *   SERF  - EN 13598-2, DCG Type D and E, SfA7, Building Regs Part H1,
+ *           DCG restricted access
+ *   ROTEX - EN 13598-2 (factory-fitted HDPE housing), SuDS design
  */
 
 import type {
@@ -20,9 +24,17 @@ import type {
   FlowControlApplication,
   FlowControlVariant,
   Diameter,
+  SystemType,
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
+import { isPositiveNumber } from '@/lib/rules/numeric'
+
+// ── SYSTEM TYPE ──────────────────────────────────────────────
+// SERF: "efficient management of stormwater". ROTEX: "managing
+// stormwater flow". Neither data sheet offers a foul application.
+
+export const FLOW_CONTROL_SYSTEM_TYPES: SystemType[] = ['surface']
 
 // ── APPLICATION ABBREVIATIONS ────────────────────────────────
 
@@ -72,27 +84,28 @@ export function validateConfig(state: WizardState): ValidationResult {
   }
 
   if (!data.variant)     errors.push('Flow control series (SERF or ROTEX) not selected')
+  if (!data.systemType)  errors.push('System type not selected')
+  if (data.systemType && !FLOW_CONTROL_SYSTEM_TYPES.includes(data.systemType)) {
+    errors.push('SERF and ROTEX flow controls are for surface water systems only')
+  }
   if (!data.application) errors.push('Application type not selected')
 
   if (!data.headDepthMm || data.headDepthMm.trim() === '') {
     errors.push('Design head not specified')
-  } else {
-    const head = parseFloat(data.headDepthMm)
-    if (isNaN(head) || head <= 0) {
-      errors.push('Design head must be a positive number')
-    }
+  } else if (!isPositiveNumber(data.headDepthMm)) {
+    errors.push('Design head must be a positive number')
   }
 
   // ROTEX requires a discharge rate input; SERF derives it from head + orifice.
+  // A SERF rate is optional, but if one is entered it must be a real number.
   if (data.variant === 'ROTEX') {
     if (!data.dischargeRateLs || data.dischargeRateLs.trim() === '') {
       errors.push('Discharge rate not specified')
-    } else {
-      const rate = parseFloat(data.dischargeRateLs)
-      if (isNaN(rate) || rate <= 0) {
-        errors.push('Discharge rate must be a positive number')
-      }
+    } else if (!isPositiveNumber(data.dischargeRateLs)) {
+      errors.push('Discharge rate must be a positive number')
     }
+  } else if (data.dischargeRateLs.trim() !== '' && !isPositiveNumber(data.dischargeRateLs)) {
+    errors.push('Discharge rate must be a positive number')
   }
 
   if (!data.chamberDiameter) errors.push('Chamber diameter not selected')
@@ -107,13 +120,17 @@ export function validateConfig(state: WizardState): ValidationResult {
 }
 
 // ── PRODUCT CODE ─────────────────────────────────────────────
+// {SERF|ROTEX}{diameter}-{application}. Series and diameter are joined as
+// in the model library codes (SEHDS1800, POC600, SERFP600150).
 
 export function generateProductCode(state: WizardState): string {
   const data = extractFlowControlData(state)
-  if (!data || !data.variant || !data.application || !data.chamberDiameter) return 'FC-???-???'
+  if (!data || !data.variant || !data.application || !data.chamberDiameter) {
+    return `${data?.variant ?? 'FC'}???-???`
+  }
 
   const appCode = APPLICATION_ABBR[data.application]
-  return `${data.variant}-${appCode}-${data.chamberDiameter}`
+  return `${data.variant}${data.chamberDiameter}-${appCode}`
 }
 
 // ── COMPLIANCE CHECK ─────────────────────────────────────────
@@ -122,29 +139,53 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
   const data = extractFlowControlData(state)
   const { valid } = validateConfig(state)
 
-  const hasValidDischarge = data?.dischargeRateLs
-    ? parseFloat(data.dischargeRateLs) > 0
-    : false
+  const hasValidHead = isPositiveNumber(data?.headDepthMm)
+  const hasValidDischarge = isPositiveNumber(data?.dischargeRateLs)
+  // SERF is sized from the design head alone; ROTEX needs both.
+  const sizingInputsOk = data?.variant === 'ROTEX'
+    ? hasValidHead && hasValidDischarge
+    : hasValidHead
 
-  const hasValidHead = data?.headDepthMm
-    ? parseFloat(data.headDepthMm) > 0
-    : false
+  const housing: ComplianceResult = {
+    standard: 'BS EN 13598-2 (2009)',
+    scope: data?.variant === 'ROTEX'
+      ? 'Factory-fitted HDPE housing'
+      : 'Plastic Inspection Chambers',
+    status: 'Pass',
+  }
+
+  if (data?.variant === 'ROTEX') {
+    return [
+      housing,
+      {
+        standard: 'SuDS Design',
+        scope: 'Controlled discharge for Sustainable Drainage Systems',
+        status: valid && sizingInputsOk ? 'Pass' : 'Warning',
+      },
+      {
+        standard: 'Flood Risk and Attenuation',
+        scope: 'Consistent pre-set discharge rate',
+        status: hasValidDischarge ? 'Pass' : 'Warning',
+      },
+    ]
+  }
 
   return [
+    housing,
+    {
+      standard: 'DCG Type D and E Chambers',
+      scope: 'Design and Construction Guidance',
+      status: valid ? 'Pass' : 'Warning',
+    },
     {
       standard: 'Sewers for Adoption 7th Ed. (SfA7)',
       scope: 'Flow Restriction - Adoptable Systems',
-      status: (valid && hasValidDischarge) ? 'Pass' : 'Warning',
+      status: valid && sizingInputsOk ? 'Pass' : 'Warning',
     },
     {
       standard: 'Building Regulations Part H1',
       scope: 'Surface Water Drainage - Flow Control',
-      status: (hasValidDischarge && hasValidHead) ? 'Pass' : 'Warning',
-    },
-    {
-      standard: 'Environment Agency Guidance',
-      scope: 'Greenfield Runoff Rate Compliance',
-      status: valid ? 'Pass' : 'Warning',
+      status: sizingInputsOk ? 'Pass' : 'Warning',
     },
     {
       standard: 'DCG Restricted Access (350mm > 1m depth)',

@@ -37,15 +37,15 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Outlet fixed at 12 o\u2019clock (north) on every chamber',
       'Six diameters: 450, 600, 750, 900, 1050 and 1200 mm',
       'Depths from 1000 mm up to 3000 mm adoptable or 6000 mm non-adoptable',
-      'Compatible with 110, 160, 225, 300 and 450 mm EN1401 / Twinwall pipework',
+      'Main channel and side connections from 110 to 300 mm (EN1401 / Twinwall)',
     ],
     specifications: [
-      { label: 'Material', value: 'HDPE (rotationally moulded)' },
+      { label: 'Material', value: 'HDPE (extrusion and thermoformed)' },
       { label: 'Diameters', value: '450, 600, 750, 900, 1050, 1200 mm' },
       { label: 'Depth (adoptable)', value: 'Up to 3000 mm (DCG / SfA7)' },
       { label: 'Depth (non-adoptable)', value: 'Up to 6000 mm' },
       { label: 'Sump', value: '350 mm integral' },
-      { label: 'Pipe Sizes', value: '110 / 160 / 225 / 300 / 450 mm' },
+      { label: 'Pipe Sizes', value: '110 / 160 / 225 / 300 mm' },
       { label: 'Max Inlets', value: 'Up to 5 (3, 5, 6, 7, 9 o\u2019clock)' },
       { label: 'Outlet', value: 'Fixed at 12 o\u2019clock' },
     ],
@@ -54,6 +54,7 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Sewers for Adoption 7th Edition (SfA7)',
       'Design and Construction Guidance (DCG)',
       'Building Regulations Part H1',
+      'DCG Parts B and C (minimum 50 mm fall from side inlets)',
       'DCG Restricted Access (350 mm cover when depth > 1 m)',
     ],
     applications: [
@@ -86,12 +87,12 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Compatible with EN1401 and Twinwall pipework',
     ],
     specifications: [
-      { label: 'Material', value: 'HDPE (rotationally moulded)' },
+      { label: 'Material', value: 'HDPE (extrusion and thermoformed)' },
       { label: 'SERS diameters', value: '300, 450, 600 mm (with silt bucket)' },
       { label: 'SERDS diameters', value: '450, 600, 750, 900, 1050, 1200 mm (settling)' },
       { label: 'Depth (adoptable)', value: 'Up to 2000 mm' },
       { label: 'Depth (non-adoptable)', value: 'Up to 3000 mm' },
-      { label: 'Pipe Sizes', value: '110 / 160 / 225 / 300 / 450 mm' },
+      { label: 'Pipe Sizes', value: '110 / 160 / 225 / 300 mm' },
       { label: 'Filtration', value: 'Removable bucket (SERS) or settling chambers (SERDS)' },
     ],
     compliance: [
@@ -171,7 +172,7 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'No moving parts and no power supply on either device',
       'SERF: discharge derived from design head and orifice size',
       'ROTEX: factory-set discharge rate at design head, sized to suit consent',
-      'Drains down from ground level for easy inspection and maintenance',
+      'SERF: integral drain-down, operated from ground level',
       'HDPE chamber bodies; ROTEX also available as a standalone unit for concrete chambers',
     ],
     specifications: [
@@ -232,7 +233,6 @@ export const PRODUCT_CATALOG: ProductCatalogEntry[] = [
       'Building Regulations Part H',
       'Water Industry Act 1991',
       'Electrical Equipment (Safety) Regulations',
-      'DCG Restricted Access (350 mm cover when depth > 1 m)',
     ],
     applications: [
       'Basement drainage pumping',
