@@ -146,21 +146,39 @@ export default async function ProductPreviewPage({ params }: ProductPageProps) {
         </section>
       ) : null}
 
-      {narrative?.howItWorks ? (
-        <section className="bg-white pb-14">
+      {narrative?.sections?.map((section) => (
+        <section key={section.heading.trail} className="bg-white pb-14">
           <div className="mx-auto max-w-[1100px] px-5">
-            <SectionHeading
-              lead={narrative.howItWorks.heading.lead}
-              trail={narrative.howItWorks.heading.trail}
-            />
-            <div className="max-w-3xl space-y-4 text-base/relaxed text-site-blue-dark md:text-lg/relaxed">
-              {narrative.howItWorks.body.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
+            <SectionHeading lead={section.heading.lead} trail={section.heading.trail} />
+
+            {section.body ? (
+              <div className="max-w-3xl space-y-4 text-base/relaxed text-site-blue-dark md:text-lg/relaxed">
+                {section.body.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ) : null}
+
+            {section.highlights ? (
+              <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+                {section.highlights.map((highlight) => (
+                  <div
+                    key={highlight.term}
+                    className="rounded-2xl border-[3px] border-site-ui-blue p-5"
+                  >
+                    <dt className="text-sm font-bold tracking-wide text-site-blue uppercase">
+                      {highlight.term}
+                    </dt>
+                    <dd className="mt-1.5 text-base/relaxed text-site-blue-dark">
+                      {highlight.detail}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
           </div>
         </section>
-      ) : null}
+      ))}
 
       <section className="bg-white pb-14">
         <div className="mx-auto max-w-[1100px] px-5">
