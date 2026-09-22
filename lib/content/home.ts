@@ -385,7 +385,7 @@ export const BUILDER_CTA = {
     { text: ', letting you design a system that ' },
     { text: 'fits your project perfectly.', emphasis: 'highlight' },
   ] satisfies RichText,
-  cta: { label: 'SuDS Builder Hub', href: '/configurator' },
+  cta: { label: 'SuDS Builder Hub', href: '/builder' },
 } as const
 
 // ── Solution routes: foul and surface water ──────────────────
@@ -472,6 +472,6 @@ export const PRODUCT_TILES: ProductTile[] = [
     id: 'site-planner',
     heading: { lead: 'Site', trail: 'Planner' },
     image: webflowAsset.cardSitePlanner,
-    links: [{ label: 'Learn more', href: '/configurator' }],
+    links: [{ label: 'Learn more', href: '/builder' }],
   },
 ]

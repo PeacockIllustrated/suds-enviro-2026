@@ -23,7 +23,7 @@ const SitePathContext = createContext('')
  * the rebuild does not replace, and files under `public/` - the brochure
  * HTML, images - are not routes at all. Prefixing either gives a 404.
  */
-const OWNED_ROUTES = ['/contact', '/products', '/rhino-range']
+const OWNED_ROUTES = ['/contact', '/products', '/rhino-range', '/builder']
 
 export function SitePathProvider({
   prefix,

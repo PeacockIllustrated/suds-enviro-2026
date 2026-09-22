@@ -174,7 +174,7 @@ export const PRIMARY_NAV = {
   links: [{ label: 'Contact', href: '/contact' }] satisfies NavLink[],
   actions: [
     { label: 'RHINO Range', href: '/products' },
-    { label: 'Build your SuDS', href: '/configurator' },
+    { label: 'Build your SuDS', href: '/builder' },
   ] satisfies NavLink[],
 } as const
 
