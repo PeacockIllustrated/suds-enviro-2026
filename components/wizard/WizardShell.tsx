@@ -265,8 +265,9 @@ export function WizardShell() {
   // Nav bar visibility
   const showNav = state.step < outputStepIndex || !hasProduct
 
-  // 3D button visibility
-  const show3dButton = hasProduct && config?.has3dViewer === true && state.step >= 2 && state.step <= reviewStepIndex
+  // 3D button visibility: every product has a preview (a library model or
+  // one built from the selections), from the second configuration step on.
+  const show3dButton = hasProduct && state.step >= 2 && state.step <= reviewStepIndex
 
   // Summary fields from product config
   const summaryFields: SummaryField[] =
@@ -407,6 +408,7 @@ export function WizardShell() {
         <button
           type="button"
           onClick={() => setViewerOpen(true)}
+          aria-label="Open 3D preview"
           className="absolute bottom-[76px] right-3.5 z-[100] flex h-[46px] w-[46px] items-center justify-center rounded-full border-2 border-green-d bg-green shadow-[0_4px_16px_rgba(68,175,67,0.45)] transition-all active:scale-[0.92]"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
