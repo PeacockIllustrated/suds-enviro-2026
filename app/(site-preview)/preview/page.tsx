@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { Hero } from '@/components/site/Hero'
-import { HeroChamberMount } from '@/components/site/HeroChamberMount'
+import { WaterJourney } from '@/components/site/WaterJourney'
 import { WaterTabs } from '@/components/site/WaterTabs'
 import { InnovationSlider } from '@/components/site/InnovationSlider'
 import { Testimonials } from '@/components/site/Testimonials'
@@ -23,9 +22,7 @@ export const metadata: Metadata = {
 export default function HomePreviewPage() {
   return (
     <>
-      <Hero>
-        <HeroChamberMount />
-      </Hero>
+      <WaterJourney />
       <WaterTabs />
       <InnovationSlider />
       <Testimonials />
