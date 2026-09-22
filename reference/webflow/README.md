@@ -15,6 +15,7 @@ site `6662e401ea62d861a416088f`) via the Webflow MCP Data API on 2026-09-22.
 | `assets.raw.json` | Raw asset listing including S3 hosted URLs and responsive variants |
 | `styles.classlist.json` | All 712 Webflow class names and their CSS selectors |
 | `flatten.py` | Turns a raw element tree into the readable outline format |
+| `DESIGN.md` | The design spec: exact palette and breakpoints from Webflow, plus the type, button, nav and card treatment read off Designer snapshots |
 
 Every image asset (93 files, 6.4 MB) is downloaded to `public/webflow/`,
 keyed by the filenames in `assets.index.json`.

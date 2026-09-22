@@ -7,12 +7,21 @@
  * markup in the content files.
  */
 
+/**
+ * Which voice a segment is spoken in - not which colour it takes.
+ *
+ * The Webflow site flips the polarity between blocks: in the hero the
+ * plain text is green and the emphasised spans are bold blue, while in
+ * body copy the plain text is dark blue and the emphasised words are
+ * green. So the component decides the colour for each voice; the content
+ * only says which voice it is. See reference/webflow/DESIGN.md.
+ */
 export type Emphasis =
-  /** Plain body voice. */
+  /** The block's default voice. */
   | 'plain'
-  /** The accent voice - brand green on the Webflow site. */
+  /** The block's emphasised voice. */
   | 'highlight'
-  /** The receded voice used for problem statements. */
+  /** A receded voice, used for problem statements. */
   | 'lowlight'
   /** Italic, used for the sub-brand names (RoFlo, multiFlo, autoFlo). */
   | 'italic'
