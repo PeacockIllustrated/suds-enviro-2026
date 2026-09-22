@@ -70,9 +70,10 @@ Recreate the intent in Tailwind rather than porting the utility sheet.
 
 ## Typography (observed)
 
-Geometric sans throughout, double-storey `a`, single-storey `g`.
-**The exact family still needs confirming** - no custom fonts are uploaded
-to the Webflow site, so it is a Google or Webflow-hosted family.
+**Montserrat** - confirmed by the client, and consistent with the
+letterforms in the Designer snapshots. No custom fonts are uploaded to
+the Webflow site, so it is served from Google Fonts. `app/layout.tsx`
+loads weights 300 to 800; 300 carries the light heading voice.
 
 Treatment is consistent and is the signature of the design:
 
@@ -127,7 +128,7 @@ standard dark-blue/green inline emphasis.
 
 ## Still missing
 
-- The exact font family, weights and type scale
+- The type scale and weights per element (the family is confirmed)
 - Real spacing and radius values
 - Spline scene URLs - the `Spline` elements report `assetId: null`, so the
   scene lives only in the published HTML
