@@ -1,8 +1,8 @@
 'use client'
 
-import { Check } from 'lucide-react'
+import { Check, AlertTriangle, X } from 'lucide-react'
 import { useWizardContext } from '../WizardContext'
-import { generateProductCode, generateCompliance } from '@/lib/rule-engine'
+import { generateProductCode, generateCompliance, validateConfig } from '@/lib/rule-engine'
 import { getProductConfig } from '@/lib/products/registry'
 
 export function Review() {
@@ -14,6 +14,7 @@ export function Review() {
   const compliance = generateCompliance(state)
   const productCode = generateProductCode(state)
   const reviewBlocks = config.getReviewBlocks(state)
+  const { errors } = validateConfig(state)
 
   return (
     <>
@@ -21,6 +22,20 @@ export function Review() {
       <div className="mb-4 inline-block rounded-full bg-green px-3 py-1 text-[11px] font-bold text-white">
         {productCode}
       </div>
+
+      {/* Anything the rule engine still rejects, e.g. an older saved config */}
+      {errors.length > 0 && (
+        <div className="mb-2.5 rounded-[10px] border border-[rgba(192,48,48,0.25)] bg-[rgba(192,48,48,0.06)] px-3.5 py-3">
+          <div className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-[#c03030]">
+            Needs attention
+          </div>
+          <ul className="list-disc pl-4 text-xs text-ink">
+            {errors.map((e) => (
+              <li key={e}>{e}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Dynamic review blocks from product config */}
       {reviewBlocks.map((block, blockIndex) => {
@@ -60,7 +75,13 @@ export function Review() {
                 ${c.status === 'Pass' ? 'bg-green' : c.status === 'Warning' ? 'bg-[#e0a02a]' : 'bg-[#c03030]'}
               `}
             >
-              <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+              {c.status === 'Pass' ? (
+                <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+              ) : c.status === 'Warning' ? (
+                <AlertTriangle className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+              ) : (
+                <X className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+              )}
             </div>
             <span className="flex-1 text-muted">{c.standard}</span>
             <span

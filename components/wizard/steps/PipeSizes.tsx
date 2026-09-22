@@ -5,7 +5,12 @@ import { useWizardContext } from '../WizardContext'
 import { PipeRow } from '@/components/ui/PipeRow'
 import { BottomSheet } from '@/components/ui/BottomSheet'
 import { AlertBox } from '@/components/ui/AlertBox'
-import { getAvailableInletSizes, clockToDegrees } from '@/lib/rule-engine'
+import {
+  getAvailableInletSizes,
+  getAvailableOutletSizes,
+  getEffectiveOutletSize,
+  clockToDegrees,
+} from '@/lib/rules/chamber'
 import {
   getDiameterValue,
   getInletCountValue,
@@ -26,7 +31,20 @@ export function PipeSizes() {
   const outletLocked = getOutletLockedValue(state)
   const pipeSizes = getPipeSizesValue(state)
   const actionType = getPipeSizeActionType(state.product)
-  const available = getAvailableInletSizes(diameter, outletLocked)
+
+  // R6: inlets may not exceed the outlet that has been set (R2 lock or the
+  // user's pick). R7: nothing may exceed the diameter maximum.
+  const explicitOutlet = pipeSizes.outlet ?? outletLocked
+  const inletOptions = getAvailableInletSizes(diameter, explicitOutlet)
+  const outletOptions = getAvailableOutletSizes(diameter, outletLocked, pipeSizes)
+  const effectiveOutlet = getEffectiveOutletSize({ outletLocked, pipeSizes })
+
+  const options = activeSlot === 'outlet' ? outletOptions : inletOptions
+
+  let allSet = inletCount > 0
+  for (let i = 1; i <= inletCount; i++) {
+    if (!pipeSizes[`inlet${i}`]) allSet = false
+  }
 
   const handleSelect = (size: PipeSize) => {
     if (activeSlot) {
@@ -38,6 +56,10 @@ export function PipeSizes() {
     }
   }
 
+  // The R2 lock is a minimum, so the outlet stays editable above it
+  // unless the lock is already the largest size this diameter allows.
+  const outletFixed = outletOptions.length <= 1 && effectiveOutlet !== null
+
   return (
     <>
       <div className="flex flex-col gap-2 mb-3.5">
@@ -45,7 +67,7 @@ export function PipeSizes() {
           const slot = `inlet${i + 1}`
           const pos = positions[i]
           const angle = pos ? `${clockToDegrees(parseInt(pos))}deg` : '--'
-          const size = pipeSizes[slot] ?? '160mm EN1401'
+          const size = pipeSizes[slot] ?? 'Select size'
 
           return (
             <PipeRow
@@ -58,35 +80,46 @@ export function PipeSizes() {
           )
         })}
 
-        {/* Outlet row - always locked */}
+        {/* Outlet row - fixed at 12 o'clock; size follows R2 / R6 / R7 */}
         <PipeRow
           label="Outlet"
-          sublabel="Position 6 o'clock (180deg) - fixed"
-          size={outletLocked ?? '160mm EN1401'}
-          locked={!!outletLocked}
-          onTap={
+          sublabel={
             outletLocked
-              ? undefined
-              : () => setActiveSlot('outlet')
+              ? `Position 12 o'clock (0deg) - min. ${outletLocked} locked`
+              : pipeSizes.outlet
+                ? "Position 12 o'clock (0deg)"
+                : "Position 12 o'clock (0deg) - matches largest inlet"
           }
+          size={effectiveOutlet ?? 'Select size'}
+          locked={outletFixed}
+          onTap={outletFixed ? undefined : () => setActiveSlot('outlet')}
         />
       </div>
 
-      <AlertBox
-        type="ok"
-        title="Pipe sizes valid"
-        body="All inlet pipe sizes are within the allowed range for your chamber diameter and outlet configuration."
-      />
+      {allSet ? (
+        <AlertBox
+          type="ok"
+          title="Pipe sizes valid"
+          body="All inlet pipe sizes are within the allowed range for your chamber diameter and outlet configuration."
+        />
+      ) : (
+        <AlertBox
+          type="info"
+          title="Pipe size limits"
+          body={`Inlets can be up to ${inletOptions[inletOptions.length - 1]} on this configuration and may not be larger than the outlet.`}
+        />
+      )}
 
       {/* Pipe size picker bottom sheet */}
       <BottomSheet
         open={activeSlot !== null}
-        title="Select pipe size"
+        title={activeSlot === 'outlet' ? 'Select outlet size' : 'Select pipe size'}
         onClose={() => setActiveSlot(null)}
       >
-        {available.map((size) => {
+        {options.map((size) => {
           const isSelected =
-            activeSlot && pipeSizes[activeSlot] === size
+            activeSlot !== null &&
+            (activeSlot === 'outlet' ? effectiveOutlet : pipeSizes[activeSlot]) === size
           return (
             <button
               key={size}

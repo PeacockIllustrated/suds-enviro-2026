@@ -3,7 +3,10 @@
 import { useWizardContext } from '../WizardContext'
 import { OptionCard } from '@/components/ui/OptionCard'
 import { AlertBox } from '@/components/ui/AlertBox'
+import { getAvailableFlowTypes } from '@/lib/rules/chamber'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
+  getDiameterValue,
   getFlowControlValue,
   getFlowTypeValue,
   getFlowRateValue,
@@ -21,6 +24,11 @@ export function FlowControl() {
   const flowControlAction = getFlowControlActionType(state.product)
   const flowTypeAction = getFlowTypeActionType(state.product)
   const flowRateAction = getFlowRateActionType(state.product)
+  const diameter = getDiameterValue(state)
+  // Orifice plates (SERF) come in 300-600mm chambers, vortex units
+  // (ROTEX) in 600-1200mm chambers, per their data sheets.
+  const availableTypes = getAvailableFlowTypes(diameter)
+  const rateInvalid = flowRate.trim() !== '' && !isPositiveNumber(flowRate)
 
   return (
     <>
@@ -80,8 +88,11 @@ export function FlowControl() {
                 </svg>
               }
               title="Vortex"
-              subtitle="Hydrodynamic vortex flow control"
+              subtitle={availableTypes.includes('Vortex')
+                ? 'Passive vortex regulator (ROTEX)'
+                : 'ROTEX vortex units need a 600mm or larger chamber'}
               selected={flowType === 'Vortex'}
+              disabled={!availableTypes.includes('Vortex')}
               onClick={() =>
                 dispatch({
                   type: flowTypeAction,
@@ -97,8 +108,11 @@ export function FlowControl() {
                 </svg>
               }
               title="Orifice plate"
-              subtitle="Fixed orifice flow restriction"
+              subtitle={availableTypes.includes('Orifice plate')
+                ? 'Pre-sized orifice plate (SERF)'
+                : 'SERF orifice plates are made for 300-600mm chambers'}
               selected={flowType === 'Orifice plate'}
+              disabled={!availableTypes.includes('Orifice plate')}
               onClick={() =>
                 dispatch({
                   type: flowTypeAction,
@@ -115,6 +129,8 @@ export function FlowControl() {
             <div className="flex items-center gap-2">
               <input
                 type="number"
+                min={0}
+                step="0.1"
                 value={flowRate}
                 onChange={(e) =>
                   dispatch({
@@ -129,6 +145,11 @@ export function FlowControl() {
                 L/s
               </span>
             </div>
+            {rateInvalid && (
+              <p className="mt-1.5 text-[11px] font-semibold text-[#c03030]">
+                Enter a flow rate greater than zero.
+              </p>
+            )}
           </div>
         </div>
       )}
