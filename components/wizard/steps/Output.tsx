@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Download, Mail, Copy, Check } from 'lucide-react'
 import { useWizardContext } from '../WizardContext'
 import { generateProductCode } from '@/lib/rule-engine'
+import { getProductConfig } from '@/lib/products/registry'
 import { getSessionId } from '@/lib/supabase'
 import type { SubmitEnquiryPayload, SubmitEnquiryResponse } from '@/lib/types'
 
@@ -20,6 +21,7 @@ interface EnquiryForm {
 export function Output() {
   const { state, dispatch } = useWizardContext()
   const productCode = generateProductCode(state)
+  const hasDrawing = state.product ? getProductConfig(state.product).hasDrawing === true : false
 
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -115,7 +117,11 @@ export function Output() {
             </div>
           </div>
         </div>
-        {state.configId ? (
+        {!hasDrawing ? (
+          <div className="rounded-lg bg-light py-3 px-3 text-center text-[11px] font-semibold text-muted border border-border">
+            Drawings for this product are prepared by our technical team. Send an enquiry below to receive one with your quote.
+          </div>
+        ) : state.configId ? (
           <button
             type="button"
             onClick={() => {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CONTACT_FORM } from '@/lib/content/contact'
+import type { ContactContent } from '@/lib/site-content/defaults'
 
 /**
  * The Webflow contact form, posting to this app's existing
@@ -20,7 +20,8 @@ const FIELD =
   'w-full rounded-lg border-2 border-site-ui-blue bg-white px-4 py-2.5 text-site-blue-dark outline-none transition-colors focus:border-site-blue'
 const LABEL = 'block text-sm font-bold tracking-wide text-white uppercase'
 
-export function ContactForm() {
+export function ContactForm({ content }: { content: Pick<ContactContent, 'CONTACT_FORM'> }) {
+  const { CONTACT_FORM } = content
   const [status, setStatus] = useState<Status>('idle')
   const [message, setMessage] = useState('')
 

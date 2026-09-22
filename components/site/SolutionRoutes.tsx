@@ -1,12 +1,13 @@
 import Image from 'next/image'
-import { SOLUTION_ROUTES } from '@/lib/content/home'
+import type { HomeContent } from '@/lib/site-content/defaults'
 import { SiteButton } from './SiteButton'
 
 /**
  * The foul-water / surface-water split. Each panel carries the RHINO
  * lockup, a two-voice heading and a stack of pill links.
  */
-export function SolutionRoutes() {
+export function SolutionRoutes({ content }: { content: Pick<HomeContent, 'SOLUTION_ROUTES'> }) {
+  const { SOLUTION_ROUTES } = content
   return (
     <section className="bg-white py-16 md:py-24">
       <div className="mx-auto grid max-w-[1400px] gap-12 px-5 md:grid-cols-2 md:gap-16">

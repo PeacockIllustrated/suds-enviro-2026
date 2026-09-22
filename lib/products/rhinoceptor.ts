@@ -21,6 +21,7 @@ import type {
   SEHDSDiameter,
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
   generateProductCode as rhinoGenerateProductCode,
   generateCompliance as rhinoGenerateCompliance,
@@ -120,7 +121,7 @@ const rhinoSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRhinoData(state)
-      return d !== null && d.drainageAreaM2 !== ''
+      return d !== null && isPositiveNumber(d.drainageAreaM2)
     },
   },
   {
@@ -131,7 +132,7 @@ const rhinoSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRhinoData(state)
-      return d !== null && d.flowRateLs !== ''
+      return d !== null && isPositiveNumber(d.flowRateLs)
     },
   },
   {

@@ -2,9 +2,12 @@
 
 import { useWizardContext } from '../../WizardContext'
 import { SizeCard } from '@/components/ui/SizeCard'
-import type { Diameter, WizardAction } from '@/lib/types'
+import { POD_PLUS_DIAMETERS } from '@/lib/rules/rhinopod'
+import type { WizardAction } from '@/lib/types'
 
-const diameters: Diameter[] = [450, 600, 750, 1050]
+// Plus is factory-fitted to a RHINO SEHDS, so it takes the SEHDS sizes
+// (RHINO POD data sheet: "Standalone, or factory-fitted to RHINO SEHDS").
+const diameters = POD_PLUS_DIAMETERS
 
 export function PodChamberCompat() {
   const { state, dispatch } = useWizardContext()
@@ -18,7 +21,7 @@ export function PodChamberCompat() {
   if (data.podType === 'plus') {
     return (
       <>
-        <div className="mb-2 text-xs font-bold text-navy">Chamber diameter</div>
+        <div className="mb-2 text-xs font-bold text-navy">SEHDS separator diameter</div>
         <div className="grid grid-cols-2 gap-2">
           {diameters.map((d) => (
             <SizeCard

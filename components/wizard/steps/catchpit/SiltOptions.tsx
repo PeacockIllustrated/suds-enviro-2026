@@ -2,6 +2,7 @@
 
 import { useWizardContext } from '../../WizardContext'
 import { OptionCard } from '@/components/ui/OptionCard'
+import { getAllowedBaffles } from '@/lib/rules/catchpit'
 import type { BaffleType, GrateType, WizardAction } from '@/lib/types'
 import { Filter, Grid3X3, ShieldCheck, Lock, Layers } from 'lucide-react'
 
@@ -64,6 +65,9 @@ export function SiltOptions() {
 
   if (!data) return null
 
+  // SERS data sheet: "Primary baffle plus removable silt bucket"
+  const allowedBaffles = getAllowedBaffles(data.variant)
+
   return (
     <>
       {/* Baffle type */}
@@ -76,6 +80,7 @@ export function SiltOptions() {
             title={opt.title}
             subtitle={opt.subtitle}
             selected={data.baffleType === opt.id}
+            disabled={!allowedBaffles.includes(opt.id)}
             onClick={() =>
               dispatch({
                 type: 'CATCHPIT_SET_BAFFLE',

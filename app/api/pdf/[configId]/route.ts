@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabase'
-import { generateCompliance, generateProductCode } from '@/lib/rule-engine'
+import { generateCompliance, generateProductCode, getRuleModule } from '@/lib/rule-engine'
+import { getEffectiveOutletSize } from '@/lib/rules/chamber'
 import { generateDrawingHTML } from '@/lib/pdf/drawing-template'
 import type { ChamberBaseFields, WizardState } from '@/lib/types'
 
@@ -34,6 +35,16 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'No product data found in configuration' }, { status: 400 })
   }
 
+  // The drawing template models a round chamber with clock-position
+  // inlets. Other products would be drawn with made-up chamber geometry,
+  // so they are refused rather than given a misleading drawing.
+  if (productData.kind !== 'chamber' && productData.kind !== 'catchpit') {
+    return NextResponse.json(
+      { error: 'An engineering drawing is not available for this product' },
+      { status: 422 }
+    )
+  }
+
   const chamberData = productData.data
 
   // Reconstruct a minimal WizardState for code/compliance generation
@@ -47,10 +58,16 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   const productCode = (config.product_code as string) || generateProductCode(wizardState)
   const compliance = generateCompliance(wizardState)
 
-  // Determine outlet size
-  const outletSize = chamberData.outletLocked
-    || chamberData.pipeSizes?.outlet
-    || '160mm EN1401'
+  // Determine outlet size: R2 lock, user choice, or the largest inlet (R6)
+  const outletSize = getEffectiveOutletSize({
+    outletLocked: chamberData.outletLocked ?? null,
+    pipeSizes: chamberData.pipeSizes ?? {},
+  }) ?? '160mm EN1401'
+
+  // Depth limits differ by product (R4)
+  const depthRules = getRuleModule(productData.kind)
+  const maxDepthAdoptable = depthRules.getMaxDepth ? depthRules.getMaxDepth(true) : 3000
+  const maxDepthNonAdoptable = depthRules.getMaxDepth ? depthRules.getMaxDepth(false) : 6000
 
   const html = generateDrawingHTML({
     productCode,
@@ -68,6 +85,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     flowType: chamberData.flowType || null,
     flowRate: chamberData.flowRate || '',
     compliance,
+    maxDepthAdoptable,
+    maxDepthNonAdoptable,
     date: new Date().toISOString(),
   })
 

@@ -2,9 +2,9 @@
 
 import { Suspense, useMemo, useRef, type MutableRefObject, type ReactNode } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { ContactShadows, Outlines, useGLTF } from '@react-three/drei'
+import { ContactShadows, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import { TOON, ToonLights, ToonModel, toonRamp, useWaterMaterial } from './three/toon'
+import { InkOutlines, TOON, ToonLights, ToonModel, toonRamp, useWaterMaterial } from './three/toon'
 
 /**
  * The home page's scroll scene: the Webflow site's Spline scroll rebuilt
@@ -86,8 +86,7 @@ function ToonSolid({ children, color, outline = TOON.ink, thickness = 2.4 }: {
     <>
       {children}
       <meshToonMaterial color={color} gradientMap={toonRamp()} />
-      {/* drei 10.7: screenspace={false} is the pixel-width path (see toon.tsx). */}
-      <Outlines screenspace={false} thickness={thickness} color={outline} toneMapped={false} angle={Math.PI / 5} />
+      <InkOutlines thickness={thickness} color={outline} angle={Math.PI / 5} />
     </>
   )
 }
@@ -127,7 +126,7 @@ function FlowTube({ curve, radius, material, progress, head, tail, outline = TOO
     <mesh ref={mesh} geometry={geo} material={material}>
       {/* angle={0} makes the outline share this geometry, and so its draw
           range; a creased copy would ink the whole pipe, drawn or not. */}
-      <Outlines screenspace={false} thickness={2.2} color={outline} toneMapped={false} angle={0} />
+      <InkOutlines thickness={2.2} color={outline} angle={0} />
     </mesh>
   )
 }
@@ -163,7 +162,7 @@ function Droplets({ progress }: { progress: ProgressRef }) {
     <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
       <sphereGeometry args={[1, 18, 12]} />
       <meshToonMaterial color={TOON.water} gradientMap={toonRamp()} />
-      <Outlines screenspace={false} thickness={2} color={TOON.ink} toneMapped={false} />
+      <InkOutlines thickness={2} color={TOON.ink} />
     </instancedMesh>
   )
 }
@@ -310,7 +309,9 @@ function RangeLineup({ progress, water }: { progress: ProgressRef; water: THREE.
       <group ref={group}>
         {LINEUP.map((item, i) => (
           <group key={i} position={[item.x, GROUND, item.z]}>
-            <ToonModel url={item.url} roles={item.roles} scale={1} />
+            <Suspense fallback={null}>
+              <ToonModel url={item.url} roles={item.roles} scale={1} />
+            </Suspense>
           </group>
         ))}
       </group>
@@ -359,7 +360,7 @@ function CameraRig({ progress }: { progress: ProgressRef }) {
     if (aspect < 1) {
       want.pos.x -= want.target.x
       want.target.x = 0
-      const back = progress.current > 0.8 ? Math.max(1.3, 1.35 / aspect) : 1.3
+      const back = progress.current > 0.8 ? Math.max(1.3, 1.7 / aspect) : 1.3
       want.pos.sub(want.target).multiplyScalar(back).add(want.target)
     }
     camera.position.x = THREE.MathUtils.damp(camera.position.x, want.pos.x, 4, dt)
@@ -385,6 +386,12 @@ function GroundShadow({ progress }: { progress: ProgressRef }) {
   )
 }
 
+/** Suspends until every line-up model has loaded. */
+function AfterLineupLoads() {
+  useGLTF(LINEUP.map((item) => item.url))
+  return null
+}
+
 // ── scene ───────────────────────────────────────────────────────────
 
 function Journey({ progress }: { progress: ProgressRef }) {
@@ -403,9 +410,15 @@ function Journey({ progress }: { progress: ProgressRef }) {
       <FlowTube curve={foul} radius={0.035} material={foulMat} outline="#7a2524" progress={progress} head={[0.05, 0.56]} tail={[0.44, 0.62]} />
       <ChamberRings progress={progress} />
       <AutoFloBlock curve={storm} progress={progress} />
+      {/* Separate boundaries so each model appears as soon as it has loaded,
+          rather than the slowest one holding back the rest on a phone. */}
       <Suspense fallback={null}>
         <ClockBase progress={progress} />
-        <RangeLineup progress={progress} water={branchWater} />
+      </Suspense>
+      <RangeLineup progress={progress} water={branchWater} />
+      {/* The shadow is baked once, so it waits for every model it is cast by. */}
+      <Suspense fallback={null}>
+        <AfterLineupLoads />
         <GroundShadow progress={progress} />
       </Suspense>
     </>

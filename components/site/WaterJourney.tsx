@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { HERO, INNOVATION_SLIDES, RHINO_RANGE, WATER_STREAMS } from '@/lib/content/home'
+import type { HomeContent } from '@/lib/site-content/defaults'
 import { RichText, HEADING_VOICES } from './RichText'
 import { SiteButton } from './SiteButton'
 
@@ -19,12 +19,10 @@ const WaterJourneyScene = dynamic(() => import('./WaterJourneyScene'), { ssr: fa
  * Only the short lockups and straplines are used here - the sections
  * further down carry the full paragraphs.
  *
- * The scene mounts once the page is idle and never under reduced motion,
- * as the old hero chamber did; the beats simply stack without it.
+ * The scene mounts once the page is idle. It also mounts under reduced
+ * motion: it only moves as the reader scrolls, and without it the beats
+ * are screens of white space. Many phones set reduced motion system-wide.
  */
-
-const multiFlo = INNOVATION_SLIDES.find((s) => s.id === 'multiflo')
-const autoFlo = INNOVATION_SLIDES.find((s) => s.id === 'autoflo')
 
 function Beat({ children, align = 'left' }: { children: React.ReactNode; align?: 'left' | 'right' | 'centre' }) {
   const side =
@@ -36,13 +34,15 @@ function Beat({ children, align = 'left' }: { children: React.ReactNode; align?:
   )
 }
 
-export function WaterJourney() {
+export function WaterJourney({ content }: { content: Pick<HomeContent, 'HERO' | 'INNOVATION_SLIDES' | 'RHINO_RANGE' | 'WATER_STREAMS'> }) {
+  const { HERO, INNOVATION_SLIDES, RHINO_RANGE, WATER_STREAMS } = content
+  const multiFlo = INNOVATION_SLIDES.find((s) => s.id === 'multiflo')
+  const autoFlo = INNOVATION_SLIDES.find((s) => s.id === 'autoflo')
   const section = useRef<HTMLElement>(null)
   const progress = useRef(0)
   const [mount, setMount] = useState(false)
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const requestIdle: typeof window.requestIdleCallback | undefined = window.requestIdleCallback
     if (typeof requestIdle === 'function') {
       const handle = requestIdle(() => setMount(true), { timeout: 2500 })

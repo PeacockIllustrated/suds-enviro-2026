@@ -1,12 +1,12 @@
 'use client'
 
 import { Lock, ChevronDown } from 'lucide-react'
-import type { PipeSize } from '@/lib/types'
 
 interface PipeRowProps {
   label: string
   sublabel: string
-  size: PipeSize
+  // A PipeSize, or a prompt such as 'Select size' when none is chosen yet
+  size: string
   locked?: boolean
   onTap?: () => void
 }

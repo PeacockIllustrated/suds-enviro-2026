@@ -11,8 +11,8 @@ import type {
   CatchpitData,
   CatchpitVariant,
   Diameter,
-  PipeSize,
-  ClockPosition,
+  SystemType,
+  BaffleType,
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
@@ -30,7 +30,8 @@ export {
 
 import {
   getMaxInlets,
-  getOutletMinSize,
+  validatePipework,
+  pipeworkRulesPass,
 } from '@/lib/rules/chamber'
 
 // ── R4: Catchpit Maximum Depth (per SERS/SERDS data sheets) ──
@@ -62,17 +63,21 @@ export function isVariantDiameter(
   return getVariantDiameters(variant).includes(diameter)
 }
 
-// ── PIPE SIZE ORDER (ascending) ──────────────────────────────
+// ── SYSTEM TYPE ──────────────────────────────────────────────
+// SERS and SERDS are silt and debris catchpits for runoff from hard
+// surfaces (paths, roofs, car parks, highways) per both data sheets, so
+// they are surface water products only.
 
-const PIPE_SIZES: PipeSize[] = [
-  '110mm EN1401',
-  '160mm EN1401',
-  '225mm Twinwall',
-  '300mm Twinwall',
-  '450mm Twinwall',
-]
+export const CATCHPIT_SYSTEM_TYPES: SystemType[] = ['surface']
 
-const pipeSizeRank = (size: PipeSize): number => PIPE_SIZES.indexOf(size)
+// ── BAFFLE ───────────────────────────────────────────────────
+// The SERS data sheet specifies "Primary baffle plus removable silt
+// bucket", so a SERS catchpit always has a baffle.
+
+export function getAllowedBaffles(variant: CatchpitVariant | null): BaffleType[] {
+  if (variant === 'SERS') return ['internal', 'external']
+  return ['none', 'internal', 'external']
+}
 
 // ── CATCHPIT-SPECIFIC: Minimum Sump Depth ────────────────────
 // Bespoke per data sheets - these are sensible defaults shown in the configurator.
@@ -132,11 +137,11 @@ export function validateConfig(state: WizardState): ValidationResult {
     }
   }
 
-  if (data.inletCount && data.positions.length !== data.inletCount) {
-    errors.push(
-      `${data.positions.length} positions placed, ${data.inletCount} required`
-    )
+  if (data.systemType && !CATCHPIT_SYSTEM_TYPES.includes(data.systemType)) {
+    errors.push('SERS and SERDS catchpits are for surface water systems only')
   }
+
+  validatePipework(data, errors)
 
   if (!data.depth)             errors.push('Depth not selected')
   if (data.adoptable === null) errors.push('Adoption status not selected')
@@ -150,38 +155,41 @@ export function validateConfig(state: WizardState): ValidationResult {
     }
   }
 
-  if (!data.baffleType) errors.push('Baffle type not selected')
+  if (!data.baffleType) {
+    errors.push('Baffle type not selected')
+  } else if (!getAllowedBaffles(data.variant).includes(data.baffleType)) {
+    errors.push('SERS catchpits are supplied with a primary baffle')
+  }
   if (!data.grateType)  errors.push('Grate type not selected')
 
   return { valid: errors.length === 0, errors }
 }
 
 // ── PRODUCT CODE ─────────────────────────────────────────────
+// {SERS|SERDS}{diameter}-{depth}-{S104|PRIV}. Series and diameter are
+// joined as in the model library codes (SEHDS1800, SERSIC600300).
 
 export function generateProductCode(state: WizardState): string {
   const data = extractCatchpitData(state)
-  if (!data || !data.variant || !data.diameter || !data.depth) return 'CP-???-???-???'
+  if (!data || !data.variant || !data.diameter || !data.depth) {
+    return `${data?.variant ?? 'CP'}???-???`
+  }
 
   const adoptStr = data.adoptable ? 'S104' : 'PRIV'
-  return `${data.variant}-${data.diameter}-${data.depth}-${adoptStr}`
+  return `${data.variant}${data.diameter}-${data.depth}-${adoptStr}`
 }
 
 // ── COMPLIANCE CHECK ─────────────────────────────────────────
+// Standards follow the Compliance section of the SERS and SERDS data
+// sheets: EN 13598-2, DCG (Type D and E for SERS), SfA7, Building Regs
+// Part H1 and the DCG restricted access requirement.
 
 export function generateCompliance(state: WizardState): ComplianceResult[] {
   const data = extractCatchpitData(state)
   const { valid } = validateConfig(state)
 
-  // Outlet rule: no flow increase on exit
-  let outletRulePass = true
-  if (data && data.outletLocked && data.diameter) {
-    const outletRank = pipeSizeRank(data.outletLocked)
-    Object.entries(data.pipeSizes).forEach(([key, size]) => {
-      if (key.startsWith('inlet')) {
-        if (pipeSizeRank(size) > outletRank) outletRulePass = false
-      }
-    })
-  }
+  // Outlet rule: no flow increase on exit (R6) and size caps (R7)
+  const outletRulePass = data ? pipeworkRulesPass(data) : true
 
   // Depth rule for adoptable
   let depthPass = true
@@ -198,7 +206,9 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       status: overallPass ? 'Pass' : 'Warning',
     },
     {
-      standard: 'DCG C7.1.1 Sediment Management',
+      standard: data?.variant === 'SERS'
+        ? 'DCG Type D and E Chambers'
+        : 'Design and Construction Guidance (DCG)',
       scope: 'Silt retention and baffle configuration',
       status: data?.baffleType ? 'Pass' : 'Warning',
     },
@@ -212,7 +222,7 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
           : 'Warning',
     },
     {
-      standard: 'BS EN 13598-1 and EN 13598-2',
+      standard: 'BS EN 13598-2 (2009)',
       scope: 'Plastic Inspection Chambers',
       status: 'Pass',
     },
@@ -220,11 +230,6 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       standard: 'Building Regulations Part H1',
       scope: 'Surface Water Drainage',
       status: data?.systemType === 'surface' ? 'Pass' : 'Warning',
-    },
-    {
-      standard: 'Environment Agency PPG3',
-      scope: 'Pollution Prevention',
-      status: 'Pass',
     },
     {
       standard: 'Outlet rule - no flow increase on exit',

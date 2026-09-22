@@ -1,6 +1,6 @@
 'use client'
 
-import { INNOVATION_SLIDES } from '@/lib/content/home'
+import type { HomeContent } from '@/lib/site-content/defaults'
 import { RichText, BODY_VOICES } from './RichText'
 import { SiteButton } from './SiteButton'
 import { Carousel } from './Carousel'
@@ -9,7 +9,8 @@ import { Carousel } from './Carousel'
  * The RoFlo / multiFlo / autoFlo slider. Right-aligned copy, the sub-brand
  * set as an upright blue word beside an italic accent word.
  */
-export function InnovationSlider() {
+export function InnovationSlider({ content }: { content: Pick<HomeContent, 'INNOVATION_SLIDES'> }) {
+  const { INNOVATION_SLIDES } = content
   return (
     <section className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-[1100px] px-5">

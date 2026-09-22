@@ -17,6 +17,7 @@ import type {
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
 import {
+  POD_PLUS_DIAMETERS,
   generateProductCode as podGenerateProductCode,
   generateCompliance as podGenerateCompliance,
 } from '@/lib/rules/rhinopod'
@@ -79,7 +80,7 @@ const rhinoPodSteps: StepDefinition[] = [
     subheading: (state: WizardState) => {
       const d = getRhinoPodData(state)
       if (d?.podType === 'plus') {
-        return 'Select the chamber diameter for the integrated RhinoPod Plus.'
+        return 'RhinoPod Plus is factory-fitted to a RHINO SEHDS separator. Select the SEHDS diameter.'
       }
       return 'Is this a retrofit to an existing chamber?'
     },
@@ -89,7 +90,7 @@ const rhinoPodSteps: StepDefinition[] = [
       if (!d || !d.podType) return false
 
       if (d.podType === 'plus') {
-        return d.chamberDiameter !== null
+        return d.chamberDiameter !== null && POD_PLUS_DIAMETERS.includes(d.chamberDiameter)
       }
 
       // standalone: needs retrofit decision
@@ -124,6 +125,7 @@ export function rhinopodReducer(
     }
 
     case 'POD_SET_DIAMETER':
+      if (!POD_PLUS_DIAMETERS.includes(action.payload)) return productData
       return {
         kind: 'rhinopod',
         data: { ...data, chamberDiameter: action.payload },
@@ -152,7 +154,7 @@ function getSummaryFields(state: WizardState): SummaryField[] {
     fields.push({ label: 'Pod Type', value: podTypeLabel(d.podType) })
   }
   if (d.podType === 'plus' && d.chamberDiameter) {
-    fields.push({ label: 'Chamber Diameter', value: `${d.chamberDiameter}mm` })
+    fields.push({ label: 'SEHDS Diameter', value: `${d.chamberDiameter}mm` })
   }
   if (d.podType === 'standalone' && d.retrofitExisting !== null) {
     fields.push({ label: 'Retrofit', value: d.retrofitExisting ? 'Yes' : 'No' })
@@ -178,7 +180,7 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 
         if (d.podType === 'plus') {
           rows.push({
-            label: 'Chamber Diameter',
+            label: 'SEHDS Diameter',
             value: d.chamberDiameter ? `${d.chamberDiameter}mm` : '-',
           })
         }
@@ -201,7 +203,7 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 export const rhinopodConfig: ProductConfig = {
   id: 'rhinopod',
   name: 'RhinoPod',
-  subtitle: 'Silt filtration unit for chamber integration or standalone use',
+  subtitle: 'Floating polishing filter, standalone or fitted to SEHDS',
   category: 'silt',
   icon: 'rhinopod',
   steps: rhinoPodSteps,

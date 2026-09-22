@@ -13,6 +13,7 @@ import type {
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 
 // ── SYSTEM TYPE ABBREVIATIONS ────────────────────────────────
 
@@ -46,11 +47,13 @@ export function validateConfig(state: WizardState): ValidationResult {
 
   if (!data.roofAreaM2 || data.roofAreaM2.trim() === '') {
     errors.push('Roof area not specified')
-  } else {
-    const area = parseFloat(data.roofAreaM2)
-    if (isNaN(area) || area <= 0) {
-      errors.push('Roof area must be a positive number')
-    }
+  } else if (!isPositiveNumber(data.roofAreaM2)) {
+    errors.push('Roof area must be a positive number')
+  }
+
+  // Annual rainfall is optional, but anything entered must be usable
+  if (data.annualRainfallMm.trim() !== '' && !isPositiveNumber(data.annualRainfallMm)) {
+    errors.push('Annual rainfall must be a positive number')
   }
 
   return { valid: errors.length === 0, errors }
@@ -72,9 +75,7 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
   const data = extractRainwaterData(state)
   const { valid } = validateConfig(state)
 
-  const hasValidArea = data?.roofAreaM2
-    ? parseFloat(data.roofAreaM2) > 0
-    : false
+  const hasValidArea = isPositiveNumber(data?.roofAreaM2)
 
   return [
     {
@@ -93,9 +94,19 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       status: data?.systemType ? 'Pass' : 'Warning',
     },
     {
-      standard: 'Building Regulations - Approved Document G',
+      standard: 'Building Regulations Part G',
       scope: 'Sanitation, Hot Water Safety and Water Efficiency',
       status: valid ? 'Pass' : 'Warning',
+    },
+    {
+      standard: 'Building Regulations Part H',
+      scope: 'Drainage and Waste Disposal',
+      status: valid ? 'Pass' : 'Warning',
+    },
+    {
+      standard: 'WRAS',
+      scope: 'Wetted components approved for contact with potable water',
+      status: 'Pass',
     },
   ]
 }

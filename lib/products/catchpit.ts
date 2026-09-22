@@ -21,11 +21,18 @@ import {
   getOutletMinSize,
   getBlockedPositions,
   getMaxDepth,
-  getAvailableInletSizes,
   isVariantDiameter,
+  getAllowedBaffles,
+  CATCHPIT_SYSTEM_TYPES,
   generateProductCode as catchpitGenerateProductCode,
   generateCompliance as catchpitGenerateCompliance,
 } from '@/lib/rules/catchpit'
+import {
+  VALID_INLET_POSITIONS,
+  cleanPipeSizes,
+  removeInletAt,
+  getEffectiveOutletSize,
+} from '@/lib/rules/chamber'
 
 // -- INITIAL DATA -----------------------------------------------------
 
@@ -234,6 +241,10 @@ export function catchpitReducer(
   switch (action.type) {
     case 'CATCHPIT_SET_VARIANT': {
       const newVariant = action.payload
+      // SERS always carries a primary baffle, so "none" no longer applies.
+      const baffleType = data.baffleType && getAllowedBaffles(newVariant).includes(data.baffleType)
+        ? data.baffleType
+        : null
       // If the current diameter isn't valid for the new variant, reset
       // diameter and downstream pipework state.
       const keepDiameter = data.diameter !== null && isVariantDiameter(newVariant, data.diameter)
@@ -243,6 +254,7 @@ export function catchpitReducer(
           data: {
             ...data,
             variant: newVariant,
+            baffleType,
             diameter: null,
             inletCount: null,
             positions: [],
@@ -253,11 +265,12 @@ export function catchpitReducer(
       }
       return {
         kind: 'catchpit',
-        data: { ...data, variant: newVariant },
+        data: { ...data, variant: newVariant, baffleType },
       }
     }
 
     case 'CATCHPIT_SET_SYSTEM':
+      if (!CATCHPIT_SYSTEM_TYPES.includes(action.payload)) return productData
       return {
         kind: 'catchpit',
         data: { ...data, systemType: action.payload },
@@ -265,6 +278,7 @@ export function catchpitReducer(
 
     case 'CATCHPIT_SET_DIAMETER': {
       const newDiameter = action.payload
+      if (!isVariantDiameter(data.variant, newDiameter)) return productData
       const maxInlets = getMaxInlets(newDiameter)
 
       // R1: if current inlet count exceeds new max, reset downstream state
@@ -287,22 +301,14 @@ export function catchpitReducer(
         ? getOutletMinSize(data.inletCount, newDiameter)
         : null
 
-      // Re-evaluate pipe sizes: remove any that exceed new limits
-      const availableSizes = getAvailableInletSizes(newDiameter, outletLocked)
-      const cleanedPipeSizes: Record<string, typeof data.pipeSizes[string]> = {}
-      for (const [slot, size] of Object.entries(data.pipeSizes)) {
-        if (availableSizes.includes(size)) {
-          cleanedPipeSizes[slot] = size
-        }
-      }
-
       return {
         kind: 'catchpit',
         data: {
           ...data,
           diameter: newDiameter,
           outletLocked,
-          pipeSizes: cleanedPipeSizes,
+          // R6/R7: drop any size that exceeds the new limits
+          pipeSizes: cleanPipeSizes(newDiameter, data.inletCount, outletLocked, data.pipeSizes),
         },
       }
     }
@@ -320,18 +326,6 @@ export function catchpitReducer(
       const validPositions = data.positions.filter((pos) => !blocked.includes(pos))
       const trimmedPositions = validPositions.slice(0, newCount)
 
-      // Clean pipe sizes
-      const cleanedPipeSizes: Record<string, typeof data.pipeSizes[string]> = {}
-      for (let i = 1; i <= newCount; i++) {
-        const key = `inlet${i}`
-        if (data.pipeSizes[key]) {
-          const available = getAvailableInletSizes(data.diameter, outletLocked)
-          if (available.includes(data.pipeSizes[key])) {
-            cleanedPipeSizes[key] = data.pipeSizes[key]
-          }
-        }
-      }
-
       return {
         kind: 'catchpit',
         data: {
@@ -339,7 +333,7 @@ export function catchpitReducer(
           inletCount: newCount,
           outletLocked,
           positions: trimmedPositions,
-          pipeSizes: cleanedPipeSizes,
+          pipeSizes: cleanPipeSizes(data.diameter, newCount, outletLocked, data.pipeSizes),
         },
       }
     }
@@ -349,12 +343,16 @@ export function catchpitReducer(
       const existing = data.positions.indexOf(pos)
 
       if (existing >= 0) {
-        const newPositions = data.positions.filter((p) => p !== pos)
+        // Remove the position; later inlets keep their own pipe sizes
+        const next = removeInletAt(data.positions, data.pipeSizes, existing)
         return {
           kind: 'catchpit',
-          data: { ...data, positions: newPositions },
+          data: { ...data, positions: next.positions, pipeSizes: next.pipeSizes },
         }
       }
+
+      // Only the five manufactured positions can take an inlet
+      if (!VALID_INLET_POSITIONS.includes(pos)) return productData
 
       if (data.inletCount !== null && data.positions.length >= data.inletCount) {
         return productData
@@ -371,10 +369,10 @@ export function catchpitReducer(
         kind: 'catchpit',
         data: {
           ...data,
-          pipeSizes: {
+          pipeSizes: cleanPipeSizes(data.diameter, data.inletCount, data.outletLocked, {
             ...data.pipeSizes,
             [action.payload.slot]: action.payload.size,
-          },
+          }),
         },
       }
 
@@ -400,6 +398,7 @@ export function catchpitReducer(
     }
 
     case 'CATCHPIT_SET_BAFFLE':
+      if (!getAllowedBaffles(data.variant).includes(action.payload)) return productData
       return {
         kind: 'catchpit',
         data: { ...data, baffleType: action.payload },
@@ -442,10 +441,11 @@ function getSummaryFields(state: WizardState): SummaryField[] {
       value: d.positions.map((p) => `${p} o'clock`).join(', '),
     })
   }
+  const outletSize = getEffectiveOutletSize(d)
   fields.push({
     label: 'Outlet',
-    value: d.outletLocked
-      ? `12 o'clock - ${d.outletLocked}`
+    value: outletSize
+      ? `12 o'clock - ${outletSize}`
       : `12 o'clock`,
     locked: d.outletLocked !== null,
   })
@@ -496,7 +496,7 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
     },
     {
       title: 'Pipework',
-      editStep: 3,
+      editStep: 4, // inlet-count (after product select, series, system, diameter)
       fields: (s: WizardState) => {
         const d = getCatchpitData(s)
         if (!d) return []
@@ -516,11 +516,12 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
           })
         }
 
+        const outletSize = getEffectiveOutletSize(d)
         rows.push({
           label: 'Outlet',
-          value: d.outletLocked
-            ? `12 o'clock - ${d.outletLocked} (locked)`
-            : `12 o'clock - Standard`,
+          value: outletSize
+            ? `12 o'clock - ${outletSize}${d.outletLocked ? ' (min. locked)' : ''}`
+            : `12 o'clock`,
           highlight: d.outletLocked !== null,
         })
 
@@ -529,7 +530,7 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
     },
     {
       title: 'Silt Options',
-      editStep: 6,
+      editStep: 7, // silt-options
       fields: (s: WizardState) => {
         const d = getCatchpitData(s)
         if (!d) return []
@@ -547,7 +548,7 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 export const catchpitConfig: ProductConfig = {
   id: 'catchpit',
   name: 'Catchpit / Silt Trap',
-  subtitle: 'HDPE catchpit with integrated silt management',
+  subtitle: 'One-piece HDPE catchpit with two-stage silt capture',
   category: 'chambers',
   icon: 'catchpit',
   steps: catchpitSteps,
@@ -557,4 +558,5 @@ export const catchpitConfig: ProductConfig = {
   getSummaryFields,
   getReviewBlocks,
   has3dViewer: true,
+  hasDrawing: true,
 }

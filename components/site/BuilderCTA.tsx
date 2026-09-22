@@ -1,9 +1,10 @@
-import { BUILDER_CTA } from '@/lib/content/home'
+import type { HomeContent } from '@/lib/site-content/defaults'
 import { RichText, BODY_VOICES } from './RichText'
 import { SiteButton } from './SiteButton'
 
 /** "build your System!" - the run into the configurator. */
-export function BuilderCTA() {
+export function BuilderCTA({ content }: { content: Pick<HomeContent, 'BUILDER_CTA'> }) {
+  const { BUILDER_CTA } = content
   return (
     <section className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-[1100px] px-5">

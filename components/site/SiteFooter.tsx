@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { FOOTER } from '@/lib/content/navigation'
+import type { NavigationContent } from '@/lib/site-content/defaults'
 
 /** The Webflow `NewFooter` component: mark, strapline, three links. */
-export function SiteFooter() {
+export function SiteFooter({ content }: { content: Pick<NavigationContent, 'FOOTER'> }) {
+  const { FOOTER } = content
 
   return (
     <footer className="bg-site-blue-dark text-white">

@@ -39,6 +39,10 @@ export interface ProductConfig {
   getSummaryFields: (state: WizardState) => SummaryField[]
   getReviewBlocks: (state: WizardState) => ReviewBlockDef[]
   has3dViewer?: boolean
+  // True when /api/pdf can draw this product. The engineering drawing
+  // template models a round chamber with clock-position inlets, so only
+  // the inspection chamber and catchpit qualify.
+  hasDrawing?: boolean
 }
 
 export interface CategoryDef {
@@ -54,7 +58,7 @@ export const CATEGORIES: CategoryDef[] = [
   {
     id: 'chambers',
     label: 'Inspection Chambers and Manholes',
-    description: 'HDPE rotationally moulded drainage chambers for surface and foul water systems.',
+    description: 'One-piece HDPE inspection chambers and catchpits for surface and foul water systems.',
     productIds: ['chamber', 'catchpit'],
   },
   {

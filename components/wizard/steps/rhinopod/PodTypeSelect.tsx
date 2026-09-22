@@ -15,14 +15,14 @@ const podTypes: {
     id: 'standalone',
     title: 'Standalone',
     subtitle:
-      'Retrofittable floating filter for existing catchpits and road gullies',
+      'Floating filter that drops into an existing chamber, manhole or catch basin',
     icon: <CircleDot className="h-[22px] w-[22px] text-blue" />,
   },
   {
     id: 'plus',
     title: 'Plus',
     subtitle:
-      'Factory-fitted chamber with integrated RhinoPod filtration',
+      'Factory-fitted to a RHINO SEHDS hydrodynamic separator',
     icon: <PackagePlus className="h-[22px] w-[22px] text-green" />,
   },
 ]

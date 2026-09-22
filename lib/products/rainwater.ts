@@ -15,6 +15,7 @@ import type {
   ReviewBlockDef,
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
   generateProductCode as rwGenerateProductCode,
   generateCompliance as rwGenerateCompliance,
@@ -83,7 +84,7 @@ const rainwaterSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRainwaterData(state)
-      return d !== null && d.roofAreaM2 !== ''
+      return d !== null && isPositiveNumber(d.roofAreaM2)
     },
   },
   {

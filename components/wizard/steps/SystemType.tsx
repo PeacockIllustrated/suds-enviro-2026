@@ -2,8 +2,19 @@
 
 import { useWizardContext } from '../WizardContext'
 import { OptionCard } from '@/components/ui/OptionCard'
+import { AlertBox } from '@/components/ui/AlertBox'
 import { getSystemTypeValue, getSystemActionType } from './helpers'
-import type { SystemType as SystemTypeVal, WizardAction } from '@/lib/types'
+import { CATCHPIT_SYSTEM_TYPES } from '@/lib/rules/catchpit'
+import { FLOW_CONTROL_SYSTEM_TYPES } from '@/lib/rules/flow-control'
+import type { ProductId, SystemType as SystemTypeVal, WizardAction } from '@/lib/types'
+
+// Catchpits (SERS / SERDS) and flow controls (SERF / ROTEX) are
+// stormwater products on their data sheets; the rest take any system.
+function allowedSystems(product: ProductId | null): SystemTypeVal[] | null {
+  if (product === 'catchpit') return CATCHPIT_SYSTEM_TYPES
+  if (product === 'flow-control') return FLOW_CONTROL_SYSTEM_TYPES
+  return null
+}
 
 const systems: {
   id: SystemTypeVal
@@ -50,6 +61,7 @@ export function SystemType() {
   const { state, dispatch } = useWizardContext()
   const systemType = getSystemTypeValue(state)
   const actionType = getSystemActionType(state.product)
+  const allowed = allowedSystems(state.product)
 
   return (
     <>
@@ -61,6 +73,7 @@ export function SystemType() {
             title={s.title}
             subtitle={s.subtitle}
             selected={systemType === s.id}
+            disabled={allowed !== null && !allowed.includes(s.id)}
             onClick={() =>
               dispatch({
                 type: actionType,
@@ -71,7 +84,17 @@ export function SystemType() {
         ))}
       </div>
 
-      {(systemType === 'foul' || systemType === 'combined') && (
+      {allowed !== null && (
+        <AlertBox
+          type="info"
+          title="Surface water product"
+          body={state.product === 'catchpit'
+            ? 'SERS and SERDS catchpits capture silt from surface water runoff, so they are specified for surface water systems only.'
+            : 'SERF and ROTEX flow controls regulate stormwater discharge, so they are specified for surface water systems only.'}
+        />
+      )}
+
+      {allowed === null && (systemType === 'foul' || systemType === 'combined') && (
         <div className="rounded-lg border border-dashed border-blue/25 bg-blue/6 p-3 text-[11px] leading-relaxed text-muted">
           <strong className="text-blue">Branch note:</strong> Foul and combined
           systems follow the same configurator path. Compliance

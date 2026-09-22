@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronDown, Menu, X } from 'lucide-react'
-import { PRIMARY_NAV } from '@/lib/content/navigation'
+import type { NavigationContent } from '@/lib/site-content/defaults'
 import { SiteButton } from './SiteButton'
 
 /**
@@ -12,7 +12,8 @@ import { SiteButton } from './SiteButton'
  * the left, the RHINO Range mega menu and Contact in the middle, two pills
  * on the right.
  */
-export function SiteHeader() {
+export function SiteHeader({ content }: { content: Pick<NavigationContent, 'PRIMARY_NAV'> }) {
+  const { PRIMARY_NAV } = content
   const [megaOpen, setMegaOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const { brand, megaMenu, links, actions } = PRIMARY_NAV

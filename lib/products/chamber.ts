@@ -15,12 +15,18 @@ import type {
   ReviewBlockDef,
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
+  VALID_INLET_POSITIONS,
   getMaxInlets,
   getOutletMinSize,
   getBlockedPositions,
   getMaxDepth,
-  getAvailableInletSizes,
+  getAvailableFlowTypes,
+  getEffectiveOutletSize,
+  cleanPipeSizes,
+  removeInletAt,
+  getChamberSeries,
   generateProductCode as chamberGenerateProductCode,
   generateCompliance as chamberGenerateCompliance,
 } from '@/lib/rules/chamber'
@@ -170,7 +176,7 @@ const chamberSteps: StepDefinition[] = [
       const d = getChamberData(state)
       if (!d || d.flowControl === null) return false
       if (d.flowControl) {
-        return d.flowType !== null && d.flowRate !== ''
+        return d.flowType !== null && isPositiveNumber(d.flowRate)
       }
       return true
     },
@@ -209,6 +215,12 @@ export function chamberReducer(
       const newDiameter = action.payload
       const maxInlets = getMaxInlets(newDiameter)
 
+      // Inline flow control must suit the new diameter (orifice up to
+      // 600mm, vortex from 600mm per the SERF / ROTEX data sheets).
+      const flowType = data.flowType && getAvailableFlowTypes(newDiameter).includes(data.flowType)
+        ? data.flowType
+        : null
+
       // R1: if current inlet count exceeds new max, reset downstream state
       if (data.inletCount !== null && data.inletCount > maxInlets) {
         return {
@@ -220,6 +232,7 @@ export function chamberReducer(
             positions: [],
             pipeSizes: {},
             outletLocked: null,
+            flowType,
           },
         }
       }
@@ -229,22 +242,15 @@ export function chamberReducer(
         ? getOutletMinSize(data.inletCount, newDiameter)
         : null
 
-      // Re-evaluate pipe sizes: remove any that exceed new limits
-      const availableSizes = getAvailableInletSizes(newDiameter, outletLocked)
-      const cleanedPipeSizes: Record<string, typeof data.pipeSizes[string]> = {}
-      for (const [slot, size] of Object.entries(data.pipeSizes)) {
-        if (availableSizes.includes(size)) {
-          cleanedPipeSizes[slot] = size
-        }
-      }
-
       return {
         kind: 'chamber',
         data: {
           ...data,
           diameter: newDiameter,
           outletLocked,
-          pipeSizes: cleanedPipeSizes,
+          // R6/R7: drop any size that exceeds the new limits
+          pipeSizes: cleanPipeSizes(newDiameter, data.inletCount, outletLocked, data.pipeSizes),
+          flowType,
         },
       }
     }
@@ -264,19 +270,6 @@ export function chamberReducer(
       // If reducing inlet count, trim positions to new count
       const trimmedPositions = validPositions.slice(0, newCount)
 
-      // Clean pipe sizes: remove entries for inlets beyond new count
-      const cleanedPipeSizes: Record<string, typeof data.pipeSizes[string]> = {}
-      for (let i = 1; i <= newCount; i++) {
-        const key = `inlet${i}`
-        if (data.pipeSizes[key]) {
-          // Also verify the size is still valid with the new outlet lock
-          const available = getAvailableInletSizes(data.diameter, outletLocked)
-          if (available.includes(data.pipeSizes[key])) {
-            cleanedPipeSizes[key] = data.pipeSizes[key]
-          }
-        }
-      }
-
       return {
         kind: 'chamber',
         data: {
@@ -284,7 +277,7 @@ export function chamberReducer(
           inletCount: newCount,
           outletLocked,
           positions: trimmedPositions,
-          pipeSizes: cleanedPipeSizes,
+          pipeSizes: cleanPipeSizes(data.diameter, newCount, outletLocked, data.pipeSizes),
         },
       }
     }
@@ -294,13 +287,16 @@ export function chamberReducer(
       const existing = data.positions.indexOf(pos)
 
       if (existing >= 0) {
-        // Remove the position
-        const newPositions = data.positions.filter((p) => p !== pos)
+        // Remove the position; later inlets keep their own pipe sizes
+        const next = removeInletAt(data.positions, data.pipeSizes, existing)
         return {
           kind: 'chamber',
-          data: { ...data, positions: newPositions },
+          data: { ...data, positions: next.positions, pipeSizes: next.pipeSizes },
         }
       }
+
+      // Only the five manufactured positions can take an inlet
+      if (!VALID_INLET_POSITIONS.includes(pos)) return productData
 
       // Add the position if under the limit
       if (data.inletCount !== null && data.positions.length >= data.inletCount) {
@@ -318,10 +314,10 @@ export function chamberReducer(
         kind: 'chamber',
         data: {
           ...data,
-          pipeSizes: {
+          pipeSizes: cleanPipeSizes(data.diameter, data.inletCount, data.outletLocked, {
             ...data.pipeSizes,
             [action.payload.slot]: action.payload.size,
-          },
+          }),
         },
       }
 
@@ -338,6 +334,7 @@ export function chamberReducer(
       }
 
     case 'CHAMBER_SET_FLOW_TYPE':
+      if (!getAvailableFlowTypes(data.diameter).includes(action.payload)) return productData
       return {
         kind: 'chamber',
         data: { ...data, flowType: action.payload },
@@ -403,10 +400,11 @@ function getSummaryFields(state: WizardState): SummaryField[] {
     })
   }
   // Outlet always at 12 o'clock. If R2 has locked the size, mark it.
+  const outletSize = getEffectiveOutletSize(d)
   fields.push({
     label: 'Outlet',
-    value: d.outletLocked
-      ? `12 o'clock - ${d.outletLocked}`
+    value: outletSize
+      ? `12 o'clock - ${outletSize}`
       : `12 o'clock`,
     locked: d.outletLocked !== null,
   })
@@ -441,7 +439,12 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
       fields: (s: WizardState) => {
         const d = getChamberData(s)
         if (!d) return []
+        const series = getChamberSeries(d.systemType)
         return [
+          {
+            label: 'Series',
+            value: series === 'IC' ? 'To be confirmed' : `RHINO ${series}`,
+          },
           { label: 'System Type', value: systemTypeLabel(d.systemType) },
           { label: 'Diameter', value: d.diameter ? `${d.diameter}mm` : '-' },
           {
@@ -479,11 +482,12 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
           })
         }
 
+        const outletSize = getEffectiveOutletSize(d)
         rows.push({
           label: 'Outlet',
-          value: d.outletLocked
-            ? `12 o'clock - ${d.outletLocked} (locked)`
-            : `12 o'clock - Standard`,
+          value: outletSize
+            ? `12 o'clock - ${outletSize}${d.outletLocked ? ' (min. locked)' : ''}`
+            : `12 o'clock`,
           highlight: d.outletLocked !== null,
         })
 
@@ -514,7 +518,7 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 export const chamberConfig: ProductConfig = {
   id: 'chamber',
   name: 'Inspection Chamber',
-  subtitle: 'HDPE rotationally moulded drainage chamber',
+  subtitle: 'One-piece HDPE benched and channelled chamber',
   category: 'chambers',
   icon: 'chamber',
   steps: chamberSteps,
@@ -524,4 +528,5 @@ export const chamberConfig: ProductConfig = {
   getSummaryFields,
   getReviewBlocks,
   has3dViewer: true,
+  hasDrawing: true,
 }

@@ -1,9 +1,10 @@
-import { RHINO_RANGE } from '@/lib/content/home'
+import type { HomeContent } from '@/lib/site-content/defaults'
 import { RichText, BODY_VOICES } from './RichText'
 import { SiteButton } from './SiteButton'
 
 /** "THE RHINO RANGE / One solution, All Situations". */
-export function RhinoRange() {
+export function RhinoRange({ content }: { content: Pick<HomeContent, 'RHINO_RANGE'> }) {
+  const { RHINO_RANGE } = content
   return (
     <section className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-[1100px] px-5 text-right">
