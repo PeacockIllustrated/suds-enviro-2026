@@ -67,6 +67,6 @@ for p in src['products']:
     q['parts'] = parts
     out.append(q)
 
-(HERE / 'products.json').write_text(json.dumps({'families': src['families'], 'products': out}, indent=2) + '\n')
+(HERE / 'products.json').write_text(json.dumps({'families': src['families'], 'noAsset': src.get('noAsset', []), 'products': out}, indent=2) + '\n')
 for q in out:
     print(f"{q['slug']:40s} {q.get('status', 'ready'):8s} {len(q.get('parts', []))} parts  {q.get('reason', '')[:90]}")

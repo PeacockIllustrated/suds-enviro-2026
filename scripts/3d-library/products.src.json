@@ -1026,5 +1026,29 @@
         "Bell Siphon/"
       ]
     }
+  ],
+  "noAsset": [
+    {
+      "name": "SudSceptor ULTIMA",
+      "codes": [
+        "ULT-SEHDS2500"
+      ],
+      "reason": "no 3D file anywhere in SuDS 3D Assets"
+    },
+    {
+      "name": "Rhino inspection chamber, foul",
+      "codes": [
+        "FIC",
+        "SERFIC"
+      ],
+      "reason": "only a single master STL (FIC450160-2.stl) exists; no parts or breakdown, so it is noted as a variant of the surface chamber rather than converted"
+    },
+    {
+      "name": "SudSceptor, sizes other than 1800",
+      "codes": [
+        "SEHDS300 to SEHDS3000"
+      ],
+      "reason": "only the 1800 has parts; SEHDS1200 exists as one master STL, noted as a variant"
+    }
   ]
 }
