@@ -1,0 +1,340 @@
+Body
+  ComponentInstance COMPONENT=NavFinal id=25c5c548-43f7-505d-482f-64ab3ebe0d8a
+  Spline .Spline Scene Mob
+  Spline .Spline Scene 12
+  Section .Section 11.vortex <section>
+    Image .watermark asset=666b82a4f21bdd6c3cbd6a6f
+    Block .Screen
+      Block .Horizontal wrapper.serf
+        Block .Div Section.1st
+          VFlex .Header flex 1.right
+            Heading .TestimonialHead.right <h1>
+              » the
+              Span .bluebold
+                » RHINO
+              
+              Span .Text Span 5
+                Strong .Bold Text 3
+                  » vortex
+              
+              Span .Text Span 6
+                » flow control
+              
+            Heading .TestimonialBody.right.top <h1>
+              » The
+              Span .ContentHighlight
+                Strong
+                  » RHINO Vortex Flow Control
+              » is an
+              Span .ContentHighlight
+                » advanced
+              » and
+              Span .ContentHighlight
+                » highly innovative solution
+              » for managing
+              Span .ContentHighlight
+                » stormwater
+              » flow in drainage systems
+              
+            List .List 4 <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Passive Flow Control:
+                Block .Text Block 6
+                  » Requires no external power or mechanical parts, ensuring reliability.
+              ListItem
+                Block .List Header
+                  Strong
+                    » Low Maintenance:
+                Block .Text Block 6
+                  » With no moving components, the system is highly robust and requires minimal servicing.
+              ListItem
+                Block .List Header
+                  Strong
+                    » Space Efficient:
+                Block .Text Block 6
+                  » Compact design fits into a wide range of chamber sizes without taking up excessive space.
+              ListItem
+                Block .List Header
+                  Strong
+                    » Environmental Benefits:
+                Block .Text Block 6
+                  » Helps manage stormwater in a controlled manner, preventing erosion and protecting downstream waterways from sediment and pollution.
+            Heading .TestimonialBody.right <h1>
+              » Engineered for
+              Span .ContentHighlight
+                » versatility
+              » , it can be fixed to either curved or flat surfaces
+              Span .ContentHighlight
+                Strong
+                  » as standard
+              » , making it adaptable to the specific requirements of various projects.
+              
+        Block .Div Section Copy.3rd.vortex
+          VFlex .Header flex 1.right 2 Copy
+            Heading .TestimonialBody.right <h1>
+              » The
+              Span .ContentHighlight
+                » RHINO Vortex Flow Control
+              » uses the natural
+              Span .ContentHighlight
+                » hydraulic properties
+              » of
+              Span .ContentHighlight
+                » swirling water
+              » to regulate flow rates
+              Span .ContentHighlight
+                » without the need for moving parts
+              » . The system generates a controlled vortex within its chamber,
+              Span .ContentHighlight
+                » utilizing centrifugal forces to restrict water flow
+              » .
+              
+              » ‍
+              
+              » ‍
+              Span .ContentHighlight
+                » This ensures consistent outflow even during fluctuating stormwater conditions, reducing the risk of overwhelming downstream systems and preventing flooding.
+              
+        Block .Div Section Copy.3rd Copy.vortex
+          VFlex .Header flex 1.leftleft.right
+            Heading .TestimonialHead <h1>
+              » how the
+              
+              » ‍
+              Span .Text Span 5
+                Strong .Bold Text 3.blue
+                  » vortex
+                  
+                  » ‍
+              Strong .Bold Text 4
+                » flow control
+              
+              » works
+              
+            Heading .TestimonialBody <h1>
+              » As
+              Span .ContentHighlight
+                Strong
+              » stormwater enters,
+              Span .ContentHighlight
+                Strong
+              » centrifugal forces
+              Span .ContentHighlight
+                Strong
+                  » restrict the water flow
+              » , with the vortex strength
+              Span .ContentHighlight
+                Strong
+                  » increasing in response to higher inflow rates.
+              » This effectively reduces outflow to a pre-set maximum rate, ensuring a
+              Span .ContentHighlight
+                Strong
+                  » consistent and controlled
+              » discharge,
+              Span .ContentHighlight
+                Strong
+                  » even under varying stormwater conditions.
+                  
+                  
+              » This mechanism is crucial in flood prevention and helps manage the capacity of downstream infrastructure by reducing peak flow rates during heavy rainfall events, thereby mitigating the risk of system overload and flooding.
+  Section .Section 19 <section>
+    Block .Div Block 9.smaller.long
+      VFlex .Header flex 1.grid.mobile
+        Layout .Quick Stack 6
+          Cell
+            Heading .TestimonialHead.right <h1>
+              » technical
+              
+              » ‍
+              Strong .Bold Text 4.blue
+                » specifications
+              
+            List .List 4 Copy <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Material Construction
+                Block .Text Block 6
+                  » The flow control components are manufactured from durable
+                  Strong
+                    » 4mm ASI 304 stainless steel
+                  » and
+                  Strong
+                    » 6mm HDPE
+                  » , ensuring long-term reliability and corrosion resistance.
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Installation and Servicing
+                Block .Text Block 6
+                  » Easily installed and fully demountable, providing simple servicing and maintenance. Full access to the vortex snail is achieved by unbolting either the front or back stainless steel plates, allowing
+                  Strong
+                    » 360-degree access
+                  » for maintenance.
+          Cell
+            Heading .TestimonialHead.right <h1>
+              » chamber
+              
+              » ‍
+              Strong .Bold Text 4.blue
+                » sizes:
+              
+            List .List 4.no gap <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 450mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 600mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 750mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 900mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1050mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1200mm
+          Cell .Cell 27
+            List .List 4 Copy <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Surface Compatibility
+                Block .Text Block 6
+                  » Designed for both curved and flat surfaces, suitable for various stormwater system configurations.
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Flow Regulation
+                Block .Text Block 6
+                  » Controls water outflow based on pre-set parameters for effective stormwater management.
+      Block .Div Block 9.smaller
+        VFlex .Flex Block 38
+          Heading .TestimonialHead.right Copy <h1>
+            » technical
+            
+            » ‍
+            Strong .Bold Text 4.blue
+              » specs
+            
+          Heading .TestimonialHead.right Copy.mobilehide <h1>
+            » technical
+            
+            » ‍
+            Strong .Bold Text 4.blue
+              » specifications
+            
+          VFlex
+            Heading .TestimonialHead.right.new <h1>
+              » chamber
+              
+              » ‍
+              » sizes:
+              
+            List .List 4.no gap <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 450mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 600mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 750mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 900mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1050mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1200mm
+          List .List 4 Copy <ul>
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » Material Construction
+              Block .Text Block 6
+                » The flow control components are manufactured from durable
+                Strong
+                  » 4mm ASI 304 stainless steel
+                » and
+                Strong
+                  » 6mm HDPE
+                » , ensuring long-term reliability and corrosion resistance.
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » Installation and Servicing
+              Block .Text Block 6
+                » Easily installed and fully demountable, providing simple servicing and maintenance. Full access to the vortex snail is achieved by unbolting either the front or back stainless steel plates, allowing
+                Strong
+                  » 360-degree access
+                » for maintenance.
+    Block .Div Block 9.smaller.long.bottom.left
+      VFlex .Header flex 1.right 2.bottom
+        Heading .TestimonialHead.right <h1>
+          » the
+          
+          » ‍
+          Span .Bold Text 4
+            Strong .Bold Text 5
+              » rhino vortex
+          
+          Span .Bold Text 4
+            Strong
+              » flow control
+          Strong
+            » :
+          Strong .Bold Text 4
+            
+          » delivering you...
+          
+        List .List 4 <ul>
+          ListItem .List Item 6
+            Block .List Header
+              Strong
+                » Time-Saving Installation:
+            Block .Text Block 6
+              » The factory-fitted HDPE chamber option simplifies the on-site installation process. It arrives as a complete system that requires only connection and backfill, eliminating the need for time-consuming and costly benching.
+          ListItem
+            Block .List Header
+              Strong
+                » Versatile Application:
+            Block .Text Block 6
+              » Designed to be fitted to both curved and flat surfaces as standard, providing flexibility for a range of stormwater management systems.
+          ListItem
+            Block .List Header
+              Strong
+                » Cost-Efficiency:
+            Block .Text Block 6
+              » By eliminating the need for expensive in-ground benching, the RHINO system reduces labour costs and installation time.
+          ListItem
+            Block .List Header
+              Strong
+                » Safety Enhancement:
+            Block .Text Block 6
+              » The factory-fitted solution minimizes in-ground hazards, improving on-site safety by reducing worker exposure to dangerous conditions during installation.
+        Link .button1
+          » Build YOUR VORTEX Control
+  Image .Image 12.top asset=6687d1ef803ea205f34ece66
+  ComponentInstance COMPONENT=NewFooter id=a2e9668d-7083-440f-f06c-984cb03f8de5

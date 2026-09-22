@@ -17,6 +17,31 @@ html {
   --color-muted: #5a7a90;
 
   --font-sans: var(--font-montserrat), sans-serif;
+
+  /* ── Marketing palette, read from the Webflow site's variable
+     collection. Namespaced `site-` so it sits alongside the configurator
+     tokens above rather than redefining them. See
+     reference/webflow/DESIGN.md. ─────────────────────────────── */
+  --color-site-blue: #1d80b9;
+  --color-site-blue-dark: #005576;
+  --color-site-green: #54b54d;
+  --color-site-green-dark: #2eaa81;
+  --color-site-blue-light: #afdbf4;
+  --color-site-ui-blue: #bfd3db;
+  --color-site-ui-green: #abe1a4;
+  --color-site-dark: #3a3a3c;
+  --color-site-red: #c34c4a;
+  --color-site-yellow: #ffe313;
+
+  /* Webflow's breakpoints, which are max-width and do not line up with
+     Tailwind's defaults. Tailwind's `max-*` variant compiles to
+     `width < value`, so each token is the Webflow ceiling plus one:
+     `max-site-tablet:` is `<= 991px`, `max-site-mobile-l:` is `<= 767px`,
+     `max-site-mobile:` is `<= 479px`. Always reach for the `max-`
+     variants here - used bare, these read as min-widths and inverted. */
+  --breakpoint-site-tablet: 992px;
+  --breakpoint-site-mobile-l: 768px;
+  --breakpoint-site-mobile: 480px;
 }
 
 body {
@@ -65,4 +90,22 @@ body {
   to {
     width: 120px;
   }
+}
+
+/* Home scroll scene: each copy beat rises in as it scrolls into view.
+   Scroll-driven where supported; everywhere else the copy is simply
+   there. Never animates under reduced motion. */
+@keyframes journey-rise {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: view()) {
+  .journey-beat {
+    animation: journey-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 30%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-beat { animation: none; }
 }

@@ -1,0 +1,498 @@
+Body
+  ComponentInstance COMPONENT=NavFinal id=25c5c548-43f7-505d-482f-64ab3ebe0d8a
+  Spline .Spline Scene 12
+  Section .Section 11.pump <section>
+    Image .watermark.left asset=666b82a4f21bdd6c3cbd6a6f
+    Block .Screen
+      Block .Horizontal wrapper.longer
+        Block .Div Section.1st.right
+          VFlex .Header flex 1.leftleft
+            Heading .TestimonialHead.right <h1>
+              » the
+              
+              Span .Text Span 5
+                Strong .Bold Text 3
+                  » RHINO
+                Strong .Bold Text 3.bigblue
+                  » -
+              Span .Text Span 5
+                Strong .Bold Text 3
+                  » lift
+              Span .Storm water.blue
+                
+                » Packaged
+              
+              Span .Text Span 6
+                » pumping stations
+              
+            Heading .TestimonialBody.right <h1>
+              » The
+              Strong .Bold Text 6
+                » RHINOLIFT Packaged Pumping Stations
+              » are designed to provide
+              Strong .Bold Text 6
+                » reliable, efficient, and robust solutions
+              » for managing
+              Strong .Bold Text 6
+                » foul water, stormwater
+              » , and
+              Strong .Bold Text 6
+                » grey water
+              » . Whether for residential or large-scale commercial applications, RHINOLIFT systems offer flexibility and durability, with a range of
+              Strong .Bold Text 6
+                » single
+              » and
+              Strong .Bold Text 6
+                » dual pump configurations
+              » for duty/standby arrangements. Each system is custom-built to meet specific project needs, ensuring the right solution to handle
+              Strong .Bold Text 6
+                » flow
+              » and
+              Strong .Bold Text 6
+                » storage requirements
+              » .
+              
+        Block .Div Section.2nd.Left
+          VFlex .Header flex 1.2nd.middle
+            HFlex .Flex Block 35
+              VFlex .Flex Block 34
+                Heading .TestimonialHead.right <h1>
+                  Span .Text Span 5
+                    Strong .Bold Text 3
+                      » built for
+                  Span .Storm water.blue
+                    
+                    » strength & longevity
+                  
+                Heading .TestimonialBody.Reight.right <h1>
+                  » Constructed from
+                  Strong .Bold Text 6
+                    » MDPE
+                  » and
+                  Strong .Bold Text 6
+                    » GRP chambers
+                  » , RHINOLIFT pumping stations provide
+                  Strong .Bold Text 6
+                    » exceptional strength
+                  » and
+                  Strong .Bold Text 6
+                    » durability
+                  » . Each station is equipped with
+                  Strong .Bold Text 6
+                    » vortex
+                  » and
+                  Strong .Bold Text 6
+                    » macerator pumps
+                  » to handle varying flow rates and ensure efficient, trouble-free operation.
+                  
+                  » ‍
+                  
+                  » We pride ourselves on fast lead times, with pumping stations built and delivered to your site within
+                  Strong .Bold Text 6
+                    » 24-48 hours
+                  » , allowing you to meet even the tightest deadlines.
+                  
+        Block .Div Section.3rd.long.shorter
+          VFlex .Header flex 1.leftleft
+            Heading .TestimonialHead.right <h1>
+              Span .Text Span 5
+                Strong .Bold Text 3.blue
+                  » how our
+                  
+              Strong .Bold Text 3
+                » Pumping Stations
+                
+              Strong .Bold Text 3.blue
+                » work:
+              
+            Heading .TestimonialBody.right <h1>
+              » The
+              Strong .Bold Text 6
+                » RHINOLIFT Pumping Station
+              » is designed to pump
+              Strong .Bold Text 6
+                » foul water, stormwater
+              » , or
+              Strong .Bold Text 6
+                » grey water
+              » from low-lying areas to higher elevations for further treatment or disposal. The station features a
+              Strong .Bold Text 6
+                » vortex or macerator pump
+              » that moves water through the system while handling solids of up to
+              Strong .Bold Text 6
+                » 50mm
+              » in diameter.
+              
+              
+              » Dual pump configurations offer
+              Strong .Bold Text 6
+                » duty/standby arrangements
+              » , where one pump operates while the other remains on standby, ensuring continuous operation during high-demand periods or maintenance.
+              
+  Section <section>
+    Block .Div Block 9.smaller
+      VFlex .Header flex 1.leftleft.padd
+        Heading .TestimonialHead.right <h1>
+          » Key
+          » ‍
+          Strong .Bold Text 4.blue
+            
+            » benefits
+          
+        Block .Text Block 6
+          Strong .Bold Text 6
+            » MDPE Chamber:
+          » Offers superior strength and durability, ideal for challenging site conditions.
+          
+          
+          » ‍
+          Strong .Bold Text 6
+            » Single or Dual Pump Configurations:
+          » Available in
+          Strong
+            » single vortex pump setups
+          » or
+          Strong
+            » dual duty/standby configurations
+          » for increased capacity and redundancy.
+          
+          » ‍
+          
+          » ‍
+          Strong .Bold Text 6
+            » Macerator Pump Option:
+          » Optional macerator pumps are available for applications requiring
+          Strong
+            » fine grinding of solids
+          » .
+          
+          » ‍
+          
+          » ‍
+          Strong .Bold Text 6
+            » Custom-Built Solutions:
+          » Each station is
+          Strong
+            » built to order
+          » , ensuring a fully bespoke solution that fits the specific needs of your project.
+          
+          
+          Strong .Bold Text 6
+            » Quick Delivery
+          » : RHINOLIFT systems are built and delivered to the site within
+          Strong
+            » 24-48 hours
+          » , ensuring project deadlines are met.
+          
+          
+          » ‍
+          Strong .Bold Text 6
+            » Telemetry & Alarms
+          » : Optional
+          Strong
+            » high-level alarms
+          » and
+          Strong
+            » telemetry systems
+          » provide enhanced monitoring and control.
+          
+          
+          » ‍
+          Strong .Bold Text 6
+            » Bluetooth Connectivity
+          » : Optional
+          Strong
+            » Bluetooth compatibility
+          » allows for remote system monitoring and diagnostics.
+    Block .Div Block 9.smaller.full
+      VFlex .Header flex 1.grid.full
+        Layout .Quick Stack 6.full
+          Cell
+            List .List 4 Copy <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Chamber Material:
+                Block .Text Block 6
+                  Strong
+                    » MDPE
+                  » or
+                  Strong
+                    » GRP
+                  » for maximum strength and durability.
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Vortex Pumps:
+                Block .Text Block 6
+                  » For handling solid waste up to
+                  Strong
+                    » 50mm
+                  » in diameter.
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Macerator Pumps:
+                Block .Text Block 6
+                  » Available for applications requiring fine grinding of solids.
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » System Configurations
+                  » :
+                Block .Text Block 6
+                  » Available in
+                  Strong
+                    » single pump
+                  » or
+                  Strong
+                    » dual pump (duty/standby)
+                  » arrangements.
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Control Options:
+                Block .Text Block 6
+                  » Can be paired with
+                  Strong
+                    » high-level alarms
+                  » ,
+                  Strong
+                    » telemetry systems
+                  » , and
+                  Strong
+                    » Bluetooth connectivity
+                  » for remote monitoring.
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Warranty:
+                Block .Text Block 6
+                  » Comes with a
+                  Strong
+                    » 1-year warranty
+                  » (terms apply).
+            Heading .TestimonialHead.right.padding <h1>
+              » technical
+              
+              » ‍
+              Strong .Bold Text 4.blue
+                » specifications
+              
+          Cell .Cell 27
+            Heading .TestimonialHead.right.new <h1>
+              » chamber
+              
+              » ‍
+              » sizes:
+              
+            List .List 4.no gap <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 450mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 600mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 750mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 900mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1050mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1200mm
+          Cell .Cell 27
+            Heading .TestimonialHead.right.new <h1>
+              » pipe
+              
+              » Sizes:
+              
+            List .List 4.no gap <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 110mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 150mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 225mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 300mm
+          Cell
+            VFlex
+              Heading .TestimonialHead.right.new <h1>
+                » depth
+                
+                » restrictions:
+                
+              List .List 4.no gap <ul>
+                ListItem .List Item 6
+                  Block .List Header
+                    Span
+                      » ADOPTABLE:
+                    
+                    Span .thin
+                      » Up to
+                      Strong
+                        » 3000mm
+                      
+                ListItem .List Item 6
+                  Block .List Header
+                    Span
+                      » NON-ADOPTABLE:
+                    
+                    Span .thin
+                      » Up to
+                      Strong
+                        » 6000mm
+                      
+          Cell
+            List .List 4 Copy <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Compliance:
+                Block .Text Block 6
+                  Strong
+                    » EN 12050-1:
+                    
+                    » ‍
+                    Subscript
+                      » ‍
+                  Subscript .Subscript
+                    » Fully compliant with European standards for lifting plants for wastewater containing faecal matter.
+                  
+                  » ‍
+                  Strong
+                    » Building Regulations Part H:
+                  
+                  Subscript .Subscript
+                    » Compliant with UK building regulations for drainage and pumping systems.
+                  
+                  » ‍
+                  Strong
+                    » Water Industry Act (1991):
+                    
+                    » ‍
+                  Subscript .Subscript
+                    » Compliant with relevant sections for drainage and water supply.
+                  
+                  » ‍
+                  Strong
+                    » Electrical Equipment (Safety) Regulations:
+                    
+                    Subscript
+                      » ‍
+                  Subscript .Subscript
+                    » Ensures the system complies with safety standards for electrical components and operation.
+          Cell
+            Heading .TestimonialHead.right <h1>
+              » rhino-lift
+              Strong .Bold Text 4.blue
+                
+                » applications
+              
+            List .List 4 Copy.horizontal <ul>
+              ListItem .List Item 6.cen
+                Block .List Header
+                  Strong
+                    » Sewage:
+                Block .Text Block 6
+                  » Residential, commercial, and industrial sewage applications.
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Stormwater:
+                Block .Text Block 6
+                  » Effective management of stormwater from
+                  Strong
+                    » driveways
+                  » ,
+                  Strong
+                    » car parks
+                  » ,
+                  Strong
+                    » roofs
+                  » , and more.
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Grey Water:
+                Block .Text Block 6
+                  » Suitable for grey water systems in both
+                  Strong
+                    » residential
+                  » and
+                  Strong
+                    » commercial properties
+                  » .
+  Block .Div Block 9.smaller.much
+    VFlex .Header flex 1.right 2
+  Block .Div Block 9.smaller
+    VFlex .Header flex 1.right 2.top
+      Heading .TestimonialHead.right <h1>
+        » the
+        
+        Span .Text Span 5
+          Strong .Bold Text 3
+            » RHINO
+          Strong .Bold Text 3.bigblue
+            » -
+        Span .Text Span 5
+          Strong .Bold Text 3
+            » lift
+        Span .Storm water.blue
+          
+          » Packaged
+        
+        Span .Text Span 6
+          » pumping stations
+        
+      List .List 4 <ul>
+        ListItem .List Item 6
+          Block .List Header
+            Strong
+              » Reliable water management:
+          Block .Text Block 6
+            » For both foul water and stormwater.
+        ListItem
+          Block .List Header
+            Strong
+              » Custom-built solutions:
+          Block .Text Block 6
+            » tailored to your specific flow and storage needs.
+        ListItem
+          Block .List Header
+            Strong
+              » Quick installation and delivery:
+          Block .Text Block 6
+            » Making them ideal for urgent projects.
+        ListItem
+          Block .List Header
+            Strong
+              » Durability and long service life:
+          Block .Text Block 6
+            » even in harsh environments.
+      Link .button1 link={"linkType": "page", "pageId": "6689b6ba3d36c919e6fc7e10"}
+        » Build your Pumping Station
+      Heading .TestimonialHead.right <h1>
+        » delivering you...
+        
+  Image .Image 12.top asset=6687d1ef803ea205f34ece66
+  ComponentInstance COMPONENT=NewFooter id=a2e9668d-7083-440f-f06c-984cb03f8de5

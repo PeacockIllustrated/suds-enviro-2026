@@ -1,0 +1,15 @@
+{
+  "name": "suds-3d-library-pipeline",
+  "private": true,
+  "type": "module",
+  "description": "Offline pipeline that builds public/models/library from the SuDS 3D Assets Drive folders. Not part of the app build.",
+  "dependencies": {
+    "@gltf-transform/cli": "^4.5.0",
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
+    "meshoptimizer": "^1.2.0",
+    "playwright-core": "^1.63.0",
+    "three": "^0.183.2"
+  }
+}

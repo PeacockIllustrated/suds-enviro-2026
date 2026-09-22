@@ -1,0 +1,416 @@
+Body
+  ComponentInstance COMPONENT=NavFinal id=25c5c548-43f7-505d-482f-64ab3ebe0d8a
+  Spline .Spline Scene 12
+  Section .Section 11 <section>
+    Image .watermark.left asset=666b82a4f21bdd6c3cbd6a6f
+    Block .Screen
+      Block .Horizontal wrapper.longer
+        Block .Div Section.1st.right
+          VFlex .Header flex 1.le
+            Heading .TestimonialHead.right <h1>
+              » the
+              Span .bluebold
+                » RHINO
+                
+              Span .Titleheader]
+                » sErf series
+              
+              Span .Text Span 5
+                Strong .Bold Text 3
+                  » orifice
+              Span .Text Span 6
+                
+                » flow Control
+              
+            Heading .TestimonialBody.right <h1>
+              » The
+              Span .ContentHighlight
+                Strong
+                  » RHINO SERF Series Orifice Flow Control Chambers
+              » The SuDS RHINO SERF Series Flow Control Chambers deliver optimal performance, ease of installation, and full compliance with industry standards.
+              
+            List .List 4 <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Stormwater Applications:
+                Block .Text Block 6
+                  » Ideal for applications requiring controlled flow of stormwater and inspection and maintenance of surface pipework systems.
+              ListItem
+                Block .List Header
+                  Strong
+                    » Versatile:
+                Block .Text Block 6
+                  » Suitable for both
+                  Strong
+                    » adoptable
+                  » and
+                  Strong
+                    » non-adoptable installations
+                  » .
+              ListItem
+                Block .List Header
+                  Strong
+                    » 'Plug & Play':
+                Block .Text Block 6
+                  » The SuDS RHINO SERF SERIES is a
+                  Strong
+                    » one-piece
+                  » ,
+                  Strong
+                    » factory-fitted unit
+                  » with a
+                  Strong
+                    » built-in service drain down feature
+                  » ,
+                  Strong
+                    » activated from ground level
+                  » . This efficient, user-friendly system
+                  Strong
+                    » simplifies installation
+                  » , offering a
+                  Strong
+                    » plug-and-play solution
+                  » for
+                  Strong
+                    » stormwater management.
+            Heading .TestimonialBody.right <h1>
+              » Their
+              Span .ContentHighlight
+                » flow control mechanism
+              » and
+              Span .ContentHighlight
+                » integral service drain down capability
+              » make them an ideal choice for sustainable stormwater management solutions.
+              
+        Block .Div Section Copy.3rd
+          VFlex .Header flex 1.right 2.thinner
+            Heading .TestimonialBody.right <h1>
+              » The baffle
+              Span .ContentHighlight
+                » improves performance
+              » by calming water flow and
+              Span .ContentHighlight
+                » trapping debris, silt, and pollutants
+              » effectively at the chamber’s base.
+              
+              » ‍
+              
+              » By reducing turbulence, it
+              Span .ContentHighlight
+                » enhances sediment retention
+              » ,
+              Span .ContentHighlight
+                » protects downstream systems
+              » , and supports
+              Span .ContentHighlight
+                » long-term, low-maintenance operation
+              » for
+              Span .ContentHighlight
+                » cleaner
+              » ,
+              Span .ContentHighlight
+                » more efficient drainage.
+              
+        Block .Div Section Copy.3rd Copy.vortex
+          VFlex .Header flex 1
+            Heading .TestimonialHead <h1>
+              » how the
+              Span .Text Span 5
+                Strong .Bold Text 3.blue
+                  » ORIFICE
+                  
+                  » ‍
+              Strong .Bold Text 4
+                » flow control
+              » works
+              
+            Heading .TestimonialBody.left <h1>
+              Span .ContentHighlight
+                » The
+                Strong
+                  » SuDS RHINO SERF SERIES
+              » is specifically engineered for the efficient management of stormwater. An
+              Span .ContentHighlight
+                Strong
+                  » orifice
+              » is used in flow control chambers to regulate the flow of water by
+              Span .ContentHighlight
+                » restricting
+              » its passage through a
+              Span .ContentHighlight
+                » small opening.
+                
+                
+              » This helps in
+              Span .ContentHighlight
+                » maintaining optimal water levels
+              » and prevents
+              Span .ContentHighlight
+                » excessive runoff
+              » , making it ideal for stormwater management. The orifice is
+              Span .ContentHighlight
+                » strategically sized
+              » to ensure
+              Span .ContentHighlight
+                » controlled
+              » water discharge, helping to manage peak flow
+              Span .ContentHighlight
+                » during storm events.
+                
+                » ‍
+                
+              » These chambers come
+              Span .ContentHighlight
+                » fully assembled
+              » and ready for installation as a
+              Span .ContentHighlight
+                » one-piece unit
+              » , designed to handle both
+              Span .ContentHighlight
+                » light-duty
+              » and
+              Span .ContentHighlight
+                » full-traffic loading applications.
+              
+  Section <section>
+    Block .Div Block 9.longer
+      VFlex .Header flex 1.grid
+        Layout .Quick Stack 6
+          Cell
+            Heading .TestimonialHead.right <h1>
+              » technical
+              
+              » ‍
+              Strong .Bold Text 4.blue
+                » specs:
+              
+            List .List 4 Copy <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Material Construction
+                Block .Text Block 6
+                  Strong
+                    » thermoformed base
+                  » enhances
+                  Strong
+                    » structural strength
+                  » and prevents fractures, ensuring a reliable installation
+                  » ncouraging
+                  Strong
+                    » environmentally responsible construction techniques
+                  » and reducing on-site installation time
+          Cell
+            Heading .TestimonialHead.right <h1>
+              » chamber
+              
+              » ‍
+              Strong .Bold Text 4.blue
+                » sizes:
+              
+            List .List 4.no gap <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 450mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 600mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 750mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 900mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1050mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1200mm
+          Cell
+            Heading .TestimonialHead.right <h1>
+              » compliant
+              
+              » ‍
+              Strong .Bold Text 4.blue
+                » depth:
+              
+            List .List 4.no gap <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » ADOPTABLE:
+                    
+                  Span .thin
+                    Subscript .Subscript 2
+                      » Up to 2000mm to the soffit pipe
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » NONE
+                    
+                    » ADOPTABLE:
+                    
+                  Span .thin
+                    Subscript .Subscript 3
+                      » Up to 2000mm to the soffit pipe
+          Cell .Cell 27
+            List .List 4 Copy <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » EN 13598 Part 2 (2009)
+                Block .Text Block 6
+                  » Fully compliant with European standards for thermoplastic inspection chambers
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Design & Construction Guidance (DCG)
+                Block .Text Block 6
+                  » Compliant with
+                  Strong
+                    » Type D
+                  » and
+                  Strong
+                    » Type E chambers
+                Block .List Header
+                  Strong
+                    » Sewers for Adoption (SfA7
+                Block .Text Block 6
+                  » Meets the standards set by the 7th edition of Sewers for Adoption.
+                Block .List Header
+                  Strong
+                    » Part H1 of Building Regulations
+                Block .Text Block 6
+                  » Compliant with UK building regulations for drainage.
+                Block .List Header
+                  Strong
+                    » Restricted Access Requirement
+                Block .Text Block 6
+                  » In compliance with DCG, ensuring restricted access where pipework is installed at depths over 1 metre, with a maximum diameter of 350mm.
+    Block .Div Block 9.longer
+      VFlex .Header flex 1.right 2
+        List .List 4 <ul>
+          ListItem .List Item 6
+            Block .List Header
+              Strong
+                » Orifice Flow Control:
+            Block .Text Block 6
+              » Regulates stormwater discharge, optimizing water flow and preventing peak runoff from overwhelming drainage systems.
+          ListItem
+            Block .List Header
+              Strong
+                » Integral Service Drain down Capability:
+            Block .Text Block 6
+              » Unique to the SERF series, allowing operators to activate drain down from ground level.
+          ListItem
+            Block .List Header
+              Strong
+                » Factory-Fitted, One-Piece Unit:
+            Block .Text Block 6
+              » Simplifies installation and reduces the need for on-site assembly.
+          ListItem
+            Block .List Header
+              Strong
+                » Multiple Inlet-Outlet Configurations:
+            Block .Text Block 6
+              » Flexible orientation options to accommodate project-specific requirements.
+          ListItem
+            Block .List Header
+              Strong
+                » Enhanced Strength & Anti-Fracture Properties:
+            Block .Text Block 6
+              » Thermoformed base provides deeper installations with minimized risk of fractures.
+          ListItem
+            Block .List Header
+              Strong
+                » Customizable Sump Depths:
+            Block .Text Block 6
+              » Available in standard or bespoke configurations to suit various project requirements.
+          ListItem
+            Block .List Header
+              Strong
+                » Rapid Installation Gains:
+            Block .Text Block 6
+              » Prefabricated design offers time savings compared to traditional in-situ methods.
+          ListItem
+            Block .List Header
+              Strong
+                » Chemical Resistance:
+            Block .Text Block 6
+              » Resilient against
+              Strong
+                » hydrogen sulphide
+              » ,
+              Strong
+                » corrosive acids
+              » , and
+              Strong
+                » bases
+              » , ensuring long-term durability.
+          ListItem
+            Block .List Header
+              Strong
+                » Extended Service Life:
+            Block .Text Block 6
+              » Built for long-term performance under harsh environmental and traffic conditions.
+    Block .Div Block 9.longer
+      VFlex .Header flex 1.right 2
+        Heading .TestimonialHead.right <h1>
+          » the
+          
+          » ‍
+          Span .Bold Text 4
+            Strong .Bold Text 5
+              » rhino orifice
+          
+          Span .Bold Text 4
+            Strong
+              » flow control
+          Strong
+            » :
+          Strong .Bold Text 4
+            
+          » delivering you...
+          
+        Heading .TestimonialBody.right <h1>
+          » Efficient
+          Span .ContentHighlight
+            Strong
+              » stormwater regulation
+          » with a durable orifice flow control mechanism and
+          Span .ContentHighlight
+            Strong
+              » easy-to-install
+          » , one-piece design. Built for
+          Span .ContentHighlight
+            Strong
+              » long-term performance
+          » and compliant with industry standards, these chambers provide
+          Span .ContentHighlight
+            Strong
+              » flexible configurations
+          » and are ideal for both
+          Span .ContentHighlight
+            Strong
+              » adoptable and non-adoptable
+          » installations, ensuring
+          Span .ContentHighlight
+            Strong
+              » sustainable
+          » and
+          Span .ContentHighlight
+            Strong
+              » reliable stormwater management.
+          
+        Link .button1
+          » build YOUR ORIFICE flow control
+  Image .Image 12.top asset=6687d1ef803ea205f34ece66
+  ComponentInstance COMPONENT=NewFooter id=a2e9668d-7083-440f-f06c-984cb03f8de5
