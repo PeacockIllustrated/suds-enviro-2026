@@ -1,5 +1,8 @@
+'use client'
+
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
+import { useSitePath } from './SitePath'
 
 /**
  * The `.button1` pill from the Webflow site: blue fill, lighter blue
@@ -38,8 +41,10 @@ export function SiteButton({
   variant = 'primary',
   className,
 }: SiteButtonProps) {
+  const sitePath = useSitePath()
+
   return (
-    <Link href={href} className={`${BASE} ${VARIANTS[variant]} ${className ?? ''}`}>
+    <Link href={sitePath(href)} className={`${BASE} ${VARIANTS[variant]} ${className ?? ''}`}>
       <span>{children}</span>
       {variant === 'card' ? <ChevronRight className="size-3.5" aria-hidden /> : null}
     </Link>

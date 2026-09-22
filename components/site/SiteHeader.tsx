@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { ChevronDown, Menu, X } from 'lucide-react'
 import { PRIMARY_NAV } from '@/lib/content/navigation'
 import { SiteButton } from './SiteButton'
+import { useSitePath } from './SitePath'
 
 /**
  * The Webflow `NavFinal` bar: solid dark blue, white mark and strapline on
@@ -16,11 +17,12 @@ export function SiteHeader() {
   const [megaOpen, setMegaOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const { brand, megaMenu, links, actions } = PRIMARY_NAV
+  const sitePath = useSitePath()
 
   return (
     <header className="sticky top-0 z-50 bg-site-blue-dark text-white">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-6 px-5">
-        <Link href={brand.href} className="flex shrink-0 items-center gap-4">
+        <Link href={sitePath(brand.href)} className="flex shrink-0 items-center gap-4">
           <Image
             src={brand.mark}
             alt="SuDS Enviro"
@@ -63,7 +65,7 @@ export function SiteHeader() {
                         {column.links.map((link) => (
                           <li key={`${column.heading}-${link.label}`}>
                             <Link
-                              href={link.href}
+                              href={sitePath(link.href)}
                               className="group block"
                               aria-disabled={link.comingSoon}
                             >
@@ -95,7 +97,7 @@ export function SiteHeader() {
                       {megaMenu.sidebar.links.map((link) => (
                         <Link
                           key={link.label}
-                          href={link.href}
+                          href={sitePath(link.href)}
                           className="text-sm font-bold hover:text-site-blue"
                         >
                           {link.label}
@@ -111,7 +113,7 @@ export function SiteHeader() {
           {links.map((link) => (
             <Link
               key={link.href}
-              href={link.href}
+              href={sitePath(link.href)}
               className="text-sm tracking-wider uppercase transition-opacity hover:opacity-80"
             >
               {link.label}
@@ -149,7 +151,7 @@ export function SiteHeader() {
                   {column.links.map((link) => (
                     <li key={`${column.heading}-${link.label}`}>
                       <Link
-                        href={link.href}
+                        href={sitePath(link.href)}
                         onClick={() => setMobileOpen(false)}
                         className="text-sm"
                       >
@@ -166,7 +168,7 @@ export function SiteHeader() {
             {links.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={sitePath(link.href)}
                 onClick={() => setMobileOpen(false)}
                 className="text-sm tracking-wider uppercase"
               >
