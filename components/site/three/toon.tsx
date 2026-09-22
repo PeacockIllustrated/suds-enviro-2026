@@ -1,8 +1,9 @@
 'use client'
 
 import { useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Outlines, useGLTF } from '@react-three/drei'
+import type { ComponentProps } from 'react'
 import * as THREE from 'three'
 
 /**
@@ -158,6 +159,27 @@ function mergeGeometries(list: THREE.BufferGeometry[]): THREE.BufferGeometry {
   return out
 }
 
+// ── outlines ────────────────────────────────────────────────────────
+
+/**
+ * drei's Outlines in pixel widths, kept in step with the canvas size.
+ *
+ * Outlines reads the drawing-buffer size only when it renders, so a canvas
+ * that mounts at zero size (a modal still opening, a hidden tab) divides
+ * by zero and loses every outline for good. Subscribing to the size here
+ * re-renders it whenever the canvas resizes.
+ *
+ * drei 10.7 has its screenspace branches swapped: screenspace={true}
+ * extrudes in model units and false offsets by pixels. Pixels are what we
+ * want, so this is deliberately false.
+ */
+export function InkOutlines(props: Omit<ComponentProps<typeof Outlines>, 'screenspace'>) {
+  const width = useThree((s) => s.size.width)
+  const height = useThree((s) => s.size.height)
+  if (width === 0 || height === 0) return null
+  return <Outlines toneMapped={false} {...props} screenspace={false} />
+}
+
 // ── drawing a part ──────────────────────────────────────────────────
 
 export interface ToonMeshProps {
@@ -174,26 +196,32 @@ export function ToonMesh({ geometry, color = TOON.body, opacity = 1, outline = T
   const see = opacity < 0.999
   return (
     <mesh geometry={geometry} renderOrder={see ? 2 : 0}>
+      {/* See-through parts draw front faces only: with both sides, every
+          rib and wall stacks another tinted layer and the part goes murky.
+          Keyed on `see` because three only switches a live material into
+          blending when it is rebuilt; flipping `transparent` in place
+          leaves the part solid. */}
       <meshToonMaterial
+        key={see ? 'see-through' : 'solid'}
         color={color}
         gradientMap={toonRamp()}
         transparent={see}
         opacity={opacity}
         depthWrite={!see}
-        side={see ? THREE.DoubleSide : THREE.FrontSide}
       />
-      {/* drei 10.7's Outlines has its branches swapped: screenspace={true}
-          extrudes in model units, false offsets in clip space by pixels.
-          Pixels are what we want, so this is deliberately false. */}
-      <Outlines
-        screenspace={false}
-        thickness={see ? thickness * 0.6 : thickness}
-        color={outline}
-        toneMapped={false}
-        transparent={see}
-        opacity={see ? Math.min(1, opacity * 2.5) : 1}
-        angle={Math.PI / 5}
-      />
+      {/* An inverted-hull outline only reads as an outline behind an opaque
+          surface; behind a see-through one its back faces show as a tinted
+          sheet over the insides. So it fades out with the part and is gone
+          by half opacity. */}
+      {opacity > 0.5 ? (
+        <InkOutlines
+          thickness={thickness}
+          color={outline}
+          transparent={see}
+          opacity={see ? (opacity - 0.5) * 2 : 1}
+          angle={Math.PI / 5}
+        />
+      ) : null}
     </mesh>
   )
 }
@@ -219,7 +247,7 @@ export function ToonModel({ url, roles = {}, reveal = 0, scale = 0.001, thicknes
     <group scale={scale}>
       {parts.map((part) => {
         const role = roles[part.name] ?? 'body'
-        const opacity = role === 'casing' ? 1 - 0.86 * reveal : role === 'xray' ? 0.1 : 1
+        const opacity = role === 'casing' ? 1 - 0.9 * reveal : role === 'xray' ? 0.1 : 1
         return (
           <group
             key={part.name}

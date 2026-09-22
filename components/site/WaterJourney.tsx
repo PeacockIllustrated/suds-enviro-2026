@@ -19,8 +19,9 @@ const WaterJourneyScene = dynamic(() => import('./WaterJourneyScene'), { ssr: fa
  * Only the short lockups and straplines are used here - the sections
  * further down carry the full paragraphs.
  *
- * The scene mounts once the page is idle and never under reduced motion,
- * as the old hero chamber did; the beats simply stack without it.
+ * The scene mounts once the page is idle. It also mounts under reduced
+ * motion: it only moves as the reader scrolls, and without it the beats
+ * are screens of white space. Many phones set reduced motion system-wide.
  */
 
 const multiFlo = INNOVATION_SLIDES.find((s) => s.id === 'multiflo')
@@ -42,7 +43,6 @@ export function WaterJourney() {
   const [mount, setMount] = useState(false)
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const requestIdle: typeof window.requestIdleCallback | undefined = window.requestIdleCallback
     if (typeof requestIdle === 'function') {
       const handle = requestIdle(() => setMount(true), { timeout: 2500 })
