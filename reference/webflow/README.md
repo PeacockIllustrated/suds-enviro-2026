@@ -53,3 +53,24 @@ page. Unpack it to `reference/webflow-export/`.
   renders (`SERSIC.png`, `SERFIC.png` and siblings) are genuine brand assets.
 - The site has no custom fonts uploaded, so the typeface is a Google or
   Webflow-hosted family. The export names it.
+
+## Regenerating the asset map
+
+`public/webflow/` filenames are normalised to `<assetId>-<slug>.<ext>`
+(the raw Webflow names contain spaces and, in one case, a `#`). After
+adding or replacing files there, rebuild `lib/content/webflow-assets.generated.ts`:
+
+```bash
+python3 - <<'PY'
+import json
+idx = json.load(open('reference/webflow/assets.index.json'))
+L = ["export const WEBFLOW_ASSETS = {"]
+for aid in sorted(idx):
+    L.append(f"  '{aid}': '{idx[aid]['path']}',")
+L += ["} as const", ""]
+print("\n".join(L))
+PY
+```
+
+`assets.index.json` records both the normalised `path` and the `original`
+Webflow filename for each id.
