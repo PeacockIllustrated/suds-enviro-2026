@@ -49,3 +49,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 3D library pipeline tooling
+/scripts/3d-library/node_modules/
+/scripts/3d-library/work/
