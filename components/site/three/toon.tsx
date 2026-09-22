@@ -86,41 +86,48 @@ function toFloat(attr: THREE.BufferAttribute | THREE.InterleavedBufferAttribute,
 const partCache = new Map<string, LibraryPart[]>()
 
 /**
- * The parts of a library file as float geometry in millimetres, grouped by
- * the part node they sit under. Cached per URL.
+ * The parts of a loaded library file as float geometry in millimetres,
+ * grouped by the part node they sit under. Cached per URL, so callers that
+ * load several files at once (useGLTF with an array) can share the cache.
+ */
+export function libraryPartsFromScene(url: string, scene: THREE.Object3D): LibraryPart[] {
+  const cached = partCache.get(url)
+  if (cached) return cached
+  scene.updateMatrixWorld(true)
+  // Assembled files are root > product node > part nodes; part files are
+  // root > part node. The part is the ancestor just below the product.
+  const product = scene.children.length === 1 && !(scene.children[0] as THREE.Mesh).isMesh ? scene.children[0] : scene
+  const byPart = new Map<string, THREE.BufferGeometry[]>()
+  scene.traverse((o) => {
+    const mesh = o as THREE.Mesh
+    if (!mesh.isMesh) return
+    let node: THREE.Object3D = mesh
+    while (node.parent && node.parent !== product && node.parent !== scene) node = node.parent
+    const name = node === mesh && product === scene ? mesh.name : node.name
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', toFloat(mesh.geometry.getAttribute('position'), 3))
+    if (mesh.geometry.index) g.setIndex(mesh.geometry.index.clone())
+    g.applyMatrix4(mesh.matrixWorld)
+    g.computeVertexNormals()
+    const list = byPart.get(name) ?? []
+    list.push(g)
+    byPart.set(name, list)
+  })
+  const parts = [...byPart.entries()].map(([name, geoms]) => ({
+    name,
+    geometry: geoms.length === 1 ? geoms[0] : mergeGeometries(geoms),
+  }))
+  partCache.set(url, parts)
+  return parts
+}
+
+/**
+ * The parts of a library file as float geometry in millimetres, keyed by
+ * part node name. Suspends while the file loads.
  */
 export function useLibraryParts(url: string): LibraryPart[] {
   const { scene } = useGLTF(url)
-  return useMemo(() => {
-    const cached = partCache.get(url)
-    if (cached) return cached
-    scene.updateMatrixWorld(true)
-    // Assembled files are root > product node > part nodes; part files are
-    // root > part node. The part is the ancestor just below the product.
-    const product = scene.children.length === 1 && !(scene.children[0] as THREE.Mesh).isMesh ? scene.children[0] : scene
-    const byPart = new Map<string, THREE.BufferGeometry[]>()
-    scene.traverse((o) => {
-      const mesh = o as THREE.Mesh
-      if (!mesh.isMesh) return
-      let node: THREE.Object3D = mesh
-      while (node.parent && node.parent !== product && node.parent !== scene) node = node.parent
-      const name = node === mesh && product === scene ? mesh.name : node.name
-      const g = new THREE.BufferGeometry()
-      g.setAttribute('position', toFloat(mesh.geometry.getAttribute('position'), 3))
-      if (mesh.geometry.index) g.setIndex(mesh.geometry.index.clone())
-      g.applyMatrix4(mesh.matrixWorld)
-      g.computeVertexNormals()
-      const list = byPart.get(name) ?? []
-      list.push(g)
-      byPart.set(name, list)
-    })
-    const parts = [...byPart.entries()].map(([name, geoms]) => ({
-      name,
-      geometry: geoms.length === 1 ? geoms[0] : mergeGeometries(geoms),
-    }))
-    partCache.set(url, parts)
-    return parts
-  }, [scene, url])
+  return useMemo(() => libraryPartsFromScene(url, scene), [scene, url])
 }
 
 /** Minimal merge for float, indexed geometries (position + normal). */
