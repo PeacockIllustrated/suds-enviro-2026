@@ -5,7 +5,9 @@ import { getProductBySlug, PRODUCT_CATALOG } from '@/lib/product-catalog'
 import { SiteButton } from '@/components/site/SiteButton'
 import { BuilderCTA } from '@/components/site/BuilderCTA'
 import { InletClock } from '@/components/site/InletClock'
+import { ProductModelViewer } from '@/components/site/ProductModelViewer'
 import { PRODUCT_NARRATIVE } from '@/lib/content/products'
+import { PRODUCT_MODELS } from '@/lib/content/product-models'
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -70,49 +72,66 @@ export default async function ProductPreviewPage({ params }: ProductPageProps) {
 
   const datasheet = product.brochures?.[0]
   const narrative = PRODUCT_NARRATIVE[product.id]
+  const models = PRODUCT_MODELS[slug]
+  const heroModel = models?.hero
+  const moreModels = models?.more ?? []
 
   return (
     <>
       <section className="bg-white py-14 md:py-20">
-        <div className="mx-auto max-w-[1100px] px-5">
-          <p className="text-sm font-bold tracking-widest text-site-green uppercase">
-            {product.categoryLabel}
-          </p>
-
-          <h1 className="mt-3 text-[clamp(2.25rem,6vw,4rem)] leading-none tracking-tight uppercase">
-            <span className="text-site-green">RHINO </span>
-            <span className="font-bold text-site-blue">
-              {narrative?.lockup.series ?? product.name}
-            </span>
-          </h1>
-
-          {narrative ? (
-            <p className="mt-2 text-[clamp(1rem,2.2vw,1.375rem)] leading-tight italic uppercase">
-              <span className="block font-bold text-site-blue">{narrative.lockup.stream}</span>
-              <span className="block text-site-ui-blue">{narrative.lockup.category}</span>
+        <div
+          className={`mx-auto max-w-[1100px] px-5${
+            heroModel
+              ? ' site-tablet:grid site-tablet:grid-cols-[minmax(0,1fr)_minmax(0,48%)] site-tablet:items-center site-tablet:gap-10'
+              : ''
+          }`}
+        >
+          <div>
+            <p className="text-sm font-bold tracking-widest text-site-green uppercase">
+              {product.categoryLabel}
             </p>
-          ) : (
-            <p className="mt-3 text-[clamp(1.125rem,2.4vw,1.5rem)] leading-tight text-site-blue uppercase">
-              {product.tagline}
-            </p>
-          )}
 
-          <div className="mt-6 max-w-3xl space-y-4 text-base/relaxed text-site-blue-dark md:text-lg/relaxed">
-            {(narrative?.intro ?? [product.description]).map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
+            <h1 className="mt-3 text-[clamp(2.25rem,6vw,4rem)] leading-none tracking-tight uppercase">
+              <span className="text-site-green">RHINO </span>
+              <span className="font-bold text-site-blue">
+                {narrative?.lockup.series ?? product.name}
+              </span>
+            </h1>
 
-          <div className="mt-8 flex flex-wrap gap-4">
-            <SiteButton href={`/configurator?product=${product.id}`}>
-              Configure this product
-            </SiteButton>
-            {datasheet ? (
-              <SiteButton href={datasheet.href} variant="outline">
-                Download datasheet
+            {narrative ? (
+              <p className="mt-2 text-[clamp(1rem,2.2vw,1.375rem)] leading-tight italic uppercase">
+                <span className="block font-bold text-site-blue">{narrative.lockup.stream}</span>
+                <span className="block text-site-ui-blue">{narrative.lockup.category}</span>
+              </p>
+            ) : (
+              <p className="mt-3 text-[clamp(1.125rem,2.4vw,1.5rem)] leading-tight text-site-blue uppercase">
+                {product.tagline}
+              </p>
+            )}
+
+            <div className="mt-6 max-w-3xl space-y-4 text-base/relaxed text-site-blue-dark md:text-lg/relaxed">
+              {(narrative?.intro ?? [product.description]).map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+
+            <div className="mt-8 flex flex-wrap gap-4">
+              <SiteButton href={`/configurator?product=${product.id}`}>
+                Configure this product
               </SiteButton>
-            ) : null}
+              {datasheet ? (
+                <SiteButton href={datasheet.href} variant="outline">
+                  Download datasheet
+                </SiteButton>
+              ) : null}
+            </div>
           </div>
+
+          {heroModel ? (
+            <div className="max-site-tablet:mt-10">
+              <ProductModelViewer model={heroModel} size="hero" />
+            </div>
+          ) : null}
         </div>
       </section>
 
@@ -179,6 +198,23 @@ export default async function ProductPreviewPage({ params }: ProductPageProps) {
           </div>
         </section>
       ))}
+
+      {moreModels.length > 0 ? (
+        <section className="bg-white pb-14">
+          <div className="mx-auto max-w-[1100px] px-5">
+            <SectionHeading lead="The range" trail="in 3D" />
+            <div
+              className={`grid gap-8 site-mobile-l:grid-cols-2 ${
+                moreModels.length >= 3 ? 'site-tablet:grid-cols-3' : ''
+              }`}
+            >
+              {moreModels.map((model) => (
+                <ProductModelViewer key={model.id} model={model} size="card" />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="bg-white pb-14">
         <div className="mx-auto max-w-[1100px] px-5">
