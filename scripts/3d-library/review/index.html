@@ -371,7 +371,11 @@ window.openViewer = async (slug) => {
   if (model) { scene.remove(model); model = null }
   cancelAnimationFrame(raf)
   try {
-    const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(it.glb)
+    // Artifacts serve no binary model type, so each glb is published as
+    // base64 text; decoded here it is byte-for-byte the library file.
+    const b64 = await (await fetch(it.glb)).text()
+    const bin = Uint8Array.from(atob(b64.trim()), (c) => c.charCodeAt(0)).buffer
+    const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(bin, '')
     model = gltf.scene
     const noMats = !(gltf.parser.json.materials || []).length
     const body = new THREE.MeshStandardMaterial({ color: 0x4d5760, roughness: 0.55 })

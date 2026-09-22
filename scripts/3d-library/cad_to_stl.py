@@ -10,8 +10,8 @@ stdout: the unit the file declares, solid count, and the files written.
 
 FreeCAD documents are zip archives. Each feature's final shape is stored
 as an OpenCASCADE .brp file referenced from Document.xml, so they can be
-read without FreeCAD itself. Only shapes marked visible in GuiDocument.xml
-are kept, which drops the construction bodies a parametric model carries.
+read without FreeCAD itself. Only each PartDesign Body's finished shape is
+taken, not the sketches and features that built it.
 """
 
 import json
@@ -86,27 +86,23 @@ def read_step(path: Path, out_dir: Path, deflection: float) -> dict:
 
 
 def read_fcstd(path: Path, out_dir: Path, deflection: float) -> dict:
+    # Each PartDesign Body stores its finished solid as <Body>.Shape.brp;
+    # sketches, pads and fillets beneath it are construction history.
     with zipfile.ZipFile(path) as z:
+        names = set(z.namelist())
         doc = z.read('Document.xml').decode('utf-8', 'ignore')
-        gui = z.read('GuiDocument.xml').decode('utf-8', 'ignore') if 'GuiDocument.xml' in z.namelist() else ''
-        hidden = set()
-        for m in re.finditer(r'<ViewProvider name="([^"]+)"[^>]*>(.*?)</ViewProvider>', gui, re.S):
-            if re.search(r'<Property name="Visibility"[^>]*>\s*<Bool value="false"', m.group(2)):
-                hidden.add(m.group(1))
-        # <Object name="Body"> ... <Property name="Shape"> <Part file="PartShape.brp"/>
-        shapes = []
-        for m in re.finditer(r'<Object name="([^"]+)"[^>]*>(.*?)</Object>', doc, re.S):
-            f = re.search(r'<Part\s+file="([^"]+\.brp)"', m.group(2))
-            if f and m.group(1) not in hidden:
-                shapes.append((m.group(1), f.group(1)))
+        bodies = re.findall(r'<Object\s+type="PartDesign::Body"\s+name="([^"]+)"', doc)
+        if not bodies:  # plain Part workbench documents: take every top-level shape
+            bodies = [n[:-len('.Shape.brp')] for n in names if n.endswith('.Shape.brp') and '.' not in n[:-len('.Shape.brp')]]
         written, skipped = [], []
         builder = BRep_Builder()
         with tempfile.TemporaryDirectory() as tmp:
-            for name, brp in shapes:
-                if brp not in z.namelist():
+            for name in bodies:
+                brp = f'{name}.Shape.brp'
+                if brp not in names:
                     skipped.append(name)
                     continue
-                local = Path(tmp) / Path(brp).name
+                local = Path(tmp) / brp
                 local.write_bytes(z.read(brp))
                 shape = TopoDS_Shape()
                 BRepTools.Read_s(shape, str(local), builder)
@@ -117,8 +113,7 @@ def read_fcstd(path: Path, out_dir: Path, deflection: float) -> dict:
                 mesh_and_write(shape, out, deflection)
                 written.append(str(out))
     # FreeCAD's internal length unit is always the millimetre.
-    return {'declaredUnit': 'mm', 'solids': len(written), 'files': written,
-            'hiddenSkipped': sorted(hidden), 'emptySkipped': skipped}
+    return {'declaredUnit': 'mm', 'solids': len(written), 'files': written, 'bodies': bodies, 'emptySkipped': skipped}
 
 
 def main() -> None:

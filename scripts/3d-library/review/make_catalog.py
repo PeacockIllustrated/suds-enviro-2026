@@ -8,6 +8,7 @@ artifact publishes beside index.html.
 """
 
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -39,13 +40,17 @@ for m in manifest['products']:
                                 'triangles', 'bboxMm')}
     if m.get('assembled'):
         src_glb = staging / m['assembled']['path']
-        shutil.copy(src_glb, out / 'models' / f"{m['slug']}.glb")
-        it['glb'] = f"models/{m['slug']}.glb"
+        # Artifacts do not serve .glb, so the review copy is base64 text.
+        import base64
+        (out / 'models' / f"{m['slug']}.glb.txt").write_text(base64.b64encode(src_glb.read_bytes()).decode())
+        it['glb'] = f"models/{m['slug']}.glb.txt"
         it['bytes'] = m['assembled']['bytes']
     if m.get('thumbnail'):
         shutil.copy(staging / m['thumbnail'], out / 'thumbs' / f"{m['slug']}.png")
         it['thumbnail'] = f"thumbs/{m['slug']}.png"
     it['parts'] = [{'name': p['name'], 'role': p['role'], 'triangles': p['triangles']} for p in m.get('parts', [])]
+    if it.get('variants'):
+        it['variants'] = [re.sub(r', Drive [^)]+', '', v) for v in it['variants']]
     items.append({k: v for k, v in it.items() if v not in (None, [], '')})
 
 # Files in Drive that did not become a model, with the reason, per family.

@@ -87,7 +87,7 @@
         "drawing": []
       },
       "toMm": 10,
-      "toMmReason": "confirm against the 1800 nominal diameter once measured",
+      "toMmReason": "1 unit = 1 cm, confirmed: the result matches the 1.8 dia Hydro Sep.stl master exactly (2105 x 4290 x 2155 mm)",
       "notes": [
         "built from Hydrdynamic Separaters/Breakout.blend because these parts could not be downloaded on their own: Water Track.fbx, Centre Pipe.fbx, Inner Curved Baffle#.fbx, Outer Curved Baffle#.fbx, inlet.fbx, Outlet.fbx"
       ],
@@ -129,12 +129,13 @@
       },
       "toMm": 10,
       "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "degradedBecause": [
+        "scale unverified: at 1 unit = 1 cm the pod is 307 mm across. If SERPOD1850 means an 1850 mm pod the parts are about 6 times too small. The Rhinopod.stl master is 21.5 MB, over the download limit",
+        "missing parts that could not be downloaded from Drive: Rhinopod-Casing.fbx"
+      ],
       "notes": [],
       "variants": [
         "Rhinopod.stl (21.6 MB, Drive 11ObqNRJYbdGPhjz7U12zJEjpq65Gh2Hu)"
-      ],
-      "degradedBecause": [
-        "missing parts that could not be downloaded from Drive: Rhinopod-Casing.fbx"
       ],
       "parts": [
         {
@@ -170,7 +171,7 @@
         ]
       },
       "toMm": 10,
-      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "toMmReason": "1 unit = 1 cm, confirmed: tubing is 696 mm across against 708 mm on the SERPT600160-2.stl master",
       "notes": [
         "built from SERPT/SERPT Breakdown.blend because these parts could not be downloaded on their own: SERPT Base.fbx"
       ],
@@ -205,8 +206,11 @@
           "SERSD500160"
         ]
       },
-      "toMm": 10,
-      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "toMm": 100,
+      "toMmReason": "approximate: 1 unit = 100 mm puts the body at about 520 mm, consistent with the nominal 500 diameter; the SERSD500160-2.stl master is 10 MB, over the Drive tool's download limit, so this is not checked against it",
+      "degradedBecause": [
+        "scale approximate, not checked against a master (see unit note)"
+      ],
       "notes": [],
       "variants": [
         "SERSD/SERSD500160-2.stl (10.2 MB, Drive 1IG64oSkPGghqafeLW9fMQvhq8bzZ-oum)"
@@ -318,8 +322,8 @@
           "SERFP600150"
         ]
       },
-      "toMm": 10,
-      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "toMm": 25,
+      "toMmReason": "calibrated to the POC600-1.5.stl master: the tube is 59.8 units tall against 1495 mm, so 1 unit = 25 mm (the FBX parts were scaled down in Blender)",
       "notes": [
         "built from Orifice Flow Control/POC Breakdown.blend because these parts could not be downloaded on their own: POC-Base.fbx, POC-Divider.fbx, POC-Orifice-Latch.fbx, POC-Wire.fbx"
       ],
@@ -359,13 +363,14 @@
       },
       "toMm": 10,
       "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "degradedBecause": [
+        "scale unverified: at 1 unit = 1 cm it is 642 mm across, which does not obviously match C1200. The RoTex-C1200-2.stl master is 12.8 MB, over the download limit",
+        "missing parts that could not be downloaded from Drive: RoTex BaseFunc.stl"
+      ],
       "notes": [],
       "variants": [
         "Vortex Flow Control/RoTex-C1200-2.stl (12.8 MB, Drive 1X712YGc8CHqfxe5WrCIpr9hdH3tX5wrj)",
         "Flow Control Tank 1200 dia x 2m.stl (12.9 MB, Drive 1ICpFrAVnHXO8-CMtEvJxqdEbQ643mnVE)"
-      ],
-      "degradedBecause": [
-        "missing parts that could not be downloaded from Drive: RoTex BaseFunc.stl"
       ],
       "parts": [
         {
@@ -466,7 +471,7 @@
         "drawing": []
       },
       "toMm": 10,
-      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "toMmReason": "1 unit = 1 cm, confirmed: matches the AQUA190S.stl master exactly (708 x 635 x 669 mm)",
       "notes": [
         "built from Pumping Stations/AQUA/AQUA Breakdown.blend because these parts could not be downloaded on their own: AQUA Handle.fbx, AQUA Nut.fbx"
       ],
@@ -929,7 +934,9 @@
         "drawing": []
       },
       "toMm": null,
-      "notes": [],
+      "notes": [
+        "Read from the FreeCAD files directly: one Body in Housing, two in Housing2. The two files overlap in space, which shows as speckling where their surfaces coincide; they are probably two iterations of the same housing rather than two parts"
+      ],
       "parts": [
         {
           "name": "housing",
@@ -956,7 +963,9 @@
       },
       "toMm": 10,
       "toMmReason": "Blender-made, 1 unit = 1 cm; an icon, so scale is nominal",
-      "notes": [],
+      "notes": [
+        "Despite the folder name this is a pipe coupling (three segments), not the brand icon"
+      ],
       "parts": [
         {
           "name": "centre",

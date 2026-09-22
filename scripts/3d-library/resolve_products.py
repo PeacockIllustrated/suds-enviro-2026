@@ -58,7 +58,7 @@ for p in src['products']:
             missing = []
     if missing and len(missing) < len(parts):
         # Build what arrived and say what is absent, rather than show nothing.
-        q['degradedBecause'] = ['missing parts that could not be downloaded from Drive: '
+        q['degradedBecause'] = q.get('degradedBecause', []) + ['missing parts that could not be downloaded from Drive: '
                                 + ', '.join(m['sourcePath'].rsplit('/', 1)[1] for m in missing)]
         parts = [x for x in parts if x not in missing]
     elif missing:
