@@ -4,6 +4,8 @@ import { Check, FileDown, ExternalLink } from 'lucide-react'
 import { getProductBySlug, PRODUCT_CATALOG } from '@/lib/product-catalog'
 import { SiteButton } from '@/components/site/SiteButton'
 import { BuilderCTA } from '@/components/site/BuilderCTA'
+import { InletClock } from '@/components/site/InletClock'
+import { PRODUCT_NARRATIVE } from '@/lib/content/products'
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -67,6 +69,7 @@ export default async function ProductPreviewPage({ params }: ProductPageProps) {
   }
 
   const datasheet = product.brochures?.[0]
+  const narrative = PRODUCT_NARRATIVE[product.id]
 
   return (
     <>
@@ -78,16 +81,27 @@ export default async function ProductPreviewPage({ params }: ProductPageProps) {
 
           <h1 className="mt-3 text-[clamp(2.25rem,6vw,4rem)] leading-none tracking-tight uppercase">
             <span className="text-site-green">RHINO </span>
-            <span className="font-bold text-site-blue">{product.name}</span>
+            <span className="font-bold text-site-blue">
+              {narrative?.lockup.series ?? product.name}
+            </span>
           </h1>
 
-          <p className="mt-3 text-[clamp(1.125rem,2.4vw,1.5rem)] leading-tight text-site-blue uppercase">
-            {product.tagline}
-          </p>
+          {narrative ? (
+            <p className="mt-2 text-[clamp(1rem,2.2vw,1.375rem)] leading-tight italic uppercase">
+              <span className="block font-bold text-site-blue">{narrative.lockup.stream}</span>
+              <span className="block text-site-ui-blue">{narrative.lockup.category}</span>
+            </p>
+          ) : (
+            <p className="mt-3 text-[clamp(1.125rem,2.4vw,1.5rem)] leading-tight text-site-blue uppercase">
+              {product.tagline}
+            </p>
+          )}
 
-          <p className="mt-6 max-w-3xl text-base/relaxed text-site-blue-dark md:text-lg/relaxed">
-            {product.description}
-          </p>
+          <div className="mt-6 max-w-3xl space-y-4 text-base/relaxed text-site-blue-dark md:text-lg/relaxed">
+            {(narrative?.intro ?? [product.description]).map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
 
           <div className="mt-8 flex flex-wrap gap-4">
             <SiteButton href={`/configurator?product=${product.id}`}>
@@ -101,6 +115,52 @@ export default async function ProductPreviewPage({ params }: ProductPageProps) {
           </div>
         </div>
       </section>
+
+      {narrative?.clock ? (
+        <section className="bg-white pb-14">
+          <div className="mx-auto max-w-[1100px] px-5">
+            <SectionHeading
+              lead={narrative.clock.heading.lead}
+              trail={narrative.clock.heading.trail}
+            />
+
+            <div className="grid gap-10 md:grid-cols-2">
+              {narrative.clock.variants.map((variant) => (
+                <div key={variant.heading.emphasis} className="flex flex-col items-center">
+                  <p className="mb-4 text-center text-lg leading-tight uppercase">
+                    <span className="text-site-blue">{variant.heading.lead} </span>
+                    <span className="font-bold text-site-green">{variant.heading.emphasis}</span>
+                    <span className="text-site-blue"> {variant.heading.trail}</span>
+                  </p>
+                  <InletClock available={variant.available} title={variant.title} />
+                </div>
+              ))}
+            </div>
+
+            <div className="mx-auto mt-10 max-w-3xl space-y-4 text-center text-base/relaxed text-site-blue-dark md:text-lg/relaxed">
+              {narrative.clock.body.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {narrative?.howItWorks ? (
+        <section className="bg-white pb-14">
+          <div className="mx-auto max-w-[1100px] px-5">
+            <SectionHeading
+              lead={narrative.howItWorks.heading.lead}
+              trail={narrative.howItWorks.heading.trail}
+            />
+            <div className="max-w-3xl space-y-4 text-base/relaxed text-site-blue-dark md:text-lg/relaxed">
+              {narrative.howItWorks.body.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="bg-white pb-14">
         <div className="mx-auto max-w-[1100px] px-5">
