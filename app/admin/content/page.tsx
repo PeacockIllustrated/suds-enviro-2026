@@ -1,42 +1,46 @@
 import type { Metadata } from 'next'
 import { isSignedIn } from '@/lib/site-content/auth'
-import { CONTENT_DEFAULTS, SECTION_IDS, SECTION_META, isSectionId } from '@/lib/site-content/defaults'
-import { getSection, readSaved } from '@/lib/site-content/store'
+import { CONTENT_DEFAULTS, SECTION_IDS, type SectionId } from '@/lib/site-content/defaults'
+import { getDraftSection, getPublishedSection } from '@/lib/site-content/store'
 import type { Json } from '@/lib/site-content/merge'
+import { PRODUCT_CATALOG } from '@/lib/product-catalog'
 import { ContentLogin } from '@/components/admin/content/ContentLogin'
-import { ContentEditor } from '@/components/admin/content/ContentEditor'
+import { VisualEditor, type EditorPage, type EditorSection } from '@/components/admin/content/VisualEditor'
 
 export const metadata: Metadata = {
-  title: 'Site content - SuDS Enviro',
+  title: 'Site editor - SuDS Enviro',
   robots: { index: false, follow: false },
 }
 
 /**
- * The site copy editor. One hard-coded account (lib/site-content/auth.ts);
- * everything saved here is merged over the wording in lib/content/.
+ * The visual site editor. One hard-coded account (lib/site-content/auth.ts).
+ * The real pages load in a canvas in draft mode; Sean clicks the words he
+ * wants to change, edits them in the side panel, and publishes when happy.
  */
-export default async function ContentAdminPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ section?: string }>
-}) {
+export default async function ContentAdminPage() {
   if (!(await isSignedIn())) return <ContentLogin />
 
-  const { section: requested } = await searchParams
-  const section = requested && isSectionId(requested) ? requested : 'home'
-  const [current, saved] = await Promise.all([
-    getSection(section, { fresh: true }),
-    readSaved(section, { fresh: true }),
-  ])
-
-  return (
-    <ContentEditor
-      key={section}
-      section={section}
-      sections={SECTION_IDS.map((id) => ({ id, ...SECTION_META[id] }))}
-      defaults={CONTENT_DEFAULTS[section] as unknown as Json}
-      current={current as unknown as Json}
-      hasSaved={saved !== null}
-    />
+  const sections: EditorSection[] = await Promise.all(
+    SECTION_IDS.map(async (id: SectionId) => {
+      const [published, draft] = await Promise.all([getPublishedSection(id, { fresh: true }), getDraftSection(id)])
+      return {
+        id,
+        defaults: CONTENT_DEFAULTS[id] as unknown as Json,
+        published: published as unknown as Json,
+        working: draft.value as unknown as Json,
+        hasDraft: draft.hasDraft,
+      }
+    }),
   )
+
+  const pages: EditorPage[] = [
+    { path: '/', label: 'Home' },
+    { path: '/rhino-range', label: 'The RHINO Range' },
+    { path: '/products', label: 'Products' },
+    ...PRODUCT_CATALOG.map((p) => ({ path: `/products/${p.slug}`, label: p.name, group: 'Product pages' })),
+    { path: '/builder', label: 'Builder hub' },
+    { path: '/contact', label: 'Contact' },
+  ]
+
+  return <VisualEditor sections={sections} pages={pages} />
 }
