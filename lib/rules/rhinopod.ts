@@ -2,19 +2,28 @@
  * RhinoPod Rule Engine
  *
  * Validates configuration for RhinoPod filtration units.
- * Two variants exist:
- *   - Standalone: independent unit, may be a retrofit to an existing chamber
- *   - Plus: integrated with a new SuDS Enviro chamber (requires diameter)
+ * Two variants per the RHINO POD data sheet:
+ *   - Standalone: floating filter dropped into any chamber, manhole or
+ *     catch basin (often a retrofit)
+ *   - Plus: factory-fitted to a RHINO SEHDS hydrodynamic separator, so
+ *     the diameter is one of the SEHDS sizes (750 / 1200 / 1800 / 2500)
  *
- * Compliance checked against the EU Water Framework Directive.
+ * Compliance follows the data sheet: EA PPG3, CIRIA C753, EU WFD and
+ * CAR (Scotland).
  */
 
 import type {
   WizardState,
   RhinoPodData,
+  Diameter,
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
+
+// ── PLUS VARIANT HOST SIZES ──────────────────────────────────
+// Plus is "factory-fitted to RHINO SEHDS", so it takes the SEHDS sizes.
+
+export const POD_PLUS_DIAMETERS: Diameter[] = [750, 1200, 1800, 2500]
 
 // ── HELPER: Extract RhinoPodData from WizardState ────────────
 
@@ -42,7 +51,9 @@ export function validateConfig(state: WizardState): ValidationResult {
 
   if (data.podType === 'plus') {
     if (!data.chamberDiameter) {
-      errors.push('Chamber diameter not selected for RhinoPod Plus')
+      errors.push('SEHDS diameter not selected for RhinoPod Plus')
+    } else if (!POD_PLUS_DIAMETERS.includes(data.chamberDiameter)) {
+      errors.push(`RhinoPod Plus is factory-fitted to SEHDS separators (750, 1200, 1800, 2500mm), not ${data.chamberDiameter}mm`)
     }
   }
 
@@ -87,9 +98,14 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       status: data?.podType ? 'Pass' : 'Warning',
     },
     {
-      standard: 'SuDS Design Guidance',
-      scope: 'Treatment Train - Source Control',
+      standard: 'CIRIA C753 SuDS Manual',
+      scope: 'Polishing Treatment for SuDS Treatment Trains',
       status: valid ? 'Pass' : 'Warning',
+    },
+    {
+      standard: 'CAR (Scotland)',
+      scope: 'Water Environment (Controlled Activities) Regulations',
+      status: data?.podType ? 'Pass' : 'Warning',
     },
   ]
 }

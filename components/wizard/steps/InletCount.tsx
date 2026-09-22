@@ -3,7 +3,7 @@
 import { useWizardContext } from '../WizardContext'
 import { SizeCard } from '@/components/ui/SizeCard'
 import { AlertBox } from '@/components/ui/AlertBox'
-import { getMaxInlets } from '@/lib/rule-engine'
+import { getMaxInlets, getOutletMinSize } from '@/lib/rule-engine'
 import {
   getDiameterValue,
   getInletCountValue,
@@ -20,8 +20,14 @@ export function InletCount() {
   const actionType = getInletCountActionType(state.product)
   const maxInlets = diameter ? getMaxInlets(diameter) : 0
 
+  // Smallest inlet count that triggers the R2 outlet lock on this diameter,
+  // if any count the diameter allows would trigger it.
+  const lockFrom = diameter
+    ? [1, 2, 3, 4, 5].find((n) => n <= maxInlets && getOutletMinSize(n, diameter) !== null) ?? null
+    : null
+
   const subheading = diameter
-    ? `${diameter}mm supports max ${maxInlets} inlets`
+    ? `${diameter}mm supports max ${maxInlets} inlet${maxInlets === 1 ? '' : 's'}`
     : 'How many inlet connections does this unit need?'
 
   return (
@@ -33,7 +39,8 @@ export function InletCount() {
       )}
 
       <div className="mb-4 grid grid-cols-3 gap-2">
-        {[1, 2, 3, 4, 5, 6].map((n) => (
+        {/* Five manufactured inlet positions, so never more than 5 */}
+        {[1, 2, 3, 4, 5].map((n) => (
           <SizeCard
             key={n}
             value={String(n)}
@@ -63,16 +70,16 @@ export function InletCount() {
       {inletCount !== null && !outletLocked && (
         <AlertBox
           type="ok"
-          title="Within adoptable spec"
+          title="Within specification"
           body={`${inletCount} inlet${inletCount > 1 ? 's' : ''} on a ${diameter}mm chamber is within standard specification.`}
         />
       )}
 
       {/* Hint about outlet lock for eligible counts */}
-      {inletCount === null && diameter && (
+      {inletCount === null && diameter && lockFrom !== null && (
         <div className="rounded-lg border border-dashed border-blue/25 bg-blue/6 p-3 text-[11px] leading-relaxed text-muted">
           <strong className="text-blue">Note:</strong> Selecting{' '}
-          {diameter === 600 ? '3 or more' : '4 or more'} inlets will
+          {lockFrom} or more inlets will
           automatically lock the outlet to a minimum of 225mm Twinwall.
         </div>
       )}

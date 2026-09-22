@@ -15,6 +15,7 @@ import type {
   ReviewBlockDef,
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
   generateProductCode as septicGenerateProductCode,
   generateCompliance as septicGenerateCompliance,
@@ -92,7 +93,7 @@ const septicSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getSepticData(state)
-      return d !== null && d.populationEquivalent !== ''
+      return d !== null && isPositiveNumber(d.populationEquivalent)
     },
   },
   {

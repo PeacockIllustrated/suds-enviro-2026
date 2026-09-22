@@ -58,6 +58,10 @@ export function getDiameterValue(state: WizardState): Diameter | null {
   if ('diameter' in d && d.diameter !== undefined) {
     return d.diameter as Diameter | null
   }
+  // Flow control stores its housing size as chamberDiameter
+  if ('chamberDiameter' in d && d.chamberDiameter !== undefined) {
+    return d.chamberDiameter as Diameter | null
+  }
   return null
 }
 

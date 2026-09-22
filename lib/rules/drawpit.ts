@@ -4,6 +4,7 @@
  * Validates configuration for cable/service drawpits.
  * Checks physical dimensions (length, width, depth), ring count,
  * structural load rating, and cover type.
+ * Compliance per the RHINO Drawpit data sheet: BS EN 124-1, NJUG Vol 4, DMRB.
  */
 
 import type {
@@ -12,6 +13,7 @@ import type {
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 
 // ── HELPER: Extract DrawpitData from WizardState ─────────────
 
@@ -59,6 +61,10 @@ export function validateConfig(state: WizardState): ValidationResult {
     }
   }
 
+  if (!isPositiveNumber(data.ringCount) || !Number.isInteger(Number(data.ringCount))) {
+    errors.push('Ring count must be a whole number of rings')
+  }
+
   if (!data.loadRating) errors.push('Load rating not selected')
   if (!data.coverType)  errors.push('Cover type not selected')
 
@@ -93,8 +99,13 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       status: (valid && data?.loadRating) ? 'Pass' : 'Fail',
     },
     {
-      standard: 'Highways Act 1980',
-      scope: 'Highway Authority Requirements - Cover Ratings',
+      standard: 'NJUG Volume 4',
+      scope: 'Planning and Installation of Utility Services',
+      status: valid ? 'Pass' : 'Warning',
+    },
+    {
+      standard: 'DMRB',
+      scope: 'Design Manual for Roads and Bridges - Highway Chambers',
       status: data?.loadRating ? 'Pass' : 'Warning',
     },
   ]

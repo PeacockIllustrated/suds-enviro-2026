@@ -15,6 +15,7 @@ import type {
   ReviewBlockDef,
 } from '@/lib/types'
 import type { ProductConfig, StepDefinition } from '@/lib/products/registry'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
   generateProductCode as dpGenerateProductCode,
   generateCompliance as dpGenerateCompliance,
@@ -87,7 +88,7 @@ const drawpitSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getDrawpitData(state)
-      return d !== null && d.lengthMm !== '' && d.widthMm !== ''
+      return d !== null && isPositiveNumber(d.lengthMm) && isPositiveNumber(d.widthMm)
     },
   },
   {
@@ -98,7 +99,12 @@ const drawpitSteps: StepDefinition[] = [
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getDrawpitData(state)
-      return d !== null && d.depthMm !== '' && d.ringCount !== ''
+      return (
+        d !== null &&
+        isPositiveNumber(d.depthMm) &&
+        isPositiveNumber(d.ringCount) &&
+        Number.isInteger(Number(d.ringCount))
+      )
     },
   },
   {

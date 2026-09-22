@@ -3,8 +3,30 @@
 import { useWizardContext } from '../../WizardContext'
 import { SizeCard } from '@/components/ui/SizeCard'
 import { OptionCard } from '@/components/ui/OptionCard'
-import type { ControllerType, WizardAction } from '@/lib/types'
-import { Hand, Waves, BarChart3, Cpu } from 'lucide-react'
+import type { ControllerType, PumpType, WizardAction } from '@/lib/types'
+import { Hand, Waves, BarChart3, Cpu, Fan, Cog } from 'lucide-react'
+
+// RHINOLIFT data sheet: vortex pumps handle solids up to 50mm; macerator
+// pumps are optional, for applications needing fine grinding of solids.
+const pumpTypeOptions: {
+  id: PumpType
+  title: string
+  subtitle: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'vortex',
+    title: 'Vortex',
+    subtitle: 'Handles solids up to 50mm diameter',
+    icon: <Fan className="h-[22px] w-[22px] text-blue" />,
+  },
+  {
+    id: 'macerator',
+    title: 'Macerator',
+    subtitle: 'Fine grinding of solids before pumping',
+    icon: <Cog className="h-[22px] w-[22px] text-navy" />,
+  },
+]
 
 const controllerOptions: {
   id: ControllerType
@@ -49,7 +71,7 @@ export function ControllerConfig() {
   return (
     <>
       {/* Pump count */}
-      <div className="mb-2 text-xs font-bold text-navy">Pump count</div>
+      <div className="mb-2 text-xs font-bold text-navy">Pump count (single or duty / standby)</div>
       <div className="mb-5 grid grid-cols-2 gap-2">
         <SizeCard
           value="1"
@@ -73,6 +95,26 @@ export function ControllerConfig() {
             } as WizardAction)
           }
         />
+      </div>
+
+      {/* Pump type */}
+      <div className="mb-2 text-xs font-bold text-navy">Pump type</div>
+      <div className="mb-5 flex flex-col gap-2">
+        {pumpTypeOptions.map((opt) => (
+          <OptionCard
+            key={opt.id}
+            icon={opt.icon}
+            title={opt.title}
+            subtitle={opt.subtitle}
+            selected={data.pumpType === opt.id}
+            onClick={() =>
+              dispatch({
+                type: 'PUMP_SET_PUMP_TYPE',
+                payload: opt.id,
+              } as WizardAction)
+            }
+          />
+        ))}
       </div>
 
       {/* Controller type */}

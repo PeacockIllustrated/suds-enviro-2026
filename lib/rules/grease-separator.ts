@@ -14,6 +14,7 @@ import type {
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 
 // ── APPLICATION ABBREVIATIONS ────────────────────────────────
 
@@ -47,20 +48,14 @@ export function validateConfig(state: WizardState): ValidationResult {
 
   if (!data.peakCoversPerDay || data.peakCoversPerDay.trim() === '') {
     errors.push('Peak covers per day not specified')
-  } else {
-    const covers = parseFloat(data.peakCoversPerDay)
-    if (isNaN(covers) || covers <= 0) {
-      errors.push('Peak covers per day must be a positive number')
-    }
+  } else if (!isPositiveNumber(data.peakCoversPerDay)) {
+    errors.push('Peak covers per day must be a positive number')
   }
 
   if (!data.flowRateLs || data.flowRateLs.trim() === '') {
     errors.push('Flow rate not specified')
-  } else {
-    const flow = parseFloat(data.flowRateLs)
-    if (isNaN(flow) || flow <= 0) {
-      errors.push('Flow rate must be a positive number')
-    }
+  } else if (!isPositiveNumber(data.flowRateLs)) {
+    errors.push('Flow rate must be a positive number')
   }
 
   return { valid: errors.length === 0, errors }
@@ -82,19 +77,19 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
   const data = extractGreaseSepData(state)
   const { valid } = validateConfig(state)
 
-  const hasValidFlow = data?.flowRateLs
-    ? parseFloat(data.flowRateLs) > 0
-    : false
-
-  const hasValidCovers = data?.peakCoversPerDay
-    ? parseFloat(data.peakCoversPerDay) > 0
-    : false
+  const hasValidFlow = isPositiveNumber(data?.flowRateLs)
+  const hasValidCovers = isPositiveNumber(data?.peakCoversPerDay)
 
   return [
     {
       standard: 'BS EN 1825-1:2004',
       scope: 'Grease Separators - Principles of Design',
       status: (valid && hasValidCovers) ? 'Pass' : 'Warning',
+    },
+    {
+      standard: 'BS EN 1825-2:2002',
+      scope: 'Grease Separators - Selection of Nominal Size',
+      status: hasValidCovers ? 'Pass' : 'Warning',
     },
     {
       standard: 'BS EN 12056-1',
@@ -107,8 +102,8 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       status: valid ? 'Pass' : 'Warning',
     },
     {
-      standard: 'Building Regulations - Approved Document H',
-      scope: 'Drainage and Waste Disposal',
+      standard: 'Building Regulations Part H1',
+      scope: 'Foul Water Drainage and Pre-treatment',
       status: data?.application ? 'Pass' : 'Warning',
     },
   ]

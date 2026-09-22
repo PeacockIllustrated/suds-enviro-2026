@@ -2,9 +2,13 @@
 
 import { useWizardContext } from '../../WizardContext'
 import { SizeCard } from '@/components/ui/SizeCard'
-import type { Diameter, DepthMm, WizardAction } from '@/lib/types'
+import { AlertBox } from '@/components/ui/AlertBox'
+import { getAllowedDiameters, getMaxDepth } from '@/lib/rules/pump-station'
+import type { DepthMm, WizardAction } from '@/lib/types'
 
-const diameters: Diameter[] = [450, 600, 750, 1050]
+// RHINOLIFT data sheet: 600-1200mm chambers, depth to pipe soffit up to
+// 2000mm adoptable / 3000mm non-adoptable.
+const diameters = getAllowedDiameters()
 const depths: DepthMm[] = [1000, 1500, 2000, 2500, 3000]
 
 export function PumpWellSizing() {
@@ -15,11 +19,35 @@ export function PumpWellSizing() {
 
   if (!data) return null
 
+  const adoptable = data.adoptable ?? null
+  const maxDepth = adoptable === null ? getMaxDepth(false) : getMaxDepth(adoptable)
+
+  const adoptButton = (value: boolean, label: string) => (
+    <button
+      type="button"
+      onClick={() =>
+        dispatch({
+          type: 'PUMP_SET_ADOPTABLE',
+          payload: value,
+        } as WizardAction)
+      }
+      className={`rounded-[10px] border-[1.5px] py-3.5 text-center text-sm font-bold transition-all shadow-[0_2px_12px_rgba(0,77,112,0.10)]
+        ${
+          adoptable === value
+            ? 'border-navy border-2 bg-[#f0f7fb] text-navy'
+            : 'border-border bg-white text-muted'
+        }
+      `}
+    >
+      {label}
+    </button>
+  )
+
   return (
     <>
       {/* Diameter grid */}
       <div className="mb-2 text-xs font-bold text-navy">Wet well diameter</div>
-      <div className="mb-5 grid grid-cols-2 gap-2">
+      <div className="mb-5 grid grid-cols-3 gap-2">
         {diameters.map((d) => (
           <SizeCard
             key={d}
@@ -36,9 +64,18 @@ export function PumpWellSizing() {
         ))}
       </div>
 
+      {/* Adoption status */}
+      <div className="mb-2 text-xs font-bold text-navy">
+        Will this pumping station be adopted?
+      </div>
+      <div className="mb-5 grid grid-cols-2 gap-2">
+        {adoptButton(true, 'Yes (S104)')}
+        {adoptButton(false, 'No (Private)')}
+      </div>
+
       {/* Depth grid */}
-      <div className="mb-2 text-xs font-bold text-navy">Wet well depth</div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="mb-2 text-xs font-bold text-navy">Depth to pipe soffit</div>
+      <div className="mb-4 grid grid-cols-3 gap-2">
         {depths.map((d) => {
           const label = `${(d / 1000).toFixed(1)}`
           return (
@@ -47,6 +84,7 @@ export function PumpWellSizing() {
               value={label}
               unit="m"
               selected={data.depth === d}
+              disabled={d > maxDepth}
               onClick={() =>
                 dispatch({
                   type: 'PUMP_SET_DEPTH',
@@ -57,6 +95,14 @@ export function PumpWellSizing() {
           )
         })}
       </div>
+
+      {adoptable === true && (
+        <AlertBox
+          type="info"
+          title="Adoptable depth limit"
+          body={`Adoptable RHINOLIFT installations are limited to ${getMaxDepth(true)}mm to pipe soffit.`}
+        />
+      )}
     </>
   )
 }

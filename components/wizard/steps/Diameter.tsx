@@ -6,6 +6,8 @@ import { AlertBox } from '@/components/ui/AlertBox'
 import { getDiameterValue, getDiameterActionType } from './helpers'
 import { getVariantDiameters as getCatchpitVariantDiameters } from '@/lib/rules/catchpit'
 import { getVariantDiameters as getFCVariantDiameters } from '@/lib/rules/flow-control'
+import { getMaxInlets, getMaxInletPipeSize } from '@/lib/rules/chamber'
+import { getProductConfig } from '@/lib/products/registry'
 import type {
   Diameter as DiameterVal,
   WizardAction,
@@ -13,18 +15,13 @@ import type {
   FlowControlVariant,
 } from '@/lib/types'
 
-
-const diameterInfo: Partial<Record<
-  DiameterVal,
-  { maxInlets: number; maxPipe: string }
->> = {
-  300:  { maxInlets: 1, maxPipe: '110mm' },
-  450:  { maxInlets: 2, maxPipe: '160mm' },
-  600:  { maxInlets: 4, maxPipe: '225mm' },
-  750:  { maxInlets: 5, maxPipe: '300mm' },
-  900:  { maxInlets: 6, maxPipe: '300mm' },
-  1050: { maxInlets: 6, maxPipe: '450mm' },
-  1200: { maxInlets: 8, maxPipe: '450mm' },
+// Reference line for a diameter, derived from the rule engine (R1, R7) so
+// it can never disagree with what the later steps allow.
+function diameterInfo(d: DiameterVal): { maxInlets: number; maxPipe: string } {
+  return {
+    maxInlets: getMaxInlets(d),
+    maxPipe: getMaxInletPipeSize(d).replace(/^(\d+mm).*$/, '$1'),
+  }
 }
 
 // Default chamber diameters (no SERS-style 300mm)
@@ -34,6 +31,10 @@ export function Diameter() {
   const { state, dispatch } = useWizardContext()
   const diameter = getDiameterValue(state)
   const actionType = getDiameterActionType(state.product)
+
+  // Inlet / pipe limits only apply to the chamber-like products
+  const showInletReference = state.product === 'chamber' || state.product === 'catchpit'
+  const has3d = state.product ? getProductConfig(state.product).has3dViewer === true : false
 
   // Available diameters depend on product (and variant where applicable).
   let diameters: DiameterVal[] = chamberDiameters
@@ -65,29 +66,32 @@ export function Diameter() {
       </div>
 
       {/* Info box */}
-      <div className="mb-3.5 rounded-[10px] border border-border bg-white p-3.5 shadow-[0_2px_12px_rgba(0,77,112,0.10)]">
-        <div className="mb-2 text-[11px] font-bold text-navy">
-          Diameter reference
+      {showInletReference && (
+        <div className="mb-3.5 rounded-[10px] border border-border bg-white p-3.5 shadow-[0_2px_12px_rgba(0,77,112,0.10)]">
+          <div className="mb-2 text-[11px] font-bold text-navy">
+            Diameter reference
+          </div>
+          {diameters.map((d) => {
+            const info = diameterInfo(d)
+            return (
+              <div key={d} className="mb-1 flex gap-2 text-[11px] text-muted">
+                <strong className="text-ink">{d}mm</strong>
+                <span>
+                  max {info.maxInlets} inlet{info.maxInlets === 1 ? '' : 's'}, max {info.maxPipe} pipe
+                </span>
+              </div>
+            )
+          })}
         </div>
-        {diameters.map((d) => {
-          const info = diameterInfo[d]
-          if (!info) return null
-          return (
-            <div key={d} className="mb-1 flex gap-2 text-[11px] text-muted">
-              <strong className="text-ink">{d}mm</strong>
-              <span>
-                max {info.maxInlets} inlets, max {info.maxPipe} pipe
-              </span>
-            </div>
-          )
-        })}
-      </div>
+      )}
 
-      <AlertBox
-        type="info"
-        title="3D Preview available"
-        body="Use the green button at the bottom right to preview your chamber in 3D as you build your configuration."
-      />
+      {has3d && (
+        <AlertBox
+          type="info"
+          title="3D Preview available"
+          body="Use the green button at the bottom right to preview your chamber in 3D as you build your configuration."
+        />
+      )}
     </>
   )
 }

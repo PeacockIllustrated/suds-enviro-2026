@@ -115,8 +115,8 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       status: modelSelected ? 'Pass' : 'Warning',
     },
     {
-      standard: 'Building Regulations - Approved Document H',
-      scope: 'Drainage and Waste Disposal',
+      standard: 'Building Regulations Part H1',
+      scope: 'Foul Water Drainage - FOG Pre-treatment',
       status: valid ? 'Pass' : 'Warning',
     },
     {

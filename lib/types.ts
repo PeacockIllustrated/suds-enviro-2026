@@ -72,7 +72,7 @@ export interface ChamberBaseFields {
   adoptable: boolean | null
 }
 
-export interface ChamberData extends ChamberBaseFields {}
+export type ChamberData = ChamberBaseFields
 
 export type BaffleType = 'none' | 'internal' | 'external'
 export type GrateType = 'hinged' | 'sealed'
@@ -135,14 +135,22 @@ export interface FlowControlData {
 
 export type ControllerType = 'manual' | 'auto-float' | 'auto-level' | 'plc'
 
+// RHINOLIFT data sheet: vortex pumps (solids to 50mm) or optional
+// macerator pumps for fine grinding.
+export type PumpType = 'vortex' | 'macerator'
+
 export interface PumpStationData {
   systemType: SystemType | null
   flowRateLs: string
   totalHeadM: string
   pumpCount: 1 | 2 | null
+  // Optional on the type so configurations saved before these fields
+  // existed still load; the wizard always sets them.
+  pumpType?: PumpType | null
   pipeSizeOutlet: PipeSize | null
   controllerType: ControllerType | null
   wetWellDiameter: Diameter | null
+  adoptable?: boolean | null
   depth: DepthMm | null
 }
 
@@ -242,6 +250,16 @@ export type SharedAction =
   | { type: 'SET_CONFIG_ID'; payload: string }
   | { type: 'GO_TO_STEP'; payload: number }
   | { type: 'RESET' }
+  // Restore a saved configuration in one step (shareable config URLs)
+  | {
+      type: 'HYDRATE'
+      payload: {
+        product: ProductId
+        productData: ProductData | null
+        step: number
+        configId: string | null
+      }
+    }
 
 // Chamber actions
 export type ChamberAction =
@@ -296,6 +314,8 @@ export type PumpStationAction =
   | { type: 'PUMP_SET_FLOW_RATE'; payload: string }
   | { type: 'PUMP_SET_HEAD'; payload: string }
   | { type: 'PUMP_SET_PUMP_COUNT'; payload: 1 | 2 }
+  | { type: 'PUMP_SET_PUMP_TYPE'; payload: PumpType }
+  | { type: 'PUMP_SET_ADOPTABLE'; payload: boolean }
   | { type: 'PUMP_SET_PIPE_SIZE'; payload: PipeSize }
   | { type: 'PUMP_SET_CONTROLLER'; payload: ControllerType }
   | { type: 'PUMP_SET_DIAMETER'; payload: Diameter }

@@ -21,6 +21,9 @@ export interface DrawingParams {
   flowType: string | null
   flowRate: string
   compliance: ComplianceResult[]
+  // Product-specific R4 limits (chamber 3000 / 6000, catchpit 2000 / 3000)
+  maxDepthAdoptable: number
+  maxDepthNonAdoptable: number
   date: string
 }
 
@@ -567,7 +570,7 @@ function generateBOM(p: DrawingParams): string {
   }
 
   const rows: BOMRow[] = [
-    { num: 1, description: 'Chamber Body', material: 'HDPE Rotationally Moulded', qty: '1', partNo: `SE-${productPrefix}-${p.diameter}-BODY` },
+    { num: 1, description: 'Chamber Body', material: 'HDPE Extruded / Thermoformed', qty: '1', partNo: `SE-${productPrefix}-${p.diameter}-BODY` },
     { num: 2, description: 'Shaft Extension Rings', material: 'HDPE', qty: 'A/R', partNo: `SE-${productPrefix}-${p.diameter}-SHAFT` },
     { num: 3, description: 'D400 Cover and Frame', material: 'Ductile Iron BS EN 124', qty: '1', partNo: 'SE-COVER-D400' },
     { num: 4, description: 'EPDM Pipe Sealing Rings', material: 'Elastomer BS EN 681-1', qty: sealQty, partNo: 'SE-SEAL-EPDM' },
@@ -653,8 +656,8 @@ function generateNotes(p: DrawingParams): string {
   notes.push(
     '4.  SUMP DEPTH 350mm IS MEASURED FROM OUTLET PIPE SOFFIT CENTRELINE TO INTERNAL',
     '    BASE.',
-    `5.  MAX ADOPTABLE DEPTH: 2000mm TO PIPE SOFFIT. MAX NON-ADOPTABLE: 3000mm TOTAL`,
-    '    DEPTH.',
+    `5.  MAX ADOPTABLE DEPTH: ${p.maxDepthAdoptable}mm TO PIPE SOFFIT. MAX NON-ADOPTABLE:`,
+    `    ${p.maxDepthNonAdoptable}mm TO PIPE SOFFIT.`,
     '6.  ALL PIPE JOINT SEALS TO BS EN 681-1. LUBRICANT TO MANUFACTURERS',
     '    SPECIFICATION.',
     '7.  GENERAL TOLERANCES: LINEAR +/-5mm, ANGULAR +/-1 DEGREE. THIRD ANGLE',
@@ -713,7 +716,7 @@ function generateTitleBlock(p: DrawingParams): string {
   lines.push(`<g clip-path="url(#cp-tbtitle)">`)
   lines.push(`<text x="56" y="183" text-anchor="start" font-size="4.5" class="tb-drw-t">INSPECTION CHAMBER</text>`)
   lines.push(`<text x="56" y="188.5" text-anchor="start" font-size="3.5" class="tb-drw-s2">RHINO SERIES</text>`)
-  lines.push(`<text x="56" y="190" text-anchor="start" font-size="3.0" class="tb-drw-s">\u00D8${p.diameter}mm x ${p.depth}mm  |  HDPE Rotationally Moulded (BS EN 13598)</text>`)
+  lines.push(`<text x="56" y="190" text-anchor="start" font-size="3.0" class="tb-drw-s">\u00D8${p.diameter}mm x ${p.depth}mm  |  HDPE One-Piece (BS EN 13598-2)</text>`)
   lines.push(`<text x="56" y="195" text-anchor="start" font-size="2.2" class="tb-drw-m">${systemLabel}  |  ${adoptLabel}${p.quoteRef ? `  |  Ref: ${p.quoteRef}` : ''}</text>`)
   lines.push(`<text x="56" y="199" text-anchor="start" font-size="2.0" class="tb-drw-m">3rd Angle Projection  |  Plan 1:10  |  Elev 1:12  |  DXF/DWG on request</text>`)
   lines.push(`</g>`)

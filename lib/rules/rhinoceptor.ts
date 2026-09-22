@@ -20,6 +20,7 @@ import type {
   ValidationResult,
   ComplianceResult,
 } from '@/lib/types'
+import { isPositiveNumber } from '@/lib/rules/numeric'
 
 // ── Mitigation Indices (fixed per data sheet) ────────────────
 
@@ -59,20 +60,14 @@ export function validateConfig(state: WizardState): ValidationResult {
 
   if (!data.drainageAreaM2 || data.drainageAreaM2.trim() === '') {
     errors.push('Drainage area not specified')
-  } else {
-    const area = parseFloat(data.drainageAreaM2)
-    if (isNaN(area) || area <= 0) {
-      errors.push('Drainage area must be a positive number')
-    }
+  } else if (!isPositiveNumber(data.drainageAreaM2)) {
+    errors.push('Drainage area must be a positive number')
   }
 
   if (!data.flowRateLs || data.flowRateLs.trim() === '') {
     errors.push('Treatment flow rate not specified')
-  } else {
-    const flow = parseFloat(data.flowRateLs)
-    if (isNaN(flow) || flow <= 0) {
-      errors.push('Treatment flow rate must be a positive number')
-    }
+  } else if (!isPositiveNumber(data.flowRateLs)) {
+    errors.push('Treatment flow rate must be a positive number')
   }
 
   if (data.rhinoPodAddOn === null) {
@@ -83,14 +78,16 @@ export function validateConfig(state: WizardState): ValidationResult {
 }
 
 // ── PRODUCT CODE ─────────────────────────────────────────────
-// SEHDS-{diameter}-{angle}-{POD?}
+// SEHDS{diameter}-A{angle}[-POD]. The base is the sales code used in the
+// model library (SEHDS1800); the inlet angle and POD suffixes are
+// configurator additions.
 
 export function generateProductCode(state: WizardState): string {
   const data = extractRhinoData(state)
-  if (!data || !data.sehdsDiameter || data.inletAngleDeg === null) return 'SEHDS-???'
+  if (!data || !data.sehdsDiameter || data.inletAngleDeg === null) return 'SEHDS???'
 
   const podSuffix = data.rhinoPodAddOn ? '-POD' : ''
-  return `SEHDS-${data.sehdsDiameter}-A${Math.round(data.inletAngleDeg)}${podSuffix}`
+  return `SEHDS${data.sehdsDiameter}-A${Math.round(data.inletAngleDeg)}${podSuffix}`
 }
 
 // ── COMPLIANCE CHECK ─────────────────────────────────────────
@@ -99,8 +96,8 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
   const data = extractRhinoData(state)
   const { valid } = validateConfig(state)
 
-  const hasValidFlow = data?.flowRateLs ? parseFloat(data.flowRateLs) > 0 : false
-  const hasValidArea = data?.drainageAreaM2 ? parseFloat(data.drainageAreaM2) > 0 : false
+  const hasValidFlow = isPositiveNumber(data?.flowRateLs)
+  const hasValidArea = isPositiveNumber(data?.drainageAreaM2)
 
   return [
     {

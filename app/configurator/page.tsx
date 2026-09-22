@@ -35,11 +35,10 @@ function ProductPreSelector() {
 }
 
 export default function ConfiguratorPage() {
+  // The splash shows once per page load; completing it hides it for good.
   const [showSplash, setShowSplash] = useState(true)
-  const hasShownRef = useRef(false)
 
   const handleSplashComplete = () => {
-    hasShownRef.current = true
     setShowSplash(false)
   }
 
@@ -49,7 +48,7 @@ export default function ConfiguratorPage() {
       <Suspense fallback={null}>
         <ProductPreSelector />
       </Suspense>
-      {showSplash && !hasShownRef.current && (
+      {showSplash && (
         <SplashScreen onComplete={handleSplashComplete} />
       )}
       <WizardShell />

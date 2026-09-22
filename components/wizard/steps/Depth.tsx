@@ -81,7 +81,7 @@ export function Depth() {
       </div>
 
       {/* Depth selection */}
-      <div className="mb-2 text-xs font-bold text-navy">Chamber depth</div>
+      <div className="mb-2 text-xs font-bold text-navy">Depth to pipe soffit</div>
       <div className="mb-4 grid grid-cols-4 gap-2">
         {depths.map((d) => {
           const label = `${(d / 1000).toFixed(1)}`
