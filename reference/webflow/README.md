@@ -16,6 +16,7 @@ site `6662e401ea62d861a416088f`) via the Webflow MCP Data API on 2026-09-22.
 | `styles.classlist.json` | All 712 Webflow class names and their CSS selectors |
 | `flatten.py` | Turns a raw element tree into the readable outline format |
 | `DESIGN.md` | The design spec: exact palette and breakpoints from Webflow, plus the type, button, nav and card treatment read off Designer snapshots |
+| `page-*.elements.json` / `page-*.outline.txt` | Element trees and readable outlines for Home and the six RHINO product pages |
 
 Every image asset (93 files, 6.4 MB) is downloaded to `public/webflow/`,
 keyed by the filenames in `assets.index.json`.
@@ -75,3 +76,45 @@ PY
 
 `assets.index.json` records both the normalised `path` and the `original`
 Webflow filename for each id.
+
+
+## Conflicts with this repo's data
+
+**Pipe sizes: 150 mm or 160 mm.** The Webflow SERSIC and SERFIC pages list
+the channelled base as `110mm, 150mm, 225mm, or 300mm`. This repo says
+160 mm throughout - `lib/product-catalog.ts`, the `PipeSize` union in
+`CLAUDE.md`, and rule R7 in the rule engine.
+
+160 mm is a standard EN1401 outside diameter; 150 mm is not. So the
+Webflow figure is most likely the error, but it is on the live site and
+this is a manufacturing spec, so **it needs confirming with the client
+rather than quietly resolving**. Nothing has been changed either way.
+
+The Webflow pages also stop at 300 mm where this repo goes to 450 mm.
+
+## The product page template
+
+The six RHINO product pages are one template with a variant class per
+product (`Section 11.serfic`, `Section 11.vortex`). Structure is: nav,
+two Spline scenes, a hero section, a content section, the wave image,
+footer.
+
+Their typography departs from the home page: the product heroes are set
+**entirely in italic**, running a four-line lockup - "the RHINO" small,
+the series name large in green italic bold, the water type in blue, then
+the product category in a lighter grey-blue.
+
+The SERSIC and SERFIC pages carry a **clock-face inlet diagram** built
+from layered PNGs (`Clock Div`, with `InletAbs` images positioned at the
+3, 5, 6, 7 and 9 o'clock inlets, and a `highlight` combo class marking
+which are available). This is the same clock model the configurator's
+rule engine already implements, so it should be rebuilt as SVG driven by
+the rule engine rather than as stacked images.
+
+## Snapshot reliability
+
+`element_snapshot_tool` needs the Webflow Designer open, in the
+foreground and not idle. On the Spline-heavy product pages it times out
+after 60s for anything larger than a single section, and the connection
+drops if the Designer tab is backgrounded. Element trees via
+`get_all_elements` are unaffected and are the reliable route for copy.

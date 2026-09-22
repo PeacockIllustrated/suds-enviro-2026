@@ -1,0 +1,628 @@
+Body
+  ComponentInstance COMPONENT=NavFinal id=25c5c548-43f7-505d-482f-64ab3ebe0d8a
+  Spline .Spline Scene Mob
+  Spline .Spline Scene 12
+  Section .Section 11.serfic <section>
+    Image .watermark asset=666b82a4f21bdd6c3cbd6a6f
+    Block .Screen
+      Block .Horizontal wrapper.serf
+        Block .Div Section.1st
+          VFlex .Header flex 1.right
+            Heading .TestimonialHead.right <h1>
+              » the
+              Span .bluebold
+                » RHINO
+              
+              Span .Text Span 5
+                Strong .Bold Text 3
+                  » FIC/serfic series
+              
+              Span .foul water
+                » foul water
+              Span .Text Span 6
+                
+                » ‍
+                » inspection chambers
+              
+            Heading .TestimonialBody.right Copy <h1>
+              » The
+              Strong .Bold Text 6
+                » RHINO SERFIC Series Foul Water Benched Channelled Inspection Chambers
+              » are
+              Strong .Bold Text 6
+                » prefabricated factory-built
+              » units engineered for
+              Strong .Bold Text 6
+                » efficient foul water
+              » and
+              Strong .Bold Text 6
+                » drainage management.
+                
+                
+                » ‍
+              » These chambers feature a main channelled base available in 110mm, 150mm, 225mm, or 300mm sizes with
+              Strong .Bold Text 6
+                » optional side connections
+              » for pipe systems ranging from
+              Strong .Bold Text 6
+                » 110mm to 300mm
+              » . The system seamlessly
+              Strong .Bold Text 6
+                » integrates with
+              » a variety of
+              Strong .Bold Text 6
+                » RHINO adaptors
+              » , allowing flexible connectivity for
+              Strong .Bold Text 6
+                » both main and side channels.
+              
+        Block .Div Section.2nd
+          VFlex .Header flex 1.2nd
+            HFlex .Flex Block 35
+              HFlex .Flex Block 31
+                VFlex .Flex Block 33
+                  Heading .Sizing Header <h1>
+                    Span .blue
+                      » available for
+                    Strong
+                      
+                      » select
+                      
+                      » ‍
+                    » chambers
+                  Block .Clock Div.Diagonal Channels
+                    Image .Image 15 asset=66a600ae97470a54c15bb251
+                    HtmlEmbed .icon-embed-medium
+                    Image .InletAbs.6 asset=66a600ae6fe911dd967e7dd6
+                    Image .InletAbs.5.highlight asset=66a600ae9e2aa05645aca286
+                    Image .InletAbs.7.highlight asset=66a600afc337e8de69f40a32
+                    Image .InletAbs.3 asset=66a600ae3cd4756ecead58ac
+                    Image .InletAbs asset=66a600ae662062b2ef20dbb5
+                VFlex .Flex Block 32
+                  Heading .Sizing Header <h1>
+                    Span .blue
+                      » available for
+                    Strong
+                      
+                      » all
+                      
+                      » ‍
+                    » chambers
+                  Block .Clock Div.SideChannels
+                    Image .Image 15 asset=66a600ae97470a54c15bb251
+                    HtmlEmbed .icon-embed-medium
+                    Image .InletAbs.6.highlight asset=66a600ae6fe911dd967e7dd6
+                    Image .InletAbs.3.highlight asset=66a600ae3cd4756ecead58ac
+                    Image .InletAbs.highlight asset=66a600ae662062b2ef20dbb5
+              VFlex .Flex Block 34
+                Block .Clock Div.watermark
+                  Image .Image 15 asset=66a600ae97470a54c15bb251
+                  HtmlEmbed .icon-embed-medium
+                  Image .InletAbs.6 asset=66a600ae6fe911dd967e7dd6
+                  Image .InletAbs.5.highlight asset=66a600ae9e2aa05645aca286
+                  Image .InletAbs.7.highlight asset=66a600afc337e8de69f40a32
+                  Image .InletAbs.3 asset=66a600ae3cd4756ecead58ac
+                  Image .InletAbs asset=66a600ae662062b2ef20dbb5
+                Heading .TestimonialHead.centre <h1>
+                  
+                  Span .Text Span 5
+                    Strong .Bold Text 3
+                      » clock-face
+                  
+                  Span .Text Span 6
+                    » versatile inlet selection
+                  
+                Heading .TestimonialBody.Centre <h1>
+                  » . These chambers feature a
+                  Strong .Bold Text 6
+                    » main channelled base
+                  » available in
+                  Strong .Bold Text 6
+                    » 110mm, 150mm, 225mm, or 300mm
+                  » sizes, with optional side connections for pipe systems ranging from
+                  Strong .Bold Text 6
+                    » 110mm to 300mm
+                  » .
+                  
+                  
+                  » The system seamlessly integrates with a variety of RHINO adaptors, allowing flexible connectivity for both main and side channels.
+                  
+        Block .Div Section.3rd.serfic
+          VFlex .Header flex 1.leftleft
+            Heading .TestimonialHead.right <h1>
+              Span .Text Span 5
+                Strong .Bold Text 3.blue
+                  » how the
+                  
+              Strong .Bold Text 4
+                » FIC/serfic works
+              
+            Heading .TestimonialBody.right <h1>
+              » Designed to
+              Span .Bold Text 6
+                Strong
+                  » optimize the flow
+              » and management of water in drainage systems. The chamber’s
+              Strong .Bold Text 6
+                » benched base
+              » has sloped surfaces that guide water into the
+              Strong .Bold Text 6
+                » central flow channel
+              » , ensuring debris and sediment are directed into the main drainage path rather than settling in corners. This setup reduces the likelihood of blockages and promotes smooth, uninterrupted water flow.
+              
+              
+              
+              
+              
+              
+              
+              » The
+              Strong .Bold Text 6
+                » central channel
+              » follows the profile of the drainage pipes connected to the chamber, minimizing turbulence and enhancing the hydraulic efficiency of the system. This design ensures that stormwater or sewage can flow freely through the chamber, even under heavy load conditions, without the risk of sediment buildup.
+              
+  Section <section>
+    Block .Div Block 9.smaller.long
+      VFlex .Flex Block 38
+        Heading .TestimonialHead.right Copy <h1>
+          » technical
+          
+          » ‍
+          Strong .Bold Text 4.blue
+            » specs
+          
+        Heading .TestimonialHead.right Copy.mobilehide <h1>
+          » technical
+          
+          » ‍
+          Strong .Bold Text 4.blue
+            » specifications
+          
+        VFlex .Flex Block 57
+          Heading .TestimonialHead.right.new <h1>
+            » chamber
+            
+            » ‍
+            » sizes:
+            
+          List .List 4.no gap <ul>
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 450mm
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 600mm
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 750mm
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 900mm
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 1050mm
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 1200mm
+        VFlex .Flex Block 56
+          Heading .TestimonialHead.right.new <h1>
+            » pipe
+            
+            » Sizes:
+            
+          List .List 4.no gap <ul>
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 110mm
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 150mm
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 225mm
+            ListItem .List Item 6
+              Block .List Header
+                Strong
+                  » 300mm
+        VFlex .Flex Block 58
+          Heading .TestimonialHead.right.new <h1>
+            » depth
+            
+            » restrictions:
+            
+          List .List 4.no gap <ul>
+            ListItem .List Item 6
+              Block .List Header
+                Span
+                  » ADOPTABLE:
+                
+                Span .thin
+                  » Up to
+                  Strong
+                    » 3000mm
+                  
+            ListItem .List Item 6
+              Block .List Header
+                Span
+                  » NON-ADOPTABLE:
+                
+                Span .thin
+                  » Up to
+                  Strong
+                    » 6000mm
+                  
+        List .List 4 Copy <ul>
+          ListItem .List Item 6
+            Block .List Header
+              Strong
+                » Material:
+            Block .Text Block 6
+              » Manufactured from
+              Strong
+                » High-Density Polyethylene (HDPE)
+              » for maximum strength and durability.
+          ListItem .List Item 6
+            Block .List Header
+              » Load Rating:
+            Block .Text Block 6
+              » Suitable for
+              Strong
+                » light-duty
+              » to
+              Strong
+                » full-traffic applications
+        List .List 4 Copy <ul>
+          ListItem .List Item 6
+            Block .List Header
+              Strong
+                » Compliance:
+            Block .Text Block 6
+              Strong
+                » EN 13598 Part 2 (2009)
+                
+                Subscript
+                  » ‍
+              Subscript .Subscript
+                » Fully compliant with European standards for thermoplastic inspection chambers
+              
+              » ‍
+              Strong
+                » Design & Construction Guidance (DCG)
+              
+              Subscript .Subscript
+                » Suitable for both adoptable and non-adoptable drainage systems.
+              
+              » ‍
+              Strong
+                » Sewers for Adoption (SfA7)
+                
+                » ‍
+              Subscript .Subscript
+                » Compliant with the 7th edition for adoptable sewer systems.
+              
+              » ‍
+              Strong
+                » Part H1 of Building Regulations
+                
+                Subscript
+                  » ‍
+              Subscript .Subscript
+                » Compliant with UK drainage regulations
+              
+              » ‍
+              Strong
+                » DCG Parts B & C Compliance
+                
+                Subscript
+                  » ‍
+              Subscript .Subscript
+                » Fully compliant with DCG Parts B and C, including a minimum 50mm fall from side inlets to the main channel.
+      VFlex .Header flex 1.grid
+        Layout .Quick Stack 6
+          Cell
+            Heading .TestimonialHead.right <h1>
+              » technical
+              
+              » ‍
+              Strong .Bold Text 4.blue
+                » specifications
+              
+          Cell .Cell 27
+            Heading .TestimonialHead.right.new <h1>
+              » chamber
+              
+              » ‍
+              » sizes:
+              
+            List .List 4.no gap <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 450mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 600mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 750mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 900mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1050mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 1200mm
+          Cell .Cell 27
+            Heading .TestimonialHead.right.new <h1>
+              » pipe
+              
+              » Sizes:
+              
+            List .List 4.no gap <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 110mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 150mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 225mm
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » 300mm
+          Cell
+            Heading .TestimonialHead.right.new <h1>
+              » depth
+              
+              » restrictions:
+              
+            List .List 4.no gap <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Span
+                    » ADOPTABLE:
+                  
+                  Span .thin
+                    » Up to
+                    Strong
+                      » 3000mm
+                    
+              ListItem .List Item 6
+                Block .List Header
+                  Span
+                    » NON-ADOPTABLE:
+                  
+                  Span .thin
+                    » Up to
+                    Strong
+                      » 6000mm
+                    
+          Cell
+            List .List 4 Copy <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Material:
+                Block .Text Block 6
+                  » Manufactured from
+                  Strong
+                    » High-Density Polyethylene (HDPE)
+                  » for maximum strength and durability.
+              ListItem .List Item 6
+                Block .List Header
+                  » Load Rating:
+                Block .Text Block 6
+                  » Suitable for
+                  Strong
+                    » light-duty
+                  » to
+                  Strong
+                    » full-traffic applications
+            List .List 4 Copy <ul>
+              ListItem .List Item 6
+                Block .List Header
+                  Strong
+                    » Compliance:
+                Block .Text Block 6
+                  Strong
+                    » EN 13598 Part 2 (2009)
+                    
+                    Subscript
+                      » ‍
+                  Subscript .Subscript
+                    » Fully compliant with European standards for thermoplastic inspection chambers
+                  
+                  » ‍
+                  Strong
+                    » Design & Construction Guidance (DCG)
+                  
+                  Subscript .Subscript
+                    » Suitable for both adoptable and non-adoptable drainage systems.
+                  
+                  » ‍
+                  Strong
+                    » Sewers for Adoption (SfA7)
+                    
+                    » ‍
+                  Subscript .Subscript
+                    » Compliant with the 7th edition for adoptable sewer systems.
+                  
+                  » ‍
+                  Strong
+                    » Part H1 of Building Regulations
+                    
+                    Subscript
+                      » ‍
+                  Subscript .Subscript
+                    » Compliant with UK drainage regulations
+                  
+                  » ‍
+                  Strong
+                    » DCG Parts B & C Compliance
+                    
+                    Subscript
+                      » ‍
+                  Subscript .Subscript
+                    » Fully compliant with DCG Parts B and C, including a minimum 50mm fall from side inlets to the main channel.
+    Block .Div Block 9.longer
+      VFlex .Header flex 1.right 2
+        Heading .TestimonialHead.right <h1>
+          » why choose
+          Span .bluebold
+            » RHINO
+          
+          Span .Text Span 5
+            Strong .Bold Text 3
+              » FIC/serfic series
+          
+          Span .foul water
+            » foul water
+          Span .Text Span 6
+            
+            » ‍
+            » inspection chambers
+          
+        List .List 4 Copy <ul>
+          ListItem .List Item 6
+            Block .Text Block 6
+              Strong .Bold Text 6
+                » Rapid Installation
+              » : RHINO Inspection Chambers can be installed up to
+              Strong
+                » 70% faster
+              » than traditional sectioned chambers.
+              
+              » ‍
+              
+              » ‍
+              Strong .Bold Text 6
+                » Comprehensive Compatibility
+              » : Seamlessly integrates with most pipework systems through RHINO Base Pipe Adaptors.
+              
+              » ‍
+              
+              » ‍
+              Strong .Bold Text 6
+                » Enhanced Strength & Anti-Fracture Design
+              » : The thermoformed base provides deeper, trouble-free installations and minimizes the risk of fractures.
+              
+              » ‍
+              
+              » ‍
+              Strong .Bold Text 6
+                » Versatile Load Capacity
+              » : Suitable for both
+              Strong
+                » light-duty
+              » and
+              Strong
+                » full-traffic loading
+              » applications, adaptable to various installation environments.
+              
+              » ‍
+              
+              » ‍
+              Strong .Bold Text 6
+                » Hydraulically Enhanced Flow
+              » : Optimized internal surfaces promote efficient water flow, reducing the risk of blockages.
+              
+              » ‍
+              
+              » ‍
+              Strong .Bold Text 6
+                » Corrosion & Chemical Resistance
+              » : Resistant to
+              Strong
+                » hydrogen sulfide
+              » and a wide range of
+              Strong
+                » corrosive acids
+              » and
+              Strong
+                » bases
+              » , ensuring long-term durability.
+              
+              » ‍
+              
+              » ‍
+              Strong .Bold Text 6
+                » Extended Durability
+              » : Engineered for long-lasting service, even under harsh environmental conditions and heavy traffic loads.
+    Block .Div Block 9.smaller.long.bottom
+      VFlex .Header flex 1.right 2.bottom
+        Heading .TestimonialHead.right <h1>
+          » The
+          Span .bluebold
+            » RHINO
+          
+          Span .Text Span 5
+            Strong .Bold Text 3
+              » FIC/serfic series
+          
+          Span .foul water
+            » foul water
+            
+            » ‍
+          Span .Text Span 6
+            » inspection chambers:
+            
+            » ‍
+            
+          » delivering you...
+          
+        Block .Text Block 6
+          Strong .Bold Text 6
+            » Access for inspection and maintenance
+          » : Allowing easy above-ground access for
+          Strong
+            » routine maintenance
+          » ,
+          Strong
+            » cleaning
+          » , and
+          Strong
+            » troubleshooting
+          » .
+          
+          
+          » ‍
+          Strong .Bold Text 6
+            » Flow management and control
+          » : Regulating peak flows during heavy rainfalls, and diverting flows to protect downstream infrastructure.
+          
+          
+          » ‍
+          Strong .Bold Text 6
+            » System integrity and safety
+          » : Minimizing the need for deep excavation, making maintenance safer and more efficient.
+          
+          
+          » ‍
+          Strong .Bold Text 6
+            » Regulatory compliance
+          » : Fully compliant with national and local standards for adoptable and non-adoptable installations.
+        Link .button1 link={"linkType": "page", "pageId": "6689b6ba3d36c919e6fc7e10"}
+          » Build your INspection chamber
+  Image .Image 12.top.Spline Scene Mob asset=6687d1ef803ea205f34ece66
+  ComponentInstance COMPONENT=NewFooter id=a2e9668d-7083-440f-f06c-984cb03f8de5
