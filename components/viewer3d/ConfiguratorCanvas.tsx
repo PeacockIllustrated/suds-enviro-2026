@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
-import { ContactShadows, OrbitControls, Outlines, useGLTF } from '@react-three/drei'
+import { ContactShadows, OrbitControls, useGLTF } from '@react-three/drei'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import * as THREE from 'three'
 import {
@@ -12,6 +12,7 @@ import {
   toonRamp,
   useWaterMaterial,
   type LibraryPart,
+  InkOutlines,
 } from '@/components/site/three/toon'
 import type { Vec3 } from './geometry'
 import type { CalloutTone, ViewerModel, ViewerRole } from './viewer-model'
@@ -317,25 +318,28 @@ function DrawPart({ id, geometry, role, color, explode, fade, thickness, registr
           interaction.onPick(id)
         }}
       >
+        {/* Rebuilt when it turns see-through: three only switches a live
+            material into blending when it is rebuilt. Front faces only, so
+            ribs and walls do not stack into a murky fill. */}
         <meshToonMaterial
+          key={see ? 'see-through' : 'solid'}
           color={lit ? HIGHLIGHT : color ?? FILL[role]}
           gradientMap={toonRamp()}
           transparent={see}
           opacity={opacity}
           depthWrite={!see}
-          side={see ? THREE.DoubleSide : THREE.FrontSide}
         />
-        {/* drei 10.7's Outlines has its screenspace branches swapped; false
-            gives pixel-width outlines (see components/site/three/toon.tsx). */}
-        <Outlines
-          screenspace={false}
-          thickness={(see ? thickness * 0.6 : thickness) * (lit ? 1.5 : 1)}
-          color={role === 'outlet' ? '#2f7c3a' : TOON.ink}
-          toneMapped={false}
-          transparent={see}
-          opacity={see ? Math.min(1, opacity * 2.5) : 1}
-          angle={Math.PI / 5}
-        />
+        {/* The outline fades out with the part: behind a see-through
+            surface an inverted hull reads as a tinted sheet, not a line. */}
+        {opacity > 0.5 ? (
+          <InkOutlines
+            thickness={thickness * (lit ? 1.5 : 1)}
+            color={role === 'outlet' ? '#2f7c3a' : TOON.ink}
+            transparent={see}
+            opacity={see ? (opacity - 0.5) * 2 : 1}
+            angle={Math.PI / 5}
+          />
+        ) : null}
       </mesh>
     )
   }
