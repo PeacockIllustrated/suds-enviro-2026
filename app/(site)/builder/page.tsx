@@ -5,8 +5,7 @@ import { RichText } from '@/components/site/RichText'
 import { SiteButton } from '@/components/site/SiteButton'
 
 export const metadata: Metadata = {
-  title: 'SuDS Builder Hub preview - SuDS Enviro',
-  robots: { index: false, follow: false },
+  title: 'SuDS Builder Hub - SuDS Enviro',
 }
 
 /** Rebuild of the Webflow `SuDS Builder | Hub` page. */

@@ -13,25 +13,21 @@ configurator, the product catalogue and the rule engine.
 
 ## Where it lives
 
-Served from **`/preview`**, not `/`. The original marketing pages under
-`app/(marketing)/` are untouched and still own `/`, `/contact` and
-`/products`. Nothing has been replaced yet - that is a deliberate, and
-still open, decision.
+The rebuild owns the root routes, in `app/(site)/`. The original marketing
+pages that used to live in `app/(marketing)/` are retired; `/about` and
+`/status` moved across into the new chrome. `/preview/*` redirects
+permanently to the same path without the prefix (`next.config.ts`), so
+links shared during review keep working.
 
 | Route | |
 |---|---|
-| `/preview` | Home, including the 3D hero |
-| `/preview/contact` | Contact, form posts to the existing `/api/enquiries` |
-| `/preview/rhino-range` | RHINO Range |
-| `/preview/products` | Product index |
-| `/preview/products/[slug]` | 11 product pages |
-| `/preview/builder` | SuDS Builder Hub |
-
-**To flip it live:** move `app/(site-preview)/preview/*` up to own `/`,
-`/contact`, `/products`, `/builder`; delete the `SitePathProvider` from
-the route-group layout; retire `app/(marketing)/`. The prefix machinery
-in `components/site/SitePath.tsx` exists only for the preview and
-collapses to nothing once the routes are real.
+| `/` | Home: the toon scroll scene (`components/site/WaterJourney*.tsx`) |
+| `/contact` | Contact, form posts to the existing `/api/enquiries` |
+| `/rhino-range` | RHINO Range |
+| `/products` | Product index |
+| `/products/[slug]` | 11 product pages, with interactive 3D viewers where a model exists |
+| `/builder` | SuDS Builder Hub |
+| `/about`, `/status` | Carried over from the original marketing pages |
 
 ## Layout of the work
 
@@ -88,7 +84,6 @@ this app has one wizard that takes inlet count as a step.
    `lib/content/contact.ts`. Do not invent replacements.
 3. **"SuDS" or "SUDS"** in uppercase headings. `uppercase` currently
    flattens the brand's own capitalisation.
-4. **Whether to flip `/preview` onto the real routes.**
 
 Also unresolved, lower stakes: the Webflow nav lists the Hydrodynamic
 Separator and Oil/Water Separator as `*****`, and the Aqua and Mini
@@ -139,7 +134,7 @@ PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm i --no-save playwright
 
 npm run build && npm start &
 node scripts/check-links.mjs               # every internal link, requested
-node scripts/screenshot.mjs /preview home  # desktop + mobile, image check
+node scripts/screenshot.mjs / home          # desktop + mobile, image check
 ```
 
 Playwright is installed on demand rather than as a devDependency, so it

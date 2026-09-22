@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
-import { SiteLink } from '@/components/site/SiteLink'
+import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { PRODUCT_CATALOG } from '@/lib/product-catalog'
 
 export const metadata: Metadata = {
-  title: 'Products preview - SuDS Enviro',
-  robots: { index: false, follow: false },
+  title: 'Products - SuDS Enviro',
 }
 
 /** Index of every catalogue entry, in the site's card language. */
@@ -20,7 +19,7 @@ export default function ProductsPreviewPage() {
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {PRODUCT_CATALOG.map((product) => (
-            <SiteLink
+            <Link
               key={product.id}
               href={`/products/${product.slug}`}
               className="group flex flex-col rounded-2xl border-[3px] border-site-ui-blue p-6 transition-colors hover:border-site-blue"
@@ -38,7 +37,7 @@ export default function ProductsPreviewPage() {
                 Learn more
                 <ChevronRight aria-hidden className="size-4" />
               </span>
-            </SiteLink>
+            </Link>
           ))}
         </div>
       </div>

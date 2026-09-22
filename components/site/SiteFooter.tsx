@@ -3,11 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { FOOTER } from '@/lib/content/navigation'
-import { useSitePath } from './SitePath'
 
 /** The Webflow `NewFooter` component: mark, strapline, three links. */
 export function SiteFooter() {
-  const sitePath = useSitePath()
 
   return (
     <footer className="bg-site-blue-dark text-white">
@@ -30,7 +28,7 @@ export function SiteFooter() {
           {FOOTER.links.map((link) => (
             <Link
               key={link.label}
-              href={sitePath(link.href)}
+              href={link.href}
               className="text-sm tracking-wider uppercase transition-opacity hover:opacity-80"
             >
               {link.label}

@@ -4,8 +4,7 @@ import { ProductTiles } from '@/components/site/ProductTiles'
 import { BuilderCTA } from '@/components/site/BuilderCTA'
 
 export const metadata: Metadata = {
-  title: 'The RHINO Range preview - SuDS Enviro',
-  robots: { index: false, follow: false },
+  title: 'The RHINO Range - SuDS Enviro',
 }
 
 /**

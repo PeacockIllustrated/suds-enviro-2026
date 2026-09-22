@@ -9,8 +9,7 @@ import { SolutionRoutes } from '@/components/site/SolutionRoutes'
 import { ProductTiles } from '@/components/site/ProductTiles'
 
 export const metadata: Metadata = {
-  title: 'Home preview - SuDS Enviro',
-  robots: { index: false, follow: false },
+  title: 'SuDS Enviro - Bespoke, Standardised',
 }
 
 /**

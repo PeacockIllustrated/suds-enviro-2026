@@ -29,5 +29,5 @@ The public pages are being rebuilt from the original Webflow site. See
 `reference/webflow/DESIGN.md` for the palette and treatment, and
 `reference/webflow/README.md` for what was extracted and what is still
 missing. Copy lives in `lib/content/`, components in `components/site/`,
-and the work in progress is served from `/preview` so the current
-marketing pages stay up.
+and the site owns the root routes (`app/(site)/`). `/preview` redirects
+to `/` for links shared during review.

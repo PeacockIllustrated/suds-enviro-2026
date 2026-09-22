@@ -3,7 +3,7 @@ import { mkdir } from 'node:fs/promises'
 /**
  * Full-page screenshots at desktop and mobile, with a broken-image check.
  *
- *   node scripts/screenshot.mjs /preview home
+ *   node scripts/screenshot.mjs / home
  *
  * Writes into .screenshots/ (gitignored) unless OUT_DIR says otherwise.
  *
@@ -37,7 +37,7 @@ const ROOT = process.env.BASE_URL ?? 'http://localhost:3000'
 const EXECUTABLE = process.env.CHROMIUM_PATH ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome'
 const OUT = process.env.OUT_DIR ?? '.screenshots'
 
-const path = process.argv[2] ?? '/preview'
+const path = process.argv[2] ?? '/'
 const tag = process.argv[3] ?? 'page'
 
 await mkdir(OUT, { recursive: true })

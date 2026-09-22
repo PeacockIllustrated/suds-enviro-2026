@@ -23,9 +23,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   if (!product) return { title: 'Product not found' }
 
   return {
-    title: `${product.name} preview - SuDS Enviro`,
+    title: `${product.name} - SuDS Enviro`,
     description: product.description,
-    robots: { index: false, follow: false },
   }
 }
 

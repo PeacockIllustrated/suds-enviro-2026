@@ -10,8 +10,7 @@ import {
 } from '@/lib/content/contact'
 
 export const metadata: Metadata = {
-  title: 'Contact preview - SuDS Enviro',
-  robots: { index: false, follow: false },
+  title: 'Contact - SuDS Enviro',
 }
 
 /** Rebuild of the Webflow `Contact` page. */
