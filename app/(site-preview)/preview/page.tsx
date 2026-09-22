@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-import { SiteHeader } from '@/components/site/SiteHeader'
-import { SiteFooter } from '@/components/site/SiteFooter'
 import { Hero } from '@/components/site/Hero'
 import { WaterTabs } from '@/components/site/WaterTabs'
 import { InnovationSlider } from '@/components/site/InnovationSlider'
@@ -23,19 +21,15 @@ export const metadata: Metadata = {
  */
 export default function HomePreviewPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <SiteHeader />
-      <main className="flex-1">
-        <Hero />
-        <WaterTabs />
-        <InnovationSlider />
-        <Testimonials />
-        <RhinoRange />
-        <SolutionRoutes />
-        <BuilderCTA />
-        <ProductTiles />
-      </main>
-      <SiteFooter />
-    </div>
+    <>
+      <Hero />
+      <WaterTabs />
+      <InnovationSlider />
+      <Testimonials />
+      <RhinoRange />
+      <SolutionRoutes />
+      <BuilderCTA />
+      <ProductTiles />
+    </>
   )
 }
