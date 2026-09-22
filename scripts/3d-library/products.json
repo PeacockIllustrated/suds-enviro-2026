@@ -1,0 +1,996 @@
+{
+  "families": [
+    {
+      "id": "sudsceptor",
+      "name": "SudSceptor",
+      "codes": "SEHDS (drawings SESSHDS)",
+      "note": "Hydrodynamic separator."
+    },
+    {
+      "id": "rhinopod",
+      "name": "RhinoPod",
+      "codes": "SERPOD"
+    },
+    {
+      "id": "rhinopit",
+      "name": "RhinoPit",
+      "codes": "SERPT, CP"
+    },
+    {
+      "id": "rhinoshield",
+      "name": "RhinoShield",
+      "codes": "SERS, SERSD"
+    },
+    {
+      "id": "rhinoduct",
+      "name": "RhinoDuct",
+      "codes": "SERD"
+    },
+    {
+      "id": "rhinoroflo",
+      "name": "RhinoRoFlo",
+      "codes": "SERF, SERFP, POC",
+      "note": "Orifice flow control."
+    },
+    {
+      "id": "rhinorotex",
+      "name": "RhinoRoTex",
+      "codes": "VFC, FVC",
+      "note": "Vortex flow control. Two generations are in Drive: a September 2024 set and April 2025 part STLs."
+    },
+    {
+      "id": "rhino-flolock",
+      "name": "Rhino FloLock",
+      "note": "Backflow device."
+    },
+    {
+      "id": "rhinolift",
+      "name": "RhinoLift",
+      "note": "Pumping stations. AQUA, MAXI, MINI and the pump tank are Drive folder names; no settled model names or codes exist for them yet."
+    },
+    {
+      "id": "rhino-inspection-chamber",
+      "name": "Rhino inspection chamber",
+      "codes": "SIC, SERSIC, FIC, SERFIC, RIC, RSIC, RFIC"
+    },
+    {
+      "id": "grease-trap",
+      "name": "Grease trap",
+      "note": "No settled brand name yet."
+    },
+    {
+      "id": "adapters",
+      "name": "Pipe adapters",
+      "note": "No settled brand name yet."
+    },
+    {
+      "id": "siphon-housing",
+      "name": "Siphon housing",
+      "note": "R&D. No settled brand name."
+    },
+    {
+      "id": "icon-study",
+      "name": "Icon study",
+      "note": "3D study of the icon, not a product."
+    }
+  ],
+  "products": [
+    {
+      "slug": "sudsceptor",
+      "file": "sudsceptor-sehds1800",
+      "family": "sudsceptor",
+      "name": "SudSceptor",
+      "codes": {
+        "sales": [
+          "SEHDS1800"
+        ],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "confirm against the 1800 nominal diameter once measured",
+      "notes": [
+        "built from Hydrdynamic Separaters/Breakout.blend because these parts could not be downloaded on their own: Water Track.fbx, Centre Pipe.fbx, Inner Curved Baffle#.fbx, Outer Curved Baffle#.fbx, inlet.fbx, Outlet.fbx"
+      ],
+      "variants": [
+        "SEHDS/SEHDS1200225-1-6-2.9.stl (9.9 MB, Drive 1c8Vnb0D4ybW1lpLRpB2L0lItT_2oYmE8)",
+        "Hydrdynamic Separaters/1.8 dia Hydro Sep.stl (1.0 MB, Drive 1cKWfCBy8gu4VLyRlNtBWmBWD0Of722kB)"
+      ],
+      "parts": [
+        {
+          "name": "from-blend",
+          "role": "body",
+          "driveId": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2",
+          "sourcePath": "SuDS 3D Assets/Hydrdynamic Separaters/Breakout.blend",
+          "split": true,
+          "roles": {
+            "casing": "body",
+            "bottom-bowl": "body",
+            "stand": "accent",
+            "water-track": "accent",
+            "centre-pipe": "accent",
+            "inner-curved-baffle": "accent",
+            "outer-curved-baffle": "accent",
+            "inlet": "body",
+            "outlet": "body"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "rhinopod",
+      "file": "rhinopod-serpod1850",
+      "family": "rhinopod",
+      "name": "RhinoPod",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERPOD1850"
+        ]
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "variants": [
+        "Rhinopod.stl (21.6 MB, Drive 11ObqNRJYbdGPhjz7U12zJEjpq65Gh2Hu)"
+      ],
+      "degradedBecause": [
+        "missing parts that could not be downloaded from Drive: Rhinopod-Casing.fbx"
+      ],
+      "parts": [
+        {
+          "name": "top",
+          "role": "accent",
+          "driveId": "11RQ3g1SintcrVAahgV6p38vQhd1QrTJr",
+          "sourcePath": "SuDS 3D Assets/Rhino Pod/Rhinopod-Top.fbx"
+        },
+        {
+          "name": "mid",
+          "role": "accent",
+          "driveId": "11SDV4HhBTCWE6WVBpnM4L9Tw7P7b6Lf3",
+          "sourcePath": "SuDS 3D Assets/Rhino Pod/Rhinopod-Mid.fbx"
+        },
+        {
+          "name": "bottom",
+          "role": "body",
+          "driveId": "11ZhYrq8YUmiJoprt9MvnElZs1I7vaxJY",
+          "sourcePath": "SuDS 3D Assets/Rhino Pod/Rhinopod-Bottom.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "rhinopit",
+      "file": "rhinopit-serpt600",
+      "family": "rhinopit",
+      "name": "RhinoPit",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERPT600160",
+          "SERPT600150"
+        ]
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [
+        "built from SERPT/SERPT Breakdown.blend because these parts could not be downloaded on their own: SERPT Base.fbx"
+      ],
+      "variants": [
+        "SERPT/SERPT600160-2.stl (2.5 MB, Drive 1XJ-t5TpKaw_N4jdNcPRJAbf8Vf04kb6_)",
+        "SERPT/SERPT600150-1.5.stl (4.6 MB, Drive 1IFoeAqCeg1Cro4TDKO018u-Dz6jwPBuj)"
+      ],
+      "parts": [
+        {
+          "name": "from-blend",
+          "role": "body",
+          "driveId": "1IiQeuVqzEDxdG7aVwLC66juyT31t0gy4",
+          "sourcePath": "SuDS 3D Assets/SERPT/SERPT Breakdown.blend",
+          "split": true,
+          "roles": {
+            "base": "body",
+            "tubing": "body",
+            "inlet": "accent",
+            "outlet": "accent"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "rhinoshield",
+      "file": "rhinoshield-sersd500",
+      "family": "rhinoshield",
+      "name": "RhinoShield",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERSD500160"
+        ]
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "variants": [
+        "SERSD/SERSD500160-2.stl (10.2 MB, Drive 1IG64oSkPGghqafeLW9fMQvhq8bzZ-oum)"
+      ],
+      "parts": [
+        {
+          "name": "base",
+          "role": "body",
+          "driveId": "1ISqSxfsKRXjmZ8-IzbZJDEzWxf-3koQv",
+          "sourcePath": "SuDS 3D Assets/SERSD/SERSD Base.fbx"
+        },
+        {
+          "name": "base-tubing",
+          "role": "body",
+          "driveId": "1IWwTdyNqI-DuIUlQPPT728WRg7cjKHee",
+          "sourcePath": "SuDS 3D Assets/SERSD/SERSD Base Tubing.fbx"
+        },
+        {
+          "name": "top-level-1",
+          "role": "body",
+          "driveId": "1IZgOIFtVC-FPlwNcr62PdmWewWBaaEE6",
+          "sourcePath": "SuDS 3D Assets/SERSD/SERSD Top Level 1.fbx"
+        },
+        {
+          "name": "top-level-2",
+          "role": "body",
+          "driveId": "1Ia5EaxOtHbkbVe4B2zGXW0_VXCIdOmh4",
+          "sourcePath": "SuDS 3D Assets/SERSD/SERSD Top Level 2.fbx"
+        },
+        {
+          "name": "filter-holder",
+          "role": "accent",
+          "driveId": "1IXNVk1991Xe1FTgUZI3zyT-emp9VvdJC",
+          "sourcePath": "SuDS 3D Assets/SERSD/SERSD Filter Holder.fbx"
+        },
+        {
+          "name": "filter-long",
+          "role": "accent",
+          "driveId": "1IZEgfZZBwwCn71u1amJ0_QMXDMgtD4oN",
+          "sourcePath": "SuDS 3D Assets/SERSD/SERSD Filter Long.fbx"
+        },
+        {
+          "name": "filter-short",
+          "role": "accent",
+          "driveId": "1IXv_S9cCQ7WXX5bdc0QF6nJUJM_icDqR",
+          "sourcePath": "SuDS 3D Assets/SERSD/SERSD Filter Short.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "rhinoduct",
+      "file": "rhinoduct-serd",
+      "family": "rhinoduct",
+      "name": "RhinoDuct",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 1,
+      "toMmReason": "RhinoDuct.stl is in millimetres (930 x 780 x 488)",
+      "notes": [
+        "RhinoDuct/Blender.blend and RhinoDuct Cover.fbx are the same duct at 1 unit = 1 cm with a cover; converted separately below so the two can be compared"
+      ],
+      "parts": [
+        {
+          "name": "duct",
+          "role": "body",
+          "driveId": "1sFu5laj-X15W3juwGudLgw8YQqaKLM4N",
+          "sourcePath": "SuDS 3D Assets/RhinoDuct.stl"
+        }
+      ]
+    },
+    {
+      "slug": "rhinoduct-with-cover",
+      "file": "rhinoduct-serd-cover",
+      "family": "rhinoduct",
+      "name": "RhinoDuct with cover",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "parts": [
+        {
+          "name": "duct",
+          "role": "body",
+          "driveId": "1XrEg7voro9JH9IchlltPc3oKMfBL_JmM",
+          "sourcePath": "SuDS 3D Assets/RhinoDuct/Blender.blend"
+        },
+        {
+          "name": "cover",
+          "role": "accent",
+          "driveId": "1Xq1t5WeRPY5nKhJSK63QpJ3pAdmYSlce",
+          "sourcePath": "SuDS 3D Assets/RhinoDuct/RhinoDuct Cover.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "rhinoroflo",
+      "file": "rhinoroflo-poc600",
+      "family": "rhinoroflo",
+      "name": "RhinoRoFlo",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "POC600",
+          "SERFP600150"
+        ]
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [
+        "built from Orifice Flow Control/POC Breakdown.blend because these parts could not be downloaded on their own: POC-Base.fbx, POC-Divider.fbx, POC-Orifice-Latch.fbx, POC-Wire.fbx"
+      ],
+      "variants": [
+        "Orifice Flow Control/POC600-1.5.stl (3.1 MB, Drive 12Qb1pFcsupuDDFBOWsa-l0EgMuUlajLm)",
+        "SERFP600150-2.stl (5.9 MB, Drive 1X2t7grWmA-IDFA-NBRBRZyEaoIchvKj2)"
+      ],
+      "parts": [
+        {
+          "name": "from-blend",
+          "role": "body",
+          "driveId": "12XNXvWVS6iWnwscsAUOxNjarSH326f54",
+          "sourcePath": "SuDS 3D Assets/Orifice Flow Control/POC Breakdown.blend",
+          "split": true,
+          "roles": {
+            "base": "body",
+            "tube": "body",
+            "divider": "body",
+            "orifice": "accent",
+            "orifice-latch": "accent",
+            "wire": "accent",
+            "wire-clips": "accent"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "rhinorotex",
+      "file": "rhinorotex-c1200",
+      "family": "rhinorotex",
+      "name": "RhinoRoTex (September 2024 set)",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "RoTex-C1200"
+        ]
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "variants": [
+        "Vortex Flow Control/RoTex-C1200-2.stl (12.8 MB, Drive 1X712YGc8CHqfxe5WrCIpr9hdH3tX5wrj)",
+        "Flow Control Tank 1200 dia x 2m.stl (12.9 MB, Drive 1ICpFrAVnHXO8-CMtEvJxqdEbQ643mnVE)"
+      ],
+      "degradedBecause": [
+        "missing parts that could not be downloaded from Drive: RoTex BaseFunc.stl"
+      ],
+      "parts": [
+        {
+          "name": "rotex",
+          "role": "accent",
+          "driveId": "1mHa_PRg1xfm_GiJjBd1dk5U56T8lJ5ti",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/RoTexFunc.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "rhinorotex-2025",
+      "file": "rhinorotex-2025-parts",
+      "family": "rhinorotex",
+      "name": "RhinoRoTex (April 2025 parts)",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": null,
+      "notes": [],
+      "degradedBecause": [
+        "missing parts that could not be downloaded from Drive: Siphn pipe.stl"
+      ],
+      "parts": [
+        {
+          "name": "back-case",
+          "role": "body",
+          "driveId": "1k8J8fA1ckGcn1k2-8sfRi3ak79mrT0x4",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/Back Case.stl"
+        },
+        {
+          "name": "snail-3-4",
+          "role": "accent",
+          "driveId": "1QS5e1K2EbzKUVmtH4jUjM1H9YpYFem2l",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/Snail 3-4.stl"
+        },
+        {
+          "name": "bracket",
+          "role": "body",
+          "driveId": "1-lSiluC5JGmVD71SCT_A33czHlO-6JOM",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/Bracket.stl"
+        },
+        {
+          "name": "bypass-arm",
+          "role": "accent",
+          "driveId": "1d9QvzSbxLR0WAad2w-l1xWJXR81-2aTj",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/Bypass Arm.stl"
+        },
+        {
+          "name": "bypass-cap",
+          "role": "accent",
+          "driveId": "1tC1KuRkhbkZm2YeZue30U2bdpOz1HzAo",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/Bypass Cap.stl"
+        },
+        {
+          "name": "outlet-pipe",
+          "role": "body",
+          "driveId": "1fwhiSx1yR8LOloFuAjU2k4eXFHF-tQuN",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/Outlet pipe.stl"
+        }
+      ]
+    },
+    {
+      "slug": "rhino-flolock",
+      "file": "rhino-flolock",
+      "family": "rhino-flolock",
+      "name": "Rhino FloLock",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 1,
+      "toMmReason": "STL in millimetres (140 mm flap)",
+      "notes": [],
+      "parts": [
+        {
+          "name": "body",
+          "role": "body",
+          "driveId": "1VSGgyujzgMJuypCE348J6IrxNSghwmOG",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/FloLock 1 of 2.stl"
+        },
+        {
+          "name": "flap",
+          "role": "accent",
+          "driveId": "1o4qFIurYThzQT1U-o4l16GofTkPij8De",
+          "sourcePath": "SuDS 3D Assets/Vortex Flow Control/FloLock 2 of 2.stl"
+        }
+      ]
+    },
+    {
+      "slug": "rhinolift-aqua",
+      "file": "rhinolift-aqua190s",
+      "family": "rhinolift",
+      "name": "RhinoLift AQUA 190S",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [
+        "built from Pumping Stations/AQUA/AQUA Breakdown.blend because these parts could not be downloaded on their own: AQUA Handle.fbx, AQUA Nut.fbx"
+      ],
+      "variants": [
+        "Pumping Stations/AQUA190S.stl (1.1 MB, Drive 1USGRjGfKptvqzxtXsqPxfpn08KHj-Vd0)"
+      ],
+      "parts": [
+        {
+          "name": "from-blend",
+          "role": "body",
+          "driveId": "1Wa95V06YWzbAhjSG-hgWBkoLihpv6wUh",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/AQUA/AQUA Breakdown.blend",
+          "split": true,
+          "roles": {
+            "casing": "body",
+            "main": "body",
+            "insides": "accent",
+            "plastic": "body",
+            "handle": "accent",
+            "nut": "accent"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "rhinolift-maxi",
+      "file": "rhinolift-maxi1600d",
+      "family": "rhinolift",
+      "name": "RhinoLift MAXI 1600 D",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "variants": [
+        "Pumping Stations/MAXI1600D.stl (11.7 MB, Drive 1UVcT0rY6QZ2bGe1XdwOO47afWzezbN9K)"
+      ],
+      "parts": [
+        {
+          "name": "casing",
+          "role": "body",
+          "driveId": "1UhN9EalIEyosLG4uXFe1qUKrYK_L65ED",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Casing.fbx"
+        },
+        {
+          "name": "insides",
+          "role": "accent",
+          "driveId": "1UgsYwmzrz3yeQWr9YUf88sqJO2EldZv7",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Insides.fbx"
+        },
+        {
+          "name": "insides-1",
+          "role": "accent",
+          "driveId": "1Wri_PIjj03YAVG_zJKwyEK5p_0slqQYc",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Insides 1.fbx"
+        },
+        {
+          "name": "insides-2",
+          "role": "accent",
+          "driveId": "1WynQnNIhZT8mh1CszpVn95KmsfbJFBnm",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Insides 2.fbx"
+        },
+        {
+          "name": "floats",
+          "role": "accent",
+          "driveId": "1WqHY8fQkZh4qbScvmIDF1jU_Trg-NnbG",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/MAXI/MAXI Floaties.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "rhinolift-mini",
+      "file": "rhinolift-mini2000d",
+      "family": "rhinolift",
+      "name": "RhinoLift MINI 2000 D",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "variants": [
+        "Pumping Stations/MINI2000D.stl (11.6 MB, Drive 1UWayOXB-AZsR2uEdNCtPiyuBO1t1VIAo)"
+      ],
+      "parts": [
+        {
+          "name": "casing",
+          "role": "body",
+          "driveId": "1UsDW9SvcE_ylf-OeUI7B9NLYq3vtwMRN",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/MINI/MINI Casing.fbx"
+        },
+        {
+          "name": "insides",
+          "role": "accent",
+          "driveId": "1UyKLd9GKCvdAtOXEaq4yvRqDuln9QYbP",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/MINI/MINI Insides.fbx"
+        },
+        {
+          "name": "insides-2",
+          "role": "accent",
+          "driveId": "1XZzTDiE8rSXuxGc35xf5m5Y2-hI1j2BG",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/MINI/MINI Insides 2.fbx"
+        },
+        {
+          "name": "floats",
+          "role": "accent",
+          "driveId": "1XWoNYRs7YDSdsWO9XjIJMSM_y8zIoguk",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/MINI/MINI Floats.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "rhinolift-pump-tank",
+      "file": "rhinolift-ps50",
+      "family": "rhinolift",
+      "name": "RhinoLift pump tank PS-50",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "PS-50-1.85-5-HS"
+        ]
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "variants": [
+        "Pumping Stations/Pump Tank/PS-50-1.85-5-HS.stl (31.8 MB, Drive 1VPlHeBj4oCYT3VJJytBBhSOqKM4Y2b8o)"
+      ],
+      "degradedBecause": [
+        "missing parts that could not be downloaded from Drive: Pump Tank Insides.fbx, Pump Tank Lid.fbx"
+      ],
+      "parts": [
+        {
+          "name": "casing",
+          "role": "body",
+          "driveId": "1VRWFVmmi3FVYbhH9quHHGpDoxL7MNT80",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Casing.fbx"
+        },
+        {
+          "name": "insides-2",
+          "role": "accent",
+          "driveId": "1XejtlP4AUck1M2l_qQpChptqwKnTbEam",
+          "sourcePath": "SuDS 3D Assets/Pumping Stations/Pump Tank/Pump Tank Insides 2.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "rhino-inspection-chamber",
+      "file": "rhino-inspection-chamber-sersic600",
+      "family": "rhino-inspection-chamber",
+      "name": "Rhino inspection chamber, surface",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERSIC600300"
+        ]
+      },
+      "toMm": 10,
+      "toMmReason": "STLs at 1 unit = 1 cm: body 70.5 units across is the 705 mm chamber",
+      "notes": [
+        "Same meshes as public/models/sic, which the configurator already uses"
+      ],
+      "variants": [
+        "SERSIC/SERSIC600300-2.stl (4.6 MB, Drive 1XHKiU8JcQEc_cUzq4N57GfoXM4yDx4my)",
+        "FIC450160-2.stl (3.6 MB, Drive 1X1fqLM2ClGYsKp_Cah14ADUOkZuE6L7f)"
+      ],
+      "parts": [
+        {
+          "name": "lid",
+          "role": "accent",
+          "driveId": "1khauTtvFEDMvKK4or6IiguJkFBedz8WK",
+          "sourcePath": "SuDS 3D Assets/SERSIC/SERSIC Lid.stl"
+        },
+        {
+          "name": "body",
+          "role": "body",
+          "driveId": "1l3uxLI1kkp7mTZX94bi_8ddN7zm_Wuu2",
+          "sourcePath": "SuDS 3D Assets/SERSIC/SERSIC Body.stl"
+        },
+        {
+          "name": "body-bottom",
+          "role": "body",
+          "driveId": "1lHRKRry-rJKXyHXklX0rY64Gcgbwvs3Y",
+          "sourcePath": "SuDS 3D Assets/SERSIC/SERSIC BodyBottom.stl"
+        },
+        {
+          "name": "base",
+          "role": "body",
+          "driveId": "1kyYiDGpoy9toGG8yqgqkGT2VhJ6VC9LI",
+          "sourcePath": "SuDS 3D Assets/SERSIC/SERSIC Base.stl"
+        },
+        {
+          "name": "inlet",
+          "role": "accent",
+          "driveId": "1krb1zwzNKKl6pFb5sFYUfEpvldev-pkm",
+          "sourcePath": "SuDS 3D Assets/SERSIC/SERSIC Inlet.stl"
+        }
+      ]
+    },
+    {
+      "slug": "rhino-inspection-chamber-5-inlet",
+      "file": "rhino-inspection-chamber-sercic600-5-inlet",
+      "family": "rhino-inspection-chamber",
+      "name": "Rhino inspection chamber, 5-inlet base",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERCIC600225"
+        ]
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm: rim 69.6 units is the 696 mm chamber",
+      "notes": [
+        "5 Inlet Base.stl is the same mesh as 5 Inlet.fbx (identical triangle count) and is not converted separately"
+      ],
+      "variants": [
+        "SERCIC600225-2.stl (5.2 MB, Drive 1X4y2nR38vbSuGpj3zqO6RKfqaJ0n-xJC)"
+      ],
+      "parts": [
+        {
+          "name": "rim",
+          "role": "accent",
+          "driveId": "1nARxUvdP6mJ0aAR98YROd5FhI-_BRRm_",
+          "sourcePath": "SuDS 3D Assets/ChamberRim.fbx"
+        },
+        {
+          "name": "body",
+          "role": "body",
+          "driveId": "1mlpAm32ku2ip8CFwsBOu-UibWE3zUmsT",
+          "sourcePath": "SuDS 3D Assets/BodyBase.fbx"
+        },
+        {
+          "name": "base",
+          "role": "body",
+          "driveId": "1mlPYUQYItEXFWtQbvFFmchWjtdpV_WTc",
+          "sourcePath": "SuDS 3D Assets/5 Inlet.fbx"
+        },
+        {
+          "name": "inlet",
+          "role": "accent",
+          "driveId": "1mnBGansr3u5QGU1z6qJlq5INxPiG7qbt",
+          "sourcePath": "SuDS 3D Assets/InletTube.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "rhino-inspection-chamber-base",
+      "file": "rhino-inspection-chamber-base-seb1050",
+      "family": "rhino-inspection-chamber",
+      "name": "Rhino inspection chamber moulded base",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SEB1050-600-600"
+        ]
+      },
+      "toMm": null,
+      "rotate": [
+        90,
+        0,
+        0
+      ],
+      "notes": [
+        "STEP master, declared millimetres; modelled Y-up so turned upright"
+      ],
+      "variants": [
+        "SEB600-150-150-150.stp (0.9 MB, Drive 1c0m4zN0POF4z7vY1Bih3AEu4cMO97nct)",
+        "SEB600-225-225.stp (1.7 MB, Drive 1bxHpD2kzY6mus79u5pSSSgqwm-yWOkpF)",
+        "SEB600-300-300.stp (0.6 MB, Drive 1bveRf-ZamWtTGJnGSHAuAFGybpb-cz6M)",
+        "750 Moulded base 450-300.stp (0.7 MB, Drive 1cB4qBNXvMitDxPB4Zyn5XH36B66YLG64)"
+      ],
+      "parts": [
+        {
+          "name": "base",
+          "role": "body",
+          "driveId": "1c64yldkLUh-r9KYfX5Cz1DOGwyk-KWoB",
+          "sourcePath": "Moulded bases STEP/SEB1050-600-600.stp"
+        }
+      ]
+    },
+    {
+      "slug": "rhino-inspection-chamber-cap",
+      "file": "rhino-inspection-chamber-cap-600",
+      "family": "rhino-inspection-chamber",
+      "name": "Rhino inspection chamber cap with dust cap upstand",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": null,
+      "rotate": [
+        90,
+        0,
+        0
+      ],
+      "notes": [],
+      "variants": [
+        "Cap with dust cap upstand 450.stp (0.0 MB, Drive 1cAI78uo2DvBuoLwqy2upmwvq05jGQyWg)"
+      ],
+      "status": "failed",
+      "reason": "source not downloaded: Moulded bases STEP/Cap with dust cap upstand 600.stp",
+      "parts": [
+        {
+          "name": "cap",
+          "role": "body",
+          "driveId": "1c9FXcbDTKMNfEsOVbpcPHW6Pip8e0Of2",
+          "sourcePath": "Moulded bases STEP/Cap with dust cap upstand 600.stp"
+        }
+      ]
+    },
+    {
+      "slug": "grease-trap-jumbo-micro",
+      "file": "grease-trap-jumbo-micro",
+      "family": "grease-trap",
+      "name": "Grease trap, Jumbo Micro",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [
+        "Jumbo Micro Casing XRay.fbx is a cut-away casing for section views; converted as its own item below",
+        "built from Grease Traps/Jumbo Micro Breakdown.blend because these parts could not be downloaded on their own: Jumbo Micro Inletfbx.fbx, Jumbo Micro Outlet.fbx"
+      ],
+      "parts": [
+        {
+          "name": "from-blend",
+          "role": "body",
+          "driveId": "1Z5CN7Z6gwRHggowMcddXY3wuz_QbvVRr",
+          "sourcePath": "SuDS 3D Assets/Grease Traps/Jumbo Micro Breakdown.blend",
+          "split": true,
+          "roles": {
+            "casing": "body",
+            "cover-housing": "body",
+            "cover": "accent",
+            "inlet": "accent",
+            "outlet": "accent"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "grease-trap-jumbo-micro-xray",
+      "file": "grease-trap-jumbo-micro-xray",
+      "family": "grease-trap",
+      "name": "Grease trap, Jumbo Micro, cut-away casing",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "parts": [
+        {
+          "name": "casing-xray",
+          "role": "body",
+          "driveId": "1_3Fyb8yGT0hmv1B78F3g9rQfFB6QXbcv",
+          "sourcePath": "SuDS 3D Assets/Grease Traps/Jumbo Micro Casing XRay.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "adapter-150-twinwall-en110",
+      "file": "adapter-150-twinwall-en110",
+      "family": "adapters",
+      "name": "Adapter, 150 Twinwall to EN110",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm: 183 mm across",
+      "notes": [],
+      "parts": [
+        {
+          "name": "adapter",
+          "role": "body",
+          "driveId": "1Z6vkswE8ttV8-xWRwaoi9lB1y4AMydLq",
+          "sourcePath": "SuDS 3D Assets/Adapters/150 Twinwall EN110 Adapter.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "adapter-225-twinwall-en150",
+      "file": "adapter-225-twinwall-en150",
+      "family": "adapters",
+      "name": "Adapter, 225 Twinwall to EN150",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "parts": [
+        {
+          "name": "adapter",
+          "role": "body",
+          "driveId": "1Z7yFyRrm6A2hBVtasnz_SWlFzKX1uhET",
+          "sourcePath": "SuDS 3D Assets/Adapters/225 Twinwall EN150 Adapter.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "adapter-225-ultrarib",
+      "file": "adapter-225-ultrarib",
+      "family": "adapters",
+      "name": "Adapter, 225 UltraRib",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [],
+      "parts": [
+        {
+          "name": "adapter",
+          "role": "body",
+          "driveId": "1Z8ecO54AmSYgjzRPH2tKSgzVUM9IPChy",
+          "sourcePath": "SuDS 3D Assets/Adapters/225 UltraRib Adapter.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "adapter-25-ridgidrain",
+      "file": "adapter-25-ridgidrain",
+      "family": "adapters",
+      "name": "Adapter, Ridgidrain",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm",
+      "notes": [
+        "File is named 25 Ridgidrain but measures 300 mm across; the 25 is not a diameter"
+      ],
+      "parts": [
+        {
+          "name": "adapter",
+          "role": "body",
+          "driveId": "1ZA0lrqlq3JwUphgcqyksh_YRbkUCIoBT",
+          "sourcePath": "SuDS 3D Assets/Adapters/25 Ridgidrain Adapter.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "siphon-housing",
+      "file": "siphon-housing",
+      "family": "siphon-housing",
+      "name": "Siphon housing",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": null,
+      "notes": [],
+      "parts": [
+        {
+          "name": "housing",
+          "role": "body",
+          "driveId": "126Hc1vsEp6g34NaoANIDHtJAFsqyLDN3",
+          "sourcePath": "SuDS 3D Assets/Siphon Housing/Housing.FCStd"
+        },
+        {
+          "name": "housing-2",
+          "role": "accent",
+          "driveId": "12YQ6cBoea2AyiVfGbBYQgBnP2aMg8mu6",
+          "sourcePath": "SuDS 3D Assets/Siphon Housing/Housing2.FCStd"
+        }
+      ]
+    },
+    {
+      "slug": "icon-study",
+      "file": "icon-study",
+      "family": "icon-study",
+      "name": "Icon study",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "toMm": 10,
+      "toMmReason": "Blender-made, 1 unit = 1 cm; an icon, so scale is nominal",
+      "notes": [],
+      "parts": [
+        {
+          "name": "centre",
+          "role": "accent",
+          "driveId": "1deh9x5JYwINRb_yBxDZ2IzIsCcFnOOLG",
+          "sourcePath": "SuDS 3D Assets/Icon/IconCenter.fbx"
+        },
+        {
+          "name": "left",
+          "role": "body",
+          "driveId": "1dYZEjEPUL7J5lOUhRvxQ5rRO3b2SH5tI",
+          "sourcePath": "SuDS 3D Assets/Icon/IconLeft.fbx"
+        },
+        {
+          "name": "right",
+          "role": "body",
+          "driveId": "1ddSzEv5eEE6HFSPekxZHh5WIpmxLRyA4",
+          "sourcePath": "SuDS 3D Assets/Icon/IconRight.fbx"
+        }
+      ]
+    },
+    {
+      "slug": "bell-siphon",
+      "file": "bell-siphon",
+      "family": "siphon-housing",
+      "name": "Bell siphon",
+      "status": "failed",
+      "reason": "needs SolidWorks (.sldprt/.sldasm only). The filenames also carry an uploads_files_ prefix, which suggests a third-party marketplace download rather than a SuDS Enviro model.",
+      "notes": [],
+      "extraSourceIds": [
+        "1viNzPAE42CDpkIMhg56n9yjscfvs86Vm",
+        "1vpiHw1DnsAkBPWTxz1wsgVtjRmuDHIsa",
+        "1vvX69-mCXc9p4y1UVe5VtixkefCHd4P8"
+      ]
+    }
+  ]
+}

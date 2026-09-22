@@ -1,0 +1,260 @@
+{
+  "_about": "Hand-authored product list. Names and codes follow the brand system naming section; sales code first, drawing code carried alongside because the two schemes are not yet mapped. Each part names its Drive source by a path regex that must match exactly one inventory.json entry; resolve_products.py turns this into products.json with Drive ids. toMm records the unit decision per product and why: the Blender-made files in this Drive were modelled at 1 unit = 1 cm whatever their headers say, which the nominal sizes prove.",
+  "families": [
+    {"id": "sudsceptor", "name": "SudSceptor", "codes": "SEHDS (drawings SESSHDS)", "note": "Hydrodynamic separator."},
+    {"id": "rhinopod", "name": "RhinoPod", "codes": "SERPOD"},
+    {"id": "rhinopit", "name": "RhinoPit", "codes": "SERPT, CP"},
+    {"id": "rhinoshield", "name": "RhinoShield", "codes": "SERS, SERSD"},
+    {"id": "rhinoduct", "name": "RhinoDuct", "codes": "SERD"},
+    {"id": "rhinoroflo", "name": "RhinoRoFlo", "codes": "SERF, SERFP, POC", "note": "Orifice flow control."},
+    {"id": "rhinorotex", "name": "RhinoRoTex", "codes": "VFC, FVC", "note": "Vortex flow control. Two generations are in Drive: a September 2024 set and April 2025 part STLs."},
+    {"id": "rhino-flolock", "name": "Rhino FloLock", "note": "Backflow device."},
+    {"id": "rhinolift", "name": "RhinoLift", "note": "Pumping stations. AQUA, MAXI, MINI and the pump tank are Drive folder names; no settled model names or codes exist for them yet."},
+    {"id": "rhino-inspection-chamber", "name": "Rhino inspection chamber", "codes": "SIC, SERSIC, FIC, SERFIC, RIC, RSIC, RFIC"},
+    {"id": "grease-trap", "name": "Grease trap", "note": "No settled brand name yet."},
+    {"id": "adapters", "name": "Pipe adapters", "note": "No settled brand name yet."},
+    {"id": "siphon-housing", "name": "Siphon housing", "note": "R&D. No settled brand name."},
+    {"id": "icon-study", "name": "Icon study", "note": "3D study of the icon, not a product."}
+  ],
+  "products": [
+    {"slug": "sudsceptor", "file": "sudsceptor-sehds1800", "family": "sudsceptor", "name": "SudSceptor",
+     "codes": {"sales": ["SEHDS1800"], "drawing": []},
+     "toMm": 10, "toMmReason": "confirm against the 1800 nominal diameter once measured",
+     "parts": [
+       {"name": "casing", "role": "body", "path": "Hydrdynamic Separaters/Casing\\.fbx$"},
+       {"name": "bottom-bowl", "role": "body", "path": "Hydrdynamic Separaters/Bottom Bowl\\.fbx$"},
+       {"name": "stand", "role": "accent", "path": "Hydrdynamic Separaters/Stand\\.fbx$"},
+       {"name": "water-track", "role": "accent", "path": "Hydrdynamic Separaters/Water Track\\.fbx$"},
+       {"name": "centre-pipe", "role": "accent", "path": "Hydrdynamic Separaters/Centre Pipe\\.fbx$"},
+       {"name": "inner-curved-baffle", "role": "accent", "path": "Hydrdynamic Separaters/Inner Curved Baffle#\\.fbx$"},
+       {"name": "outer-curved-baffle", "role": "accent", "path": "Hydrdynamic Separaters/Outer Curved Baffle#\\.fbx$"},
+       {"name": "inlet", "role": "body", "path": "Hydrdynamic Separaters/inlet\\.fbx$"},
+       {"name": "outlet", "role": "body", "path": "Hydrdynamic Separaters/Outlet\\.fbx$"}
+     ],
+     "blendFallback": "Hydrdynamic Separaters/Breakout\\.blend$",
+     "variantPaths": ["SEHDS/SEHDS1200225-1-6-2\\.9\\.stl$", "Hydrdynamic Separaters/1\\.8 dia Hydro Sep\\.stl$"]},
+
+    {"slug": "rhinopod", "file": "rhinopod-serpod1850", "family": "rhinopod", "name": "RhinoPod",
+     "codes": {"sales": [], "drawing": ["SERPOD1850"]}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "top", "role": "accent", "path": "Rhino Pod/Rhinopod-Top\\.fbx$"},
+       {"name": "mid", "role": "accent", "path": "Rhino Pod/Rhinopod-Mid\\.fbx$"},
+       {"name": "casing", "role": "body", "path": "Rhino Pod/Rhinopod-Casing\\.fbx$"},
+       {"name": "bottom", "role": "body", "path": "Rhino Pod/Rhinopod-Bottom\\.fbx$"}
+     ],
+     "blendFallback": "Rhino Pod/Rhino Pod Breakdown\\.blend$",
+     "variantPaths": ["^SuDS 3D Assets/Rhinopod\\.stl$"]},
+
+    {"slug": "rhinopit", "file": "rhinopit-serpt600", "family": "rhinopit", "name": "RhinoPit",
+     "codes": {"sales": [], "drawing": ["SERPT600160", "SERPT600150"]}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "base", "role": "body", "path": "SERPT/SERPT Base\\.fbx$"},
+       {"name": "tubing", "role": "body", "path": "SERPT/SERPT Tubing\\.fbx$"},
+       {"name": "inlet", "role": "accent", "path": "SERPT/SERPT Inlet\\.fbx$"},
+       {"name": "outlet", "role": "accent", "path": "SERPT/SERPT Outlet\\.fbx$"}
+     ],
+     "blendFallback": "SERPT/SERPT Breakdown\\.blend$",
+     "variantPaths": ["SERPT/SERPT600160-2\\.stl$", "SERPT/SERPT600150-1\\.5\\.stl$"]},
+
+    {"slug": "rhinoshield", "file": "rhinoshield-sersd500", "family": "rhinoshield", "name": "RhinoShield",
+     "codes": {"sales": [], "drawing": ["SERSD500160"]}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "base", "role": "body", "path": "SERSD/SERSD Base\\.fbx$"},
+       {"name": "base-tubing", "role": "body", "path": "SERSD/SERSD Base Tubing\\.fbx$"},
+       {"name": "top-level-1", "role": "body", "path": "SERSD/SERSD Top Level 1\\.fbx$"},
+       {"name": "top-level-2", "role": "body", "path": "SERSD/SERSD Top Level 2\\.fbx$"},
+       {"name": "filter-holder", "role": "accent", "path": "SERSD/SERSD Filter Holder\\.fbx$"},
+       {"name": "filter-long", "role": "accent", "path": "SERSD/SERSD Filter Long\\.fbx$"},
+       {"name": "filter-short", "role": "accent", "path": "SERSD/SERSD Filter Short\\.fbx$"}
+     ],
+     "blendFallback": "SERSD/SERSD Breakdown\\.blend$",
+     "variantPaths": ["SERSD/SERSD500160-2\\.stl$"]},
+
+    {"slug": "rhinoduct", "file": "rhinoduct-serd", "family": "rhinoduct", "name": "RhinoDuct",
+     "codes": {"sales": [], "drawing": []}, "toMm": 1, "toMmReason": "RhinoDuct.stl is in millimetres (930 x 780 x 488)",
+     "parts": [
+       {"name": "duct", "role": "body", "path": "^SuDS 3D Assets/RhinoDuct\\.stl$"}
+     ],
+     "notes": ["RhinoDuct/Blender.blend and RhinoDuct Cover.fbx are the same duct at 1 unit = 1 cm with a cover; converted separately below so the two can be compared"]},
+
+    {"slug": "rhinoduct-with-cover", "file": "rhinoduct-serd-cover", "family": "rhinoduct", "name": "RhinoDuct with cover",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "duct", "role": "body", "path": "RhinoDuct/Blender\\.blend$"},
+       {"name": "cover", "role": "accent", "path": "RhinoDuct/RhinoDuct Cover\\.fbx$"}
+     ]},
+
+    {"slug": "rhinoroflo", "file": "rhinoroflo-poc600", "family": "rhinoroflo", "name": "RhinoRoFlo",
+     "codes": {"sales": [], "drawing": ["POC600", "SERFP600150"]}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "base", "role": "body", "path": "Orifice Flow Control/POC-Base\\.fbx$"},
+       {"name": "tube", "role": "body", "path": "Orifice Flow Control/POC-Tube\\.fbx$"},
+       {"name": "divider", "role": "body", "path": "Orifice Flow Control/POC-Divider\\.fbx$"},
+       {"name": "orifice", "role": "accent", "path": "Orifice Flow Control/POC-Orifice\\.fbx$"},
+       {"name": "orifice-latch", "role": "accent", "path": "Orifice Flow Control/POC-Orifice-Latch\\.fbx$"},
+       {"name": "wire", "role": "accent", "path": "Orifice Flow Control/POC-Wire\\.fbx$"},
+       {"name": "wire-clips", "role": "accent", "path": "Orifice Flow Control/POC-Wire-Clips\\.fbx$"}
+     ],
+     "blendFallback": "Orifice Flow Control/POC Breakdown\\.blend$",
+     "variantPaths": ["Orifice Flow Control/POC600-1\\.5\\.stl$", "^SuDS 3D Assets/SERFP600150-2\\.stl$"]},
+
+    {"slug": "rhinorotex", "file": "rhinorotex-c1200", "family": "rhinorotex", "name": "RhinoRoTex (September 2024 set)",
+     "codes": {"sales": [], "drawing": ["RoTex-C1200"]}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "rotex", "role": "accent", "path": "Vortex Flow Control/RoTexFunc\\.fbx$"},
+       {"name": "base", "role": "body", "path": "Vortex Flow Control/RoTex BaseFunc\\.stl$"}
+     ],
+     "blendFallback": "Vortex Flow Control/RoTex Breakdown\\.blend$",
+     "variantPaths": ["Vortex Flow Control/RoTex-C1200-2\\.stl$", "^SuDS 3D Assets/Flow Control Tank 1200 dia x 2m\\.stl$"]},
+
+    {"slug": "rhinorotex-2025", "file": "rhinorotex-2025-parts", "family": "rhinorotex", "name": "RhinoRoTex (April 2025 parts)",
+     "codes": {"sales": [], "drawing": []}, "toMm": null,
+     "parts": [
+       {"name": "back-case", "role": "body", "path": "Vortex Flow Control/Back Case\\.stl$"},
+       {"name": "snail-3-4", "role": "accent", "path": "Vortex Flow Control/Snail 3-4\\.stl$"},
+       {"name": "bracket", "role": "body", "path": "Vortex Flow Control/Bracket\\.stl$"},
+       {"name": "bypass-arm", "role": "accent", "path": "Vortex Flow Control/Bypass Arm\\.stl$"},
+       {"name": "bypass-cap", "role": "accent", "path": "Vortex Flow Control/Bypass Cap\\.stl$"},
+       {"name": "siphon-pipe", "role": "accent", "path": "Vortex Flow Control/Siphn pipe\\.stl$"},
+       {"name": "outlet-pipe", "role": "body", "path": "Vortex Flow Control/Outlet pipe\\.stl$"}
+     ]},
+
+    {"slug": "rhino-flolock", "file": "rhino-flolock", "family": "rhino-flolock", "name": "Rhino FloLock",
+     "codes": {"sales": [], "drawing": []}, "toMm": 1, "toMmReason": "STL in millimetres (140 mm flap)",
+     "parts": [
+       {"name": "body", "role": "body", "path": "Vortex Flow Control/FloLock 1 of 2\\.stl$"},
+       {"name": "flap", "role": "accent", "path": "Vortex Flow Control/FloLock 2 of 2\\.stl$"}
+     ]},
+
+    {"slug": "rhinolift-aqua", "file": "rhinolift-aqua190s", "family": "rhinolift", "name": "RhinoLift AQUA 190S",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "casing", "role": "body", "path": "AQUA/AQUA Casing\\.fbx$"},
+       {"name": "main", "role": "body", "path": "AQUA/AQUA Main\\.fbx$"},
+       {"name": "insides", "role": "accent", "path": "AQUA/AQUA Insides\\.fbx$"},
+       {"name": "plastic", "role": "body", "path": "AQUA/AQUA Plastic\\.fbx$"},
+       {"name": "handle", "role": "accent", "path": "AQUA/AQUA Handle\\.fbx$"},
+       {"name": "nut", "role": "accent", "path": "AQUA/AQUA Nut\\.fbx$"}
+     ],
+     "blendFallback": "AQUA/AQUA Breakdown\\.blend$",
+     "variantPaths": ["Pumping Stations/AQUA190S\\.stl$"]},
+
+    {"slug": "rhinolift-maxi", "file": "rhinolift-maxi1600d", "family": "rhinolift", "name": "RhinoLift MAXI 1600 D",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "casing", "role": "body", "path": "MAXI/MAXI Casing\\.fbx$"},
+       {"name": "insides", "role": "accent", "path": "MAXI/MAXI Insides\\.fbx$"},
+       {"name": "insides-1", "role": "accent", "path": "MAXI/MAXI Insides 1\\.fbx$"},
+       {"name": "insides-2", "role": "accent", "path": "MAXI/MAXI Insides 2\\.fbx$"},
+       {"name": "floats", "role": "accent", "path": "MAXI/MAXI Floaties\\.fbx$"}
+     ],
+     "variantPaths": ["Pumping Stations/MAXI1600D\\.stl$"]},
+
+    {"slug": "rhinolift-mini", "file": "rhinolift-mini2000d", "family": "rhinolift", "name": "RhinoLift MINI 2000 D",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "casing", "role": "body", "path": "MINI/MINI Casing\\.fbx$"},
+       {"name": "insides", "role": "accent", "path": "MINI/MINI Insides\\.fbx$"},
+       {"name": "insides-2", "role": "accent", "path": "MINI/MINI Insides 2\\.fbx$"},
+       {"name": "floats", "role": "accent", "path": "MINI/MINI Floats\\.fbx$"}
+     ],
+     "variantPaths": ["Pumping Stations/MINI2000D\\.stl$"]},
+
+    {"slug": "rhinolift-pump-tank", "file": "rhinolift-ps50", "family": "rhinolift", "name": "RhinoLift pump tank PS-50",
+     "codes": {"sales": [], "drawing": ["PS-50-1.85-5-HS"]}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "casing", "role": "body", "path": "Pump Tank/Pump Tank Casing\\.fbx$"},
+       {"name": "insides", "role": "accent", "path": "Pump Tank/Pump Tank Insides\\.fbx$"},
+       {"name": "insides-2", "role": "accent", "path": "Pump Tank/Pump Tank Insides 2\\.fbx$"},
+       {"name": "lid", "role": "body", "path": "Pump Tank/Pump Tank Lid\\.fbx$"}
+     ],
+     "variantPaths": ["Pump Tank/PS-50-1\\.85-5-HS\\.stl$"]},
+
+    {"slug": "rhino-inspection-chamber", "file": "rhino-inspection-chamber-sersic600", "family": "rhino-inspection-chamber", "name": "Rhino inspection chamber, surface",
+     "codes": {"sales": [], "drawing": ["SERSIC600300"]}, "toMm": 10, "toMmReason": "STLs at 1 unit = 1 cm: body 70.5 units across is the 705 mm chamber",
+     "parts": [
+       {"name": "lid", "role": "accent", "path": "SERSIC/SERSIC Lid\\.stl$"},
+       {"name": "body", "role": "body", "path": "SERSIC/SERSIC Body\\.stl$"},
+       {"name": "body-bottom", "role": "body", "path": "SERSIC/SERSIC BodyBottom\\.stl$"},
+       {"name": "base", "role": "body", "path": "SERSIC/SERSIC Base\\.stl$"},
+       {"name": "inlet", "role": "accent", "path": "SERSIC/SERSIC Inlet\\.stl$"}
+     ],
+     "notes": ["Same meshes as public/models/sic, which the configurator already uses"],
+     "variantPaths": ["SERSIC/SERSIC600300-2\\.stl$", "^SuDS 3D Assets/FIC450160-2\\.stl$"]},
+
+    {"slug": "rhino-inspection-chamber-5-inlet", "file": "rhino-inspection-chamber-sercic600-5-inlet", "family": "rhino-inspection-chamber", "name": "Rhino inspection chamber, 5-inlet base",
+     "codes": {"sales": [], "drawing": ["SERCIC600225"]}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm: rim 69.6 units is the 696 mm chamber",
+     "parts": [
+       {"name": "rim", "role": "accent", "path": "^SuDS 3D Assets/ChamberRim\\.fbx$"},
+       {"name": "body", "role": "body", "path": "^SuDS 3D Assets/BodyBase\\.fbx$"},
+       {"name": "base", "role": "body", "path": "^SuDS 3D Assets/5 Inlet\\.fbx$"},
+       {"name": "inlet", "role": "accent", "path": "^SuDS 3D Assets/InletTube\\.fbx$"}
+     ],
+     "notes": ["5 Inlet Base.stl is the same mesh as 5 Inlet.fbx (identical triangle count) and is not converted separately"],
+     "variantPaths": ["^SuDS 3D Assets/SERCIC600225-2\\.stl$"]},
+
+    {"slug": "rhino-inspection-chamber-base", "file": "rhino-inspection-chamber-base-seb1050", "family": "rhino-inspection-chamber", "name": "Rhino inspection chamber moulded base",
+     "codes": {"sales": [], "drawing": ["SEB1050-600-600"]}, "toMm": null, "rotate": [90, 0, 0],
+     "parts": [
+       {"name": "base", "role": "body", "path": "SEB1050-600-600\\.stp$"}
+     ],
+     "notes": ["STEP master, declared millimetres; modelled Y-up so turned upright"],
+     "variantPaths": ["SEB600-150-150-150\\.stp$", "SEB600-225-225\\.stp$", "SEB600-300-300\\.stp$", "750 Moulded base 450-300\\.stp$"]},
+
+    {"slug": "rhino-inspection-chamber-cap", "file": "rhino-inspection-chamber-cap-600", "family": "rhino-inspection-chamber", "name": "Rhino inspection chamber cap with dust cap upstand",
+     "codes": {"sales": [], "drawing": []}, "toMm": null, "rotate": [90, 0, 0],
+     "parts": [
+       {"name": "cap", "role": "body", "path": "Cap with dust cap upstand 600\\.stp$"}
+     ],
+     "variantPaths": ["Cap with dust cap upstand 450\\.stp$"]},
+
+    {"slug": "grease-trap-jumbo-micro", "file": "grease-trap-jumbo-micro", "family": "grease-trap", "name": "Grease trap, Jumbo Micro",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [
+       {"name": "casing", "role": "body", "path": "Grease Traps/Jumbo Micro Casing\\.fbx$"},
+       {"name": "cover-housing", "role": "body", "path": "Grease Traps/Jumbo Micro Cover Housing\\.fbx$"},
+       {"name": "cover", "role": "accent", "path": "Grease Traps/Jumbo Micro Cover\\.fbx$"},
+       {"name": "inlet", "role": "accent", "path": "Grease Traps/Jumbo Micro Inletfbx\\.fbx$"},
+       {"name": "outlet", "role": "accent", "path": "Grease Traps/Jumbo Micro Outlet\\.fbx$"}
+     ],
+     "blendFallback": "Grease Traps/Jumbo Micro Breakdown\\.blend$",
+     "notes": ["Jumbo Micro Casing XRay.fbx is a cut-away casing for section views; converted as its own item below"]},
+
+    {"slug": "grease-trap-jumbo-micro-xray", "file": "grease-trap-jumbo-micro-xray", "family": "grease-trap", "name": "Grease trap, Jumbo Micro, cut-away casing",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [{"name": "casing-xray", "role": "body", "path": "Grease Traps/Jumbo Micro Casing XRay\\.fbx$"}]},
+
+    {"slug": "adapter-150-twinwall-en110", "file": "adapter-150-twinwall-en110", "family": "adapters", "name": "Adapter, 150 Twinwall to EN110",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm: 183 mm across",
+     "parts": [{"name": "adapter", "role": "body", "path": "Adapters/150 Twinwall EN110 Adapter\\.fbx$"}]},
+    {"slug": "adapter-225-twinwall-en150", "file": "adapter-225-twinwall-en150", "family": "adapters", "name": "Adapter, 225 Twinwall to EN150",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [{"name": "adapter", "role": "body", "path": "Adapters/225 Twinwall EN150 Adapter\\.fbx$"}]},
+    {"slug": "adapter-225-ultrarib", "file": "adapter-225-ultrarib", "family": "adapters", "name": "Adapter, 225 UltraRib",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [{"name": "adapter", "role": "body", "path": "Adapters/225 UltraRib Adapter\\.fbx$"}]},
+    {"slug": "adapter-25-ridgidrain", "file": "adapter-25-ridgidrain", "family": "adapters", "name": "Adapter, Ridgidrain",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm",
+     "parts": [{"name": "adapter", "role": "body", "path": "Adapters/25 Ridgidrain Adapter\\.fbx$"}],
+     "notes": ["File is named 25 Ridgidrain but measures 300 mm across; the 25 is not a diameter"]},
+
+    {"slug": "siphon-housing", "file": "siphon-housing", "family": "siphon-housing", "name": "Siphon housing",
+     "codes": {"sales": [], "drawing": []}, "toMm": null,
+     "parts": [
+       {"name": "housing", "role": "body", "path": "Siphon Housing/Housing\\.FCStd$"},
+       {"name": "housing-2", "role": "accent", "path": "Siphon Housing/Housing2\\.FCStd$"}
+     ]},
+
+    {"slug": "icon-study", "file": "icon-study", "family": "icon-study", "name": "Icon study",
+     "codes": {"sales": [], "drawing": []}, "toMm": 10, "toMmReason": "Blender-made, 1 unit = 1 cm; an icon, so scale is nominal",
+     "parts": [
+       {"name": "centre", "role": "accent", "path": "Icon/IconCenter\\.fbx$"},
+       {"name": "left", "role": "body", "path": "Icon/IconLeft\\.fbx$"},
+       {"name": "right", "role": "body", "path": "Icon/IconRight\\.fbx$"}
+     ]},
+
+    {"slug": "bell-siphon", "file": "bell-siphon", "family": "siphon-housing", "name": "Bell siphon",
+     "status": "failed", "reason": "needs SolidWorks (.sldprt/.sldasm only). The filenames also carry an uploads_files_ prefix, which suggests a third-party marketplace download rather than a SuDS Enviro model.",
+     "extraPaths": ["Bell Siphon/"]}
+  ]
+}

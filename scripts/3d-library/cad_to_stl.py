@@ -41,19 +41,23 @@ def mesh_and_write(shape: TopoDS_Shape, out: Path, deflection: float) -> None:
         raise RuntimeError(f'STL write failed for {out.name}')
 
 
+# OCP renamed the static downcasts between releases (Solid_s vs Solid).
+_solid = getattr(TopoDS, 'Solid_s', None) or getattr(TopoDS, 'Solid')
+
+
 def solids(shape: TopoDS_Shape) -> list[TopoDS_Shape]:
     found = []
     exp = TopExp_Explorer(shape, TopAbs_SOLID)
     while exp.More():
-        found.append(TopoDS.Solid_s(exp.Current()))
+        found.append(_solid(exp.Current()))
         exp.Next()
     return found
 
 
 def step_unit(path: Path) -> str:
-    # The header names the length unit in SI_UNIT(.MILLI.,.METRE.) or a
+    # The file names its length unit in SI_UNIT(.MILLI.,.METRE.) or a
     # CONVERSION_BASED_UNIT('INCH', ...). Read it rather than assume mm.
-    head = path.read_bytes()[:400_000].decode('latin-1', 'ignore').upper()
+    head = path.read_bytes().decode('latin-1', 'ignore').upper()
     if re.search(r"CONVERSION_BASED_UNIT\s*\(\s*'INCH'", head):
         return 'inch'
     m = re.search(r'SI_UNIT\s*\(\s*\.(\w+)\.\s*,\s*\.METRE\.\s*\)', head)

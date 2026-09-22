@@ -27,7 +27,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent
-LIB = REPO / 'public' / 'models' / 'library' / 'v1'
+# OUT points a review build at a staging folder instead of the published library.
+LIB = Path(os.environ.get('OUT', REPO / 'public' / 'models' / 'library' / 'v1')).resolve()
 WORK = Path(os.environ.get('WORK', HERE / 'work'))
 SRC = WORK / 'src'
 VENV_PY = Path(os.environ.get('VENV', WORK / 'venv')) / 'bin' / 'python'
@@ -41,6 +42,11 @@ def run(cmd: list[str], **kw) -> str:
     if res.returncode != 0:
         raise RuntimeError(f'{Path(cmd[1]).name} failed: {(res.stderr or res.stdout).strip()[-800:]}')
     return res.stdout
+
+
+def last_json(out: str) -> dict:
+    # The node tools log progress before their one-line JSON result.
+    return json.loads(out.strip().splitlines()[-1])
 
 
 def report_line(out: str) -> dict:
@@ -66,15 +72,16 @@ def resolve_parts(product: dict, tmp: Path) -> tuple[list[dict], list[str]]:
         src = local_source(part['driveId'])
         if src.suffix.lower() in ('.stp', '.step', '.fcstd'):
             out_dir = tmp / 'cad' / part['name']
-            rep = json.loads(run([str(VENV_PY), str(HERE / 'cad_to_stl.py'), str(src), str(out_dir)]))
+            rep = last_json(run([str(VENV_PY), str(HERE / 'cad_to_stl.py'), str(src), str(out_dir)]))
             notes.append(f"{part['name']}: tessellated from {src.suffix} ({rep['solids']} solids, declared {rep['declaredUnit']})")
             for i, stl in enumerate(rep['files']):
                 name = part['name'] if len(rep['files']) == 1 else f"{part['name']}-{i + 1:02d}"
                 parts.append({'name': name, 'role': part.get('role', 'body'), 'src': stl})
         else:
             entry = {'name': part['name'], 'role': part.get('role', 'body'), 'src': str(src)}
-            if part.get('objects'):
-                entry['objects'] = part['objects']
+            for k in ('objects', 'split', 'roles'):
+                if part.get(k):
+                    entry[k] = part[k]
             parts.append(entry)
     return parts, notes
 
@@ -111,11 +118,11 @@ def build(product: dict) -> dict:
     base['notes'] += rep['notes']
 
     # Compress: assembled file and each part.
-    asm = json.loads(run(['node', str(HERE / 'optimize.mjs'), rep['rawGlb'], str(out_dir / f'{file}.glb')]))
+    asm = last_json(run(['node', str(HERE / 'optimize.mjs'), rep['rawGlb'], str(out_dir / f'{file}.glb')]))
     part_out = []
     for p in rep['parts']:
         dst = out_dir / 'parts' / f"{file}--{p['name']}.glb"
-        po = json.loads(run(['node', str(HERE / 'optimize.mjs'), p['rawGlb'], str(dst)]))
+        po = last_json(run(['node', str(HERE / 'optimize.mjs'), p['rawGlb'], str(dst)]))
         part_out.append({
             'name': p['name'], 'role': p['role'], 'source': p['src'],
             'path': str(dst.relative_to(LIB)), 'bytes': po['bytes'], 'triangles': po['tris'],
@@ -125,7 +132,7 @@ def build(product: dict) -> dict:
 
     roles = {p['name']: p['role'] for p in rep['parts']}
     thumb = out_dir / f'{file}.png'
-    th = json.loads(run(['node', str(HERE / 'thumbnail.mjs'), str(out_dir / f'{file}.glb'), str(thumb), json.dumps(roles)]))
+    th = last_json(run(['node', str(HERE / 'thumbnail.mjs'), str(out_dir / f'{file}.glb'), str(thumb), json.dumps(roles)]))
 
     problems = list(product.get('degradedBecause', []))
     if asm['bytes'] > MAX_BYTES:

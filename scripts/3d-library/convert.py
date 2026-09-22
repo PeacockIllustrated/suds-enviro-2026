@@ -143,6 +143,11 @@ def join_as(objs: list[bpy.types.Object], name: str) -> bpy.types.Object:
     return ob
 
 
+def slug(name: str) -> str:
+    import re
+    return re.sub(r'[^a-z0-9]+', '-', name.lower().split('.')[0]).strip('-') or 'part'
+
+
 def tri_count(ob: bpy.types.Object) -> int:
     ob.data.calc_loop_triangles()
     return len(ob.data.loop_triangles)
@@ -202,14 +207,20 @@ def main() -> None:
             report['notes'].append(f"{p['name']}: no mesh objects imported from {src.name}")
             continue
         label, file_mm = declared_unit(src)
-        ob = join_as(objs, p['name'])
-        lo, hi = bbox([ob])
-        entry = {'name': p['name'], 'role': p.get('role', 'body'), 'src': src.name,
-                 'declaredUnit': label, 'declaredMmPerUnit': file_mm,
-                 'rawSize': [round(v, 4) for v in (hi - lo)],
-                 'trisIn': tri_count(ob),
-                 'materials': [m.name for m in ob.data.materials if m]}
-        parts.append((ob, entry, src))
+        # split: a breakdown scene, one part per mesh object, named after it.
+        groups = [([o], slug(o.name)) for o in objs] if p.get('split') else [(objs, p['name'])]
+        for group, name in groups:
+            ob = join_as(group, name)
+            lo, hi = bbox([ob])
+            role = p.get('role', 'body')
+            if p.get('split'):
+                role = next((r for k, r in (p.get('roles') or {}).items() if k.replace('-', '') in name.replace('-', '')), 'body')
+            entry = {'name': ob.name, 'role': role, 'src': src.name,
+                     'declaredUnit': label, 'declaredMmPerUnit': file_mm,
+                     'rawSize': [round(v, 4) for v in (hi - lo)],
+                     'trisIn': tri_count(ob),
+                     'materials': [m.name for m in ob.data.materials if m]}
+            parts.append((ob, entry, src))
     if measure:
         report['parts'] = [e for _, e, _ in parts]
         print('REPORT ' + json.dumps(report))
