@@ -57,8 +57,9 @@ export const RHINOPOD: LibraryEntry = {
 }
 
 // RhinoRoFlo POC600 (SERF orifice chamber): 904 x 1495 x 708 mm. The
-// orifice plate hangs on a pull string and lifts out for maintenance, so
-// the plate, string, clips and latch move up together.
+// orifice plate hangs on a pull string and lifts out for maintenance; in the
+// breakout the plate, string, clips and latch move out together, clear of
+// the riser.
 export const POC600: LibraryEntry = {
   url: `${LIB}/rhinoroflo/rhinoroflo-poc600.glb`,
   name: 'RhinoRoFlo POC600',
@@ -66,10 +67,10 @@ export const POC600: LibraryEntry = {
     'poc-tube': { label: 'Chamber riser', role: 'casing', explode: [0, 900, 0] },
     'poc-base': { label: 'Chamber base and outlet', role: 'casing', explode: [0, 0, 0] },
     'poc-divider': { label: 'Divider wall', role: 'insides', explode: [0, 0, 0] },
-    'poc-orifice': { label: 'Orifice plate', role: 'accent', explode: [-160, 560, 0] },
-    'poc-orifice-latch': { label: 'Orifice latch', role: 'accent', explode: [-160, 560, 0] },
-    'poc-string': { label: 'Pull string', role: 'insides', explode: [-160, 560, 0] },
-    'poc-string-clips': { label: 'String clips', role: 'insides', explode: [-160, 560, 0], labelled: false },
+    'poc-orifice': { label: 'Orifice plate', role: 'accent', explode: [-480, 260, 0] },
+    'poc-orifice-latch': { label: 'Orifice latch', role: 'accent', explode: [-480, 260, 0] },
+    'poc-string': { label: 'Pull string', role: 'insides', explode: [-480, 260, 0] },
+    'poc-string-clips': { label: 'String clips', role: 'insides', explode: [-480, 260, 0], labelled: false },
   },
 }
 export const POC600_DIAMETER = 600

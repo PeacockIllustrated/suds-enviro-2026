@@ -291,7 +291,7 @@ function DrawPart({ id, geometry, role, color, explode, fade, thickness, registr
 
   let body: ReactNode
   if (role === 'water' && water) {
-    body = <mesh geometry={geometry} material={water} raycast={NO_RAYCAST} />
+    body = <mesh geometry={geometry} material={water} raycast={NO_RAYCAST} renderOrder={1} />
   } else {
     const opacity = opacityFor(role, fade)
     const see = opacity < 0.999
@@ -467,7 +467,25 @@ function SceneContent({
   interaction,
 }: SceneProps & { libParts: LibraryPart[][] }) {
   const flowWater = useWaterMaterial(5)
-  const stillWater = useWaterMaterial(1.4)
+  // Still water is see-through so tank and sump internals stay readable; it
+  // has no outline shell, so the opaque-water caveat in toon.tsx does not apply.
+  const stillBase = useWaterMaterial(1.4)
+  const stillWater = useMemo(() => {
+    const m = stillBase.clone()
+    m.transparent = true
+    m.depthWrite = false
+    m.uniforms.uOpacity.value = 0.62
+    return m
+  }, [stillBase])
+  const stillSync = useRef({ from: stillBase, to: stillWater })
+  useEffect(() => {
+    stillSync.current = { from: stillBase, to: stillWater }
+    return () => stillWater.dispose()
+  }, [stillBase, stillWater])
+  useFrame(() => {
+    const { from, to } = stillSync.current
+    to.uniforms.uTime.value = from.uniforms.uTime.value
+  })
   const registry = useRef(new PartRegistry())
   const root = useRef<THREE.Group>(null)
   const controls = useRef<OrbitControlsImpl>(null)

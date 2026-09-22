@@ -367,7 +367,13 @@ function rotexUse(ch: RoundChamber): LibraryUse {
     url: ROTEX_UNIT.url,
     // Spigot tip at the start of the outlet pipe, spigot centre on the outlet centre.
     position: [0, ch.outletCentre - ROTEX_SPIGOT.centreY, -(ch.Ri - 12) - ROTEX_SPIGOT.tipZ],
-    parts: ROTEX_UNIT.parts,
+    // Inside a chamber only the main parts are named, so labels stay legible.
+    parts: Object.fromEntries(
+      Object.entries(ROTEX_UNIT.parts).map(([name, spec]) => [
+        name,
+        { ...spec, labelled: name === 'snail-3-4' || name === 'bypass-arm' || name === 'back-case' },
+      ]),
+    ),
   }
 }
 
@@ -615,9 +621,16 @@ function buildCatchpit(d: CatchpitData): Built {
     top: d.grateType === 'sealed' ? 'sealed-grate' : d.grateType === 'hinged' ? 'hinged-grate' : 'cover',
     dimensions: true,
   })
-  const parts = [...ch.parts]
+  let parts = [...ch.parts]
   const p = PIPE[outlet.size]
   if (variant === 'SERS') {
+    // The bucket lifts out through the shaft, so in breakout it rises clear
+    // of the base and everything above it rises by the same amount.
+    const lift = ch.outletInvert - ch.floorTop + 120
+    const above = new Set(['riser', 'cap', 'frame', 'lid'])
+    parts = parts.map((part) =>
+      above.has(part.id) ? { ...part, explode: [part.explode[0], part.explode[1] + lift, part.explode[2]] as Vec3 } : part,
+    )
     // Removable silt bucket: sits on the base, rim below the outlet invert.
     const ro = ch.Ri - 20
     const top = ch.outletInvert - 60
@@ -629,7 +642,7 @@ function buildCatchpit(d: CatchpitData): Built {
       label: 'Removable silt bucket',
       role: 'insides',
       geometry: merge([tube(ro, ro - 10, ch.floorTop + 12, top, 48), cylinder(ro - 10, ch.floorTop + 12, ch.floorTop + 24, 48), handle]),
-      explode: [0, ch.explode * 0.55, 0],
+      explode: [0, lift + ch.explode * 0.3, 0],
     })
   } else {
     // Built-in settling: a weir splits the sump into a primary (inlet side)
@@ -703,9 +716,16 @@ function buildFlowControl(d: FlowControlData): Built {
       outletDetail: 'Vortex outlet',
       inlets: [{ n: 1, hour: 6, size: DEFAULT_PIPE, title: 'Inlet' }],
       top: 'cover',
-      waterTop: 40 + sump + head,
       dimensions: false,
     })
+    // Water at its working level; a ring on the wall marks the design head
+    // so the vortex unit stays visible.
+    const level = Math.min(40 + sump + head, ch.bodyTop - 40)
+    const ring = tube(ch.Ri - 1, ch.Ri - 34, level - 10, level + 10)
+    const parts: ProcPart[] = [
+      ...ch.parts,
+      { id: 'head', label: 'Design top water level', role: 'insides', color: '#3d9fd6', geometry: ring, explode: [0, 0, 0] },
+    ]
     const callouts = ch.callouts.map((c) =>
       c.id === 'inlet-1' ? { ...c, title: "Inlet · 6 o'clock", detail: 'Position to suit site' } : c,
     )
@@ -715,7 +735,7 @@ function buildFlowControl(d: FlowControlData): Built {
       title: 'Design head',
       detail: `${fmt(head)} mm above outlet invert`,
       tone: 'info',
-      anchor: [w.x * (ch.Ri - 4), Math.min(ch.waterTop, ch.bodyTop - 40), w.z * (ch.Ri - 4)],
+      anchor: [w.x * (ch.Ri - 34), level + 10, w.z * (ch.Ri - 34)],
       priority: 6,
       hideWhenExploded: true,
     })
@@ -736,7 +756,7 @@ function buildFlowControl(d: FlowControlData): Built {
           'Chamber height is indicative, set from the design head. Vortex unit from the 3D library.',
         ]),
       },
-      parts: ch.parts,
+      parts,
       libraries: [rotexUse(ch)],
       callouts,
       view: { azimuth: 30, elevation: 20 },
