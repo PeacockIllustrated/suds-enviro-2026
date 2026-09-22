@@ -108,6 +108,31 @@ function wizardReducer(
 
     case 'RESET':
       return { ...INITIAL_WIZARD_STATE }
+
+    case 'HYDRATE': {
+      const { product, productData, step, configId } = action.payload
+      if (!isProductRegistered(product)) return state
+      const config = getProductConfig(product)
+      const initial = config.initialData
+      // Start from the product's initial data so fields added since the
+      // configuration was saved get their defaults, then lay the saved
+      // values over it. Saved data for a different product is ignored.
+      const merged: ProductData =
+        productData && productData.kind === initial.kind
+          ? ({
+              kind: initial.kind,
+              data: { ...initial.data, ...productData.data },
+            } as ProductData)
+          : initial
+      const maxStep = getTotalSteps(product) - 1
+      return {
+        ...state,
+        product,
+        productData: merged,
+        step: Math.min(Math.max(step, 0), maxStep),
+        configId,
+      }
+    }
   }
 
   // Delegate to product-specific sub-reducer
