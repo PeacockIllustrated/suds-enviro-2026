@@ -21,6 +21,10 @@ and kills your own session.
 
 # Marketing site rebuild
 
+Read `HANDOVER.md` first - it covers the state of the rebuild, the
+decisions behind it, what is still open and the traps in this
+environment.
+
 The public pages are being rebuilt from the original Webflow site. See
 `reference/webflow/DESIGN.md` for the palette and treatment, and
 `reference/webflow/README.md` for what was extracted and what is still
