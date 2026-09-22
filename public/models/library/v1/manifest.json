@@ -1,0 +1,4271 @@
+{
+  "library": "SuDS Enviro 3D product library",
+  "version": "1.0.0",
+  "generated": "2026-09-22T19:48:34+00:00",
+  "conventions": {
+    "units": "Millimetres: 1 glTF unit = 1 mm. glTF assumes metres, so scale by unitScale (0.001) for AR or physically based lighting.",
+    "upAxis": "Y, product base at y = 0, centred on x and z",
+    "compression": "EXT_meshopt_compression with KHR_mesh_quantization; three.js needs GLTFLoader.setMeshoptDecoder",
+    "naming": "Settled product names and codes per the SuDS Enviro brand system naming section; sales code first, drawing code carried alongside until the mapping is written",
+    "paths": "Relative to this manifest"
+  },
+  "noAsset": [
+    {
+      "name": "SudSceptor ULTIMA",
+      "codes": [
+        "ULT-SEHDS2500"
+      ],
+      "reason": "no 3D file anywhere in SuDS 3D Assets"
+    },
+    {
+      "name": "Rhino inspection chamber, foul",
+      "codes": [
+        "FIC",
+        "SERFIC"
+      ],
+      "reason": "only a single master STL (FIC450160-2.stl) exists; no parts or breakdown, so it is noted as a variant of the surface chamber rather than converted"
+    },
+    {
+      "name": "SudSceptor, sizes other than 1800",
+      "codes": [
+        "SEHDS300 to SEHDS3000"
+      ],
+      "reason": "only the 1800 has parts; SEHDS1200 exists as one master STL, noted as a variant"
+    }
+  ],
+  "products": [
+    {
+      "name": "SudSceptor",
+      "codes": {
+        "sales": [
+          "SEHDS1800"
+        ],
+        "drawing": []
+      },
+      "family": "sudsceptor",
+      "slug": "sudsceptor",
+      "file": "sudsceptor-sehds1800",
+      "sourceDriveIds": [
+        "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2"
+      ],
+      "variants": [
+        "SEHDS/SEHDS1200225-1-6-2.9.stl (9.9 MB, Drive 1c8Vnb0D4ybW1lpLRpB2L0lItT_2oYmE8)",
+        "Hydrdynamic Separaters/1.8 dia Hydro Sep.stl (1.0 MB, Drive 1cKWfCBy8gu4VLyRlNtBWmBWD0Of722kB)"
+      ],
+      "notes": [
+        "built from Hydrdynamic Separaters/Breakout.blend because these parts could not be downloaded on their own: Water Track.fbx, Centre Pipe.fbx, Inner Curved Baffle#.fbx, Outer Curved Baffle#.fbx, inlet.fbx, Outlet.fbx",
+        "unit override: 1 source unit = 10 mm (1 unit = 1 cm, confirmed: the result matches the 1.8 dia Hydro Sep.stl master exactly (2105 x 4290 x 2155 mm))"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "sudsceptor/sudsceptor-sehds1800.glb",
+        "bytes": 139704,
+        "nodes": [
+          "bottom-bowl",
+          "casing",
+          "center-pipe",
+          "inlet",
+          "inner-curved-baffle",
+          "outer-curved-baffle",
+          "outlet",
+          "stand",
+          "water-track",
+          "sudsceptor-sehds1800"
+        ]
+      },
+      "thumbnail": "sudsceptor/sudsceptor-sehds1800.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 20655,
+      "trianglesSource": 20655,
+      "bboxMm": {
+        "min": [
+          -1052.5,
+          0.0,
+          -1077.5
+        ],
+        "max": [
+          1052.5,
+          4290.0,
+          1077.5
+        ],
+        "size": [
+          2105.0,
+          4290.0,
+          2155.0
+        ]
+      },
+      "parts": [
+        {
+          "name": "bottom-bowl",
+          "role": "body",
+          "source": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2.blend",
+          "path": "sudsceptor/parts/sudsceptor-sehds1800--bottom-bowl.glb",
+          "bytes": 45180,
+          "triangles": 7402,
+          "bboxMm": {
+            "min": [
+              -752.3,
+              450.0,
+              -727.3
+            ],
+            "max": [
+              1047.5,
+              978.5,
+              1072.2
+            ],
+            "size": [
+              1799.7,
+              528.5,
+              1799.6
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "casing",
+          "role": "body",
+          "source": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2.blend",
+          "path": "sudsceptor/parts/sudsceptor-sehds1800--casing.glb",
+          "bytes": 55888,
+          "triangles": 9678,
+          "bboxMm": {
+            "min": [
+              -757.5,
+              4.0,
+              -731.9
+            ],
+            "max": [
+              1051.4,
+              4290.0,
+              1076.9
+            ],
+            "size": [
+              1808.9,
+              4286.0,
+              1808.8
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "center-pipe",
+          "role": "body",
+          "source": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2.blend",
+          "path": "sudsceptor/parts/sudsceptor-sehds1800--center-pipe.glb",
+          "bytes": 4824,
+          "triangles": 388,
+          "bboxMm": {
+            "min": [
+              -232.0,
+              1714.5,
+              -207.0
+            ],
+            "max": [
+              527.0,
+              3820.5,
+              552.0
+            ],
+            "size": [
+              759.0,
+              2106.0,
+              759.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "inlet",
+          "role": "body",
+          "source": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2.blend",
+          "path": "sudsceptor/parts/sudsceptor-sehds1800--inlet.glb",
+          "bytes": 6780,
+          "triangles": 568,
+          "bboxMm": {
+            "min": [
+              -1052.5,
+              3365.0,
+              -132.2
+            ],
+            "max": [
+              -537.1,
+              3675.0,
+              238.2
+            ],
+            "size": [
+              515.4,
+              310.0,
+              370.4
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "inner-curved-baffle",
+          "role": "accent",
+          "source": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2.blend",
+          "path": "sudsceptor/parts/sudsceptor-sehds1800--inner-curved-baffle.glb",
+          "bytes": 2592,
+          "triangles": 100,
+          "bboxMm": {
+            "min": [
+              375.3,
+              3134.3,
+              -136.5
+            ],
+            "max": [
+              728.9,
+              3584.3,
+              323.6
+            ],
+            "size": [
+              353.6,
+              450.0,
+              460.1
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "outer-curved-baffle",
+          "role": "accent",
+          "source": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2.blend",
+          "path": "sudsceptor/parts/sudsceptor-sehds1800--outer-curved-baffle.glb",
+          "bytes": 2800,
+          "triangles": 124,
+          "bboxMm": {
+            "min": [
+              460.3,
+              3370.0,
+              -351.3
+            ],
+            "max": [
+              1044.6,
+              3820.0,
+              103.3
+            ],
+            "size": [
+              584.4,
+              450.0,
+              454.6
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "outlet",
+          "role": "body",
+          "source": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2.blend",
+          "path": "sudsceptor/parts/sudsceptor-sehds1800--outlet.glb",
+          "bytes": 5560,
+          "triangles": 459,
+          "bboxMm": {
+            "min": [
+              -7.5,
+              3365.0,
+              -1077.5
+            ],
+            "max": [
+              302.5,
+              3675.0,
+              -719.1
+            ],
+            "size": [
+              310.0,
+              310.0,
+              358.4
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "stand",
+          "role": "accent",
+          "source": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2.blend",
+          "path": "sudsceptor/parts/sudsceptor-sehds1800--stand.glb",
+          "bytes": 13048,
+          "triangles": 1160,
+          "bboxMm": {
+            "min": [
+              -757.5,
+              0.0,
+              -732.5
+            ],
+            "max": [
+              1052.5,
+              402.0,
+              1077.5
+            ],
+            "size": [
+              1810.0,
+              402.0,
+              1810.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "water-track",
+          "role": "accent",
+          "source": "1dHTvoB7a1tqU6OskpQxb5r3UG4cwNFw2.blend",
+          "path": "sudsceptor/parts/sudsceptor-sehds1800--water-track.glb",
+          "bytes": 8096,
+          "triangles": 776,
+          "bboxMm": {
+            "min": [
+              -752.3,
+              2099.0,
+              -606.9
+            ],
+            "max": [
+              1047.3,
+              3735.0,
+              1071.3
+            ],
+            "size": [
+              1799.6,
+              1636.0,
+              1678.2
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "RhinoPod",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERPOD1850"
+        ]
+      },
+      "family": "rhinopod",
+      "slug": "rhinopod",
+      "file": "rhinopod-serpod1850",
+      "sourceDriveIds": [
+        "11RQ3g1SintcrVAahgV6p38vQhd1QrTJr",
+        "11SDV4HhBTCWE6WVBpnM4L9Tw7P7b6Lf3",
+        "11TxghHkKkx88LXU7uG-i4AJPNXLQCA5X",
+        "11ZhYrq8YUmiJoprt9MvnElZs1I7vaxJY"
+      ],
+      "variants": [
+        "Rhinopod.stl (21.6 MB, Drive 11ObqNRJYbdGPhjz7U12zJEjpq65Gh2Hu)"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "degraded",
+      "reason": "scale unverified: at 1 unit = 1 cm the pod is 307 mm across. If SERPOD1850 means an 1850 mm pod the parts are about 6 times too small. The Rhinopod.stl master is 21.5 MB, over the download limit",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinopod/rhinopod-serpod1850.glb",
+        "bytes": 1818660,
+        "nodes": [
+          "bottom",
+          "casing",
+          "mid",
+          "top",
+          "rhinopod-serpod1850"
+        ]
+      },
+      "thumbnail": "rhinopod/rhinopod-serpod1850.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 139987,
+      "trianglesSource": 452381,
+      "bboxMm": {
+        "min": [
+          -162.6,
+          -0.0,
+          -162.6
+        ],
+        "max": [
+          162.6,
+          579.4,
+          162.6
+        ],
+        "size": [
+          325.2,
+          579.4,
+          325.2
+        ]
+      },
+      "parts": [
+        {
+          "name": "top",
+          "role": "accent",
+          "source": "11RQ3g1SintcrVAahgV6p38vQhd1QrTJr.fbx",
+          "path": "rhinopod/parts/rhinopod-serpod1850--top.glb",
+          "bytes": 755700,
+          "triangles": 56840,
+          "bboxMm": {
+            "min": [
+              -148.4,
+              339.5,
+              -151.8
+            ],
+            "max": [
+              148.5,
+              451.4,
+              151.8
+            ],
+            "size": [
+              296.9,
+              112.0,
+              303.5
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 94,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "mid",
+          "role": "accent",
+          "source": "11SDV4HhBTCWE6WVBpnM4L9Tw7P7b6Lf3.fbx",
+          "path": "rhinopod/parts/rhinopod-serpod1850--mid.glb",
+          "bytes": 98116,
+          "triangles": 6758,
+          "bboxMm": {
+            "min": [
+              -153.7,
+              323.3,
+              -153.3
+            ],
+            "max": [
+              153.7,
+              355.1,
+              153.3
+            ],
+            "size": [
+              307.4,
+              31.9,
+              306.6
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "casing",
+          "role": "body",
+          "source": "11TxghHkKkx88LXU7uG-i4AJPNXLQCA5X.fbx",
+          "path": "rhinopod/parts/rhinopod-serpod1850--casing.glb",
+          "bytes": 943660,
+          "triangles": 73998,
+          "bboxMm": {
+            "min": [
+              -162.6,
+              -0.0,
+              -162.6
+            ],
+            "max": [
+              162.6,
+              579.4,
+              162.6
+            ],
+            "size": [
+              325.2,
+              579.4,
+              325.2
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 25,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "bottom",
+          "role": "body",
+          "source": "11ZhYrq8YUmiJoprt9MvnElZs1I7vaxJY.fbx",
+          "path": "rhinopod/parts/rhinopod-serpod1850--bottom.glb",
+          "bytes": 22868,
+          "triangles": 2391,
+          "bboxMm": {
+            "min": [
+              -151.8,
+              198.1,
+              -152.0
+            ],
+            "max": [
+              151.8,
+              332.9,
+              152.0
+            ],
+            "size": [
+              303.6,
+              134.8,
+              304.1
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 67,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "RhinoPit",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERPT600160",
+          "SERPT600150"
+        ]
+      },
+      "family": "rhinopit",
+      "slug": "rhinopit",
+      "file": "rhinopit-serpt600",
+      "sourceDriveIds": [
+        "1IiQeuVqzEDxdG7aVwLC66juyT31t0gy4"
+      ],
+      "variants": [
+        "SERPT/SERPT600160-2.stl (2.5 MB, Drive 1XJ-t5TpKaw_N4jdNcPRJAbf8Vf04kb6_)",
+        "SERPT/SERPT600150-1.5.stl (4.6 MB, Drive 1IFoeAqCeg1Cro4TDKO018u-Dz6jwPBuj)"
+      ],
+      "notes": [
+        "The box in the SERPT Breakdown scene is an x-ray shell for presentation; it is exported as a translucent material",
+        "built from SERPT/SERPT Breakdown.blend because these parts could not be downloaded on their own: SERPT Base.fbx",
+        "unit override: 1 source unit = 10 mm (1 unit = 1 cm, confirmed: tubing is 696 mm across against 708 mm on the SERPT600160-2.stl master)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinopit/rhinopit-serpt600.glb",
+        "bytes": 520672,
+        "nodes": [
+          "cube",
+          "serpt-base",
+          "serpt-inlet",
+          "serpt-tubing",
+          "serptoutlet",
+          "rhinopit-serpt600"
+        ]
+      },
+      "thumbnail": "rhinopit/rhinopit-serpt600.png",
+      "thumbnailMaterials": "source",
+      "triangles": 65414,
+      "trianglesSource": 74178,
+      "bboxMm": {
+        "min": [
+          -540.4,
+          0.0,
+          -627.1
+        ],
+        "max": [
+          540.4,
+          1541.7,
+          627.1
+        ],
+        "size": [
+          1080.9,
+          1541.7,
+          1254.2
+        ]
+      },
+      "parts": [
+        {
+          "name": "cube",
+          "role": "xray",
+          "source": "1IiQeuVqzEDxdG7aVwLC66juyT31t0gy4.blend",
+          "path": "rhinopit/parts/rhinopit-serpt600--cube.glb",
+          "bytes": 2136,
+          "triangles": 12,
+          "bboxMm": {
+            "min": [
+              -389.9,
+              73.7,
+              -152.6
+            ],
+            "max": [
+              389.9,
+              1541.7,
+              627.1
+            ],
+            "size": [
+              779.7,
+              1468.0,
+              779.7
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "serpt-base",
+          "role": "body",
+          "source": "1IiQeuVqzEDxdG7aVwLC66juyT31t0gy4.blend",
+          "path": "rhinopit/parts/rhinopit-serpt600--serpt-base.glb",
+          "bytes": 10624,
+          "triangles": 1004,
+          "bboxMm": {
+            "min": [
+              -428.0,
+              184.5,
+              -627.1
+            ],
+            "max": [
+              428.0,
+              564.5,
+              -152.6
+            ],
+            "size": [
+              856.0,
+              380.0,
+              474.4
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "serpt-inlet",
+          "role": "accent",
+          "source": "1IiQeuVqzEDxdG7aVwLC66juyT31t0gy4.blend",
+          "path": "rhinopit/parts/rhinopit-serpt600--serpt-inlet.glb",
+          "bytes": 148028,
+          "triangles": 19860,
+          "bboxMm": {
+            "min": [
+              -540.4,
+              288.2,
+              -359.6
+            ],
+            "max": [
+              -253.0,
+              460.8,
+              -186.9
+            ],
+            "size": [
+              287.4,
+              172.6,
+              172.6
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "serpt-tubing",
+          "role": "body",
+          "source": "1IiQeuVqzEDxdG7aVwLC66juyT31t0gy4.blend",
+          "path": "rhinopit/parts/rhinopit-serpt600--serpt-tubing.glb",
+          "bytes": 236516,
+          "triangles": 24678,
+          "bboxMm": {
+            "min": [
+              -348.0,
+              0.0,
+              -621.2
+            ],
+            "max": [
+              348.0,
+              1495.0,
+              74.8
+            ],
+            "size": [
+              696.0,
+              1495.0,
+              696.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "serptoutlet",
+          "role": "accent",
+          "source": "1IiQeuVqzEDxdG7aVwLC66juyT31t0gy4.blend",
+          "path": "rhinopit/parts/rhinopit-serpt600--serptoutlet.glb",
+          "bytes": 147992,
+          "triangles": 19860,
+          "bboxMm": {
+            "min": [
+              253.0,
+              288.3,
+              -359.5
+            ],
+            "max": [
+              540.4,
+              460.8,
+              -187.0
+            ],
+            "size": [
+              287.4,
+              172.5,
+              172.5
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "RhinoShield",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERSD500160"
+        ]
+      },
+      "family": "rhinoshield",
+      "slug": "rhinoshield",
+      "file": "rhinoshield-sersd500",
+      "sourceDriveIds": [
+        "1ISqSxfsKRXjmZ8-IzbZJDEzWxf-3koQv",
+        "1IWwTdyNqI-DuIUlQPPT728WRg7cjKHee",
+        "1IZgOIFtVC-FPlwNcr62PdmWewWBaaEE6",
+        "1Ia5EaxOtHbkbVe4B2zGXW0_VXCIdOmh4",
+        "1IXNVk1991Xe1FTgUZI3zyT-emp9VvdJC",
+        "1IZEgfZZBwwCn71u1amJ0_QMXDMgtD4oN",
+        "1IXv_S9cCQ7WXX5bdc0QF6nJUJM_icDqR"
+      ],
+      "variants": [
+        "SERSD/SERSD500160-2.stl (10.2 MB, Drive 1IG64oSkPGghqafeLW9fMQvhq8bzZ-oum)"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 100 mm (approximate: 1 unit = 100 mm puts the body at about 520 mm, consistent with the nominal 500 diameter; the SERSD500160-2.stl master is 10 MB, over the Drive tool's download limit, so this is not checked against it)"
+      ],
+      "status": "degraded",
+      "reason": "scale approximate, not checked against a master (see unit note)",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinoshield/rhinoshield-sersd500.glb",
+        "bytes": 1423608,
+        "nodes": [
+          "base",
+          "base-tubing",
+          "filter-holder",
+          "filter-long",
+          "filter-short",
+          "top-level-1",
+          "top-level-2",
+          "rhinoshield-sersd500"
+        ]
+      },
+      "thumbnail": "rhinoshield/rhinoshield-sersd500.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 139924,
+      "trianglesSource": 208912,
+      "bboxMm": {
+        "min": [
+          -355.0,
+          0.0,
+          -265.2
+        ],
+        "max": [
+          355.0,
+          1227.0,
+          265.2
+        ],
+        "size": [
+          710.0,
+          1227.0,
+          530.3
+        ]
+      },
+      "parts": [
+        {
+          "name": "base",
+          "role": "body",
+          "source": "1ISqSxfsKRXjmZ8-IzbZJDEzWxf-3koQv.fbx",
+          "path": "rhinoshield/parts/rhinoshield-sersd500--base.glb",
+          "bytes": 26136,
+          "triangles": 2856,
+          "bboxMm": {
+            "min": [
+              -355.0,
+              195.0,
+              -265.2
+            ],
+            "max": [
+              355.0,
+              695.0,
+              265.2
+            ],
+            "size": [
+              710.0,
+              500.0,
+              530.3
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "base-tubing",
+          "role": "body",
+          "source": "1IWwTdyNqI-DuIUlQPPT728WRg7cjKHee.fbx",
+          "path": "rhinoshield/parts/rhinoshield-sersd500--base-tubing.glb",
+          "bytes": 206764,
+          "triangles": 17982,
+          "bboxMm": {
+            "min": [
+              -258.8,
+              0.0,
+              -259.1
+            ],
+            "max": [
+              258.9,
+              733.0,
+              259.1
+            ],
+            "size": [
+              517.7,
+              733.0,
+              518.3
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "top-level-1",
+          "role": "body",
+          "source": "1IZgOIFtVC-FPlwNcr62PdmWewWBaaEE6.fbx",
+          "path": "rhinoshield/parts/rhinoshield-sersd500--top-level-1.glb",
+          "bytes": 112208,
+          "triangles": 9761,
+          "bboxMm": {
+            "min": [
+              -252.9,
+              703.0,
+              -253.0
+            ],
+            "max": [
+              252.9,
+              980.0,
+              253.0
+            ],
+            "size": [
+              505.7,
+              277.0,
+              506.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 211,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "top-level-2",
+          "role": "body",
+          "source": "1Ia5EaxOtHbkbVe4B2zGXW0_VXCIdOmh4.fbx",
+          "path": "rhinoshield/parts/rhinoshield-sersd500--top-level-2.glb",
+          "bytes": 112260,
+          "triangles": 9761,
+          "bboxMm": {
+            "min": [
+              -252.9,
+              950.0,
+              -253.0
+            ],
+            "max": [
+              252.9,
+              1227.0,
+              253.0
+            ],
+            "size": [
+              505.7,
+              277.0,
+              506.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 225,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "filter-holder",
+          "role": "accent",
+          "source": "1IXNVk1991Xe1FTgUZI3zyT-emp9VvdJC.fbx",
+          "path": "rhinoshield/parts/rhinoshield-sersd500--filter-holder.glb",
+          "bytes": 32024,
+          "triangles": 3388,
+          "bboxMm": {
+            "min": [
+              -225.0,
+              105.0,
+              -225.0
+            ],
+            "max": [
+              224.6,
+              834.3,
+              225.0
+            ],
+            "size": [
+              449.6,
+              729.3,
+              450.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "filter-long",
+          "role": "accent",
+          "source": "1IZEgfZZBwwCn71u1amJ0_QMXDMgtD4oN.fbx",
+          "path": "rhinoshield/parts/rhinoshield-sersd500--filter-long.glb",
+          "bytes": 592280,
+          "triangles": 61726,
+          "bboxMm": {
+            "min": [
+              -182.5,
+              184.5,
+              -74.9
+            ],
+            "max": [
+              -32.5,
+              634.5,
+              74.9
+            ],
+            "size": [
+              150.0,
+              450.0,
+              149.9
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "filter-short",
+          "role": "accent",
+          "source": "1IXv_S9cCQ7WXX5bdc0QF6nJUJM_icDqR.fbx",
+          "path": "rhinoshield/parts/rhinoshield-sersd500--filter-short.glb",
+          "bytes": 345776,
+          "triangles": 34450,
+          "bboxMm": {
+            "min": [
+              15.0,
+              245.0,
+              -95.0
+            ],
+            "max": [
+              205.0,
+              495.0,
+              95.0
+            ],
+            "size": [
+              189.9,
+              250.0,
+              190.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "RhinoDuct",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "rhinoduct",
+      "slug": "rhinoduct",
+      "file": "rhinoduct-serd",
+      "sourceDriveIds": [
+        "1sFu5laj-X15W3juwGudLgw8YQqaKLM4N"
+      ],
+      "notes": [
+        "RhinoDuct/Blender.blend and RhinoDuct Cover.fbx are the same duct at 1 unit = 1 cm with a cover; converted separately below so the two can be compared",
+        "unit override: 1 source unit = 1 mm (RhinoDuct.stl is in millimetres (930 x 780 x 488))"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinoduct/rhinoduct-serd.glb",
+        "bytes": 87004,
+        "nodes": [
+          "duct",
+          "rhinoduct-serd"
+        ]
+      },
+      "thumbnail": "rhinoduct/rhinoduct-serd.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 9156,
+      "trianglesSource": 9156,
+      "bboxMm": {
+        "min": [
+          -465.0,
+          0.0,
+          -244.0
+        ],
+        "max": [
+          465.0,
+          780.0,
+          244.0
+        ],
+        "size": [
+          930.0,
+          780.0,
+          488.0
+        ]
+      },
+      "parts": [
+        {
+          "name": "duct",
+          "role": "body",
+          "source": "1sFu5laj-X15W3juwGudLgw8YQqaKLM4N.stl",
+          "path": "rhinoduct/parts/rhinoduct-serd--duct.glb",
+          "bytes": 86964,
+          "triangles": 9156,
+          "bboxMm": {
+            "min": [
+              -465.0,
+              0.0,
+              -244.0
+            ],
+            "max": [
+              465.0,
+              780.0,
+              244.0
+            ],
+            "size": [
+              930.0,
+              780.0,
+              488.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 760,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "RhinoDuct with cover",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "rhinoduct",
+      "slug": "rhinoduct-with-cover",
+      "file": "rhinoduct-serd-cover",
+      "sourceDriveIds": [
+        "1XrEg7voro9JH9IchlltPc3oKMfBL_JmM",
+        "1Xq1t5WeRPY5nKhJSK63QpJ3pAdmYSlce"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinoduct-with-cover/rhinoduct-serd-cover.glb",
+        "bytes": 172156,
+        "nodes": [
+          "cover",
+          "duct",
+          "rhinoduct-serd-cover"
+        ]
+      },
+      "thumbnail": "rhinoduct-with-cover/rhinoduct-serd-cover.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 18696,
+      "trianglesSource": 18696,
+      "bboxMm": {
+        "min": [
+          -465.0,
+          0.0,
+          -390.0
+        ],
+        "max": [
+          465.0,
+          707.3,
+          390.0
+        ],
+        "size": [
+          930.0,
+          707.3,
+          780.0
+        ]
+      },
+      "parts": [
+        {
+          "name": "duct",
+          "role": "body",
+          "source": "1XrEg7voro9JH9IchlltPc3oKMfBL_JmM.blend",
+          "path": "rhinoduct-with-cover/parts/rhinoduct-serd-cover--duct.glb",
+          "bytes": 105952,
+          "triangles": 11124,
+          "bboxMm": {
+            "min": [
+              -465.0,
+              0.0,
+              -390.0
+            ],
+            "max": [
+              465.0,
+              707.3,
+              390.0
+            ],
+            "size": [
+              930.0,
+              707.3,
+              780.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 1872,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "cover",
+          "role": "accent",
+          "source": "1Xq1t5WeRPY5nKhJSK63QpJ3pAdmYSlce.fbx",
+          "path": "rhinoduct-with-cover/parts/rhinoduct-serd-cover--cover.glb",
+          "bytes": 66812,
+          "triangles": 7572,
+          "bboxMm": {
+            "min": [
+              -454.0,
+              570.6,
+              -379.0
+            ],
+            "max": [
+              454.0,
+              633.6,
+              379.0
+            ],
+            "size": [
+              908.0,
+              63.0,
+              758.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "RhinoRoFlo",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "POC600",
+          "SERFP600150"
+        ]
+      },
+      "family": "rhinoroflo",
+      "slug": "rhinoroflo",
+      "file": "rhinoroflo-poc600",
+      "sourceDriveIds": [
+        "12XNXvWVS6iWnwscsAUOxNjarSH326f54"
+      ],
+      "variants": [
+        "Orifice Flow Control/POC600-1.5.stl (3.1 MB, Drive 12Qb1pFcsupuDDFBOWsa-l0EgMuUlajLm)",
+        "SERFP600150-2.stl (5.9 MB, Drive 1X2t7grWmA-IDFA-NBRBRZyEaoIchvKj2)"
+      ],
+      "notes": [
+        "built from Orifice Flow Control/POC Breakdown.blend because these parts could not be downloaded on their own: POC-Base.fbx, POC-Divider.fbx, POC-Orifice-Latch.fbx, POC-Wire.fbx",
+        "unit override: 1 source unit = 25 mm (calibrated to the POC600-1.5.stl master: the tube is 59.8 units tall against 1495 mm, so 1 unit = 25 mm (the FBX parts were scaled down in Blender))"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinoroflo/rhinoroflo-poc600.glb",
+        "bytes": 483576,
+        "nodes": [
+          "poc-base",
+          "poc-divider",
+          "poc-orifice",
+          "poc-orifice-latch",
+          "poc-string",
+          "poc-string-clips",
+          "poc-tube",
+          "rhinoroflo-poc600"
+        ]
+      },
+      "thumbnail": "rhinoroflo/rhinoroflo-poc600.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 57544,
+      "trianglesSource": 57544,
+      "bboxMm": {
+        "min": [
+          -452.0,
+          0.0,
+          -353.9
+        ],
+        "max": [
+          452.0,
+          1495.0,
+          353.9
+        ],
+        "size": [
+          904.0,
+          1495.0,
+          707.7
+        ]
+      },
+      "parts": [
+        {
+          "name": "poc-base",
+          "role": "body",
+          "source": "12XNXvWVS6iWnwscsAUOxNjarSH326f54.blend",
+          "path": "rhinoroflo/parts/rhinoroflo-poc600--poc-base.glb",
+          "bytes": 9596,
+          "triangles": 1176,
+          "bboxMm": {
+            "min": [
+              -452.0,
+              156.0,
+              -353.9
+            ],
+            "max": [
+              452.0,
+              556.0,
+              353.9
+            ],
+            "size": [
+              904.0,
+              400.0,
+              707.7
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "poc-divider",
+          "role": "body",
+          "source": "12XNXvWVS6iWnwscsAUOxNjarSH326f54.blend",
+          "path": "rhinoroflo/parts/rhinoroflo-poc600--poc-divider.glb",
+          "bytes": 2308,
+          "triangles": 60,
+          "bboxMm": {
+            "min": [
+              -5.0,
+              10.0,
+              -300.0
+            ],
+            "max": [
+              8.0,
+              760.0,
+              300.0
+            ],
+            "size": [
+              13.0,
+              750.0,
+              600.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "poc-orifice",
+          "role": "accent",
+          "source": "12XNXvWVS6iWnwscsAUOxNjarSH326f54.blend",
+          "path": "rhinoroflo/parts/rhinoroflo-poc600--poc-orifice.glb",
+          "bytes": 33260,
+          "triangles": 5328,
+          "bboxMm": {
+            "min": [
+              -299.3,
+              865.0,
+              -20.0
+            ],
+            "max": [
+              -278.9,
+              1445.0,
+              20.0
+            ],
+            "size": [
+              20.4,
+              580.0,
+              40.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "poc-orifice-latch",
+          "role": "accent",
+          "source": "12XNXvWVS6iWnwscsAUOxNjarSH326f54.blend",
+          "path": "rhinoroflo/parts/rhinoroflo-poc600--poc-orifice-latch.glb",
+          "bytes": 5460,
+          "triangles": 456,
+          "bboxMm": {
+            "min": [
+              -212.0,
+              280.0,
+              -29.9
+            ],
+            "max": [
+              -192.0,
+              360.0,
+              29.9
+            ],
+            "size": [
+              20.0,
+              80.0,
+              59.9
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "poc-string",
+          "role": "body",
+          "source": "12XNXvWVS6iWnwscsAUOxNjarSH326f54.blend",
+          "path": "rhinoroflo/parts/rhinoroflo-poc600--poc-string.glb",
+          "bytes": 9140,
+          "triangles": 856,
+          "bboxMm": {
+            "min": [
+              -297.7,
+              303.2,
+              -1.2
+            ],
+            "max": [
+              -195.6,
+              1423.3,
+              1.0
+            ],
+            "size": [
+              102.1,
+              1120.0,
+              2.2
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "poc-string-clips",
+          "role": "body",
+          "source": "12XNXvWVS6iWnwscsAUOxNjarSH326f54.blend",
+          "path": "rhinoroflo/parts/rhinoroflo-poc600--poc-string-clips.glb",
+          "bytes": 139700,
+          "triangles": 17548,
+          "bboxMm": {
+            "min": [
+              -296.0,
+              240.0,
+              -69.9
+            ],
+            "max": [
+              -197.1,
+              380.0,
+              70.0
+            ],
+            "size": [
+              98.9,
+              139.9,
+              139.9
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "poc-tube",
+          "role": "body",
+          "source": "12XNXvWVS6iWnwscsAUOxNjarSH326f54.blend",
+          "path": "rhinoroflo/parts/rhinoroflo-poc600--poc-tube.glb",
+          "bytes": 287928,
+          "triangles": 32120,
+          "bboxMm": {
+            "min": [
+              -348.0,
+              0.0,
+              -348.0
+            ],
+            "max": [
+              348.0,
+              1495.0,
+              348.0
+            ],
+            "size": [
+              696.0,
+              1495.0,
+              696.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "RhinoRoTex (September 2024 set)",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "RoTex-C1200"
+        ]
+      },
+      "family": "rhinorotex",
+      "slug": "rhinorotex",
+      "file": "rhinorotex-c1200",
+      "sourceDriveIds": [
+        "1mHa_PRg1xfm_GiJjBd1dk5U56T8lJ5ti",
+        "1mH81rmvkPZDDs7ahlJmfI5g5oHsa30uC"
+      ],
+      "variants": [
+        "Vortex Flow Control/RoTex-C1200-2.stl (12.8 MB, Drive 1X712YGc8CHqfxe5WrCIpr9hdH3tX5wrj)",
+        "Flow Control Tank 1200 dia x 2m.stl (12.9 MB, Drive 1ICpFrAVnHXO8-CMtEvJxqdEbQ643mnVE)"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "degraded",
+      "reason": "scale unverified: at 1 unit = 1 cm it is 642 mm across, which does not obviously match C1200. The RoTex-C1200-2.stl master is 12.8 MB, over the download limit",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinorotex/rhinorotex-c1200.glb",
+        "bytes": 1250420,
+        "nodes": [
+          "base",
+          "rotex",
+          "rhinorotex-c1200"
+        ]
+      },
+      "thumbnail": "rhinorotex/rhinorotex-c1200.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 139998,
+      "trianglesSource": 207928,
+      "bboxMm": {
+        "min": [
+          -596.2,
+          0.0,
+          -321.3
+        ],
+        "max": [
+          596.2,
+          899.3,
+          321.3
+        ],
+        "size": [
+          1192.3,
+          899.3,
+          642.5
+        ]
+      },
+      "parts": [
+        {
+          "name": "rotex",
+          "role": "accent",
+          "source": "1mHa_PRg1xfm_GiJjBd1dk5U56T8lJ5ti.fbx",
+          "path": "rhinorotex/parts/rhinorotex-c1200--rotex.glb",
+          "bytes": 450524,
+          "triangles": 48318,
+          "bboxMm": {
+            "min": [
+              -596.2,
+              76.7,
+              -321.3
+            ],
+            "max": [
+              -103.7,
+              395.7,
+              321.3
+            ],
+            "size": [
+              492.4,
+              319.0,
+              642.5
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 19380,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "base",
+          "role": "body",
+          "source": "1mH81rmvkPZDDs7ahlJmfI5g5oHsa30uC.stl",
+          "path": "rhinorotex/parts/rhinorotex-c1200--base.glb",
+          "bytes": 800288,
+          "triangles": 91680,
+          "bboxMm": {
+            "min": [
+              -596.2,
+              0.0,
+              -321.3
+            ],
+            "max": [
+              596.2,
+              899.3,
+              321.3
+            ],
+            "size": [
+              1192.3,
+              899.3,
+              642.5
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 27696,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "RhinoRoTex (April 2025 parts)",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "rhinorotex",
+      "slug": "rhinorotex-2025",
+      "file": "rhinorotex-2025-parts",
+      "sourceDriveIds": [
+        "1k8J8fA1ckGcn1k2-8sfRi3ak79mrT0x4",
+        "1QS5e1K2EbzKUVmtH4jUjM1H9YpYFem2l",
+        "1-lSiluC5JGmVD71SCT_A33czHlO-6JOM",
+        "1d9QvzSbxLR0WAad2w-l1xWJXR81-2aTj",
+        "1tC1KuRkhbkZm2YeZue30U2bdpOz1HzAo",
+        "1huTazwz_lpszSE2TmNov2qD5IWQgmRmm",
+        "1fwhiSx1yR8LOloFuAjU2k4eXFHF-tQuN"
+      ],
+      "notes": [],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinorotex-2025/rhinorotex-2025-parts.glb",
+        "bytes": 359756,
+        "nodes": [
+          "back-case",
+          "bracket",
+          "bypass-arm",
+          "bypass-cap",
+          "outlet-pipe",
+          "siphon-pipe",
+          "snail-3-4",
+          "rhinorotex-2025-parts"
+        ]
+      },
+      "thumbnail": "rhinorotex-2025/rhinorotex-2025-parts.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 40984,
+      "trianglesSource": 40984,
+      "bboxMm": {
+        "min": [
+          -207.5,
+          0.0,
+          -209.5
+        ],
+        "max": [
+          207.5,
+          1020.1,
+          209.5
+        ],
+        "size": [
+          415.0,
+          1020.1,
+          419.0
+        ]
+      },
+      "parts": [
+        {
+          "name": "back-case",
+          "role": "body",
+          "source": "1k8J8fA1ckGcn1k2-8sfRi3ak79mrT0x4.stl",
+          "path": "rhinorotex-2025/parts/rhinorotex-2025-parts--back-case.glb",
+          "bytes": 37036,
+          "triangles": 5412,
+          "bboxMm": {
+            "min": [
+              -207.5,
+              0.0,
+              -103.1
+            ],
+            "max": [
+              207.5,
+              450.0,
+              76.9
+            ],
+            "size": [
+              415.0,
+              450.0,
+              180.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "snail-3-4",
+          "role": "accent",
+          "source": "1QS5e1K2EbzKUVmtH4jUjM1H9YpYFem2l.stl",
+          "path": "rhinorotex-2025/parts/rhinorotex-2025-parts--snail-3-4.glb",
+          "bytes": 41492,
+          "triangles": 5044,
+          "bboxMm": {
+            "min": [
+              -147.5,
+              60.2,
+              78.5
+            ],
+            "max": [
+              147.5,
+              389.8,
+              209.5
+            ],
+            "size": [
+              295.0,
+              329.5,
+              131.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "bracket",
+          "role": "body",
+          "source": "1-lSiluC5JGmVD71SCT_A33czHlO-6JOM.stl",
+          "path": "rhinorotex-2025/parts/rhinorotex-2025-parts--bracket.glb",
+          "bytes": 13184,
+          "triangles": 1194,
+          "bboxMm": {
+            "min": [
+              49.5,
+              625.5,
+              -53.5
+            ],
+            "max": [
+              118.5,
+              695.5,
+              48.9
+            ],
+            "size": [
+              69.0,
+              70.0,
+              102.4
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "bypass-arm",
+          "role": "accent",
+          "source": "1d9QvzSbxLR0WAad2w-l1xWJXR81-2aTj.stl",
+          "path": "rhinorotex-2025/parts/rhinorotex-2025-parts--bypass-arm.glb",
+          "bytes": 40732,
+          "triangles": 5726,
+          "bboxMm": {
+            "min": [
+              -55.0,
+              460.0,
+              -61.3
+            ],
+            "max": [
+              178.9,
+              927.5,
+              56.9
+            ],
+            "size": [
+              233.9,
+              467.5,
+              118.2
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "bypass-cap",
+          "role": "accent",
+          "source": "1tC1KuRkhbkZm2YeZue30U2bdpOz1HzAo.stl",
+          "path": "rhinorotex-2025/parts/rhinorotex-2025-parts--bypass-cap.glb",
+          "bytes": 46148,
+          "triangles": 4676,
+          "bboxMm": {
+            "min": [
+              105.3,
+              919.5,
+              -44.9
+            ],
+            "max": [
+              184.5,
+              1020.1,
+              41.6
+            ],
+            "size": [
+              79.2,
+              100.6,
+              86.5
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "siphon-pipe",
+          "role": "accent",
+          "source": "1huTazwz_lpszSE2TmNov2qD5IWQgmRmm.stl",
+          "path": "rhinorotex-2025/parts/rhinorotex-2025-parts--siphon-pipe.glb",
+          "bytes": 4712,
+          "triangles": 512,
+          "bboxMm": {
+            "min": [
+              -53.9,
+              271.1,
+              -57.6
+            ],
+            "max": [
+              56.1,
+              726.0,
+              52.4
+            ],
+            "size": [
+              110.0,
+              454.9,
+              110.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "outlet-pipe",
+          "role": "body",
+          "source": "1fwhiSx1yR8LOloFuAjU2k4eXFHF-tQuN.stl",
+          "path": "rhinorotex-2025/parts/rhinorotex-2025-parts--outlet-pipe.glb",
+          "bytes": 180284,
+          "triangles": 18420,
+          "bboxMm": {
+            "min": [
+              -85.1,
+              140.2,
+              -209.5
+            ],
+            "max": [
+              87.3,
+              312.9,
+              30.6
+            ],
+            "size": [
+              172.4,
+              172.7,
+              240.1
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "Rhino FloLock",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "rhino-flolock",
+      "slug": "rhino-flolock",
+      "file": "rhino-flolock",
+      "sourceDriveIds": [
+        "1VSGgyujzgMJuypCE348J6IrxNSghwmOG",
+        "1o4qFIurYThzQT1U-o4l16GofTkPij8De"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 1 mm (STL in millimetres (140 mm flap))"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhino-flolock/rhino-flolock.glb",
+        "bytes": 150168,
+        "nodes": [
+          "body",
+          "flap",
+          "rhino-flolock"
+        ]
+      },
+      "thumbnail": "rhino-flolock/rhino-flolock.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 19380,
+      "trianglesSource": 19380,
+      "bboxMm": {
+        "min": [
+          -70.0,
+          0.0,
+          -70.0
+        ],
+        "max": [
+          70.0,
+          30.4,
+          70.0
+        ],
+        "size": [
+          140.0,
+          30.4,
+          140.0
+        ]
+      },
+      "parts": [
+        {
+          "name": "body",
+          "role": "body",
+          "source": "1VSGgyujzgMJuypCE348J6IrxNSghwmOG.stl",
+          "path": "rhino-flolock/parts/rhino-flolock--body.glb",
+          "bytes": 137536,
+          "triangles": 17461,
+          "bboxMm": {
+            "min": [
+              -70.0,
+              0.0,
+              -70.0
+            ],
+            "max": [
+              70.0,
+              28.7,
+              70.0
+            ],
+            "size": [
+              140.0,
+              28.7,
+              140.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "flap",
+          "role": "accent",
+          "source": "1o4qFIurYThzQT1U-o4l16GofTkPij8De.stl",
+          "path": "rhino-flolock/parts/rhino-flolock--flap.glb",
+          "bytes": 13240,
+          "triangles": 1919,
+          "bboxMm": {
+            "min": [
+              -62.6,
+              17.9,
+              -62.6
+            ],
+            "max": [
+              62.5,
+              30.4,
+              62.5
+            ],
+            "size": [
+              125.1,
+              12.5,
+              125.1
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "RhinoLift AQUA 190S",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "rhinolift",
+      "slug": "rhinolift-aqua",
+      "file": "rhinolift-aqua190s",
+      "sourceDriveIds": [
+        "1Wa95V06YWzbAhjSG-hgWBkoLihpv6wUh"
+      ],
+      "variants": [
+        "Pumping Stations/AQUA190S.stl (1.1 MB, Drive 1USGRjGfKptvqzxtXsqPxfpn08KHj-Vd0)"
+      ],
+      "notes": [
+        "built from Pumping Stations/AQUA/AQUA Breakdown.blend because these parts could not be downloaded on their own: AQUA Handle.fbx, AQUA Nut.fbx",
+        "unit override: 1 source unit = 10 mm (1 unit = 1 cm, confirmed: matches the AQUA190S.stl master exactly (708 x 635 x 669 mm))"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinolift-aqua/rhinolift-aqua190s.glb",
+        "bytes": 173808,
+        "nodes": [
+          "aqua-casing",
+          "aqua-handle",
+          "aqua-nut",
+          "aqua-plastic-connectors",
+          "aqua190s",
+          "rhinolift-aqua190s"
+        ]
+      },
+      "thumbnail": "rhinolift-aqua/rhinolift-aqua190s.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 22396,
+      "trianglesSource": 22396,
+      "bboxMm": {
+        "min": [
+          -354.0,
+          0.0,
+          -334.4
+        ],
+        "max": [
+          354.0,
+          635.0,
+          334.4
+        ],
+        "size": [
+          708.0,
+          635.0,
+          668.9
+        ]
+      },
+      "parts": [
+        {
+          "name": "aqua-casing",
+          "role": "body",
+          "source": "1Wa95V06YWzbAhjSG-hgWBkoLihpv6wUh.blend",
+          "path": "rhinolift-aqua/parts/rhinolift-aqua190s--aqua-casing.glb",
+          "bytes": 12988,
+          "triangles": 1466,
+          "bboxMm": {
+            "min": [
+              -316.0,
+              0.0,
+              -334.4
+            ],
+            "max": [
+              354.0,
+              635.0,
+              334.4
+            ],
+            "size": [
+              670.0,
+              635.0,
+              668.9
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "aqua-handle",
+          "role": "accent",
+          "source": "1Wa95V06YWzbAhjSG-hgWBkoLihpv6wUh.blend",
+          "path": "rhinolift-aqua/parts/rhinolift-aqua190s--aqua-handle.glb",
+          "bytes": 2692,
+          "triangles": 112,
+          "bboxMm": {
+            "min": [
+              -31.0,
+              239.6,
+              -132.5
+            ],
+            "max": [
+              93.9,
+              345.0,
+              -87.5
+            ],
+            "size": [
+              124.9,
+              105.4,
+              45.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "aqua-nut",
+          "role": "accent",
+          "source": "1Wa95V06YWzbAhjSG-hgWBkoLihpv6wUh.blend",
+          "path": "rhinolift-aqua/parts/rhinolift-aqua190s--aqua-nut.glb",
+          "bytes": 7864,
+          "triangles": 700,
+          "bboxMm": {
+            "min": [
+              -283.0,
+              489.0,
+              -29.0
+            ],
+            "max": [
+              -266.0,
+              547.0,
+              29.0
+            ],
+            "size": [
+              17.0,
+              58.0,
+              58.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "aqua-plastic-connectors",
+          "role": "body",
+          "source": "1Wa95V06YWzbAhjSG-hgWBkoLihpv6wUh.blend",
+          "path": "rhinolift-aqua/parts/rhinolift-aqua190s--aqua-plastic-connectors.glb",
+          "bytes": 69844,
+          "triangles": 8272,
+          "bboxMm": {
+            "min": [
+              -104.0,
+              20.0,
+              -177.3
+            ],
+            "max": [
+              126.3,
+              553.7,
+              37.3
+            ],
+            "size": [
+              230.3,
+              533.7,
+              214.5
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "aqua190s",
+          "role": "body",
+          "source": "1Wa95V06YWzbAhjSG-hgWBkoLihpv6wUh.blend",
+          "path": "rhinolift-aqua/parts/rhinolift-aqua190s--aqua190s.glb",
+          "bytes": 82960,
+          "triangles": 11846,
+          "bboxMm": {
+            "min": [
+              -354.0,
+              70.0,
+              -175.0
+            ],
+            "max": [
+              135.9,
+              547.8,
+              34.9
+            ],
+            "size": [
+              489.9,
+              477.8,
+              209.9
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 1014,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "RhinoLift MAXI 1600 D",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "rhinolift",
+      "slug": "rhinolift-maxi",
+      "file": "rhinolift-maxi1600d",
+      "sourceDriveIds": [
+        "1UhN9EalIEyosLG4uXFe1qUKrYK_L65ED",
+        "1UgsYwmzrz3yeQWr9YUf88sqJO2EldZv7",
+        "1Wri_PIjj03YAVG_zJKwyEK5p_0slqQYc",
+        "1WynQnNIhZT8mh1CszpVn95KmsfbJFBnm",
+        "1WqHY8fQkZh4qbScvmIDF1jU_Trg-NnbG"
+      ],
+      "variants": [
+        "Pumping Stations/MAXI1600D.stl (11.7 MB, Drive 1UVcT0rY6QZ2bGe1XdwOO47afWzezbN9K)"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinolift-maxi/rhinolift-maxi1600d.glb",
+        "bytes": 1518284,
+        "nodes": [
+          "casing",
+          "floats",
+          "insides",
+          "insides-1",
+          "insides-2",
+          "rhinolift-maxi1600d"
+        ]
+      },
+      "thumbnail": "rhinolift-maxi/rhinolift-maxi1600d.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 139994,
+      "trianglesSource": 466208,
+      "bboxMm": {
+        "min": [
+          -598.8,
+          -0.0,
+          -687.8
+        ],
+        "max": [
+          598.8,
+          1500.0,
+          687.8
+        ],
+        "size": [
+          1197.6,
+          1500.0,
+          1375.6
+        ]
+      },
+      "parts": [
+        {
+          "name": "casing",
+          "role": "body",
+          "source": "1UhN9EalIEyosLG4uXFe1qUKrYK_L65ED.fbx",
+          "path": "rhinolift-maxi/parts/rhinolift-maxi1600d--casing.glb",
+          "bytes": 91396,
+          "triangles": 7040,
+          "bboxMm": {
+            "min": [
+              -598.8,
+              -0.0,
+              -598.2
+            ],
+            "max": [
+              598.8,
+              1500.0,
+              598.2
+            ],
+            "size": [
+              1197.6,
+              1500.0,
+              1196.5
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "insides",
+          "role": "accent",
+          "source": "1UgsYwmzrz3yeQWr9YUf88sqJO2EldZv7.fbx",
+          "path": "rhinolift-maxi/parts/rhinolift-maxi1600d--insides.glb",
+          "bytes": 706296,
+          "triangles": 66479,
+          "bboxMm": {
+            "min": [
+              -318.5,
+              20.1,
+              -166.2
+            ],
+            "max": [
+              300.0,
+              1494.7,
+              687.8
+            ],
+            "size": [
+              618.5,
+              1474.6,
+              854.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "insides-1",
+          "role": "accent",
+          "source": "1Wri_PIjj03YAVG_zJKwyEK5p_0slqQYc.fbx",
+          "path": "rhinolift-maxi/parts/rhinolift-maxi1600d--insides-1.glb",
+          "bytes": 99184,
+          "triangles": 9530,
+          "bboxMm": {
+            "min": [
+              -300.0,
+              7.3,
+              -687.8
+            ],
+            "max": [
+              300.0,
+              1481.8,
+              149.8
+            ],
+            "size": [
+              600.0,
+              1474.5,
+              837.6
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "insides-2",
+          "role": "accent",
+          "source": "1WynQnNIhZT8mh1CszpVn95KmsfbJFBnm.fbx",
+          "path": "rhinolift-maxi/parts/rhinolift-maxi1600d--insides-2.glb",
+          "bytes": 601984,
+          "triangles": 53965,
+          "bboxMm": {
+            "min": [
+              -318.5,
+              26.5,
+              -657.7
+            ],
+            "max": [
+              277.7,
+              1481.5,
+              147.8
+            ],
+            "size": [
+              596.2,
+              1455.0,
+              805.5
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "floats",
+          "role": "accent",
+          "source": "1WqHY8fQkZh4qbScvmIDF1jU_Trg-NnbG.fbx",
+          "path": "rhinolift-maxi/parts/rhinolift-maxi1600d--floats.glb",
+          "bytes": 21752,
+          "triangles": 2980,
+          "bboxMm": {
+            "min": [
+              -311.0,
+              360.3,
+              -164.2
+            ],
+            "max": [
+              -251.0,
+              739.7,
+              166.2
+            ],
+            "size": [
+              60.0,
+              379.4,
+              330.4
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "RhinoLift MINI 2000 D",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "rhinolift",
+      "slug": "rhinolift-mini",
+      "file": "rhinolift-mini2000d",
+      "sourceDriveIds": [
+        "1UsDW9SvcE_ylf-OeUI7B9NLYq3vtwMRN",
+        "1UyKLd9GKCvdAtOXEaq4yvRqDuln9QYbP",
+        "1XZzTDiE8rSXuxGc35xf5m5Y2-hI1j2BG",
+        "1XWoNYRs7YDSdsWO9XjIJMSM_y8zIoguk"
+      ],
+      "variants": [
+        "Pumping Stations/MINI2000D.stl (11.6 MB, Drive 1UWayOXB-AZsR2uEdNCtPiyuBO1t1VIAo)"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinolift-mini/rhinolift-mini2000d.glb",
+        "bytes": 1332500,
+        "nodes": [
+          "casing",
+          "floats",
+          "insides",
+          "insides-2",
+          "rhinolift-mini2000d"
+        ]
+      },
+      "thumbnail": "rhinolift-mini/rhinolift-mini2000d.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 139995,
+      "trianglesSource": 243027,
+      "bboxMm": {
+        "min": [
+          -499.7,
+          -0.0,
+          -530.8
+        ],
+        "max": [
+          499.7,
+          2000.0,
+          530.8
+        ],
+        "size": [
+          999.4,
+          2000.0,
+          1061.6
+        ]
+      },
+      "parts": [
+        {
+          "name": "casing",
+          "role": "body",
+          "source": "1UsDW9SvcE_ylf-OeUI7B9NLYq3vtwMRN.fbx",
+          "path": "rhinolift-mini/parts/rhinolift-mini2000d--casing.glb",
+          "bytes": 142532,
+          "triangles": 13270,
+          "bboxMm": {
+            "min": [
+              -499.7,
+              -0.0,
+              -530.8
+            ],
+            "max": [
+              499.7,
+              2000.0,
+              468.6
+            ],
+            "size": [
+              999.4,
+              2000.0,
+              999.4
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "insides",
+          "role": "accent",
+          "source": "1UyKLd9GKCvdAtOXEaq4yvRqDuln9QYbP.fbx",
+          "path": "rhinolift-mini/parts/rhinolift-mini2000d--insides.glb",
+          "bytes": 105908,
+          "triangles": 13288,
+          "bboxMm": {
+            "min": [
+              -300.0,
+              5.0,
+              -181.4
+            ],
+            "max": [
+              300.0,
+              1980.0,
+              449.8
+            ],
+            "size": [
+              600.0,
+              1975.0,
+              631.2
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "insides-2",
+          "role": "accent",
+          "source": "1XZzTDiE8rSXuxGc35xf5m5Y2-hI1j2BG.fbx",
+          "path": "rhinolift-mini/parts/rhinolift-mini2000d--insides-2.glb",
+          "bytes": 1047480,
+          "triangles": 107719,
+          "bboxMm": {
+            "min": [
+              -274.0,
+              24.5,
+              -179.1
+            ],
+            "max": [
+              318.5,
+              1979.5,
+              530.8
+            ],
+            "size": [
+              592.5,
+              1955.0,
+              709.9
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "floats",
+          "role": "accent",
+          "source": "1XWoNYRs7YDSdsWO9XjIJMSM_y8zIoguk.fbx",
+          "path": "rhinolift-mini/parts/rhinolift-mini2000d--floats.glb",
+          "bytes": 38264,
+          "triangles": 5718,
+          "bboxMm": {
+            "min": [
+              251.0,
+              358.5,
+              -197.5
+            ],
+            "max": [
+              311.0,
+              738.2,
+              132.8
+            ],
+            "size": [
+              60.0,
+              379.7,
+              330.2
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "RhinoLift pump tank PS-50",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "PS-50-1.85-5-HS"
+        ]
+      },
+      "family": "rhinolift",
+      "slug": "rhinolift-pump-tank",
+      "file": "rhinolift-ps50",
+      "sourceDriveIds": [
+        "1VRWFVmmi3FVYbhH9quHHGpDoxL7MNT80",
+        "1VU_Wv8HbEw-0KeEaTqWIs9z1EclpswPW",
+        "1XejtlP4AUck1M2l_qQpChptqwKnTbEam",
+        "1V_3GRY1PmFswVJTTkzlQumA0a4hQW800"
+      ],
+      "variants": [
+        "Pumping Stations/Pump Tank/PS-50-1.85-5-HS.stl (31.8 MB, Drive 1VPlHeBj4oCYT3VJJytBBhSOqKM4Y2b8o)"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhinolift-pump-tank/rhinolift-ps50.glb",
+        "bytes": 1633928,
+        "nodes": [
+          "casing",
+          "insides",
+          "insides-2",
+          "lid",
+          "rhinolift-ps50"
+        ]
+      },
+      "thumbnail": "rhinolift-pump-tank/rhinolift-ps50.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 140132,
+      "trianglesSource": 529066,
+      "bboxMm": {
+        "min": [
+          -814.2,
+          -0.0,
+          -2541.3
+        ],
+        "max": [
+          814.2,
+          3899.6,
+          2541.3
+        ],
+        "size": [
+          1628.4,
+          3899.6,
+          5082.7
+        ]
+      },
+      "parts": [
+        {
+          "name": "casing",
+          "role": "body",
+          "source": "1VRWFVmmi3FVYbhH9quHHGpDoxL7MNT80.fbx",
+          "path": "rhinolift-pump-tank/parts/rhinolift-ps50--casing.glb",
+          "bytes": 547936,
+          "triangles": 48659,
+          "bboxMm": {
+            "min": [
+              -814.2,
+              24.5,
+              -2541.3
+            ],
+            "max": [
+              783.5,
+              3874.5,
+              2541.3
+            ],
+            "size": [
+              1597.7,
+              3850.0,
+              5082.7
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 9,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "insides",
+          "role": "accent",
+          "source": "1VU_Wv8HbEw-0KeEaTqWIs9z1EclpswPW.fbx",
+          "path": "rhinolift-pump-tank/parts/rhinolift-ps50--insides.glb",
+          "bytes": 877280,
+          "triangles": 71067,
+          "bboxMm": {
+            "min": [
+              -211.7,
+              -0.0,
+              -2534.4
+            ],
+            "max": [
+              814.2,
+              3825.6,
+              -995.0
+            ],
+            "size": [
+              1025.9,
+              3825.6,
+              1539.3
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 120,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "insides-2",
+          "role": "accent",
+          "source": "1XejtlP4AUck1M2l_qQpChptqwKnTbEam.fbx",
+          "path": "rhinolift-pump-tank/parts/rhinolift-ps50--insides-2.glb",
+          "bytes": 206820,
+          "triangles": 20220,
+          "bboxMm": {
+            "min": [
+              -281.7,
+              34.5,
+              -1491.4
+            ],
+            "max": [
+              665.2,
+              3825.7,
+              -991.5
+            ],
+            "size": [
+              946.9,
+              3791.2,
+              500.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "lid",
+          "role": "body",
+          "source": "1V_3GRY1PmFswVJTTkzlQumA0a4hQW800.fbx",
+          "path": "rhinolift-pump-tank/parts/rhinolift-ps50--lid.glb",
+          "bytes": 3568,
+          "triangles": 186,
+          "bboxMm": {
+            "min": [
+              -404.2,
+              3874.5,
+              -1706.3
+            ],
+            "max": [
+              725.8,
+              3899.6,
+              -976.3
+            ],
+            "size": [
+              1130.0,
+              25.1,
+              730.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "Rhino inspection chamber, surface",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERSIC600300"
+        ]
+      },
+      "family": "rhino-inspection-chamber",
+      "slug": "rhino-inspection-chamber",
+      "file": "rhino-inspection-chamber-sersic600",
+      "sourceDriveIds": [
+        "1khauTtvFEDMvKK4or6IiguJkFBedz8WK",
+        "1l3uxLI1kkp7mTZX94bi_8ddN7zm_Wuu2",
+        "1lHRKRry-rJKXyHXklX0rY64Gcgbwvs3Y",
+        "1kyYiDGpoy9toGG8yqgqkGT2VhJ6VC9LI",
+        "1krb1zwzNKKl6pFb5sFYUfEpvldev-pkm"
+      ],
+      "variants": [
+        "SERSIC/SERSIC600300-2.stl (4.6 MB, Drive 1XHKiU8JcQEc_cUzq4N57GfoXM4yDx4my)",
+        "FIC450160-2.stl (3.6 MB, Drive 1X1fqLM2ClGYsKp_Cah14ADUOkZuE6L7f)"
+      ],
+      "notes": [
+        "Same meshes as public/models/sic, which the configurator already uses",
+        "unit override: 1 source unit = 10 mm (STLs at 1 unit = 1 cm: body 70.5 units across is the 705 mm chamber)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhino-inspection-chamber/rhino-inspection-chamber-sersic600.glb",
+        "bytes": 652284,
+        "nodes": [
+          "base",
+          "body",
+          "body-bottom",
+          "inlet",
+          "lid",
+          "rhino-inspection-chamber-sersic600"
+        ]
+      },
+      "thumbnail": "rhino-inspection-chamber/rhino-inspection-chamber-sersic600.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 68946,
+      "trianglesSource": 68946,
+      "bboxMm": {
+        "min": [
+          -352.7,
+          0.0,
+          -353.0
+        ],
+        "max": [
+          352.7,
+          1950.0,
+          353.0
+        ],
+        "size": [
+          705.5,
+          1950.0,
+          706.0
+        ]
+      },
+      "parts": [
+        {
+          "name": "lid",
+          "role": "accent",
+          "source": "1khauTtvFEDMvKK4or6IiguJkFBedz8WK.stl",
+          "path": "rhino-inspection-chamber/parts/rhino-inspection-chamber-sersic600--lid.glb",
+          "bytes": 8248,
+          "triangles": 876,
+          "bboxMm": {
+            "min": [
+              -326.8,
+              711.1,
+              -327.1
+            ],
+            "max": [
+              327.4,
+              762.5,
+              327.1
+            ],
+            "size": [
+              654.2,
+              51.4,
+              654.2
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "body",
+          "role": "body",
+          "source": "1l3uxLI1kkp7mTZX94bi_8ddN7zm_Wuu2.stl",
+          "path": "rhino-inspection-chamber/parts/rhino-inspection-chamber-sersic600--body.glb",
+          "bytes": 377716,
+          "triangles": 39530,
+          "bboxMm": {
+            "min": [
+              -352.7,
+              0.0,
+              -353.0
+            ],
+            "max": [
+              352.7,
+              1950.0,
+              353.0
+            ],
+            "size": [
+              705.5,
+              1950.0,
+              706.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "body-bottom",
+          "role": "body",
+          "source": "1lHRKRry-rJKXyHXklX0rY64Gcgbwvs3Y.stl",
+          "path": "rhino-inspection-chamber/parts/rhino-inspection-chamber-sersic600--body-bottom.glb",
+          "bytes": 9904,
+          "triangles": 976,
+          "bboxMm": {
+            "min": [
+              -352.7,
+              559.1,
+              -353.0
+            ],
+            "max": [
+              352.7,
+              1009.1,
+              353.0
+            ],
+            "size": [
+              705.5,
+              450.0,
+              706.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "base",
+          "role": "body",
+          "source": "1kyYiDGpoy9toGG8yqgqkGT2VhJ6VC9LI.stl",
+          "path": "rhino-inspection-chamber/parts/rhino-inspection-chamber-sersic600--base.glb",
+          "bytes": 58040,
+          "triangles": 7354,
+          "bboxMm": {
+            "min": [
+              -306.1,
+              669.8,
+              -306.1
+            ],
+            "max": [
+              306.7,
+              861.8,
+              306.5
+            ],
+            "size": [
+              612.8,
+              192.0,
+              612.6
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "inlet",
+          "role": "accent",
+          "source": "1krb1zwzNKKl6pFb5sFYUfEpvldev-pkm.stl",
+          "path": "rhino-inspection-chamber/parts/rhino-inspection-chamber-sersic600--inlet.glb",
+          "bytes": 200896,
+          "triangles": 20210,
+          "bboxMm": {
+            "min": [
+              -137.5,
+              615.0,
+              -176.7
+            ],
+            "max": [
+              138.3,
+              890.8,
+              165.6
+            ],
+            "size": [
+              275.8,
+              275.9,
+              342.3
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "Rhino inspection chamber, 5-inlet base",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SERCIC600225"
+        ]
+      },
+      "family": "rhino-inspection-chamber",
+      "slug": "rhino-inspection-chamber-5-inlet",
+      "file": "rhino-inspection-chamber-sercic600-5-inlet",
+      "sourceDriveIds": [
+        "1nARxUvdP6mJ0aAR98YROd5FhI-_BRRm_",
+        "1mlpAm32ku2ip8CFwsBOu-UibWE3zUmsT",
+        "1mlPYUQYItEXFWtQbvFFmchWjtdpV_WTc",
+        "1mnBGansr3u5QGU1z6qJlq5INxPiG7qbt"
+      ],
+      "variants": [
+        "SERCIC600225-2.stl (5.2 MB, Drive 1X4y2nR38vbSuGpj3zqO6RKfqaJ0n-xJC)"
+      ],
+      "notes": [
+        "5 Inlet Base.stl is the same mesh as 5 Inlet.fbx (identical triangle count) and is not converted separately",
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm: rim 69.6 units is the 696 mm chamber)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhino-inspection-chamber-5-inlet/rhino-inspection-chamber-sercic600-5-inlet.glb",
+        "bytes": 613580,
+        "nodes": [
+          "base",
+          "body",
+          "inlet",
+          "rim",
+          "rhino-inspection-chamber-sercic600-5-inlet"
+        ]
+      },
+      "thumbnail": "rhino-inspection-chamber-5-inlet/rhino-inspection-chamber-sercic600-5-inlet.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 63552,
+      "trianglesSource": 63552,
+      "bboxMm": {
+        "min": [
+          -348.1,
+          0.0,
+          -348.2
+        ],
+        "max": [
+          348.1,
+          1556.3,
+          348.2
+        ],
+        "size": [
+          696.3,
+          1556.3,
+          696.4
+        ]
+      },
+      "parts": [
+        {
+          "name": "rim",
+          "role": "accent",
+          "source": "1nARxUvdP6mJ0aAR98YROd5FhI-_BRRm_.fbx",
+          "path": "rhino-inspection-chamber-5-inlet/parts/rhino-inspection-chamber-sercic600-5-inlet--rim.glb",
+          "bytes": 15248,
+          "triangles": 1318,
+          "bboxMm": {
+            "min": [
+              -348.1,
+              322.7,
+              -347.8
+            ],
+            "max": [
+              347.9,
+              395.0,
+              348.2
+            ],
+            "size": [
+              696.0,
+              72.3,
+              696.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "body",
+          "role": "body",
+          "source": "1mlpAm32ku2ip8CFwsBOu-UibWE3zUmsT.fbx",
+          "path": "rhino-inspection-chamber-5-inlet/parts/rhino-inspection-chamber-sercic600-5-inlet--body.glb",
+          "bytes": 288656,
+          "triangles": 29930,
+          "bboxMm": {
+            "min": [
+              -347.9,
+              0.0,
+              -348.2
+            ],
+            "max": [
+              348.1,
+              1556.3,
+              347.8
+            ],
+            "size": [
+              696.0,
+              1556.3,
+              696.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "base",
+          "role": "body",
+          "source": "1mlPYUQYItEXFWtQbvFFmchWjtdpV_WTc.fbx",
+          "path": "rhino-inspection-chamber-5-inlet/parts/rhino-inspection-chamber-sercic600-5-inlet--base.glb",
+          "bytes": 110900,
+          "triangles": 12106,
+          "bboxMm": {
+            "min": [
+              -298.6,
+              248.9,
+              -300.5
+            ],
+            "max": [
+              298.4,
+              553.9,
+              301.0
+            ],
+            "size": [
+              597.0,
+              305.0,
+              601.5
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "inlet",
+          "role": "accent",
+          "source": "1mnBGansr3u5QGU1z6qJlq5INxPiG7qbt.fbx",
+          "path": "rhino-inspection-chamber-5-inlet/parts/rhino-inspection-chamber-sercic600-5-inlet--inlet.glb",
+          "bytes": 200660,
+          "triangles": 20198,
+          "bboxMm": {
+            "min": [
+              -137.9,
+              222.2,
+              -170.2
+            ],
+            "max": [
+              137.9,
+              498.1,
+              172.1
+            ],
+            "size": [
+              275.8,
+              275.9,
+              342.3
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "Rhino inspection chamber moulded base",
+      "codes": {
+        "sales": [],
+        "drawing": [
+          "SEB1050-600-600"
+        ]
+      },
+      "family": "rhino-inspection-chamber",
+      "slug": "rhino-inspection-chamber-base",
+      "file": "rhino-inspection-chamber-base-seb1050",
+      "sourceDriveIds": [
+        "1c64yldkLUh-r9KYfX5Cz1DOGwyk-KWoB"
+      ],
+      "variants": [
+        "SEB600-150-150-150.stp (0.9 MB, Drive 1c0m4zN0POF4z7vY1Bih3AEu4cMO97nct)",
+        "SEB600-225-225.stp (1.7 MB, Drive 1bxHpD2kzY6mus79u5pSSSgqwm-yWOkpF)",
+        "SEB600-300-300.stp (0.6 MB, Drive 1bveRf-ZamWtTGJnGSHAuAFGybpb-cz6M)",
+        "750 Moulded base 450-300.stp (0.7 MB, Drive 1cB4qBNXvMitDxPB4Zyn5XH36B66YLG64)"
+      ],
+      "notes": [
+        "STEP master, declared millimetres; modelled Y-up so turned upright",
+        "base: tessellated from .stp (1 solids, declared mm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "rhino-inspection-chamber-base/rhino-inspection-chamber-base-seb1050.glb",
+        "bytes": 200452,
+        "nodes": [
+          "base",
+          "rhino-inspection-chamber-base-seb1050"
+        ]
+      },
+      "thumbnail": "rhino-inspection-chamber-base/rhino-inspection-chamber-base-seb1050.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 27500,
+      "trianglesSource": 27500,
+      "bboxMm": {
+        "min": [
+          -535.9,
+          0.0,
+          -535.9
+        ],
+        "max": [
+          535.9,
+          380.0,
+          535.9
+        ],
+        "size": [
+          1071.9,
+          380.0,
+          1071.8
+        ]
+      },
+      "parts": [
+        {
+          "name": "base",
+          "role": "body",
+          "source": "1c64yldkLUh-r9KYfX5Cz1DOGwyk-KWoB-00.stl",
+          "path": "rhino-inspection-chamber-base/parts/rhino-inspection-chamber-base-seb1050--base.glb",
+          "bytes": 200388,
+          "triangles": 27500,
+          "bboxMm": {
+            "min": [
+              -535.9,
+              0.0,
+              -535.9
+            ],
+            "max": [
+              535.9,
+              380.0,
+              535.9
+            ],
+            "size": [
+              1071.9,
+              380.0,
+              1071.8
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "Rhino inspection chamber cap with dust cap upstand",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "rhino-inspection-chamber",
+      "slug": "rhino-inspection-chamber-cap",
+      "file": "rhino-inspection-chamber-cap-600",
+      "sourceDriveIds": [
+        "1c9FXcbDTKMNfEsOVbpcPHW6Pip8e0Of2"
+      ],
+      "variants": [
+        "Cap with dust cap upstand 450.stp (0.0 MB, Drive 1cAI78uo2DvBuoLwqy2upmwvq05jGQyWg)"
+      ],
+      "notes": [],
+      "status": "failed",
+      "reason": "source not downloaded: Moulded bases STEP/Cap with dust cap upstand 600.stp"
+    },
+    {
+      "name": "Grease trap, Jumbo Micro",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "grease-trap",
+      "slug": "grease-trap-jumbo-micro",
+      "file": "grease-trap-jumbo-micro",
+      "sourceDriveIds": [
+        "1Z5CN7Z6gwRHggowMcddXY3wuz_QbvVRr"
+      ],
+      "notes": [
+        "Jumbo Micro Casing XRay.fbx is a cut-away casing for section views; converted as its own item below",
+        "built from Grease Traps/Jumbo Micro Breakdown.blend because these parts could not be downloaded on their own: Jumbo Micro Inletfbx.fbx, Jumbo Micro Outlet.fbx",
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "grease-trap-jumbo-micro/grease-trap-jumbo-micro.glb",
+        "bytes": 149648,
+        "nodes": [
+          "jumbo-micro-casing",
+          "jumbo-micro-casing-xray",
+          "jumbo-micro-cover",
+          "jumbo-micro-cover-housing",
+          "jumbo-micro-inlet-1",
+          "jumbo-micro-inlet-2",
+          "grease-trap-jumbo-micro"
+        ]
+      },
+      "thumbnail": "grease-trap-jumbo-micro/grease-trap-jumbo-micro.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 17762,
+      "trianglesSource": 17762,
+      "bboxMm": {
+        "min": [
+          -320.0,
+          0.0,
+          -414.9
+        ],
+        "max": [
+          320.0,
+          643.5,
+          414.9
+        ],
+        "size": [
+          640.0,
+          643.5,
+          829.8
+        ]
+      },
+      "parts": [
+        {
+          "name": "jumbo-micro-casing",
+          "role": "body",
+          "source": "1Z5CN7Z6gwRHggowMcddXY3wuz_QbvVRr.blend",
+          "path": "grease-trap-jumbo-micro/parts/grease-trap-jumbo-micro--jumbo-micro-casing.glb",
+          "bytes": 40240,
+          "triangles": 5232,
+          "bboxMm": {
+            "min": [
+              -320.0,
+              0.0,
+              -394.5
+            ],
+            "max": [
+              320.0,
+              607.0,
+              394.5
+            ],
+            "size": [
+              640.0,
+              607.0,
+              789.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "jumbo-micro-casing-xray",
+          "role": "body",
+          "source": "1Z5CN7Z6gwRHggowMcddXY3wuz_QbvVRr.blend",
+          "path": "grease-trap-jumbo-micro/parts/grease-trap-jumbo-micro--jumbo-micro-casing-xray.glb",
+          "bytes": 41820,
+          "triangles": 5226,
+          "bboxMm": {
+            "min": [
+              -320.0,
+              0.0,
+              -394.5
+            ],
+            "max": [
+              320.0,
+              607.0,
+              394.5
+            ],
+            "size": [
+              640.0,
+              607.0,
+              789.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "jumbo-micro-cover",
+          "role": "accent",
+          "source": "1Z5CN7Z6gwRHggowMcddXY3wuz_QbvVRr.blend",
+          "path": "grease-trap-jumbo-micro/parts/grease-trap-jumbo-micro--jumbo-micro-cover.glb",
+          "bytes": 42784,
+          "triangles": 4448,
+          "bboxMm": {
+            "min": [
+              -248.0,
+              572.0,
+              -273.0
+            ],
+            "max": [
+              248.0,
+              643.5,
+              223.0
+            ],
+            "size": [
+              496.0,
+              71.5,
+              496.0
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "jumbo-micro-cover-housing",
+          "role": "body",
+          "source": "1Z5CN7Z6gwRHggowMcddXY3wuz_QbvVRr.blend",
+          "path": "grease-trap-jumbo-micro/parts/grease-trap-jumbo-micro--jumbo-micro-cover-housing.glb",
+          "bytes": 14020,
+          "triangles": 1536,
+          "bboxMm": {
+            "min": [
+              -273.0,
+              582.0,
+              -297.9
+            ],
+            "max": [
+              272.6,
+              642.0,
+              247.9
+            ],
+            "size": [
+              545.6,
+              60.0,
+              545.8
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "jumbo-micro-inlet-1",
+          "role": "accent",
+          "source": "1Z5CN7Z6gwRHggowMcddXY3wuz_QbvVRr.blend",
+          "path": "grease-trap-jumbo-micro/parts/grease-trap-jumbo-micro--jumbo-micro-inlet-1.glb",
+          "bytes": 7364,
+          "triangles": 660,
+          "bboxMm": {
+            "min": [
+              -77.4,
+              368.6,
+              359.5
+            ],
+            "max": [
+              77.5,
+              523.5,
+              414.9
+            ],
+            "size": [
+              154.9,
+              154.9,
+              55.4
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "jumbo-micro-inlet-2",
+          "role": "accent",
+          "source": "1Z5CN7Z6gwRHggowMcddXY3wuz_QbvVRr.blend",
+          "path": "grease-trap-jumbo-micro/parts/grease-trap-jumbo-micro--jumbo-micro-inlet-2.glb",
+          "bytes": 7372,
+          "triangles": 660,
+          "bboxMm": {
+            "min": [
+              -77.4,
+              338.6,
+              -414.9
+            ],
+            "max": [
+              77.5,
+              493.5,
+              -359.5
+            ],
+            "size": [
+              154.9,
+              154.9,
+              55.4
+            ]
+          },
+          "sourceUnit": "blend scale_length 1 METERS",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "Grease trap, Jumbo Micro, cut-away casing",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "grease-trap",
+      "slug": "grease-trap-jumbo-micro-xray",
+      "file": "grease-trap-jumbo-micro-xray",
+      "sourceDriveIds": [
+        "1_3Fyb8yGT0hmv1B78F3g9rQfFB6QXbcv"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "grease-trap-jumbo-micro-xray/grease-trap-jumbo-micro-xray.glb",
+        "bytes": 116556,
+        "nodes": [
+          "casing-xray",
+          "grease-trap-jumbo-micro-xray"
+        ]
+      },
+      "thumbnail": "grease-trap-jumbo-micro-xray/grease-trap-jumbo-micro-xray.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 17762,
+      "trianglesSource": 17762,
+      "bboxMm": {
+        "min": [
+          -320.0,
+          0.0,
+          -414.9
+        ],
+        "max": [
+          320.0,
+          643.5,
+          414.9
+        ],
+        "size": [
+          640.0,
+          643.5,
+          829.8
+        ]
+      },
+      "parts": [
+        {
+          "name": "casing-xray",
+          "role": "body",
+          "source": "1_3Fyb8yGT0hmv1B78F3g9rQfFB6QXbcv.fbx",
+          "path": "grease-trap-jumbo-micro-xray/parts/grease-trap-jumbo-micro-xray--casing-xray.glb",
+          "bytes": 116504,
+          "triangles": 17762,
+          "bboxMm": {
+            "min": [
+              -320.0,
+              0.0,
+              -414.9
+            ],
+            "max": [
+              320.0,
+              643.5,
+              414.9
+            ],
+            "size": [
+              640.0,
+              643.5,
+              829.8
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "Adapter, 150 Twinwall to EN110",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "adapters",
+      "slug": "adapter-150-twinwall-en110",
+      "file": "adapter-150-twinwall-en110",
+      "sourceDriveIds": [
+        "1Z6vkswE8ttV8-xWRwaoi9lB1y4AMydLq"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm: 183 mm across)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "adapter-150-twinwall-en110/adapter-150-twinwall-en110.glb",
+        "bytes": 183172,
+        "nodes": [
+          "adapter",
+          "adapter-150-twinwall-en110"
+        ]
+      },
+      "thumbnail": "adapter-150-twinwall-en110/adapter-150-twinwall-en110.png",
+      "thumbnailMaterials": "source",
+      "triangles": 21344,
+      "trianglesSource": 21344,
+      "bboxMm": {
+        "min": [
+          -91.5,
+          0.0,
+          -167.7
+        ],
+        "max": [
+          91.5,
+          182.7,
+          167.7
+        ],
+        "size": [
+          183.0,
+          182.7,
+          335.4
+        ]
+      },
+      "parts": [
+        {
+          "name": "adapter",
+          "role": "body",
+          "source": "1Z6vkswE8ttV8-xWRwaoi9lB1y4AMydLq.fbx",
+          "path": "adapter-150-twinwall-en110/parts/adapter-150-twinwall-en110--adapter.glb",
+          "bytes": 183120,
+          "triangles": 21344,
+          "bboxMm": {
+            "min": [
+              -91.5,
+              0.0,
+              -167.7
+            ],
+            "max": [
+              91.5,
+              182.7,
+              167.7
+            ],
+            "size": [
+              183.0,
+              182.7,
+              335.4
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [
+            "Mat 1",
+            "Material"
+          ],
+          "normalsFlipped": 5616,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "Adapter, 225 Twinwall to EN150",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "adapters",
+      "slug": "adapter-225-twinwall-en150",
+      "file": "adapter-225-twinwall-en150",
+      "sourceDriveIds": [
+        "1Z7yFyRrm6A2hBVtasnz_SWlFzKX1uhET"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "adapter-225-twinwall-en150/adapter-225-twinwall-en150.glb",
+        "bytes": 289044,
+        "nodes": [
+          "adapter",
+          "adapter-225-twinwall-en150"
+        ]
+      },
+      "thumbnail": "adapter-225-twinwall-en150/adapter-225-twinwall-en150.png",
+      "thumbnailMaterials": "source",
+      "triangles": 35342,
+      "trianglesSource": 35342,
+      "bboxMm": {
+        "min": [
+          -132.4,
+          0.0,
+          -181.7
+        ],
+        "max": [
+          132.4,
+          264.9,
+          181.7
+        ],
+        "size": [
+          264.9,
+          264.9,
+          363.4
+        ]
+      },
+      "parts": [
+        {
+          "name": "adapter",
+          "role": "body",
+          "source": "1Z7yFyRrm6A2hBVtasnz_SWlFzKX1uhET.fbx",
+          "path": "adapter-225-twinwall-en150/parts/adapter-225-twinwall-en150--adapter.glb",
+          "bytes": 288988,
+          "triangles": 35342,
+          "bboxMm": {
+            "min": [
+              -132.4,
+              0.0,
+              -181.7
+            ],
+            "max": [
+              132.4,
+              264.9,
+              181.7
+            ],
+            "size": [
+              264.9,
+              264.9,
+              363.4
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [
+            "Mat 1",
+            "Material"
+          ],
+          "normalsFlipped": 9600,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "Adapter, 225 UltraRib",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "adapters",
+      "slug": "adapter-225-ultrarib",
+      "file": "adapter-225-ultrarib",
+      "sourceDriveIds": [
+        "1Z8ecO54AmSYgjzRPH2tKSgzVUM9IPChy"
+      ],
+      "notes": [
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "adapter-225-ultrarib/adapter-225-ultrarib.glb",
+        "bytes": 42600,
+        "nodes": [
+          "adapter",
+          "adapter-225-ultrarib"
+        ]
+      },
+      "thumbnail": "adapter-225-ultrarib/adapter-225-ultrarib.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 5270,
+      "trianglesSource": 5270,
+      "bboxMm": {
+        "min": [
+          -149.7,
+          0.0,
+          -140.0
+        ],
+        "max": [
+          149.7,
+          300.0,
+          140.0
+        ],
+        "size": [
+          299.5,
+          300.0,
+          280.0
+        ]
+      },
+      "parts": [
+        {
+          "name": "adapter",
+          "role": "body",
+          "source": "1Z8ecO54AmSYgjzRPH2tKSgzVUM9IPChy.fbx",
+          "path": "adapter-225-ultrarib/parts/adapter-225-ultrarib--adapter.glb",
+          "bytes": 42552,
+          "triangles": 5270,
+          "bboxMm": {
+            "min": [
+              -149.7,
+              0.0,
+              -140.0
+            ],
+            "max": [
+              149.7,
+              300.0,
+              140.0
+            ],
+            "size": [
+              299.5,
+              300.0,
+              280.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "Adapter, Ridgidrain",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "adapters",
+      "slug": "adapter-25-ridgidrain",
+      "file": "adapter-25-ridgidrain",
+      "sourceDriveIds": [
+        "1ZA0lrqlq3JwUphgcqyksh_YRbkUCIoBT"
+      ],
+      "notes": [
+        "File is named 25 Ridgidrain but measures 300 mm across; the 25 is not a diameter",
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "adapter-25-ridgidrain/adapter-25-ridgidrain.glb",
+        "bytes": 14644,
+        "nodes": [
+          "adapter",
+          "adapter-25-ridgidrain"
+        ]
+      },
+      "thumbnail": "adapter-25-ridgidrain/adapter-25-ridgidrain.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 1696,
+      "trianglesSource": 1696,
+      "bboxMm": {
+        "min": [
+          -150.0,
+          0.0,
+          -145.0
+        ],
+        "max": [
+          150.0,
+          300.4,
+          145.0
+        ],
+        "size": [
+          299.9,
+          300.4,
+          290.0
+        ]
+      },
+      "parts": [
+        {
+          "name": "adapter",
+          "role": "body",
+          "source": "1ZA0lrqlq3JwUphgcqyksh_YRbkUCIoBT.fbx",
+          "path": "adapter-25-ridgidrain/parts/adapter-25-ridgidrain--adapter.glb",
+          "bytes": 14596,
+          "triangles": 1696,
+          "bboxMm": {
+            "min": [
+              -150.0,
+              0.0,
+              -145.0
+            ],
+            "max": [
+              150.0,
+              300.4,
+              145.0
+            ],
+            "size": [
+              299.9,
+              300.4,
+              290.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "Siphon housing",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "siphon-housing",
+      "slug": "siphon-housing",
+      "file": "siphon-housing",
+      "sourceDriveIds": [
+        "126Hc1vsEp6g34NaoANIDHtJAFsqyLDN3",
+        "12YQ6cBoea2AyiVfGbBYQgBnP2aMg8mu6"
+      ],
+      "notes": [
+        "Read from the FreeCAD files directly: one Body in Housing, two in Housing2. The two files overlap in space, which shows as speckling where their surfaces coincide; they are probably two iterations of the same housing rather than two parts",
+        "housing: tessellated from .fcstd (1 solids, declared mm)",
+        "housing-2: tessellated from .fcstd (2 solids, declared mm)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "siphon-housing/siphon-housing.glb",
+        "bytes": 39332,
+        "nodes": [
+          "housing",
+          "housing-2-01",
+          "housing-2-02",
+          "siphon-housing"
+        ]
+      },
+      "thumbnail": "siphon-housing/siphon-housing.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 5040,
+      "trianglesSource": 5040,
+      "bboxMm": {
+        "min": [
+          -197.5,
+          0.0,
+          -67.5
+        ],
+        "max": [
+          197.5,
+          200.0,
+          67.5
+        ],
+        "size": [
+          395.0,
+          200.0,
+          135.0
+        ]
+      },
+      "parts": [
+        {
+          "name": "housing",
+          "role": "body",
+          "source": "126Hc1vsEp6g34NaoANIDHtJAFsqyLDN3-Body.stl",
+          "path": "siphon-housing/parts/siphon-housing--housing.glb",
+          "bytes": 22868,
+          "triangles": 3096,
+          "bboxMm": {
+            "min": [
+              -197.5,
+              0.0,
+              -62.5
+            ],
+            "max": [
+              197.5,
+              200.0,
+              67.5
+            ],
+            "size": [
+              395.0,
+              200.0,
+              130.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "housing-2-01",
+          "role": "accent",
+          "source": "12YQ6cBoea2AyiVfGbBYQgBnP2aMg8mu6-Body.stl",
+          "path": "siphon-housing/parts/siphon-housing--housing-2-01.glb",
+          "bytes": 8376,
+          "triangles": 936,
+          "bboxMm": {
+            "min": [
+              -162.5,
+              0.0,
+              17.5
+            ],
+            "max": [
+              197.5,
+              200.0,
+              67.5
+            ],
+            "size": [
+              360.0,
+              200.0,
+              50.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        },
+        {
+          "name": "housing-2-02",
+          "role": "accent",
+          "source": "12YQ6cBoea2AyiVfGbBYQgBnP2aMg8mu6-Body001.stl",
+          "path": "siphon-housing/parts/siphon-housing--housing-2-02.glb",
+          "bytes": 9344,
+          "triangles": 1008,
+          "bboxMm": {
+            "min": [
+              -162.5,
+              0.0,
+              -67.5
+            ],
+            "max": [
+              197.5,
+              200.0,
+              17.5
+            ],
+            "size": [
+              360.0,
+              200.0,
+              85.0
+            ]
+          },
+          "sourceUnit": "stl: unitless",
+          "unitResolution": "assumed mm (unitless source)",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": false
+        }
+      ]
+    },
+    {
+      "name": "Icon study",
+      "codes": {
+        "sales": [],
+        "drawing": []
+      },
+      "family": "icon-study",
+      "slug": "icon-study",
+      "file": "icon-study",
+      "sourceDriveIds": [
+        "1deh9x5JYwINRb_yBxDZ2IzIsCcFnOOLG",
+        "1dYZEjEPUL7J5lOUhRvxQ5rRO3b2SH5tI",
+        "1ddSzEv5eEE6HFSPekxZHh5WIpmxLRyA4"
+      ],
+      "notes": [
+        "Despite the folder name this is a pipe coupling (three segments), not the brand icon",
+        "unit override: 1 source unit = 10 mm (Blender-made, 1 unit = 1 cm; an icon, so scale is nominal)"
+      ],
+      "status": "ok",
+      "units": "mm",
+      "unitScale": 0.001,
+      "upAxis": "Y",
+      "assembled": {
+        "path": "icon-study/icon-study.glb",
+        "bytes": 805668,
+        "nodes": [
+          "centre",
+          "left",
+          "right",
+          "icon-study"
+        ]
+      },
+      "thumbnail": "icon-study/icon-study.png",
+      "thumbnailMaterials": "brand defaults (body ink-600, accent brand-blue #1E80BA)",
+      "triangles": 139998,
+      "trianglesSource": 153100,
+      "bboxMm": {
+        "min": [
+          -860.0,
+          0.0,
+          -833.8
+        ],
+        "max": [
+          860.0,
+          1720.0,
+          833.8
+        ],
+        "size": [
+          1720.0,
+          1720.0,
+          1667.5
+        ]
+      },
+      "parts": [
+        {
+          "name": "centre",
+          "role": "accent",
+          "source": "1deh9x5JYwINRb_yBxDZ2IzIsCcFnOOLG.fbx",
+          "path": "icon-study/parts/icon-study--centre.glb",
+          "bytes": 130032,
+          "triangles": 22406,
+          "bboxMm": {
+            "min": [
+              -860.0,
+              0.0,
+              -718.3
+            ],
+            "max": [
+              860.0,
+              1720.0,
+              716.7
+            ],
+            "size": [
+              1720.0,
+              1720.0,
+              1435.0
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "left",
+          "role": "body",
+          "source": "1dYZEjEPUL7J5lOUhRvxQ5rRO3b2SH5tI.fbx",
+          "path": "icon-study/parts/icon-study--left.glb",
+          "bytes": 337116,
+          "triangles": 58796,
+          "bboxMm": {
+            "min": [
+              -852.5,
+              7.6,
+              -833.8
+            ],
+            "max": [
+              852.4,
+              1712.5,
+              6.7
+            ],
+            "size": [
+              1704.9,
+              1704.9,
+              840.5
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        },
+        {
+          "name": "right",
+          "role": "body",
+          "source": "1ddSzEv5eEE6HFSPekxZHh5WIpmxLRyA4.fbx",
+          "path": "icon-study/parts/icon-study--right.glb",
+          "bytes": 339788,
+          "triangles": 58796,
+          "bboxMm": {
+            "min": [
+              -852.4,
+              7.7,
+              -6.7
+            ],
+            "max": [
+              851.9,
+              1712.3,
+              833.8
+            ],
+            "size": [
+              1704.3,
+              1704.6,
+              840.5
+            ]
+          },
+          "sourceUnit": "fbx UnitScaleFactor 1 (1 file unit = 10 mm)",
+          "unitResolution": "job override",
+          "materialsInSource": [],
+          "normalsFlipped": 0,
+          "customNormalsCleared": true
+        }
+      ]
+    },
+    {
+      "name": "Bell siphon",
+      "family": "siphon-housing",
+      "slug": "bell-siphon",
+      "file": "bell-siphon",
+      "sourceDriveIds": [
+        "1viNzPAE42CDpkIMhg56n9yjscfvs86Vm",
+        "1vpiHw1DnsAkBPWTxz1wsgVtjRmuDHIsa",
+        "1vvX69-mCXc9p4y1UVe5VtixkefCHd4P8"
+      ],
+      "notes": [],
+      "status": "failed",
+      "reason": "needs SolidWorks (.sldprt/.sldasm only). The filenames also carry an uploads_files_ prefix, which suggests a third-party marketplace download rather than a SuDS Enviro model."
+    }
+  ]
+}
