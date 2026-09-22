@@ -1,50 +1,37 @@
 'use client'
 
-import { useMemo, useRef, type MutableRefObject, type ReactNode } from 'react'
+import { Suspense, useMemo, useRef, type MutableRefObject, type ReactNode } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { ContactShadows, Outlines, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
+import { TOON, ToonLights, ToonModel, toonRamp, useWaterMaterial } from './three/toon'
 
 /**
- * The home page's scroll scene, rebuilt from the Webflow site's Spline
- * scroll (see reference/webflow/SPLINE.md) as line art in the site palette.
+ * The home page's scroll scene: the Webflow site's Spline scroll rebuilt
+ * in its own toon style (stepped shading, inked outlines) with the real
+ * product models from the 3D library.
  *
- * Everything is driven by one number, `progress` (0 at the top of the
- * journey, 1 at the end), which WaterJourney writes from the page scroll.
- * Nothing here re-renders React on scroll; each element reads the ref in
- * useFrame and eases towards where it should be.
+ * Everything reads one number, `progress` (0 at the top of the journey,
+ * 1 at the end), which WaterJourney writes from the page scroll. Nothing
+ * re-renders React on scroll: elements read the ref in useFrame and ease
+ * towards where they should be.
  *
- * Beats, in the order the copy runs:
- *   0.00  droplets gather into the water tube            (hero)
- *   0.20  storm tube and foul line spiral down together  (storm / foul)
- *   0.40  they pass through the chamber, autoFlo rides   (autoFlo)
- *   0.60  top-down onto the 5-inlet base, the clock      (multiFlo)
- *   0.80  water branches out to the RHINO range          (all situations)
- *
- * Product geometry is the real 3D library (public/models/library/v1),
- * drawn as edges over a pale translucent fill.
+ *   0.00  droplets gather into the water                (hero)
+ *   0.20  storm water and the foul line spiral down     (storm / foul)
+ *   0.40  the chamber stacks up around them; autoFlo    (autoFlo)
+ *   0.60  the spiral drains into the 5-inlet base; the
+ *         camera turns top-down and the inlets light    (multiFlo)
+ *   0.80  water branches out to the RHINO range         (all situations)
  */
 
-const C = {
-  blue: '#1d80b9',
-  blueDark: '#005576',
-  blueLight: '#afdbf4',
-  green: '#54b54d',
-  red: '#c34c4a',
-  yellow: '#ffe313',
-} as const
-
-// Library models are in millimetres; this puts a 2 m product at ~4.4 units.
 const MM = 0.0022
 const GROUND = -8.6
 const LIB = '/models/library/v1'
 const PARTS = {
   base: `${LIB}/rhino-inspection-chamber-5-inlet/parts/rhino-inspection-chamber-sercic600-5-inlet--base.glb`,
   rim: `${LIB}/rhino-inspection-chamber-5-inlet/parts/rhino-inspection-chamber-sercic600-5-inlet--rim.glb`,
-  chamber: `${LIB}/rhino-inspection-chamber/parts/rhino-inspection-chamber-sersic600--body.glb`,
-  chamberInlet: `${LIB}/rhino-inspection-chamber/parts/rhino-inspection-chamber-sersic600--inlet.glb`,
-  sudsceptor: `${LIB}/sudsceptor/parts/sudsceptor-sehds1800--casing.glb`,
-  sudsceptorStand: `${LIB}/sudsceptor/parts/sudsceptor-sehds1800--stand.glb`,
+  chamber: `${LIB}/rhino-inspection-chamber/rhino-inspection-chamber-sersic600.glb`,
+  sudsceptor: `${LIB}/sudsceptor/sudsceptor-sehds1800.glb`,
   maxi: `${LIB}/rhinolift-maxi/parts/rhinolift-maxi1600d--casing.glb`,
   pumpTank: `${LIB}/rhinolift-pump-tank/parts/rhinolift-ps50--casing.glb`,
 } as const
@@ -59,8 +46,14 @@ const ramp = (p: number, a: number, b: number) => {
   const t = clamp01((p - a) / (b - a))
   return t * t * (3 - 2 * t)
 }
+/** An overshooting ease for things that pop into place. */
+const pop = (t: number) => {
+  const c = 1.70158
+  const u = t - 1
+  return t <= 0 ? 0 : 1 + (c + 1) * u * u * u + c * u * u
+}
 
-/** Clock hour to a point on a circle seen from above, 12 o'clock = north (-z). */
+/** Clock hour to a point seen from above, 12 o'clock = north (-z). */
 const clockPoint = (hour: number, r: number, y: number) => {
   const a = (hour / 12) * Math.PI * 2
   return new THREE.Vector3(Math.sin(a) * r, y, -Math.cos(a) * r)
@@ -80,77 +73,73 @@ function waterCurve(phase: number, radius: number) {
     const r = radius * (1.15 - 0.45 * t)
     pts.push(new THREE.Vector3(Math.cos(a) * r, top + (bottom - top) * t, Math.sin(a) * r))
   }
-  pts.push(new THREE.Vector3(0, -6.4, 0), new THREE.Vector3(0, GROUND + 0.9, 0))
+  pts.push(new THREE.Vector3(0, -6.4, 0), new THREE.Vector3(0, GROUND + 0.75, 0))
   return new THREE.CatmullRomCurve3(pts, false, 'centripetal')
 }
 
-// ── materials, shared ───────────────────────────────────────────────
+// ── toon primitives ─────────────────────────────────────────────────
 
-function useMaterials() {
-  return useMemo(
-    () => ({
-      fill: new THREE.MeshBasicMaterial({
-        color: C.blueLight, transparent: true, opacity: 0.3, depthWrite: false, side: THREE.DoubleSide,
-      }),
-      line: new THREE.LineBasicMaterial({ color: C.blue, transparent: true, opacity: 0.9 }),
-      lineGreen: new THREE.LineBasicMaterial({ color: C.green, transparent: true, opacity: 0.95 }),
-      water: new THREE.MeshStandardMaterial({
-        color: C.blueLight, emissive: C.blue, emissiveIntensity: 0.12,
-        roughness: 0.15, metalness: 0, transparent: true, opacity: 0.72,
-      }),
-      foul: new THREE.MeshBasicMaterial({ color: C.red }),
-      amber: new THREE.MeshBasicMaterial({
-        color: C.yellow, transparent: true, opacity: 0.45, depthWrite: false,
-      }),
-      amberLine: new THREE.LineBasicMaterial({ color: '#c9b000' }),
-      marker: new THREE.MeshBasicMaterial({ color: C.green }),
-      outlet: new THREE.MeshBasicMaterial({ color: C.blue }),
-    }),
-    [],
+function ToonSolid({ children, color, outline = TOON.ink, thickness = 2.4 }: {
+  children: ReactNode; color: string; outline?: string; thickness?: number
+}) {
+  return (
+    <>
+      {children}
+      <meshToonMaterial color={color} gradientMap={toonRamp()} />
+      {/* drei 10.7: screenspace={false} is the pixel-width path (see toon.tsx). */}
+      <Outlines screenspace={false} thickness={thickness} color={outline} toneMapped={false} angle={Math.PI / 5} />
+    </>
   )
 }
-type Materials = ReturnType<typeof useMaterials>
 
-/** Fade every material under a group; line art reads as drawn in. */
-function setGroupOpacity(group: THREE.Object3D, k: number) {
-  group.visible = k > 0.002
-  group.traverse((o) => {
-    const m = (o as THREE.Mesh).material
-    if (!m || Array.isArray(m)) return
-    // Each material remembers its authored opacity the first time through.
-    if (typeof m.userData.base !== 'number') m.userData.base = m.opacity
-    m.opacity = (m.userData.base as number) * k
-  })
-}
-
-// ── scene elements ──────────────────────────────────────────────────
-
-/** A tube along the water path that grows with progress. */
-function GrowingTube({ curve, radius, material, progress, from, to }: {
-  curve: THREE.CatmullRomCurve3; radius: number; material: THREE.Material
-  progress: ProgressRef; from: number; to: number
+/**
+ * A tube along a curve, drawn between a head and a tail that both move
+ * with progress, so water can arrive and then drain on down the pipe.
+ */
+function FlowTube({ curve, radius, material, progress, head, tail, outline = TOON.ink, segments = 420 }: {
+  curve: THREE.CatmullRomCurve3
+  radius: number
+  material: THREE.Material
+  progress: ProgressRef
+  /** Progress range over which the front of the water travels the curve. */
+  head: [number, number]
+  /** Progress range over which the back of the water follows it. */
+  tail?: [number, number]
+  outline?: string
+  segments?: number
 }) {
-  const geo = useMemo(() => new THREE.TubeGeometry(curve, 420, radius, 12, false), [curve, radius])
-  const shown = useRef(0)
+  const geo = useMemo(() => new THREE.TubeGeometry(curve, segments, radius, 14, false), [curve, radius, segments])
+  const mesh = useRef<THREE.Mesh>(null)
+  const eased = useRef({ head: 0, tail: 0 })
   useFrame((_, dt) => {
-    const target = ramp(progress.current, from, to)
-    shown.current = THREE.MathUtils.damp(shown.current, target, 6, dt)
-    const count = geo.index ? geo.index.count : 0
-    // Draw whole rings of the tube so the growing end stays clean.
-    const perSegment = 12 * 6
-    geo.setDrawRange(0, Math.floor((count * shown.current) / perSegment) * perSegment)
+    const e = eased.current
+    const p = progress.current
+    e.head = THREE.MathUtils.damp(e.head, ramp(p, head[0], head[1]), 6, dt)
+    e.tail = THREE.MathUtils.damp(e.tail, tail ? ramp(p, tail[0], tail[1]) : 0, 6, dt)
+    const perRing = 14 * 6
+    const rings = (geo.index?.count ?? 0) / perRing
+    const start = Math.floor(rings * e.tail) * perRing
+    const end = Math.floor(rings * e.head) * perRing
+    geo.setDrawRange(start, Math.max(0, end - start))
+    if (mesh.current) mesh.current.visible = end - start > perRing
   })
-  return <mesh geometry={geo} material={material} />
+  return (
+    <mesh ref={mesh} geometry={geo} material={material}>
+      {/* angle={0} makes the outline share this geometry, and so its draw
+          range; a creased copy would ink the whole pipe, drawn or not. */}
+      <Outlines screenspace={false} thickness={2.2} color={outline} toneMapped={false} angle={0} />
+    </mesh>
+  )
 }
 
-/** Droplets that drift down and gather into the start of the tube. */
+/** Droplets drifting down and gathering into the head of the stream. */
 function Droplets({ progress }: { progress: ProgressRef }) {
-  const count = 26
+  const count = 22
   const mesh = useRef<THREE.InstancedMesh>(null)
   const seeds = useMemo(
     () => Array.from({ length: count }, (_, i) => ({
-      x: Math.sin(i * 12.9898) * 2.2, z: Math.cos(i * 78.233) * 1.2,
-      y: 6.4 + ((i * 37) % 23) / 10, s: 0.035 + ((i * 17) % 7) / 90, v: 0.25 + ((i * 11) % 5) / 12,
+      x: Math.sin(i * 12.9898) * 2.4, z: Math.cos(i * 78.233) * 1.3,
+      y: 6.6 + ((i * 37) % 23) / 10, s: 0.05 + ((i * 17) % 7) / 80, v: 0.25 + ((i * 11) % 5) / 12,
     })),
     [],
   )
@@ -158,15 +147,13 @@ function Droplets({ progress }: { progress: ProgressRef }) {
   useFrame(({ clock }) => {
     const m = mesh.current
     if (!m) return
-    const fade = 1 - ramp(progress.current, 0.12, 0.26)
-    m.visible = fade > 0.01
-    const material = m.material as THREE.MeshBasicMaterial
-    material.opacity = 0.55 * fade
+    const gather = ramp(progress.current, 0, 0.18)
+    const gone = ramp(progress.current, 0.14, 0.24)
+    m.visible = gone < 0.99
     seeds.forEach((d, i) => {
-      const fall = (clock.elapsedTime * d.v * 0.4 + i * 0.13) % 1
-      const pull = ramp(progress.current, 0, 0.18)
-      tmp.position.set(d.x * (1 - pull * 0.7), d.y - fall * 1.6, d.z * (1 - pull * 0.7))
-      tmp.scale.setScalar(d.s)
+      const fall = (clock.elapsedTime * d.v * 0.35 + i * 0.13) % 1
+      tmp.position.set(d.x * (1 - gather * 0.75), d.y - fall * 1.4 - gather * 0.6, d.z * (1 - gather * 0.75))
+      tmp.scale.setScalar(d.s * (1 - gone))
       tmp.updateMatrix()
       m.setMatrixAt(i, tmp.matrix)
     })
@@ -174,96 +161,73 @@ function Droplets({ progress }: { progress: ProgressRef }) {
   })
   return (
     <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[1, 12, 8]} />
-      <meshBasicMaterial color={C.blue} transparent opacity={0.55} />
+      <sphereGeometry args={[1, 18, 12]} />
+      <meshToonMaterial color={TOON.water} gradientMap={toonRamp()} />
+      <Outlines screenspace={false} thickness={2} color={TOON.ink} toneMapped={false} />
     </instancedMesh>
   )
 }
 
-/** The corrugated chamber the water falls through: stacked flat rings. */
-function ChamberRings({ progress, mats }: { progress: ProgressRef; mats: Materials }) {
+/** The corrugated chamber, ring by ring, stacking up around the stream. */
+function ChamberRings({ progress }: { progress: ProgressRef }) {
   const group = useRef<THREE.Group>(null)
   const rings = 13
-  const geo = useMemo(() => new THREE.TorusGeometry(1.45, 0.07, 6, 64), [])
-  const edges = useMemo(() => new THREE.EdgesGeometry(geo, 25), [geo])
   useFrame(() => {
     const g = group.current
     if (!g) return
     const p = progress.current
     g.children.forEach((ring, i) => {
-      // Rings arrive top first, then clear away before the top-down view.
-      const inK = ramp(p, 0.3 + i * 0.008, 0.4 + i * 0.008)
-      const outK = 1 - ramp(p, 0.56, 0.62)
-      const k = inK * outK
-      ring.scale.set(1, 1, 1).multiplyScalar(0.85 + 0.15 * k)
-      setGroupOpacity(ring, k)
+      const inK = pop(ramp(p, 0.3 + i * 0.009, 0.37 + i * 0.009))
+      const outK = 1 - ramp(p, 0.55 + (rings - i) * 0.003, 0.6 + (rings - i) * 0.003)
+      const k = Math.max(0, inK * outK)
+      ring.visible = k > 0.01
+      ring.scale.set(k, k, Math.max(0.01, k))
     })
   })
   return (
     <group ref={group}>
       {Array.from({ length: rings }, (_, i) => (
-        <group key={i} position={[0, -1.2 - i * 0.3, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <mesh geometry={geo} material={mats.fill.clone()} />
-          <lineSegments geometry={edges} material={mats.line.clone()} />
-        </group>
+        <mesh key={i} position={[0, -1.2 - i * 0.3, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <ToonSolid color={i % 4 === 0 ? TOON.accentLight : TOON.body}>
+            <torusGeometry args={[1.5, 0.11, 10, 72]} />
+          </ToonSolid>
+        </mesh>
       ))}
     </group>
   )
 }
 
-/** autoFlo: the amber siphon block riding the stream. */
-function AutoFloBlock({ curve, progress, mats }: { curve: THREE.CatmullRomCurve3; progress: ProgressRef; mats: Materials }) {
+/** autoFlo: the yellow siphon block riding the stream. */
+function AutoFloBlock({ curve, progress }: { curve: THREE.CatmullRomCurve3; progress: ProgressRef }) {
   const group = useRef<THREE.Group>(null)
-  const geo = useMemo(() => new THREE.BoxGeometry(0.42, 0.7, 0.3), [])
-  const edges = useMemo(() => new THREE.EdgesGeometry(geo), [geo])
   const at = useMemo(() => curve.getPointAt(0.34), [curve])
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const g = group.current
     if (!g) return
-    const k = ramp(progress.current, 0.36, 0.44) * (1 - ramp(progress.current, 0.55, 0.6))
-    setGroupOpacity(g, k)
+    const p = progress.current
+    const k = pop(ramp(p, 0.36, 0.42)) * (1 - ramp(p, 0.54, 0.58))
+    g.visible = k > 0.01
+    g.scale.setScalar(Math.max(0.001, k))
+    g.rotation.y = Math.sin(clock.elapsedTime * 0.8) * 0.12
   })
   return (
     <group ref={group} position={at}>
-      <mesh geometry={geo} material={mats.amber.clone()} />
-      <lineSegments geometry={edges} material={mats.amberLine.clone()} />
+      <mesh>
+        <ToonSolid color={TOON.yellow} outline="#8a7400">
+          <boxGeometry args={[0.46, 0.74, 0.34]} />
+        </ToonSolid>
+      </mesh>
+      <mesh position={[0.3, 0.08, 0]}>
+        <ToonSolid color={TOON.yellow} outline="#8a7400">
+          <boxGeometry args={[0.16, 0.4, 0.26]} />
+        </ToonSolid>
+      </mesh>
     </group>
   )
 }
 
-/** A library part drawn as edges over a translucent fill. */
-function LinePart({ url, accent = false, mats }: { url: string; accent?: boolean; mats: Materials }) {
-  const { scene } = useGLTF(url)
-  const drawn = useMemo(() => {
-    const out = new THREE.Group()
-    scene.updateMatrixWorld(true)
-    scene.traverse((o) => {
-      const mesh = o as THREE.Mesh
-      if (!mesh.isMesh) return
-      // Library meshes use quantised (16-bit normalised) positions; the
-      // node transform undoes that. Bake it into float positions, or the
-      // transform would be clipped back into the integer range.
-      const src = mesh.geometry.getAttribute('position')
-      const pos = new Float32Array(src.count * 3)
-      for (let i = 0; i < src.count; i++) {
-        pos[i * 3] = src.getX(i)
-        pos[i * 3 + 1] = src.getY(i)
-        pos[i * 3 + 2] = src.getZ(i)
-      }
-      const g = new THREE.BufferGeometry()
-      g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
-      if (mesh.geometry.index) g.setIndex(mesh.geometry.index.clone())
-      g.applyMatrix4(mesh.matrixWorld)
-      out.add(new THREE.Mesh(g, mats.fill.clone()))
-      out.add(new THREE.LineSegments(new THREE.EdgesGeometry(g, 32), (accent ? mats.lineGreen : mats.line).clone()))
-    })
-    return out
-  }, [scene, accent, mats])
-  return <primitive object={drawn} />
-}
-
-/** The 5-inlet base with its clock markers: 3, 5, 6, 7, 9 in, 12 out. */
-function ClockBase({ progress, mats }: { progress: ProgressRef; mats: Materials }) {
+/** The 5-inlet base with its clock: 3, 5, 6, 7, 9 in, 12 out. */
+function ClockBase({ progress }: { progress: ProgressRef }) {
   const markers = useRef<THREE.Group>(null)
   const hours = [3, 5, 6, 7, 9]
   const top = GROUND + 0.72
@@ -272,24 +236,30 @@ function ClockBase({ progress, mats }: { progress: ProgressRef; mats: Materials 
     if (!g) return
     const p = progress.current
     g.children.forEach((m, i) => {
-      // Inlets light one after another, like hands going round.
-      const k = i === 0 ? ramp(p, 0.58, 0.61) : ramp(p, 0.59 + i * 0.012, 0.62 + i * 0.012)
-      m.scale.setScalar(0.001 + k * (1 - 0.3 * ramp(p, 0.8, 0.9)))
+      // Outlet first, then the inlets one after another, like a hand going round.
+      const k = i === 0 ? pop(ramp(p, 0.58, 0.61)) : pop(ramp(p, 0.59 + i * 0.012, 0.62 + i * 0.012))
+      const settle = 1 - 0.35 * ramp(p, 0.8, 0.9)
+      m.visible = k > 0.01
+      m.scale.setScalar(Math.max(0.001, k * settle))
     })
   })
   return (
     <group>
-      <group scale={MM} position={[0, GROUND, 0]}>
-        <LinePart url={PARTS.base} mats={mats} />
-        <LinePart url={PARTS.rim} accent mats={mats} />
+      <group position={[0, GROUND, 0]}>
+        <ToonModel url={PARTS.base} scale={MM} />
+        <ToonModel url={PARTS.rim} scale={MM} roles={{ 'rhino-inspection-chamber-sercic600-5-inlet--rim': 'inlet', rim: 'inlet' }} />
       </group>
       <group ref={markers}>
-        <mesh position={clockPoint(0, 0.95, top)} material={mats.outlet}>
-          <sphereGeometry args={[0.1, 16, 12]} />
+        <mesh position={clockPoint(0, 1.0, top)}>
+          <ToonSolid color={TOON.accent}>
+            <sphereGeometry args={[0.13, 20, 14]} />
+          </ToonSolid>
         </mesh>
         {hours.map((h) => (
-          <mesh key={h} position={clockPoint(h, 0.95, top)} material={mats.marker}>
-            <sphereGeometry args={[0.08, 16, 12]} />
+          <mesh key={h} position={clockPoint(h, 1.0, top)}>
+            <ToonSolid color={TOON.green} outline="#2f7c3a">
+              <sphereGeometry args={[0.1, 20, 14]} />
+            </ToonSolid>
           </mesh>
         ))}
       </group>
@@ -297,19 +267,19 @@ function ClockBase({ progress, mats }: { progress: ProgressRef; mats: Materials 
   )
 }
 
-/** The range the water branches out to, and the pipes that feed it. */
-// Presentation sizes, not true relative scale: a 4.3 m SudSceptor beside a
-// 1.5 m MAXI would dwarf it. `span` is the product's largest dimension in
-// mm (from the library manifest) and `size` the stage units it is fitted
-// to. The pump tank lies long, so it gets a little more room.
-const LINEUP: { url: string; accent?: string; span: number; size: number; x: number; z: number; hour: number }[] = [
+/**
+ * The range the water branches out to. Sized for presentation, not true
+ * relative scale: `span` is the product's largest dimension in mm (from
+ * the library manifest) and `size` the stage units it is fitted to.
+ */
+const LINEUP: { url: string; roles?: Record<string, 'inlet' | 'accent'>; span: number; size: number; x: number; z: number; hour: number }[] = [
   { url: PARTS.pumpTank, span: 5083, size: 4.2, x: -7.4, z: -1.6, hour: 9 },
-  { url: PARTS.chamber, accent: PARTS.chamberInlet, span: 1950, size: 3.1, x: -3.7, z: 0.6, hour: 7 },
-  { url: PARTS.sudsceptor, accent: PARTS.sudsceptorStand, span: 4290, size: 3.1, x: 3.7, z: 0.6, hour: 5 },
+  { url: PARTS.chamber, roles: { inlet: 'inlet', lid: 'accent' }, span: 1950, size: 3.1, x: -3.7, z: 0.6, hour: 7 },
+  { url: PARTS.sudsceptor, roles: { stand: 'inlet', inlet: 'inlet', outlet: 'inlet' }, span: 4290, size: 3.1, x: 3.7, z: 0.6, hour: 5 },
   { url: PARTS.maxi, span: 1500, size: 3.1, x: 7.2, z: -1.6, hour: 3 },
 ]
 
-function RangeLineup({ progress, mats }: { progress: ProgressRef; mats: Materials }) {
+function RangeLineup({ progress, water }: { progress: ProgressRef; water: THREE.Material }) {
   const group = useRef<THREE.Group>(null)
   const pipes = useMemo(
     () => LINEUP.map((item) => {
@@ -324,34 +294,28 @@ function RangeLineup({ progress, mats }: { progress: ProgressRef; mats: Material
     const g = group.current
     if (!g) return
     const p = progress.current
-    g.children.forEach((c, i) => setGroupOpacity(c, ramp(p, 0.82 + i * 0.025, 0.9 + i * 0.025)))
+    g.children.forEach((c, i) => {
+      // Each product rises into place as its pipe reaches it.
+      const k = pop(ramp(p, 0.84 + i * 0.022, 0.9 + i * 0.022))
+      c.visible = k > 0.01
+      c.position.y = GROUND - (1 - Math.min(1, k)) * 1.2
+      c.scale.setScalar((LINEUP[i].size / LINEUP[i].span) * Math.max(0.001, k))
+    })
   })
   return (
     <>
       {pipes.map((curve, i) => (
-        <GrowingTube key={i} curve={curve} radius={0.1} material={mats.water} progress={progress} from={0.78 + i * 0.02} to={0.9 + i * 0.02} />
+        <FlowTube key={i} curve={curve} radius={0.11} material={water} progress={progress} head={[0.78 + i * 0.02, 0.88 + i * 0.02]} segments={120} />
       ))}
       <group ref={group}>
         {LINEUP.map((item, i) => (
-          <group key={i} position={[item.x, GROUND, item.z]} scale={item.size / item.span}>
-            <LinePart url={item.url} mats={mats} />
-            {item.accent ? <LinePart url={item.accent} accent mats={mats} /> : null}
+          <group key={i} position={[item.x, GROUND, item.z]}>
+            <ToonModel url={item.url} roles={item.roles} scale={1} />
           </group>
         ))}
       </group>
     </>
   )
-}
-
-/** Fades everything under it out between two progress points. */
-function FadingGroup({ progress, from, to, children }: {
-  progress: ProgressRef; from: number; to: number; children: ReactNode
-}) {
-  const group = useRef<THREE.Group>(null)
-  useFrame(() => {
-    if (group.current) setGroupOpacity(group.current, 1 - ramp(progress.current, from, to))
-  })
-  return <group ref={group}>{children}</group>
 }
 
 // ── camera ──────────────────────────────────────────────────────────
@@ -408,37 +372,42 @@ function CameraRig({ progress }: { progress: ProgressRef }) {
   return null
 }
 
+/** Contact shadows under the line-up, shown with it. */
+function GroundShadow({ progress }: { progress: ProgressRef }) {
+  const group = useRef<THREE.Group>(null)
+  useFrame(() => {
+    if (group.current) group.current.visible = progress.current > 0.8
+  })
+  return (
+    <group ref={group} position={[0, GROUND - 0.01, 0]}>
+      <ContactShadows scale={24} width={24} height={10} far={4} blur={2.4} opacity={0.35} color={TOON.ink} frames={1} />
+    </group>
+  )
+}
+
 // ── scene ───────────────────────────────────────────────────────────
 
 function Journey({ progress }: { progress: ProgressRef }) {
-  const mats = useMaterials()
+  const water = useWaterMaterial(26)
+  const branchWater = useWaterMaterial(8)
   const storm = useMemo(() => waterCurve(0, 1.0), [])
   const foul = useMemo(() => waterCurve(Math.PI * 0.55, 1.22), [])
-  const drop = useMemo(() => new THREE.CatmullRomCurve3([new THREE.Vector3(0, GROUND + 3.4, 0), new THREE.Vector3(0, GROUND + 0.9, 0)]), [])
-  // The spiral fades out on its own materials, leaving the shared ones alone.
-  const spiralWater = useMemo(() => mats.water.clone(), [mats])
-  const dropWater = useMemo(() => mats.water.clone(), [mats])
-  const spiralFoul = useMemo(() => Object.assign(mats.foul.clone(), { transparent: true }), [mats])
+  const foulMat = useMemo(() => new THREE.MeshToonMaterial({ color: TOON.red, gradientMap: toonRamp() }), [])
   return (
     <>
       <CameraRig progress={progress} />
-      <ambientLight intensity={0.9} />
-      <directionalLight position={[3, 8, 5]} intensity={1.1} />
+      <ToonLights />
       <Droplets progress={progress} />
-      <FadingGroup progress={progress} from={0.55} to={0.6}>
-        <GrowingTube curve={storm} radius={0.14} material={spiralWater} progress={progress} from={0.02} to={0.56} />
-        <GrowingTube curve={foul} radius={0.025} material={spiralFoul} progress={progress} from={0.05} to={0.56} />
-      </FadingGroup>
-      {/* The drop into the base: out of the way for the top-down clock,
-          back for the line-up as the feed the range branches from. */}
-      <FadingGroup progress={progress} from={0.58} to={0.61}>
-        <GrowingTube curve={drop} radius={0.14} material={dropWater} progress={progress} from={0.54} to={0.6} />
-      </FadingGroup>
-      <GrowingTube curve={drop} radius={0.14} material={mats.water} progress={progress} from={0.78} to={0.84} />
-      <ChamberRings progress={progress} mats={mats} />
-      <AutoFloBlock curve={storm} progress={progress} mats={mats} />
-      <ClockBase progress={progress} mats={mats} />
-      <RangeLineup progress={progress} mats={mats} />
+      {/* The spiral fills from the top, then drains on down into the base. */}
+      <FlowTube curve={storm} radius={0.16} material={water} progress={progress} head={[0.02, 0.58]} tail={[0.44, 0.66]} />
+      <FlowTube curve={foul} radius={0.035} material={foulMat} outline="#7a2524" progress={progress} head={[0.05, 0.56]} tail={[0.44, 0.62]} />
+      <ChamberRings progress={progress} />
+      <AutoFloBlock curve={storm} progress={progress} />
+      <Suspense fallback={null}>
+        <ClockBase progress={progress} />
+        <RangeLineup progress={progress} water={branchWater} />
+        <GroundShadow progress={progress} />
+      </Suspense>
     </>
   )
 }
@@ -446,6 +415,7 @@ function Journey({ progress }: { progress: ProgressRef }) {
 export default function WaterJourneyScene({ progress }: { progress: ProgressRef }) {
   return (
     <Canvas
+      flat
       camera={{ position: [1.2, 6.6, 7.5], fov: 38, near: 0.05, far: 200 }}
       dpr={[1, 1.75]}
       gl={{ alpha: true, antialias: true }}

@@ -91,3 +91,21 @@ body {
     width: 120px;
   }
 }
+
+/* Home scroll scene: each copy beat rises in as it scrolls into view.
+   Scroll-driven where supported; everywhere else the copy is simply
+   there. Never animates under reduced motion. */
+@keyframes journey-rise {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: view()) {
+  .journey-beat {
+    animation: journey-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 30%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-beat { animation: none; }
+}

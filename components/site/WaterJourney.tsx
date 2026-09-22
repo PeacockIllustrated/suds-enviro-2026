@@ -31,7 +31,7 @@ function Beat({ children, align = 'left' }: { children: React.ReactNode; align?:
     align === 'right' ? 'md:ml-auto md:text-right' : align === 'centre' ? 'mx-auto text-center' : 'md:mr-auto'
   return (
     <div className="relative flex min-h-[100svh] items-center px-5 py-24">
-      <div className={`w-full max-w-md bg-white/80 p-5 backdrop-blur-[2px] md:bg-white/60 ${side}`}>{children}</div>
+      <div className={`journey-beat w-full max-w-md bg-white/80 p-5 backdrop-blur-[2px] md:bg-white/60 ${side}`}>{children}</div>
     </div>
   )
 }
@@ -148,7 +148,7 @@ export function WaterJourney() {
 
         {/* 5. The range: water branches out to every situation. */}
         <div className="relative flex min-h-[100svh] items-start justify-center px-5 pt-20 text-center">
-          <div className="bg-white/70 p-5">
+          <div className="journey-beat bg-white/70 p-5">
             <p className="text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-tight uppercase">
               <span className="text-site-green">{RHINO_RANGE.eyebrow.lead}</span>{' '}
               <span className="font-bold text-site-blue">{RHINO_RANGE.eyebrow.mark}</span>

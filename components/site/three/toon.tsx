@@ -29,8 +29,8 @@ export const TOON = {
   green: '#54b54d',
   red: '#c34c4a',
   yellow: '#ffe313',
-  water: '#6cc3ec',
-  waterDeep: '#1d80b9',
+  water: '#9ad9f6',
+  waterDeep: '#3d9fd6',
   waterFoam: '#ffffff',
 } as const
 
@@ -269,7 +269,7 @@ const waterFragment = /* glsl */ `
     // Toon light: three hard bands from a key light up and to the side.
     vec3 L = normalize(vec3(0.4, 0.8, 0.5));
     float d = dot(normalize(vNormal), L);
-    float band = d > 0.55 ? 1.0 : d > 0.05 ? 0.72 : 0.5;
+    float band = d > 0.5 ? 1.0 : d > -0.1 ? 0.78 : 0.55;
     vec3 col = mix(uDeep, uShallow, band);
     // Flow: soft streaks travelling along the pipe, and foam flecks.
     float along = vUv.x * uFlow - uTime * 0.9;
@@ -280,7 +280,7 @@ const waterFragment = /* glsl */ `
     // Hard rim highlight, the Spline water's glassy edge.
     float rim = 1.0 - max(dot(normalize(vNormal), normalize(vView)), 0.0);
     col = mix(col, uFoam, step(0.72, rim) * 0.6);
-    gl_FragColor = vec4(col, uOpacity * (0.82 + 0.18 * rim));
+    gl_FragColor = vec4(col, uOpacity);
   }
 `
 
@@ -290,10 +290,12 @@ export function useWaterMaterial(flow = 18) {
     () => new THREE.ShaderMaterial({
       vertexShader: waterVertex,
       fragmentShader: waterFragment,
-      transparent: true,
+      // Opaque on purpose: a transparent pass would draw after the outline
+      // shell and let its back faces show through the water.
+      transparent: false,
       uniforms: {
         uTime: { value: 0 },
-        uOpacity: { value: 0.95 },
+        uOpacity: { value: 1 },
         uFlow: { value: flow },
         uShallow: { value: new THREE.Color(TOON.water) },
         uDeep: { value: new THREE.Color(TOON.waterDeep) },
