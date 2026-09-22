@@ -1,0 +1,411 @@
+<title>RHINO 3D Model Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.183.2/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/"}}</script>
+<style>
+:root {
+  --surface-000: #ffffff; --surface-100: #f3f6f8; --surface-200: #e4eaee;
+  --ink-900: #231f20; --ink-600: #4d5760; --ink-400: #636d75;
+  --line-200: #cfd8dd; --line-strong: #9aa7af;
+  --brand-blue: #1e80ba; --brand-blue-deep: #0e5176; --on-brand: #ffffff;
+  --keep: #2f7c3a; --keep-bg: #e6f2e7;
+  --remove: #a8321f; --remove-bg: #f8e7e3;
+  --warn: #8a5a00; --warn-bg: #fbf0d9;
+  --stage: #eef2f5;
+  --font: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface-000: #14181b; --surface-100: #1b2125; --surface-200: #252d33;
+    --ink-900: #eef2f4; --ink-600: #b6c0c7; --ink-400: #8d979e;
+    --line-200: #333d44; --line-strong: #4c5860;
+    --brand-blue: #57abdd; --brand-blue-deep: #2a89c4;
+    --keep: #6cc46a; --keep-bg: #1d3320; --remove: #ef8a76; --remove-bg: #3a211c;
+    --warn: #e7b85c; --warn-bg: #3a2f17; --stage: #20282d;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-000: #14181b; --surface-100: #1b2125; --surface-200: #252d33;
+  --ink-900: #eef2f4; --ink-600: #b6c0c7; --ink-400: #8d979e;
+  --line-200: #333d44; --line-strong: #4c5860;
+  --brand-blue: #57abdd; --brand-blue-deep: #2a89c4;
+  --keep: #6cc46a; --keep-bg: #1d3320; --remove: #ef8a76; --remove-bg: #3a211c;
+  --warn: #e7b85c; --warn-bg: #3a2f17; --stage: #20282d;
+}
+* { box-sizing: border-box; }
+body { background: var(--surface-000); color: var(--ink-900); font: 400 15px/23px var(--font); padding-inline: 16px; padding-block: 0 64px; }
+.wrap { max-width: 1240px; margin: 0 auto; }
+.num, .code { font-variant-numeric: tabular-nums; }
+.code { font: 500 13px/18px var(--font); letter-spacing: 0.01em; }
+.label { font: 600 11px/14px var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-400); }
+h1 { font: 700 24px/28px var(--font); margin: 0; text-wrap: balance; }
+h2 { font: 600 19px/24px var(--font); margin: 0; }
+h3 { font: 600 16px/22px var(--font); margin: 0; }
+p { margin: 0; }
+button, textarea, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+
+/* header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface-000); border-bottom: 1px solid var(--line-200); margin-inline: -16px; padding: 14px 16px 12px; }
+.top .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; }
+.intro { display: grid; gap: 4px; }
+.intro p { color: var(--ink-600); font-size: 13px; line-height: 19px; max-width: 64ch; }
+.tally { display: flex; gap: 6px; flex-wrap: wrap; }
+.tally button { border: 1px solid var(--line-200); background: var(--surface-100); padding: 6px 10px; border-radius: 2px; font-size: 13px; line-height: 18px; display: inline-flex; gap: 6px; align-items: baseline; }
+.tally button[aria-pressed="true"] { border-color: var(--ink-900); background: var(--surface-200); }
+.tally b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.sync { font-size: 12px; color: var(--ink-400); min-height: 18px; }
+.sync.err { color: var(--remove); }
+nav.fam { display: flex; gap: 4px 14px; flex-wrap: wrap; padding: 12px 0 0; font-size: 13px; }
+nav.fam a { color: var(--brand-blue-deep); text-decoration: none; white-space: nowrap; }
+nav.fam a:hover { text-decoration: underline; }
+nav.fam a .num { color: var(--ink-400); }
+
+/* families */
+section.family { padding-top: 32px; scroll-margin-top: 150px; }
+.fam-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line-strong); margin-bottom: 16px; }
+.fam-head .label { margin-left: auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 16px; }
+
+/* card */
+.card { border: 1px solid var(--line-200); background: var(--surface-000); display: grid; grid-template-rows: auto 1fr; }
+.card[data-decision="keep"] { border-color: var(--keep); box-shadow: inset 0 3px 0 var(--keep); }
+.card[data-decision="remove"] { border-color: var(--remove); box-shadow: inset 0 3px 0 var(--remove); }
+.card[data-decision="remove"] .stage img { opacity: 0.35; filter: grayscale(1); }
+.stage { position: relative; background: var(--stage); aspect-ratio: 4 / 3; max-width: 100%; display: grid; place-items: center; overflow: hidden; border-bottom: 1px solid var(--line-200); }
+.stage img { width: 78%; height: 100%; object-fit: contain; }
+.stage .none { color: var(--ink-400); font-size: 13px; padding: 16px; text-align: center; }
+.stage .open3d { position: absolute; right: 8px; bottom: 8px; border: 1px solid var(--line-strong); background: var(--surface-000); padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 2px; }
+.stage .status { position: absolute; left: 8px; top: 8px; }
+.pill { display: inline-block; font: 600 11px/14px var(--font); letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 6px; border-radius: 2px; }
+.pill.ok { background: var(--keep-bg); color: var(--keep); }
+.pill.degraded { background: var(--warn-bg); color: var(--warn); }
+.pill.failed { background: var(--remove-bg); color: var(--remove); }
+.body { padding: 14px 14px 16px; display: grid; gap: 12px; align-content: start; }
+.name { display: grid; gap: 2px; }
+.name .code { color: var(--ink-600); }
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-block: 1px solid var(--line-200); padding-block: 8px; }
+.facts div { display: grid; gap: 2px; }
+.facts .v { font: 500 13px/18px var(--font); font-variant-numeric: tabular-nums; }
+.reason { font-size: 13px; line-height: 19px; color: var(--warn); background: var(--warn-bg); padding: 8px 10px; }
+.reason.failed { color: var(--remove); background: var(--remove-bg); }
+.notes-src { font-size: 12px; line-height: 17px; color: var(--ink-600); display: grid; gap: 2px; }
+details.parts summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--brand-blue-deep); }
+details.parts ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+details.parts li label { display: flex; gap: 8px; align-items: baseline; font-size: 13px; line-height: 18px; }
+details.parts li .num { margin-left: auto; color: var(--ink-400); font-size: 12px; }
+details.parts li.off span.pn { text-decoration: line-through; color: var(--ink-400); }
+.variants { font-size: 12px; line-height: 17px; color: var(--ink-600); }
+.decide { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line-strong); }
+.decide button { border: 0; border-left: 1px solid var(--line-strong); background: var(--surface-000); padding: 8px 4px; font-size: 13px; font-weight: 600; }
+.decide button:first-child { border-left: 0; }
+.decide button[aria-pressed="true"][data-v="keep"] { background: var(--keep); color: var(--on-brand); }
+.decide button[aria-pressed="true"][data-v="remove"] { background: var(--remove); color: var(--on-brand); }
+.decide button[aria-pressed="true"][data-v="undecided"] { background: var(--surface-200); }
+textarea { width: 100%; min-height: 56px; resize: vertical; border: 1px solid var(--line-200); background: var(--surface-100); padding: 8px; font-size: 13px; line-height: 19px; border-radius: 0; }
+
+/* not converted */
+.skipped { margin-top: 16px; border: 1px solid var(--line-200); }
+.skipped summary { padding: 10px 12px; cursor: pointer; font-size: 13px; font-weight: 600; background: var(--surface-100); }
+.skipped .tbl { overflow-x: auto; }
+.skipped table { border-collapse: collapse; width: 100%; font-size: 12px; line-height: 17px; }
+.skipped th, .skipped td { text-align: left; padding: 6px 12px; border-top: 1px solid var(--line-200); vertical-align: top; }
+.skipped th { font: 600 11px/14px var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-400); }
+.skipped td.num { text-align: right; white-space: nowrap; }
+
+/* viewer */
+dialog { border: 1px solid var(--line-strong); padding: 0; width: min(960px, 100vw - 32px); max-height: calc(100vh - 32px); background: var(--surface-000); color: var(--ink-900); }
+dialog::backdrop { background: rgb(10 20 28 / 0.6); }
+.vhead { display: flex; gap: 12px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line-200); }
+.vhead h3 { flex: 1; }
+.vhead button { border: 1px solid var(--line-strong); background: var(--surface-100); padding: 4px 10px; font-size: 13px; }
+.vbody { display: grid; grid-template-columns: 1fr 220px; min-height: 0; }
+.vcanvas { position: relative; background: var(--stage); aspect-ratio: 4 / 3; max-width: 100%; }
+.vcanvas canvas { width: 100%; height: 100%; display: block; }
+.vcanvas .msg { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-600); font-size: 13px; padding: 24px; text-align: center; }
+.vside { border-left: 1px solid var(--line-200); padding: 12px; display: grid; gap: 10px; align-content: start; font-size: 13px; overflow-y: auto; max-height: 70vh; }
+.vside label { display: flex; gap: 8px; align-items: baseline; }
+.vside input[type="range"] { width: 100%; }
+@media (max-width: 720px) { .vbody { grid-template-columns: 1fr; } .vside { border-left: 0; border-top: 1px solid var(--line-200); max-height: none; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+.empty { padding: 48px 0; color: var(--ink-600); }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="intro">
+      <span class="label">SuDS Enviro 3D product library</span>
+      <h1>RHINO 3D model review</h1>
+      <p>Every model converted from the SuDS 3D Assets Drive folder, named to the brand system. Mark each one Keep or Remove and untick parts you do not want. Only kept models go into the web library.</p>
+    </div>
+    <div style="display:grid;gap:6px;justify-items:end">
+      <div class="tally" id="tally" role="group" aria-label="Filter by decision"></div>
+      <div class="sync" id="sync" aria-live="polite">Loading decisions...</div>
+    </div>
+  </div>
+  <div class="wrap"><nav class="fam" id="famnav" aria-label="Product families"></nav></div>
+</header>
+
+<main class="wrap" id="main"><p class="empty">Loading the catalogue...</p></main>
+
+<dialog id="viewer" aria-labelledby="vtitle">
+  <div class="vhead"><h3 id="vtitle">Model</h3><button type="button" id="vclose">Close</button></div>
+  <div class="vbody">
+    <div class="vcanvas" id="vcanvas"><div class="msg" id="vmsg">Loading model...</div></div>
+    <div class="vside">
+      <label for="explode">Explode</label>
+      <input type="range" id="explode" min="0" max="100" value="0">
+      <div class="label">Parts</div>
+      <div id="vparts" style="display:grid;gap:4px"></div>
+      <p class="variants" id="vdims"></p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s)
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+const state = { catalog: null, decisions: {}, filter: 'all', db: null }
+
+function codesLine(c) {
+  if (!c) return ''
+  const sales = (c.sales || []).join(', ')
+  const drawing = (c.drawing || []).join(', ')
+  if (sales && drawing) return `${sales} (${drawing})`
+  return sales || drawing
+}
+const mb = (b) => b == null ? '-' : (b / 1048576).toFixed(b < 1048576 ? 2 : 1) + ' MB'
+const kt = (t) => t == null ? '-' : t >= 1000 ? Math.round(t / 1000) + 'k' : String(t)
+const dims = (bb) => bb ? bb.size.map((v) => Math.round(v)).join(' x ') + ' mm' : '-'
+
+function decisionOf(slug) { return state.decisions[slug]?.decision || 'undecided' }
+
+function renderTally() {
+  const items = state.catalog.items
+  const n = { all: items.length, keep: 0, remove: 0, undecided: 0 }
+  for (const it of items) n[decisionOf(it.slug)]++
+  const labels = { all: 'All', undecided: 'Undecided', keep: 'Keep', remove: 'Remove' }
+  $('#tally').innerHTML = Object.keys(labels).map((k) =>
+    `<button type="button" data-f="${k}" aria-pressed="${state.filter === k}">${labels[k]} <b>${n[k]}</b></button>`).join('')
+}
+
+function card(it) {
+  const d = state.decisions[it.slug] || {}
+  const decision = d.decision || 'undecided'
+  const off = new Set(d.excludedParts || [])
+  const thumb = it.thumbnail
+    ? `<img src="${esc(it.thumbnail)}" alt="${esc(it.name)} three-quarter view" loading="lazy">`
+    : `<div class="none">No preview: ${esc(it.reason || 'not converted')}</div>`
+  const parts = (it.parts || []).map((p) => `<li class="${off.has(p.name) ? 'off' : ''}"><label>
+      <input type="checkbox" data-part="${esc(p.name)}" ${off.has(p.name) ? '' : 'checked'}>
+      <span class="pn">${esc(p.name)}</span><span class="num">${kt(p.triangles)} tris</span></label></li>`).join('')
+  const notes = (it.notes || []).map((n) => `<span>${esc(n)}</span>`).join('')
+  return `<article class="card" data-slug="${esc(it.slug)}" data-decision="${decision}">
+    <div class="stage">${thumb}
+      <span class="status"><span class="pill ${esc(it.status)}">${esc(it.status)}</span></span>
+      ${it.glb ? `<button type="button" class="open3d" data-open="${esc(it.slug)}">View in 3D</button>` : ''}
+    </div>
+    <div class="body">
+      <div class="name"><h3>${esc(it.name)}</h3><span class="code">${esc(codesLine(it.codes)) || 'No code in source'}</span></div>
+      ${it.glb ? `<div class="facts">
+        <div><span class="label">Size</span><span class="v">${mb(it.bytes)}</span></div>
+        <div><span class="label">Triangles</span><span class="v">${kt(it.triangles)}</span></div>
+        <div><span class="label">Bounds</span><span class="v">${dims(it.bboxMm)}</span></div></div>` : ''}
+      ${it.reason ? `<p class="reason ${it.status === 'failed' ? 'failed' : ''}">${esc(it.reason)}</p>` : ''}
+      ${notes ? `<div class="notes-src">${notes}</div>` : ''}
+      ${it.variants?.length ? `<p class="variants"><span class="label">Other sizes in Drive, not converted</span><br>${it.variants.map(esc).join('<br>')}</p>` : ''}
+      ${parts ? `<details class="parts"><summary>${it.parts.length} parts, ${it.parts.length - off.size} included</summary><ul>${parts}</ul></details>` : ''}
+      <div class="decide" role="group" aria-label="Decision for ${esc(it.name)}">
+        ${['keep', 'undecided', 'remove'].map((v) => `<button type="button" data-v="${v}" aria-pressed="${decision === v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join('')}
+      </div>
+      <textarea id="note-${esc(it.slug)}" data-note placeholder="Note for Claude, e.g. use the 1200 size instead" aria-label="Note for ${esc(it.name)}">${esc(d.note || '')}</textarea>
+    </div>
+  </article>`
+}
+
+function render() {
+  const { families, items, skipped } = state.catalog
+  renderTally()
+  const visible = (it) => state.filter === 'all' || decisionOf(it.slug) === state.filter
+  $('#famnav').innerHTML = families.map((f) => {
+    const n = items.filter((i) => i.family === f.id).length
+    return `<a href="#fam-${esc(f.id)}">${esc(f.name)} <span class="num">${n}</span></a>`
+  }).join('')
+  const focused = document.activeElement?.id
+  $('#main').innerHTML = families.map((f) => {
+    const its = items.filter((i) => i.family === f.id && visible(i))
+    const sk = (skipped || []).filter((s) => s.family === f.id)
+    if (!its.length && !(state.filter === 'all' && sk.length)) return ''
+    return `<section class="family" id="fam-${esc(f.id)}">
+      <div class="fam-head"><h2>${esc(f.name)}</h2>${f.codes ? `<span class="code">${esc(f.codes)}</span>` : ''}
+        <span class="label">${its.length} model${its.length === 1 ? '' : 's'}</span></div>
+      ${f.note ? `<p class="notes-src" style="margin-bottom:12px">${esc(f.note)}</p>` : ''}
+      <div class="grid">${its.map(card).join('')}</div>
+      ${state.filter === 'all' && sk.length ? `<details class="skipped"><summary>${sk.length} file${sk.length === 1 ? '' : 's'} not converted in this family</summary>
+        <div class="tbl"><table><thead><tr><th>File</th><th>Why</th><th>Size</th></tr></thead><tbody>
+        ${sk.map((s) => `<tr><td>${esc(s.path)}</td><td>${esc(s.reason)}</td><td class="num">${mb(s.bytes)}</td></tr>`).join('')}
+        </tbody></table></div></details>` : ''}
+    </section>`
+  }).join('') || '<p class="empty">Nothing matches this filter.</p>'
+  if (focused) document.getElementById(focused)?.focus()
+}
+
+async function save(slug, patch) {
+  const prev = state.decisions[slug] || {}
+  const next = { ...prev, ...patch, updatedAt: new Date().toISOString() }
+  state.decisions[slug] = next
+  if (!state.db) { setSync('Not saved: this view cannot reach the shared store.', true); return }
+  setSync('Saving...')
+  try {
+    await state.db.doc(`review/${slug}`).set(next)
+    setSync('Saved')
+  } catch (e) {
+    setSync(`Not saved: ${e?.message || e}. Try again.`, true)
+  }
+}
+function setSync(t, err = false) { const s = $('#sync'); s.textContent = t; s.classList.toggle('err', err) }
+
+document.addEventListener('click', (e) => {
+  const f = e.target.closest('[data-f]')
+  if (f) { state.filter = f.dataset.f; render(); return }
+  const v = e.target.closest('.decide button')
+  if (v) {
+    const slug = v.closest('.card').dataset.slug
+    save(slug, { decision: v.dataset.v }); render(); return
+  }
+  const o = e.target.closest('[data-open]')
+  if (o) openViewer(o.dataset.open)
+})
+document.addEventListener('change', (e) => {
+  const cb = e.target.closest('input[data-part]')
+  if (!cb) return
+  const slug = cb.closest('.card').dataset.slug
+  const off = new Set(state.decisions[slug]?.excludedParts || [])
+  cb.checked ? off.delete(cb.dataset.part) : off.add(cb.dataset.part)
+  save(slug, { excludedParts: [...off] })
+  const li = cb.closest('li'); li.classList.toggle('off', !cb.checked)
+  const it = state.catalog.items.find((i) => i.slug === slug)
+  cb.closest('details').querySelector('summary').textContent = `${it.parts.length} parts, ${it.parts.length - off.size} included`
+})
+let noteTimer
+document.addEventListener('input', (e) => {
+  const t = e.target.closest('textarea[data-note]')
+  if (!t) return
+  const slug = t.closest('.card').dataset.slug
+  clearTimeout(noteTimer)
+  setSync('Typing...')
+  noteTimer = setTimeout(() => save(slug, { note: t.value }), 700)
+})
+
+async function boot() {
+  try {
+    const res = await fetch('catalog.json')
+    state.catalog = await res.json()
+    window.__catalog = state.catalog.items
+  } catch (e) {
+    $('#main').innerHTML = `<p class="empty">The catalogue did not load (${esc(e.message)}). Reload the page.</p>`
+    return
+  }
+  render()
+  const db = window.claude?.use ? await window.claude.use('db').catch(() => null) : null
+  if (!db) { setSync('Decisions cannot be saved in this view.', true); return }
+  state.db = db
+  db.collection('review').onSnapshot((snap) => {
+    const next = {}
+    for (const d of snap.docs) next[d.id] = d.data() || {}
+    const typing = document.activeElement?.matches?.('textarea[data-note]')
+    state.decisions = next
+    setSync(`${Object.keys(next).length} decisions saved`)
+    if (!typing) render()
+  }, (err) => setSync(`Live updates stopped: ${err?.message || err}`, true))
+}
+boot()
+</script>
+
+<script type="module">
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js'
+
+const dlg = document.getElementById('viewer')
+const wrap = document.getElementById('vcanvas')
+const msg = document.getElementById('vmsg')
+let renderer, scene, camera, controls, model, parts = [], raf, radius = 1
+
+function setup() {
+  if (renderer) return
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
+  renderer.outputColorSpace = THREE.SRGBColorSpace
+  renderer.toneMapping = THREE.NeutralToneMapping
+  wrap.prepend(renderer.domElement)
+  scene = new THREE.Scene()
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a949b, 1.6))
+  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(1, 1.6, 1.2); scene.add(key)
+  const rim = new THREE.DirectionalLight(0xffffff, 0.8); rim.position.set(-1.2, 0.6, -1); scene.add(rim)
+  camera = new THREE.PerspectiveCamera(30, 4 / 3, 1, 1e6)
+  controls = new OrbitControls(camera, renderer.domElement)
+  controls.enableDamping = true
+  new ResizeObserver(size).observe(wrap)
+}
+function size() {
+  const w = wrap.clientWidth, h = wrap.clientHeight
+  if (!w || !h) return
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix()
+}
+function loop() { controls.update(); renderer.render(scene, camera); raf = requestAnimationFrame(loop) }
+
+window.openViewer = async (slug) => {
+  const it = (window.__catalog || []).find((i) => i.slug === slug)
+  if (!it) return
+  document.getElementById('vtitle').textContent = it.name
+  document.getElementById('vdims').textContent = it.bboxMm ? `Overall ${it.bboxMm.size.map(Math.round).join(' x ')} mm (W x H x D)` : ''
+  dlg.showModal(); setup(); size()
+  msg.hidden = false; msg.textContent = 'Loading model...'
+  if (model) { scene.remove(model); model = null }
+  cancelAnimationFrame(raf)
+  try {
+    const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(it.glb)
+    model = gltf.scene
+    const noMats = !(gltf.parser.json.materials || []).length
+    const body = new THREE.MeshStandardMaterial({ color: 0x4d5760, roughness: 0.55 })
+    const accent = new THREE.MeshStandardMaterial({ color: 0x1e80ba, roughness: 0.45 })
+    const roles = Object.fromEntries((it.parts || []).map((p) => [p.name, p.role]))
+    model.traverse((o) => { if (o.isMesh && noMats) { let n = o, r; while (n && !r) { r = roles[n.name]; n = n.parent } o.material = r === 'accent' ? accent : body } })
+    scene.add(model)
+    const box = new THREE.Box3().setFromObject(model)
+    const sph = box.getBoundingSphere(new THREE.Sphere()); radius = sph.radius
+    const root = model.children.length === 1 && !model.children[0].isMesh ? model.children[0] : model
+    parts = root.children.map((c) => {
+      const cb = new THREE.Box3().setFromObject(c).getCenter(new THREE.Vector3())
+      return { node: c, home: c.position.clone(), dir: cb.sub(sph.center).normalize() }
+    })
+    document.getElementById('vparts').innerHTML = parts.map((p, i) =>
+      `<label><input type="checkbox" data-vp="${i}" checked> ${p.node.name.replace(/[<>&]/g, '')}</label>`).join('')
+    document.getElementById('explode').value = 0
+    const d = radius / Math.sin(THREE.MathUtils.degToRad(15))
+    camera.near = radius / 100; camera.far = radius * 100; camera.updateProjectionMatrix()
+    camera.position.set(sph.center.x + d * 0.64, sph.center.y + d * 0.42, sph.center.z + d * 0.64)
+    controls.target.copy(sph.center); controls.update()
+    msg.hidden = true
+    loop()
+  } catch (e) {
+    msg.textContent = `This model did not load in the browser: ${e.message || e}`
+  }
+}
+document.getElementById('vparts').addEventListener('change', (e) => {
+  const i = e.target.dataset.vp; if (i != null) parts[i].node.visible = e.target.checked
+})
+document.getElementById('explode').addEventListener('input', (e) => {
+  const k = e.target.value / 100 * radius * 0.8
+  for (const p of parts) p.node.position.copy(p.home).addScaledVector(p.dir, k)
+})
+document.getElementById('vclose').addEventListener('click', () => dlg.close())
+dlg.addEventListener('close', () => cancelAnimationFrame(raf))
+</script>
