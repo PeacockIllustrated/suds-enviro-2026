@@ -13,6 +13,7 @@ const SECTION_LABELS: Record<SectionId, string> = {
   contact: 'Contact page',
   builderHub: 'Builder hub',
   products: 'Product pages',
+  siteExplorer: 'Site Explorer',
 }
 
 const GROUP_LABELS: Record<string, string> = {
