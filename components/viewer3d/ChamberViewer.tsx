@@ -2,11 +2,11 @@
 
 import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from 'react'
-import { Box, Expand, Eye, EyeOff, Move3d, Shrink, Tag, X } from 'lucide-react'
+import { Box, Expand, Eye, EyeOff, Layers, Move3d, Shrink, Tag, X } from 'lucide-react'
 import { useWizardContext } from '@/components/wizard/WizardContext'
 import { getProductConfig } from '@/lib/products/registry'
 import { buildViewerModel } from './build-model'
-import type { MatchKind } from './viewer-model'
+import type { LegendEntry, MatchKind } from './viewer-model'
 
 // The canvas pulls in three.js; keep it out of this chunk and off the server.
 const ConfiguratorCanvas = dynamic(() => import('./ConfiguratorCanvas'), { ssr: false })
@@ -45,6 +45,42 @@ const MATCH_STYLE: Record<MatchKind, string> = {
   exact: 'bg-green',
   nearest: 'bg-site-yellow ring-1 ring-[#c9a800]',
   indicative: 'bg-site-blue',
+}
+
+const LEGEND_DOT: Record<LegendEntry['kind'], string> = {
+  library: 'bg-green',
+  scaled: 'bg-site-yellow ring-1 ring-[#c9a800]',
+  drawn: 'border border-muted bg-white',
+}
+
+const LEGEND_TITLE: Record<LegendEntry['kind'], string> = {
+  library: 'Library part at true size',
+  scaled: 'Library part resized to suit',
+  drawn: 'Drawn to suit',
+}
+
+/** What the preview is made of: library parts first, then drawn ones. */
+function PartsLegend({ entries }: { entries: LegendEntry[] }) {
+  if (entries.length === 0) return null
+  return (
+    <div className="pointer-events-auto absolute inset-x-0 top-0 flex items-center gap-1.5 overflow-x-auto px-3 pt-2.5 pb-1 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible sm:px-5">
+      <span className="flex shrink-0 items-center gap-1 text-[9px] font-extrabold tracking-widest text-muted uppercase sm:text-[10px]">
+        <Layers aria-hidden className="size-3.5" />
+        Parts
+      </span>
+      {entries.map((entry) => (
+        <span
+          key={entry.text}
+          title={LEGEND_TITLE[entry.kind]}
+          className="flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-white/90 px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap text-navy sm:text-[11px]"
+        >
+          <span aria-hidden className={`inline-block size-1.5 shrink-0 rounded-full ${LEGEND_DOT[entry.kind]}`} />
+          <span className="sr-only">{LEGEND_TITLE[entry.kind]}: </span>
+          {entry.text}
+        </span>
+      ))}
+    </div>
+  )
 }
 
 function ToggleButton({
@@ -139,6 +175,7 @@ export function ChamberViewer({ open, onClose }: ChamberViewerProps) {
     if (!model) return false
     return (
       model.parts.some((p) => p.role === 'casing') ||
+      model.kit.some((p) => p.role === 'casing') ||
       model.libraries.some((lib) => Object.values(lib.parts).some((p) => p.role === 'casing'))
     )
   }, [model])
@@ -213,6 +250,7 @@ export function ChamberViewer({ open, onClose }: ChamberViewerProps) {
               {model ? 'Loading 3D model' : 'Choose a product to see it in 3D'}
             </span>
           ) : null}
+          {model ? <PartsLegend entries={model.legend} /> : null}
           {model ? (
             <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center gap-2 px-3">
               {hasCasing ? (

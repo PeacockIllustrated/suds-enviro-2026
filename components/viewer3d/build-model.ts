@@ -16,24 +16,21 @@ import type {
   WizardState,
 } from '@/lib/types'
 import { getMinSumpDepth } from '@/lib/rules/catchpit'
+import { getEffectiveOutletSize } from '@/lib/rules/chamber'
 import { PIPE_DIMS, type PipeDims } from '@/lib/pipe-dims'
 import { GREASE_TRAP_SPECS } from '@/lib/rules/grease-trap'
 import {
   box,
   clockDir,
   cylinder,
-  edges,
   horizontalTank,
   merge,
   orient,
   pipe,
   pipeWater,
   rectRing,
-  revolve,
-  roundWater,
   tankRibs,
   tube,
-  type P2,
   type Vec3,
 } from './geometry'
 import {
@@ -43,6 +40,8 @@ import {
   LIFT_SIZES,
   POC600,
   POC600_DIAMETER,
+  RHINODUCT,
+  RHINODUCT_COVER,
   RHINOPOD,
   ROTEX_SPIGOT,
   ROTEX_UNIT,
@@ -51,17 +50,22 @@ import {
   SEHDS_DIAMETER,
   SEHDS_INLET_BEARING,
 } from './library-models'
-import type { Callout, LibraryUse, MatchKind, ProcPart, ViewerModel } from './viewer-model'
+import { kitChamber, type KitChamber, type KitInlet } from './chamber-kit'
+import type { Callout, KitPart, LegendEntry, LibraryUse, MatchKind, ProcPart, ViewerModel } from './viewer-model'
 
 /**
  * Turns the wizard selections into a ViewerModel.
  *
- * Chamber-bodied products (inspection chamber, catchpit, ROTEX flow
- * control, RhinoPod Plus) are built procedurally so their dimensions are
- * true to the selections. Products the 3D library covers use the library
- * model, choosing the closest variant and saying so when it is not exact.
- * Products with no library model get a procedural shape sized from the
- * selections and are labelled indicative.
+ * Round chambers (inspection chamber, catchpit, ROTEX flow control) are
+ * assembled from the manufacturer's part files as a kit (chamber-kit.ts):
+ * the real base, a shaft stacked from whole corrugations of the real body,
+ * the real cap and the real pipe fittings, resized only where the library
+ * has no part at the chosen size, and labelled as such. Drawpits stack real
+ * RhinoDuct sections. Products the 3D library covers as a whole use the
+ * library model, choosing the closest variant and saying so when it is not
+ * exact. Products with no library model get a procedural shape sized from
+ * the selections and are labelled indicative. Every model lists what it is
+ * made of for the viewer's parts legend.
  */
 
 // ── pipes ───────────────────────────────────────────────────────────
@@ -72,8 +76,6 @@ const PIPE = PIPE_DIMS
 const DEFAULT_PIPE: PipeSize = '160mm EN1401'
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
-const v3 = (v: THREE.Vector3): Vec3 => [v.x, v.y, v.z]
-const scaled = (v: THREE.Vector3, s: number): Vec3 => [v.x * s, v.y * s, v.z * s]
 const fmt = (n: number) => Math.round(n).toLocaleString('en-GB')
 
 function num(value: string | null | undefined): number | null {
@@ -88,262 +90,10 @@ const GREASE = '#f2cf5b'
 const SLUDGE = '#a38f6d'
 const SCUM = '#d8c79a'
 
-// ── round chamber ───────────────────────────────────────────────────
+// ── round chambers ──────────────────────────────────────────────────
 
-interface RoundInlet {
-  n: number
-  hour: number
-  size: PipeSize
-  /** Replaces "Inlet n" in the callout, e.g. for an indicative inlet. */
-  title?: string
-}
-
-interface RoundChamberOptions {
-  /** External diameter, mm. */
-  diameter: number
-  /** Cover level down to the outlet soffit, mm. */
-  depthToSoffit: number
-  /** Outlet invert above the internal base, mm. */
-  sump: number
-  outlet: PipeSize
-  outletDetail?: string
-  inlets: RoundInlet[]
-  top: 'cover' | 'hinged-grate' | 'sealed-grate'
-  /** Water surface height; undefined = just above the outlet invert, null = dry. */
-  waterTop?: number | null
-  /** Show the depth and sump dimension callouts. */
-  dimensions: boolean
-  /** Soffit-align inlets with the outlet (true) or share its invert. */
-  soffitAligned?: boolean
-}
-
-interface RoundChamber {
-  parts: ProcPart[]
-  callouts: Callout[]
-  Ro: number
-  Ri: number
-  floorTop: number
-  outletInvert: number
-  outletCentre: number
-  waterTop: number
-  bodyTop: number
-  coverTop: number
-  explode: number
-  riserLift: number
-}
-
-/** A ribbed HDPE riser: core radius Rc, ribs out to Ro, bore Ri. */
-function ribbedRiser(Ro: number, Rc: number, Ri: number, y0: number, y1: number): THREE.BufferGeometry {
-  const pitch = 240
-  const rib = 80
-  const profile: P2[] = [[Ri, y0], [Rc, y0]]
-  let y = y0 + 70
-  while (y + rib < y1 - 50) {
-    profile.push([Rc, y], [Ro, y], [Ro, y + rib], [Rc, y + rib])
-    y += pitch
-  }
-  profile.push([Rc, y1], [Ri, y1], [Ri, y0])
-  return revolve(edges(profile), 48)
-}
-
-function lidGeometry(opening: number, top: number): THREE.BufferGeometry {
-  const r = opening - 8
-  const parts = [cylinder(r, top - 45, top - 6)]
-  // Raised grip bars, as cast into ductile iron covers.
-  ;[-0.45, 0, 0.45].forEach((f) => parts.push(box(r * 1.3 * Math.sqrt(1 - f * f), 8, 28, 0, top - 2, f * r)))
-  return merge(parts)
-}
-
-function grateGeometry(opening: number, top: number, hinged: boolean): THREE.BufferGeometry {
-  const r = opening - 8
-  const inner = r - 34
-  const parts = [tube(r, inner, top - 45, top - 6)]
-  for (let z = -inner + 45; z < inner - 30; z += 68) {
-    const chord = 2 * Math.sqrt(Math.max(0, inner * inner - z * z)) + 6
-    parts.push(box(chord, 34, 22, 0, top - 25, z))
-  }
-  if (hinged) {
-    ;[-0.4, 0.4].forEach((f) => parts.push(box(80, 34, 34, f * r, top - 16, -(r + 4))))
-  } else {
-    for (let k = 0; k < 4; k++) {
-      const a = Math.PI / 4 + (k * Math.PI) / 2
-      const bolt = cylinder(12, top - 6, top + 2, 16)
-      bolt.translate(Math.sin(a) * (r - 17), 0, Math.cos(a) * (r - 17))
-      parts.push(bolt)
-    }
-  }
-  return merge(parts)
-}
-
-function roundChamber(o: RoundChamberOptions): RoundChamber {
-  const Ro = o.diameter / 2
-  const Rc = Ro - 16
-  const Ri = Ro - 30
-  const floorTop = 40
-  const out = PIPE[o.outlet]
-  const outletInvert = floorTop + o.sump
-  const outletCentre = outletInvert + out.bore / 2
-  const outletSoffit = outletInvert + out.bore
-  const coverTop = outletSoffit + o.depthToSoffit
-  const reduced = o.diameter > 600
-  // Chambers over 600 mm take a reducing cap to a 600 mm clear opening.
-  const opening = reduced ? 300 : Ri
-  const coverH = 110
-  const capT = reduced ? 80 : 0
-  const bodyTop = coverTop - coverH - capT
-  const E = clamp(o.diameter * 0.55, 350, 650)
-  const riserLift = E * 0.9
-  const soffit = o.soffitAligned ?? true
-
-  const inlets = o.inlets.map((inlet) => {
-    const p = PIPE[inlet.size]
-    // Soffits aligned with the outlet: the usual practice, so a smaller
-    // inlet's invert sits higher and never below the outlet's.
-    const invert = soffit ? outletSoffit - p.bore : outletInvert
-    return { ...inlet, p, centre: invert + p.bore / 2 }
-  })
-  const pipeTop = Math.max(outletCentre + out.od / 2, ...inlets.map((i) => i.centre + i.p.od / 2))
-  const baseTop = Math.min(Math.max(pipeTop + 160, floorTop + 260), bodyTop - 150)
-
-  const parts: ProcPart[] = []
-  const callouts: Callout[] = []
-
-  parts.push({
-    id: 'base',
-    label: 'Chamber base',
-    role: 'casing',
-    geometry: revolve(edges([[0, 0], [Ro, 0], [Ro, baseTop], [Ri, baseTop], [Ri, floorTop], [0, floorTop]]), 56),
-    explode: [0, 0, 0],
-  })
-  parts.push({
-    id: 'riser',
-    label: 'Riser shaft',
-    role: 'casing',
-    geometry: ribbedRiser(Ro, Rc, Ri, baseTop, bodyTop),
-    explode: [0, riserLift, 0],
-  })
-  if (reduced) {
-    parts.push({
-      id: 'cap',
-      label: 'Reducing cap',
-      role: 'casing',
-      geometry: tube(Ro, opening, bodyTop, bodyTop + capT),
-      explode: [0, riserLift + E * 0.55, 0],
-    })
-  }
-  const frameRo = reduced ? opening + 70 : Ro + 25
-  parts.push({
-    id: 'frame',
-    label: 'Cover frame',
-    role: 'cover',
-    geometry: tube(frameRo, opening, bodyTop + capT, coverTop),
-    explode: [0, riserLift + E * 1.15, 0],
-  })
-  parts.push({
-    id: 'lid',
-    label: o.top === 'cover' ? 'Cover' : o.top === 'hinged-grate' ? 'Hinged grate' : 'Sealed grate',
-    role: 'cover',
-    geometry: o.top === 'cover' ? lidGeometry(opening, coverTop) : grateGeometry(opening, coverTop, o.top === 'hinged-grate'),
-    explode: [0, riserLift + E * 1.8, 0],
-  })
-
-  const waterTop = o.waterTop === undefined ? outletInvert + out.bore * 0.25 : o.waterTop ?? floorTop
-  if (o.waterTop !== null) {
-    parts.push({
-      id: 'sump-water',
-      label: 'Water',
-      role: 'water',
-      water: 'still',
-      geometry: roundWater(Ri - 2, floorTop + 1, Math.min(waterTop, bodyTop - 40)),
-      explode: [0, 0, 0],
-      labelled: false,
-    })
-  }
-
-  // Pipes start just inside the bore and run out past the wall.
-  const rs = Ri - 12
-  const outside = clamp(o.diameter * 0.5, 320, 600)
-  const length = Ro - rs + outside
-  const addPipe = (
-    id: string,
-    label: string,
-    role: 'inlet' | 'outlet',
-    dir: THREE.Vector3,
-    centre: number,
-    p: PipeDims,
-    callout: Omit<Callout, 'id' | 'follows' | 'anchor'>,
-  ) => {
-    const start = dir.clone().multiplyScalar(rs).setY(centre)
-    const explode = scaled(dir, E)
-    parts.push({ id, label, role, geometry: pipe(start, dir, length, p.od, p.bore, Ro - rs), explode, labelled: false })
-    parts.push({
-      id: `${id}-water`,
-      label: 'Water',
-      role: 'water',
-      water: 'flow',
-      geometry: pipeWater(start, dir, length * 0.995, p.bore, role === 'inlet'),
-      explode,
-      labelled: false,
-    })
-    const tip = dir.clone().multiplyScalar(rs + length).setY(centre + p.od / 2 + 14)
-    callouts.push({ ...callout, id, follows: id, anchor: v3(tip) })
-  }
-
-  inlets.forEach((inlet) => {
-    addPipe(`inlet-${inlet.n}`, inlet.title ?? `Inlet ${inlet.n}`, 'inlet', clockDir(inlet.hour), inlet.centre, inlet.p, {
-      title: `${inlet.title ?? `Inlet ${inlet.n}`} · ${inlet.hour} o'clock`,
-      detail: `${inlet.size} · H ${fmt(inlet.centre - floorTop)}`,
-      tone: 'inlet',
-      priority: 9,
-    })
-  })
-  addPipe('outlet', 'Outlet', 'outlet', clockDir(12), outletCentre, out, {
-    title: "Outlet · 12 o'clock",
-    detail: o.outletDetail ?? `${o.outlet} · H ${fmt(outletCentre - floorTop)}`,
-    tone: 'outlet',
-    priority: 10,
-  })
-
-  if (o.dimensions) {
-    const d = clockDir(10.5)
-    callouts.push({
-      id: 'depth',
-      title: 'Cover to outlet soffit',
-      detail: `${fmt(o.depthToSoffit)} mm`,
-      tone: 'info',
-      follows: 'frame',
-      anchor: [d.x * frameRo, coverTop, d.z * frameRo],
-      priority: 6,
-      hideWhenExploded: true,
-    })
-    const s = clockDir(4)
-    callouts.push({
-      id: 'sump',
-      title: 'Sump',
-      detail: `${fmt(o.sump)} mm below outlet invert`,
-      tone: 'info',
-      follows: 'base',
-      anchor: [s.x * Ro, floorTop + o.sump / 2, s.z * Ro],
-      priority: 5,
-      hideWhenExploded: true,
-    })
-  }
-
-  return {
-    parts,
-    callouts,
-    Ro,
-    Ri,
-    floorTop,
-    outletInvert,
-    outletCentre,
-    waterTop,
-    bodyTop,
-    coverTop,
-    explode: E,
-    riserLift,
-  }
-}
+/** What the RoTex and orifice plate placements need from a chamber. */
+type RoundChamber = Pick<KitChamber, 'Ri' | 'outletCentre' | 'explode'>
 
 /** A RoTex vortex unit hung on the north wall over the outlet. */
 function rotexUse(ch: RoundChamber): LibraryUse {
@@ -501,18 +251,23 @@ interface Built {
   match: { kind: MatchKind; text: string; note?: string }
   parts: ProcPart[]
   libraries: LibraryUse[]
+  kit?: KitPart[]
+  legend?: LegendEntry[]
   callouts: Callout[]
   view: { azimuth: number; elevation: number }
 }
-
-const CONFIGURED = 'Built to your selections'
 
 function notes(list: (string | false | null | undefined)[]): string | undefined {
   const out = list.filter((s): s is string => typeof s === 'string' && s.length > 0)
   return out.length ? out.join(' ') : undefined
 }
 
-function chamberInlets(d: ChamberData | CatchpitData): RoundInlet[] {
+/** The kit chamber's own honesty line, with any selection notes after it. */
+function kitMatch(ch: KitChamber, extra: (string | false | null | undefined)[]): Built['match'] {
+  return { kind: ch.match.kind, text: ch.match.text, note: notes([ch.match.note, ...extra]) }
+}
+
+function chamberInlets(d: ChamberData | CatchpitData): KitInlet[] {
   return d.positions.map((pos, i) => ({
     n: i + 1,
     hour: Number(pos),
@@ -520,33 +275,43 @@ function chamberInlets(d: ChamberData | CatchpitData): RoundInlet[] {
   }))
 }
 
-function chamberOutlet(d: ChamberData | CatchpitData): { size: PipeSize; detail: (h: number) => string } {
-  const size = d.outletLocked ?? d.pipeSizes.outlet ?? DEFAULT_PIPE
-  return { size, detail: (h) => `${size}${d.outletLocked ? ' (locked)' : ''} · H ${fmt(h)}` }
+function chamberOutlet(d: ChamberData | CatchpitData): { size: PipeSize; label: string } {
+  // The same outlet the spec sheet uses: the R2 minimum or the user's pick,
+  // whichever is larger, else the largest inlet.
+  const size = getEffectiveOutletSize({ outletLocked: d.outletLocked, pipeSizes: d.pipeSizes }) ?? DEFAULT_PIPE
+  return { size, label: `${size}${d.outletLocked === size ? ' (locked)' : ''}` }
+}
+
+/** Library entries for a whole-file model, for the legend strip. */
+function libraryLegend(name: string, exact: boolean): LegendEntry[] {
+  return [{ kind: exact ? 'library' : 'scaled', text: exact ? name : `${name} (nearest size in the library)` }]
 }
 
 function buildChamber(d: ChamberData): Built {
   const diameter = d.diameter ?? 600
   const depth = d.depth ?? 1500
   const outlet = chamberOutlet(d)
-  const sump = 350
-  const outletCentre = 40 + sump + PIPE[outlet.size].bore / 2
-  const ch = roundChamber({
+  // A flow control needs a sump below the outlet for the regulator, so it
+  // is drawn on a sump floor rather than the channelled base.
+  const flow = d.flowControl === true && d.flowType !== null
+  const ch = kitChamber({
     diameter,
     depthToSoffit: depth,
-    sump,
+    base: flow ? { kind: 'sump', sump: 350 } : { kind: 'moulded' },
     outlet: outlet.size,
-    outletDetail: outlet.detail(outletCentre - 40),
+    outletLabel: outlet.label,
     inlets: chamberInlets(d),
     top: 'cover',
     dimensions: true,
   })
   const parts = [...ch.parts]
   const libraries: LibraryUse[] = []
+  const legend = [...ch.legend]
   const callouts = [...ch.callouts]
   let flowNote: string | undefined
-  if (d.flowControl && d.flowType === 'Orifice plate') {
+  if (flow && d.flowType === 'Orifice plate') {
     parts.push(orificePlate(ch, outlet.size))
+    legend.push({ kind: 'drawn', text: 'Orifice plate' })
     callouts.push({
       id: 'flow',
       title: 'Orifice plate',
@@ -555,9 +320,10 @@ function buildChamber(d: ChamberData): Built {
       follows: 'orifice',
       priority: 7,
     })
-  } else if (d.flowControl && d.flowType === 'Vortex') {
+  } else if (flow && d.flowType === 'Vortex') {
     if (rotexFits(ch.Ri)) {
       libraries.push(rotexUse(ch))
+      legend.push({ kind: 'library', text: 'RhinoRoTex vortex regulator' })
       callouts.push({
         id: 'flow',
         title: 'Vortex flow control',
@@ -572,21 +338,25 @@ function buildChamber(d: ChamberData): Built {
   }
   const pending = (d.inletCount ?? 0) > d.positions.length
   return {
-    match: {
-      kind: 'configured',
-      text: CONFIGURED,
-      note: notes([
-        !d.diameter && 'Showing 600 mm until a diameter is chosen.',
-        !d.depth && 'Showing 1500 mm deep until a depth is chosen.',
-        pending && 'Inlets appear once their clock positions are chosen.',
-        flowNote,
-      ]),
-    },
+    match: kitMatch(ch, [
+      !d.diameter && 'Showing 600 mm until a diameter is chosen.',
+      !d.depth && 'Showing 1500 mm deep until a depth is chosen.',
+      pending && 'Inlets appear once their clock positions are chosen.',
+      flow && 'With flow control the chamber is shown on a sump floor.',
+      flowNote,
+    ]),
     parts,
     libraries,
+    kit: ch.kit,
+    legend,
     callouts,
     view: { azimuth: 30, elevation: 18 },
   }
+}
+
+/** Lift the kit and drawn parts above the base by `lift` in the breakout. */
+function liftAbove<T extends { id: string; explode: Vec3 }>(list: T[], ids: Set<string>, lift: number): T[] {
+  return list.map((part) => (ids.has(part.id) ? { ...part, explode: [part.explode[0], part.explode[1] + lift, part.explode[2]] as Vec3 } : part))
 }
 
 function buildCatchpit(d: CatchpitData): Built {
@@ -595,27 +365,27 @@ function buildCatchpit(d: CatchpitData): Built {
   const depth = d.depth ?? 1500
   const sump = getMinSumpDepth(diameter as Diameter)
   const outlet = chamberOutlet(d)
-  const outletCentre = 40 + sump + PIPE[outlet.size].bore / 2
-  const ch = roundChamber({
+  const ch = kitChamber({
     diameter,
     depthToSoffit: depth,
-    sump,
+    base: { kind: 'sump', sump },
     outlet: outlet.size,
-    outletDetail: outlet.detail(outletCentre - 40),
+    outletLabel: outlet.label,
     inlets: chamberInlets(d),
     top: d.grateType === 'sealed' ? 'sealed-grate' : d.grateType === 'hinged' ? 'hinged-grate' : 'cover',
     dimensions: true,
   })
   let parts = [...ch.parts]
+  let kit = [...ch.kit]
+  const legend = [...ch.legend]
   const p = PIPE[outlet.size]
   if (variant === 'SERS') {
     // The bucket lifts out through the shaft, so in breakout it rises clear
     // of the base and everything above it rises by the same amount.
     const lift = ch.outletInvert - ch.floorTop + 120
-    const above = new Set(['riser', 'cap', 'frame', 'lid'])
-    parts = parts.map((part) =>
-      above.has(part.id) ? { ...part, explode: [part.explode[0], part.explode[1] + lift, part.explode[2]] as Vec3 } : part,
-    )
+    const above = new Set(['shaft', 'cap', 'frame', 'lid'])
+    parts = liftAbove(parts, above, lift)
+    kit = liftAbove(kit, above, lift)
     // Removable silt bucket: sits on the base, rim below the outlet invert.
     const ro = ch.Ri - 20
     const top = ch.outletInvert - 60
@@ -629,6 +399,7 @@ function buildCatchpit(d: CatchpitData): Built {
       geometry: merge([tube(ro, ro - 10, ch.floorTop + 12, top, 48), cylinder(ro - 10, ch.floorTop + 12, ch.floorTop + 24, 48), handle]),
       explode: [0, lift + ch.explode * 0.3, 0],
     })
+    legend.push({ kind: 'drawn', text: 'Silt bucket' })
   } else {
     // Built-in settling: a weir splits the sump into a primary (inlet side)
     // and a secondary (outlet side) settling chamber.
@@ -641,6 +412,7 @@ function buildCatchpit(d: CatchpitData): Built {
       geometry: box(half * 2, ch.outletInvert - 110 - ch.floorTop, 22, 0, (ch.floorTop + ch.outletInvert - 110) / 2, z),
       explode: [0, 0, 0],
     })
+    legend.push({ kind: 'drawn', text: 'Settling weir' })
   }
   if (d.baffleType === 'internal') {
     const z = -(ch.Ri - p.od * 0.9)
@@ -655,6 +427,7 @@ function buildCatchpit(d: CatchpitData): Built {
       geometry: box(w, y1 - y0, 16, 0, (y0 + y1) / 2, z),
       explode: [0, 0, ch.explode * 0.6],
     })
+    legend.push({ kind: 'drawn', text: 'Baffle plate' })
   } else if (d.baffleType === 'external') {
     const g = dipPipe(0, ch.outletInvert - 260, ch.outletInvert + p.bore + 120, p)
     g.translate(0, 0, -(ch.Ri - p.od / 2 - 14))
@@ -665,20 +438,19 @@ function buildCatchpit(d: CatchpitData): Built {
       geometry: g,
       explode: [0, 0, ch.explode * 0.6],
     })
+    legend.push({ kind: 'drawn', text: 'Outlet baffle' })
   }
   const pending = (d.inletCount ?? 0) > d.positions.length
   return {
-    match: {
-      kind: 'configured',
-      text: CONFIGURED,
-      note: notes([
-        !d.diameter && `Showing ${diameter} mm until a diameter is chosen.`,
-        !d.depth && 'Showing 1500 mm deep until a depth is chosen.',
-        pending && 'Inlets appear once their clock positions are chosen.',
-      ]),
-    },
+    match: kitMatch(ch, [
+      !d.diameter && `Showing ${diameter} mm until a diameter is chosen.`,
+      !d.depth && 'Showing 1500 mm deep until a depth is chosen.',
+      pending && 'Inlets appear once their clock positions are chosen.',
+    ]),
     parts,
     libraries: [],
+    kit,
+    legend,
     callouts: ch.callouts,
     view: { azimuth: 30, elevation: 18 },
   }
@@ -693,10 +465,10 @@ function buildFlowControl(d: FlowControlData): Built {
     // Cover level: design head above the outlet invert plus freeboard.
     const coverTop = 40 + sump + Math.max(head, 900) + 450
     const depthToSoffit = coverTop - (40 + sump + out.bore)
-    const ch = roundChamber({
+    const ch = kitChamber({
       diameter,
       depthToSoffit,
-      sump,
+      base: { kind: 'sump', sump },
       outlet: DEFAULT_PIPE,
       outletDetail: 'Vortex outlet',
       inlets: [{ n: 1, hour: 6, size: DEFAULT_PIPE, title: 'Inlet' }],
@@ -733,16 +505,14 @@ function buildFlowControl(d: FlowControlData): Built {
       priority: 7,
     })
     return {
-      match: {
-        kind: 'configured',
-        text: CONFIGURED,
-        note: notes([
-          !d.chamberDiameter && 'Showing 600 mm until a diameter is chosen.',
-          'Chamber height is indicative, set from the design head. Vortex unit from the 3D library.',
-        ]),
-      },
+      match: kitMatch(ch, [
+        !d.chamberDiameter && 'Showing 600 mm until a diameter is chosen.',
+        'Chamber height is indicative, set from the design head.',
+      ]),
       parts,
       libraries: [rotexUse(ch)],
+      kit: ch.kit,
+      legend: [...ch.legend, { kind: 'library', text: 'RhinoRoTex vortex regulator' }],
       callouts,
       view: { azimuth: 30, elevation: 20 },
     }
@@ -763,6 +533,7 @@ function buildFlowControl(d: FlowControlData): Built {
         },
     parts: [],
     libraries: [{ id: 'poc', url: POC600.url, parts: POC600.parts }],
+    legend: libraryLegend(POC600.name, exact),
     callouts: [],
     view: { azimuth: 35, elevation: 18 },
   }
@@ -814,6 +585,10 @@ function buildRhinoceptor(d: RhinoCeptorData): Built {
         },
     parts: [],
     libraries,
+    legend: [
+      ...libraryLegend(SEHDS1800.name, exact),
+      ...(d.rhinoPodAddOn ? [{ kind: 'scaled' as const, text: 'RhinoPod add-on (library scale unverified)' }] : []),
+    ],
     callouts,
     // Look from a little round from the inlet side.
     view: { azimuth: 180 - bearing + 40, elevation: 16 },
@@ -836,6 +611,7 @@ function buildPumpStation(d: PumpStationData): Built {
     },
     parts: [],
     libraries: [{ id: 'lift', url: entry.url, parts: entry.parts }],
+    legend: libraryLegend(entry.name, exact),
     callouts: [],
     view: { azimuth: 25, elevation: 18 },
   }
@@ -860,6 +636,7 @@ function buildGreaseTrap(d: GreaseTrapData): Built {
         },
     parts: [],
     libraries: [{ id: 'trap', url: JUMBO_MICRO.url, parts: JUMBO_MICRO.parts }],
+    legend: libraryLegend(JUMBO_MICRO.name, exact),
     callouts: [
       {
         id: 'inlet',
@@ -1120,56 +897,105 @@ function buildDrawpit(d: DrawpitData): Built {
   const depth = num(d.depthMm) ?? 600
   const rings = clamp(Math.round(num(d.ringCount) ?? Math.max(1, Math.round(depth / 150))), 1, 40)
   const ringH = depth / rings
-  const wall = 35
   const gap = clamp(Math.min(length, width) * 0.35, 90, 220)
-  const parts: ProcPart[] = []
+  // Each ring is a RhinoDuct section stood up and resized to the plan and
+  // ring height asked for; the spigot of each nests in the ring below.
+  const sx = length / RHINODUCT.length
+  const sz = width / RHINODUCT.width
+  const sy = ringH / RHINODUCT.pitch
+  const exactPlan = Math.abs(sx - 1) < 0.03 && Math.abs(sz - 1) < 0.03
+  const exactRing = Math.abs(sy - 1) < 0.03
+  const kit: KitPart[] = []
   for (let i = 0; i < rings; i++) {
-    parts.push({
+    kit.push({
       id: `ring-${i + 1}`,
       label: rings > 1 ? `Ring ${i + 1}` : 'Ring',
       role: 'casing',
-      geometry: rectRing(length, width, wall, i * ringH, (i + 1) * ringH - 3),
+      pieces: [
+        {
+          url: RHINODUCT.url,
+          part: RHINODUCT.part,
+          ops: [
+            { op: 'translate', v: [0, -RHINODUCT.centreY, -RHINODUCT.boxFrom] },
+            { op: 'rotateX', angle: -Math.PI / 2 },
+            { op: 'scale', v: [sx, sy, sz] },
+            { op: 'translate', v: [0, i * ringH, 0] },
+          ],
+        },
+      ],
       explode: [0, i * gap, 0],
       labelled: i === 0 || i === rings - 1,
     })
   }
   const top = depth
-  parts.push({
-    id: 'frame',
-    label: 'Cover frame',
-    role: 'cover',
-    geometry: rectRing(length + 70, width + 70, 60, top, top + 50),
-    explode: [0, rings * gap + gap * 0.4, 0],
-  })
+  const wall = 35
+  const parts: ProcPart[] = [
+    {
+      id: 'frame',
+      label: 'Cover frame',
+      role: 'cover',
+      geometry: rectRing(length + 70, width + 70, 60, top, top + 50),
+      explode: [0, rings * gap + gap * 0.4, 0],
+    },
+  ]
   const grated = d.coverType === 'grated'
-  const lid: THREE.BufferGeometry[] = []
   const lw = length - 2 * wall
   const lz = width - 2 * wall
-  if (grated) {
-    lid.push(rectRing(lw, lz, 30, top + 5, top + 45))
-    for (let z = -lz / 2 + 55; z < lz / 2 - 40; z += 60) lid.push(box(lw - 40, 36, 20, 0, top + 25, z))
-  } else {
-    lid.push(box(lw, 40, lz, 0, top + 25, 0))
-    lid.push(box(lw * 0.3, 8, 30, 0, top + 49, 0))
-  }
-  parts.push({
-    id: 'cover',
-    label: grated ? 'Grated cover' : 'Solid cover',
-    role: 'cover',
-    geometry: merge(lid),
-    explode: [0, rings * gap + gap * 1.3, 0],
-  })
-  return {
-    match: {
-      kind: 'configured',
-      text: CONFIGURED,
-      note: notes([
-        (!d.lengthMm || !d.widthMm) && 'Showing 600 x 450 mm until dimensions are entered.',
-        !d.depthMm && 'Showing 600 mm deep until a depth is entered.',
-      ]),
+  const legend: LegendEntry[] = [
+    {
+      kind: exactPlan && exactRing ? 'library' : 'scaled',
+      text:
+        exactPlan && exactRing
+          ? `${rings} x ${RHINODUCT.name} section`
+          : `${rings} x ${RHINODUCT.name} section, resized to ${fmt(length)} x ${fmt(width)} x ${fmt(ringH)} mm`,
     },
+  ]
+  if (grated) {
+    kit.push({
+      id: 'cover',
+      label: 'Grated cover',
+      role: 'cover',
+      pieces: [
+        {
+          url: RHINODUCT_COVER.url,
+          part: RHINODUCT_COVER.part,
+          ops: [
+            { op: 'translate', v: [0, -RHINODUCT_COVER.underside, 0] },
+            { op: 'scale', v: [lw / RHINODUCT_COVER.length, 1, lz / RHINODUCT_COVER.width] },
+            { op: 'translate', v: [0, top + 5, 0] },
+          ],
+        },
+      ],
+      explode: [0, rings * gap + gap * 1.3, 0],
+    })
+    legend.push({ kind: 'scaled', text: `${RHINODUCT.name} grating, resized to the opening` })
+  } else {
+    parts.push({
+      id: 'cover',
+      label: 'Solid cover',
+      role: 'cover',
+      geometry: merge([box(lw, 40, lz, 0, top + 25, 0), box(lw * 0.3, 8, 30, 0, top + 49, 0)]),
+      explode: [0, rings * gap + gap * 1.3, 0],
+    })
+    legend.push({ kind: 'drawn', text: 'Solid cover' })
+  }
+  legend.push({ kind: 'drawn', text: 'Cover frame' })
+  return {
+    match: exactPlan && exactRing
+      ? { kind: 'exact', text: `Assembled from ${RHINODUCT.name} sections` }
+      : {
+          kind: 'nearest',
+          text: `Representative model, resized from ${RHINODUCT.name} sections`,
+          note: notes([
+            `The library section is ${RHINODUCT.length} x ${RHINODUCT.width} mm in plan and ${RHINODUCT.pitch} mm high; each ring is resized to your plan and ring height.`,
+            (!d.lengthMm || !d.widthMm) && 'Showing 600 x 450 mm until dimensions are entered.',
+            !d.depthMm && 'Showing 600 mm deep until a depth is entered.',
+          ]),
+        },
     parts,
     libraries: [],
+    kit,
+    legend,
     callouts: [
       {
         id: 'size',
@@ -1177,7 +1003,7 @@ function buildDrawpit(d: DrawpitData): Built {
         detail: `${fmt(depth)} mm deep, ${rings} ring${rings === 1 ? '' : 's'}`,
         tone: 'info',
         follows: 'ring-1',
-        anchor: [length / 2, depth * 0.35, width / 2],
+        anchor: [length / 2, Math.min(depth, ringH) * 0.5, width / 2],
         priority: 6,
         hideWhenExploded: true,
       },
@@ -1191,34 +1017,34 @@ function buildDrawpit(d: DrawpitData): Built {
 
 function buildRhinoPod(d: RhinoPodData): Built {
   if (d.podType === 'plus') {
-    const diameter = d.chamberDiameter ?? 600
-    const ch = roundChamber({
-      diameter,
-      depthToSoffit: 1000,
-      sump: 350,
-      outlet: DEFAULT_PIPE,
-      outletDetail: 'Position and size indicative',
-      inlets: [{ n: 1, hour: 6, size: DEFAULT_PIPE, title: 'Inlet' }],
-      top: 'cover',
-      dimensions: false,
-    })
-    const callouts = ch.callouts.map((c) =>
-      c.id === 'inlet-1' ? { ...c, title: 'Inlet', detail: 'Position and size indicative' } : { ...c, title: 'Outlet' },
-    )
-    callouts.push({ id: 'pod', title: 'RhinoPod', detail: 'Floats at water level', tone: 'accent', follows: 'pod:casing', priority: 8 })
+    // Plus is factory-fitted to a SEHDS separator (RhinoPod data sheet), so
+    // it is shown with the library separator, the pod beside it.
+    const dia = d.chamberDiameter
+    const exact = dia === null || dia === SEHDS_DIAMETER
+    const parts = Object.fromEntries(Object.entries(RHINOPOD.parts).map(([name, spec]) => [name, { ...spec, labelled: false }]))
     return {
-      match: {
-        kind: 'configured',
-        text: 'Chamber built to your diameter',
-        note: notes([
-          !d.chamberDiameter && 'Showing 600 mm until a diameter is chosen.',
-          'RhinoPod from the 3D library, scale indicative. Depth and pipes indicative.',
-        ]),
-      },
-      parts: ch.parts,
-      libraries: [{ id: 'pod', url: RHINOPOD.url, position: [0, ch.waterTop - 300, 0], parts: RHINOPOD.parts }],
-      callouts,
-      view: { azimuth: 30, elevation: 24 },
+      match: exact
+        ? {
+            kind: 'exact',
+            text: `Library models: ${SEHDS1800.name} with RhinoPod`,
+            note: notes([dia === null && 'Showing the 1800 mm separator until a diameter is chosen.', 'RhinoPod scale indicative.']),
+          }
+        : {
+            kind: 'nearest',
+            text: `Nearest model shown: ${SEHDS1800.name} with RhinoPod`,
+            note: `Your separator is ${dia} mm; the library has the 1800 mm unit only. RhinoPod scale indicative.`,
+          },
+      parts: [],
+      libraries: [
+        { id: 'sehds', url: SEHDS1800.url, parts: SEHDS1800.parts },
+        { id: 'pod', url: RHINOPOD.url, position: [1350, 0, 1500], parts },
+      ],
+      legend: [
+        ...libraryLegend(SEHDS1800.name, exact),
+        { kind: 'scaled', text: 'RhinoPod (library scale unverified)' },
+      ],
+      callouts: [{ id: 'pod', title: 'RhinoPod', tone: 'accent', follows: 'pod:casing', priority: 8 }],
+      view: { azimuth: 40, elevation: 16 },
     }
   }
   return {
@@ -1232,6 +1058,7 @@ function buildRhinoPod(d: RhinoPodData): Built {
     },
     parts: [],
     libraries: [{ id: 'pod', url: RHINOPOD.url, parts: RHINOPOD.parts }],
+    legend: [{ kind: 'scaled', text: 'RhinoPod (library scale unverified)' }],
     callouts: [],
     view: { azimuth: 35, elevation: 20 },
   }
@@ -1273,6 +1100,10 @@ export function buildViewerModel(state: WizardState): ViewerModel | null {
   return {
     key: `${state.productData.kind}|${JSON.stringify(state.productData.data)}`,
     ...built,
+    kit: built.kit ?? [],
+    legend:
+      built.legend ??
+      (built.libraries.length === 0 && !built.kit?.length ? [{ kind: 'drawn', text: 'Drawn to suit, no library model' }] : []),
     dispose: () => parts.forEach((p) => p.geometry.dispose()),
   }
 }

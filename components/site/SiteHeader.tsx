@@ -30,13 +30,13 @@ export function SiteHeader({ content }: { content: Pick<NavigationContent, 'PRIM
             priority
             className="h-9 w-auto"
           />
-          <span className="hidden border-l border-white/40 pl-4 text-[13px] leading-tight tracking-wide uppercase max-site-tablet:hidden lg:block">
+          <span className="hidden border-l border-white/40 pl-4 text-[13px] leading-tight tracking-wide uppercase max-site-tablet:hidden min-[1440px]:block">
             <span className="block">{brand.strapline.lead}</span>
             <span className="block italic">{brand.strapline.trail}</span>
           </span>
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-8 lg:flex">
+        <nav className="ml-auto hidden items-center gap-6 xl:flex 2xl:gap-8">
           <div
             className="relative"
             onMouseEnter={() => setMegaOpen(true)}
@@ -46,7 +46,7 @@ export function SiteHeader({ content }: { content: Pick<NavigationContent, 'PRIM
               type="button"
               aria-expanded={megaOpen}
               onClick={() => setMegaOpen((open) => !open)}
-              className="flex items-center gap-1.5 text-sm tracking-wider uppercase transition-opacity hover:opacity-80"
+              className="flex items-center gap-1.5 text-sm tracking-wider whitespace-nowrap uppercase transition-opacity hover:opacity-80"
             >
               {megaMenu.label}
               <ChevronDown className="size-4" aria-hidden />
@@ -113,16 +113,16 @@ export function SiteHeader({ content }: { content: Pick<NavigationContent, 'PRIM
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm tracking-wider uppercase transition-opacity hover:opacity-80"
+              className="text-sm tracking-wider whitespace-nowrap uppercase transition-opacity hover:opacity-80"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="ml-auto hidden items-center gap-3 lg:ml-0 lg:flex">
-          <SiteButton href={actions[0].href}>{actions[0].label}</SiteButton>
-          <SiteButton href={actions[1].href} variant="outline">
+        <div className="ml-auto hidden items-center gap-3 xl:ml-0 xl:flex">
+          <SiteButton href={actions[0].href} className="whitespace-nowrap">{actions[0].label}</SiteButton>
+          <SiteButton href={actions[1].href} variant="outline" className="whitespace-nowrap">
             {actions[1].label}
           </SiteButton>
         </div>
@@ -132,14 +132,14 @@ export function SiteHeader({ content }: { content: Pick<NavigationContent, 'PRIM
           onClick={() => setMobileOpen((open) => !open)}
           aria-expanded={mobileOpen}
           aria-label="Menu"
-          className="ml-auto lg:hidden"
+          className="ml-auto xl:hidden"
         >
           {mobileOpen ? <X className="size-6" /> : <Menu className="size-6" />}
         </button>
       </div>
 
       {mobileOpen ? (
-        <div className="border-t border-white/15 px-5 pb-6 lg:hidden">
+        <div className="border-t border-white/15 px-5 pb-6 xl:hidden">
           <div className="grid gap-5 pt-5 sm:grid-cols-2">
             {megaMenu.columns.map((column) => (
               <div key={column.heading}>

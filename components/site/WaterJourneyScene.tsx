@@ -5,6 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { ContactShadows, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { InkOutlines, TOON, ToonLights, ToonModel, toonRamp, useWaterMaterial } from './three/toon'
+import { BASE5_DROP } from './three/assembly'
 
 /**
  * The home page's scroll scene: the Webflow site's Spline scroll rebuilt
@@ -245,8 +246,12 @@ function ClockBase({ progress }: { progress: ProgressRef }) {
   return (
     <group>
       <group position={[0, GROUND, 0]}>
+        {/* The base is assembled (outlet socket north, underside on the
+            ground); the rim, drawn here as a ring round it, drops with it. */}
         <ToonModel url={PARTS.base} scale={MM} />
-        <ToonModel url={PARTS.rim} scale={MM} roles={{ 'rhino-inspection-chamber-sercic600-5-inlet--rim': 'inlet', rim: 'inlet' }} />
+        <group position={[0, -BASE5_DROP * MM, 0]}>
+          <ToonModel url={PARTS.rim} scale={MM} roles={{ 'rhino-inspection-chamber-sercic600-5-inlet--rim': 'inlet', rim: 'inlet' }} />
+        </group>
       </group>
       <group ref={markers}>
         <mesh position={clockPoint(0, 1.0, top)}>
@@ -273,7 +278,7 @@ function ClockBase({ progress }: { progress: ProgressRef }) {
  */
 const LINEUP: { url: string; roles?: Record<string, 'inlet' | 'accent'>; span: number; size: number; x: number; z: number; hour: number }[] = [
   { url: PARTS.pumpTank, span: 5083, size: 4.2, x: -7.4, z: -1.6, hour: 9 },
-  { url: PARTS.chamber, roles: { inlet: 'inlet', lid: 'accent' }, span: 1950, size: 3.1, x: -3.7, z: 0.6, hour: 7 },
+  { url: PARTS.chamber, roles: { inlet: 'inlet', outlet: 'inlet', lid: 'accent' }, span: 1950, size: 3.1, x: -3.7, z: 0.6, hour: 7 },
   { url: PARTS.sudsceptor, roles: { stand: 'inlet', inlet: 'inlet', outlet: 'inlet' }, span: 4290, size: 3.1, x: 3.7, z: 0.6, hour: 5 },
   { url: PARTS.maxi, span: 1500, size: 3.1, x: 7.2, z: -1.6, hour: 3 },
 ]

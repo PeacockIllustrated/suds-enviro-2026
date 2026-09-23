@@ -122,6 +122,32 @@ export const LIFT_SIZES = {
   maxi: { diameter: 1200, depth: 1500 },
 } as const
 
+// RhinoDuct (SERD) drawpit section: an open box 930 x 780 mm in plan, lying
+// on its side in the file with its axis along Z. The box runs from z -191
+// to 244 (435 mm, the stacking pitch) with a narrower spigot from -244 to
+// -191 that nests in the section below. The cover file's grating is
+// 908 x 758 mm, 63 mm deep, from y 570.6.
+export const RHINODUCT = {
+  url: `${LIB}/rhinoduct/parts/rhinoduct-serd--duct.glb`,
+  part: 'duct',
+  name: 'RhinoDuct',
+  length: 930,
+  width: 780,
+  pitch: 435,
+  spigot: 53,
+  /** Native z of the box's lower end once stood up (the spigot's top). */
+  boxFrom: -191,
+  /** Native y of the plan centre. */
+  centreY: 390,
+} as const
+export const RHINODUCT_COVER = {
+  url: `${LIB}/rhinoduct-with-cover/parts/rhinoduct-serd-cover--cover.glb`,
+  part: 'cover',
+  length: 908,
+  width: 758,
+  underside: 570.6,
+} as const
+
 // Grease trap Jumbo Micro: 640 x 644 x 830 mm. The higher stub (+Z) is the
 // inlet, the lower (-Z) the outlet. The "-xray" casing is a coincident copy
 // of the casing and is left out so the reveal is not blocked.

@@ -117,6 +117,64 @@ export function pipe(
 }
 
 /**
+ * A twinwall pipe: a smooth bore inside a corrugated outer wall, `length`
+ * long from `start` along `dir`. Corrugations run at a pitch set from the
+ * outside diameter, so a 225 pipe reads like the library's 225 stubs.
+ */
+export function twinwallPipe(
+  start: THREE.Vector3,
+  dir: THREE.Vector3,
+  length: number,
+  od: number,
+  bore: number,
+): THREE.BufferGeometry {
+  const ro = od / 2
+  const rv = ro - Math.max(4, od * 0.05)
+  const ri = bore / 2
+  const pitch = Math.max(24, od * 0.15)
+  // The corrugations are one smooth run (rounded crests, as moulded) so the
+  // ink outline follows the silhouette instead of ruling every rib.
+  const wave: P2[] = []
+  const steps = 10
+  const ribs = Math.max(1, Math.floor((length - pitch * 0.4) / pitch))
+  const y0 = (length - ribs * pitch) / 2
+  wave.push([rv, 0])
+  for (let k = 0; k < ribs; k++) {
+    for (let i = 0; i < steps; i++) {
+      const t = i / steps
+      wave.push([rv + (ro - rv) * (0.5 - 0.5 * Math.cos(t * Math.PI * 2)), y0 + (k + t) * pitch])
+    }
+  }
+  wave.push([rv, y0 + ribs * pitch], [rv, length])
+  const runs: P2[][] = [[[ri, 0], [rv, 0]], wave, [[rv, length], [ri, length]], [[ri, length], [ri, 0]]]
+  return orient(revolve(runs, 36), dir, start)
+}
+
+/** A concentric reducer: outside radius r0 at the start to r1 at the far end. */
+export function reducer(start: THREE.Vector3, dir: THREE.Vector3, length: number, r0: number, r1: number): THREE.BufferGeometry {
+  const t = 8
+  const lip = Math.min(40, length * 0.3)
+  const profile: P2[] = [
+    [r0 - t, 0],
+    [r0, 0],
+    [r0, lip],
+    [r1, length - lip],
+    [r1, length],
+    [r1 - t, length],
+    [r1 - t, length - lip],
+    [r0 - t, lip],
+    [r0 - t, 0],
+  ]
+  return orient(revolve(edges(profile), 36), dir, start)
+}
+
+/** A blanking cap over a socket mouth: a shallow closed cup, `depth` long. */
+export function blankingCap(start: THREE.Vector3, dir: THREE.Vector3, r: number, depth: number): THREE.BufferGeometry {
+  const profile: P2[] = [[r - 6, 0], [r, 0], [r, depth], [0, depth]]
+  return orient(revolve(edges(profile), 36), dir, start)
+}
+
+/**
  * A water core for a pipe: a slim cylinder lying on the invert, with its
  * UVs turned so the water shader's streaks run along the pipe. `inwards`
  * reverses the flow so inlet water runs towards the chamber.
