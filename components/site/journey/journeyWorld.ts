@@ -116,7 +116,9 @@ export interface ModelFit {
  * Measured from manifest.json (bboxMm of each part):
  * - SERSIC600 chamber: 1950 mm body, Ø705 over the ribs; its 225 stubs sit
  *   in holes centred 192.5 mm up on the 12 / 6 o'clock line (z in the file),
- *   so it is turned a quarter to put them along the run.
+ *   so it is turned a quarter to put them along the run, outlet downstream.
+ *   The data sheet gives a 10 mm fall across the chamber (inlet invert 85,
+ *   outlet 75 mm above the base); the model's stubs are level.
  * - SERPT600 catchpit: tubing 1495 mm, inlet and outlet stubs centred 374 mm
  *   up, ends at x = -540 and +540. The file is drawn cut in half.
  * - SEHDS1800 separator: 4290 mm, Ø1800 shell; inlet and outlet stubs
@@ -124,6 +126,9 @@ export interface ModelFit {
  *   at z -1250 from the shell centre). Turned an eighth so both point back
  *   at 45 degrees either side, and stood forward of the cut so both stub
  *   ends reach the section face and the run visibly passes through it.
+ *   The data sheet puts both inverts 2970 mm above the base (1320 mm below
+ *   the top); the model's stubs sit about 400 mm higher, and the pipes
+ *   follow the model so they meet its stubs.
  * - POC600 orifice chamber: 1495 mm tube, Ø696; stubs on the lower band
  *   centred 356 mm up, ends at x = +/-452. The orifice plate sits on the
  *   -x stub, so it is turned half round to put the outlet downstream.
@@ -133,7 +138,8 @@ export const FITS = {
     model: heroOf('inspection-chamber'),
     heightMm: 1950,
     radiusMm: 353,
-    turn: Math.PI / 2,
+    // The 12 o'clock outlet (the file's -z) downstream, the 6 o'clock inlet upstream.
+    turn: -Math.PI / 2,
     inletMm: 192.5,
     outletMm: 192.5,
     inletXMm: -353,
@@ -207,7 +213,9 @@ export function topOf(p: ProductPlace): number {
 export const CHAMBER: ProductPlace = { fit: 'chamber', x: 13.2, inletY: -0.05 - (1950 - 192.5) * S }
 export const SILT: ProductPlace = { fit: 'silt', x: 26.6, inletY: CHAMBER.inletY - 0.09 }
 export const SEPARATOR: ProductPlace = { fit: 'separator', x: 34, inletY: SILT.inletY - 0.1 }
-export const FLOW: ProductPlace = { fit: 'flow', x: 56.4, inletY: SEPARATOR.inletY - 0.2 }
+// The storage sits below the separator's outlet and the flow control below
+// the storage's outlet, so the run falls all the way to the outfall.
+export const FLOW: ProductPlace = { fit: 'flow', x: 56.4, inletY: SEPARATOR.inletY - 0.28 }
 
 /*
  * The illustrative items, at data-sheet sizes times S.
@@ -223,7 +231,7 @@ export const CRATES = {
   from: 43,
   module: [1.0 * S * 1000, 0.4 * S * 1000, 0.5 * S * 1000] as Vec3,
   count: [6, 3, 2] as [number, number, number],
-  bottom: SEPARATOR.inletY - 0.28,
+  bottom: SEPARATOR.inletY - 0.4,
 }
 export const CRATES_TO = CRATES.from + CRATES.module[0] * CRATES.count[0]
 export const CRATES_TOP = CRATES.bottom + CRATES.module[1] * CRATES.count[1]

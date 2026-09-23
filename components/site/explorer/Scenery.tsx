@@ -24,7 +24,7 @@ import { drawStreetLamp } from '@/components/site/lineart/StreetLamp'
 import { Trees, type TreeSpec } from '@/components/site/lineart/Trees'
 import { drawVan } from '@/components/site/lineart/Van'
 import { selectHandlers } from './lineArt'
-import { PLOTS, STRIP, type Box3Spec, type PipeRun } from './explorerLayout'
+import { BACK_KITCHEN, PLOTS, STRIP, type Box3Spec, type PipeRun } from './explorerLayout'
 
 /**
  * The scenery on each plot, drawn with the line-art kit
@@ -39,7 +39,7 @@ import { PLOTS, STRIP, type Box3Spec, type PipeRun } from './explorerLayout'
 
 type OnSelect = () => void
 
-/** Rainwater pipe runs that come down a wall: where their fittings go. */
+/** Rainwater pipe runs that come down a wall: where their fittings (hopper, brackets, gully at the foot) go. */
 function downpipesOf(runs: PipeRun[]) {
   return runs
     .filter((r) => r.stream === 'surface' && r.points[0][1] > 1)
@@ -49,17 +49,19 @@ function downpipesOf(runs: PipeRun[]) {
 function fittings(s: Sketch, plotId: string) {
   const plot = PLOTS.find((p) => p.id === plotId)
   if (!plot) return
-  for (const d of downpipesOf(plot.pipes)) drawDownpipe(s, { position: [d.x, 0, d.z], top: d.top, radius: 0.15 })
+  for (const d of downpipesOf(plot.pipes)) drawDownpipe(s, { position: [d.x, 0, d.z], top: d.top, radius: 0.12 })
 }
 
-/** Access covers on the section line over the chambers below. */
+/**
+ * Access covers on the section line over the chambers finished at the
+ * surface. Deeper products bring their own riser, cover and frame up to
+ * the surface (Products.tsx); housings and the drawpit carry their own.
+ */
 function covers(s: Sketch, plotId: string) {
   const plot = PLOTS.find((p) => p.id === plotId)
   if (!plot) return
   for (const p of plot.products) {
     if (p.model === 'chamber') drawManholeCover(s, { position: [p.x, 0, 0], size: 0.9, cut: true })
-    if (p.model === 'sudsceptor' || p.model === 'rhinolift') drawManholeCover(s, { position: [p.x, 0, 0], size: 1.2, shape: 'square', cut: true })
-    if (p.model === 'roflo' || p.model === 'rotex' || p.model === 'rhinopit' || p.model === 'grease') drawManholeCover(s, { position: [p.x, 0, 0], size: 0.9, shape: 'square', cut: true })
   }
 }
 
@@ -92,6 +94,8 @@ function drawOfficePlot(s: Sketch) {
   drawPerson(s, { position: [-4.2, 0, -3.1], pose: 'walk' })
   drawPerson(s, { position: [-1.6, 0, -2.4], shirt: LA.shirtGreen, flip: true })
   drawPerson(s, { position: [-0.9, 0, -2.6], shirt: LA.paper, trousers: LA.inkDark })
+  // Yard gully by the loading bay, draining to the surface water carrier.
+  drawGully(s, { position: [-6.9, 0, -1.2] })
   fittings(s, 'office')
   covers(s, 'office')
 }
@@ -110,9 +114,10 @@ function drawCarParkPlot(s: Sketch) {
   for (const x of [33.55, 36.05]) drawEVCharger(s, { position: [x + 0.9, 0, -6.35] })
   // Entry lane arrows up to the barrier.
   for (const z of [-1.8, -4.2]) s.polygon([[22.3, 0.008, z + 0.9], [22.7, 0.008, z + 0.9], [22.7, 0.008, z], [23.05, 0.008, z], [22.5, 0.008, z - 0.7], [21.95, 0.008, z], [22.3, 0.008, z]], { fill: LA.paper, ink: LA.ink, weight: 'fine', shade: false })
-  // A slot channel across the bays' foot, draining to the catchpit.
-  s.patch(19, -0.95, 42, -0.75, 0.01, { fill: LA.metal, ink: LA.ink, weight: 'fine' })
-  s.line([19, 0.012, -0.85], [42, 0.012, -0.85], LA.metalDark, 'line')
+  // A slot channel across the bays' foot, falling to the gully that holds the RhinoPod.
+  s.patch(21.7, -0.95, 42, -0.75, 0.01, { fill: LA.metal, ink: LA.ink, weight: 'fine' })
+  s.line([21.7, 0.012, -0.85], [42, 0.012, -0.85], LA.metalDark, 'line')
+  drawGully(s, { position: [21.2, 0, -0.85] })
   drawStreetLamp(s, { position: [19.2, 0, -6.2] })
   drawPerson(s, { position: [28.4, 0, -1.9], pose: 'walk', shirt: LA.shirtGreen })
   fittings(s, 'car-park')
@@ -132,9 +137,29 @@ function drawRetailPlot(s: Sketch) {
   drawPerson(s, { position: [57.2, 0, -3.3], pose: 'walk' })
   drawPerson(s, { position: [62.4, 0, -2.2], shirt: LA.shirtGreen, flip: true, pose: 'walk' })
   drawPerson(s, { position: [66.9, 0, -3.9], shirt: LA.paper, trousers: LA.inkDark })
-  drawGully(s, { position: [55.2, 0, -0.9] })
+  drawGully(s, { position: [55.4, 0, -0.9] })
+  drawBackKitchen(s)
   fittings(s, 'retail')
   covers(s, 'retail')
+}
+
+/**
+ * The cafe's back kitchen, a single-storey room on the parade's gable,
+ * drawn cut away (no roof, front and side walls cut low) so the
+ * floor-standing grease trap shows on its floor, with the sink it serves.
+ */
+function drawBackKitchen(s: Sketch) {
+  const { x0, x1, z0, z1, height } = BACK_KITCHEN
+  const wall = 0.2
+  const cut = 0.45
+  s.box([x0, 0, z1], [x1, 0.02, z0], { fill: LA.concrete, ink: LA.ink })
+  joints(s, x0 + wall, z1 + wall, x1 - wall, z0 - wall, 0.024, 0.4, 0.4)
+  s.box([x0, 0, z1], [x1, height, z1 + wall], { fill: LA.paper, ink: LA.ink })
+  s.box([x1 - wall, 0, z1 + wall], [x1, cut, z0], { fill: LA.paper, ink: LA.ink })
+  s.box([x0, 0, z0 - wall], [x1 - wall, cut, z0], { fill: LA.paper, ink: LA.ink })
+  // Stainless worktop and sink against the gable.
+  s.box([x0, 0.02, z1 + wall], [x0 + 0.65, 0.95, z1 + wall + 0.95], { fill: LA.metal, ink: LA.ink })
+  s.box([x0 + 0.12, 0.8, z1 + wall + 0.2], [x0 + 0.53, 0.955, z1 + wall + 0.75], { fill: LA.metalDark, ink: LA.ink, weight: 'fine' })
 }
 
 // ── house ───────────────────────────────────────────────────────────
@@ -172,8 +197,9 @@ function drawHousePlot(s: Sketch) {
 const TREES: TreeSpec[] = (() => {
   const out: TreeSpec[] = []
   for (let x = STRIP[0] + 1; x <= STRIP[1] - 1; x += 3.3) out.push({ position: [x, 0.04, -21.2] })
-  ;[16, 46.5, 75.2].forEach((x) => {
-    for (let z = -18.5; z <= -2.5; z += 3.2) out.push({ position: [x, 0.04, z] })
+  ;[16, 46.5, 76.7].forEach((x) => {
+    // Beside the cafe's back kitchen the verge is kept clear so the room shows.
+    for (let z = -18.5; z <= -2.5; z += 3.2) if (x !== 76.7 || z < -11) out.push({ position: [x, 0.04, z] })
   })
   out.push(
     { position: [-14.3, 0, -3.2], kind: 'broadleaf', height: 5.5 },
