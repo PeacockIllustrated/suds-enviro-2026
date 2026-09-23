@@ -75,6 +75,8 @@ export interface LibraryUse {
  *   sliceY      keep only triangles lying wholly between two heights (cut on
  *               existing vertex rings so stacked slices meet exactly)
  *   dropNear    drop triangles with a vertex nearer the Y axis than `radius`
+ *   dropBox     drop triangles lying wholly inside an axis-aligned box
+ *   keepBox     keep only triangles lying wholly inside an axis-aligned box
  *   stackY      repeat the geometry `count` times, `pitch` apart up Y
  *   radial      remap each vertex's distance from the Y axis through a
  *               piecewise-linear curve of [from, to] knots, extended
@@ -87,6 +89,8 @@ export interface LibraryUse {
 export type KitOp =
   | { op: 'sliceY'; y0: number; y1: number }
   | { op: 'dropNear'; radius: number }
+  | { op: 'dropBox'; min: Vec3; max: Vec3 }
+  | { op: 'keepBox'; min: Vec3; max: Vec3 }
   | { op: 'stackY'; count: number; pitch: number }
   | { op: 'radial'; knots: readonly (readonly [number, number])[] }
   | { op: 'scale'; v: Vec3 }

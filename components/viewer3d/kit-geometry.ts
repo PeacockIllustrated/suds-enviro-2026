@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import type { Vec3 } from './geometry'
 import type { KitOp, KitPart, KitPiece } from './viewer-model'
 
 /**
@@ -79,6 +80,18 @@ function dropNear(s: Soup, radius: number): Soup {
   return filterTriangles(s, (a, b, c) => far(a) && far(b) && far(c))
 }
 
+/** Whether every vertex of a triangle lies inside the box [min, max]. */
+function inBox(s: Soup, min: Vec3, max: Vec3) {
+  const inside = (v: number) => {
+    for (let k = 0; k < 3; k++) {
+      const c = s.pos[v * 3 + k]
+      if (c < min[k] || c > max[k]) return false
+    }
+    return true
+  }
+  return (a: number, b: number, c: number) => inside(a) && inside(b) && inside(c)
+}
+
 function stackY(s: Soup, count: number, pitch: number): Soup {
   const n = Math.max(0, Math.floor(count))
   const verts = s.pos.length / 3
@@ -149,6 +162,12 @@ function apply(s: Soup, op: KitOp): Soup {
       return sliceY(s, op.y0, op.y1)
     case 'dropNear':
       return dropNear(s, op.radius)
+    case 'dropBox': {
+      const inside = inBox(s, op.min, op.max)
+      return filterTriangles(s, (a, b, c) => !inside(a, b, c))
+    }
+    case 'keepBox':
+      return filterTriangles(s, inBox(s, op.min, op.max))
     case 'stackY':
       return stackY(s, op.count, op.pitch)
     case 'radial':
@@ -193,6 +212,14 @@ function toGeometry(s: Soup): THREE.BufferGeometry {
   g.computeBoundingBox()
   g.computeBoundingSphere()
   return g
+}
+
+/**
+ * A library part's geometry with `ops` applied, as new geometry with
+ * normals and bounds. The source geometry is left as it is.
+ */
+export function applyKitOps(geometry: THREE.BufferGeometry, ops: readonly KitOp[]): THREE.BufferGeometry {
+  return toGeometry(ops.reduce(apply, fromGeometry(geometry)))
 }
 
 function pieceSoup(piece: KitPiece, source: KitSource): Soup | null {

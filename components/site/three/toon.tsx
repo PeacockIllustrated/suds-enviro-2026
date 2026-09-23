@@ -5,6 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { Outlines, useGLTF } from '@react-three/drei'
 import type { ComponentProps } from 'react'
 import * as THREE from 'three'
+import { assembleParts } from './assembly'
 
 /**
  * The shared 3D look for the marketing site: the toon shading with inked
@@ -17,7 +18,9 @@ import * as THREE from 'three'
  *
  * Library files are Meshopt compressed with quantised attributes; parts are
  * dequantised into float geometry once per file so outlines, which extrude
- * along normals, are not distorted by the quantisation scale.
+ * along normals, are not distorted by the quantisation scale. Parts some
+ * files leave out of place are moved to where they sit on the product
+ * (assembly.ts) before they are drawn.
  */
 
 export const TOON = {
@@ -121,13 +124,27 @@ export function libraryPartsFromScene(url: string, scene: THREE.Object3D): Libra
   return parts
 }
 
+const assembledCache = new Map<string, LibraryPart[]>()
+
+/**
+ * The parts of a library file as float geometry in millimetres, moved to
+ * their assembled positions (see assembly.ts). Cached per URL.
+ */
+export function assembledLibraryParts(url: string, scene: THREE.Object3D): LibraryPart[] {
+  const cached = assembledCache.get(url)
+  if (cached) return cached
+  const parts = assembleParts(url, libraryPartsFromScene(url, scene), (name, geometry) => ({ name, geometry }))
+  assembledCache.set(url, parts)
+  return parts
+}
+
 /**
  * The parts of a library file as float geometry in millimetres, keyed by
- * part node name. Suspends while the file loads.
+ * part node name and assembled. Suspends while the file loads.
  */
 export function useLibraryParts(url: string): LibraryPart[] {
   const { scene } = useGLTF(url)
-  return useMemo(() => libraryPartsFromScene(url, scene), [scene, url])
+  return useMemo(() => assembledLibraryParts(url, scene), [scene, url])
 }
 
 /** Minimal merge for float, indexed geometries (position + normal). */

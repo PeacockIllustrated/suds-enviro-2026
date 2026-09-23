@@ -57,7 +57,7 @@ const FILE = {
  * corrugation, so a slice between them stacks without gaps; the last
  * valley ring is at 1552.622 and the plain end at 1556.327.
  */
-const BODY = {
+export const BODY = {
   bore: 302.2,
   outer: 348.2,
   foot: 57.661,
@@ -74,7 +74,7 @@ const KIT_DIAMETER = 600
  * (r 296.8 to 327.4) seats on the top of the shaft at y 758.1; a small
  * marker at the centre of the file is left out.
  */
-const CAP = { seat: 758.1, top: 761.1, bottom: 711.1, opening: 159.7, dish: 296.8, flange: 327.4 } as const
+export const CAP = { seat: 758.1, top: 761.1, bottom: 711.1, opening: 159.7, dish: 296.8, flange: 327.4 } as const
 
 /**
  * The 5-inlet moulded base. In the file its underside is at y 248.874 and
@@ -85,8 +85,8 @@ const CAP = { seat: 758.1, top: 761.1, bottom: 711.1, opening: 159.7, dish: 296.
  * are higher side entries, and the two smaller sockets either side of 6 are
  * moulded at 45 degrees off the 6 o'clock line.
  */
-const BASE5 = { underside: 248.874, top: 553.852 - 248.874 } as const
-interface Socket {
+export const BASE5 = { underside: 248.874, top: 553.852 - 248.874 } as const
+export interface Socket {
   bearing: number
   centre: number
   radius: number
@@ -94,7 +94,7 @@ interface Socket {
   /** Outside diameter of pipe the socket takes, mm. */
   nominal: number
 }
-const SOCKETS: Record<number, Socket> = {
+export const SOCKETS: Record<number, Socket> = {
   12: { bearing: 0, centre: 102.3, radius: 91.9, mouth: 303, nominal: 160 },
   6: { bearing: 180, centre: 117.6, radius: 91.8, mouth: 303, nominal: 160 },
   3: { bearing: 90, centre: 196.7, radius: 91.8, mouth: 301, nominal: 160 },
@@ -121,7 +121,7 @@ const ADAPTER = { spigotY: 94.95, twinY: 132.45, spigotTip: 182, twinEnd: 195 } 
  * The 225 twinwall stub: a smooth coupler (276 mm across) from z -177 to 0
  * and twinwall from 0 to 172, on an axis at y 360.2.
  */
-const STUB = { axisY: 360.2, coupler: 177, twin: 172 } as const
+export const STUB = { axisY: 360.2, coupler: 177, twin: 172 } as const
 
 const PIPE = PIPE_DIMS
 const ADAPTER_SIZE: PipeSize = '225mm Twinwall'

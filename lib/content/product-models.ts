@@ -5,7 +5,10 @@ import type { PartRole } from '@/components/site/three/toon'
  *
  * Keyed by the product catalogue slug (lib/product-catalog.ts). Models come
  * from public/models/library/v1 (see its manifest.json); part names are the
- * part node names listed there per product.
+ * part node names listed there per product. Some files leave parts out of
+ * place; components/site/three/assembly.ts moves them to where they sit on
+ * the product when the file loads, and can add parts (a second stub, a
+ * cover frame), so roles below may name parts the manifest does not list.
  *
  * Roles decide how a part is drawn and what the page's interaction does:
  *   casing  the outer shell; hovering (or the reveal control on touch)
@@ -24,8 +27,14 @@ export interface ProductModel {
   label: string
   /** Assembled glb, relative to the site root: /models/library/v1/<slug>/<file>.glb */
   url: string
-  /** Largest dimension of the product in mm (manifest bboxMm.size max), used to fit the view. */
+  /** Largest dimension of the assembled product in mm, used to fit the view. */
   span: number
+  /**
+   * Still shown before the canvas loads and on phones. Defaults to the
+   * library thumbnail beside the glb; set where that thumbnail shows parts
+   * out of place, to a render of the assembled model in public/models/posters.
+   */
+  poster?: string
   roles: Record<string, PartRole>
   /** One line on what the viewer is showing; plain, no marketing. */
   caption?: string
@@ -55,40 +64,48 @@ const LIB = '/models/library/v1'
  *   septic-tank           no library asset
  */
 export const PRODUCT_MODELS: Partial<Record<string, ProductModelSet>> = {
-  // SERSIC 600: "body" is the full-height ribbed shell and "body-bottom" a
-  // band of the same 353 mm radius, so both are the casing. The moulded base
-  // and the benching disc ("lid", which sits inside at about 740 mm) are the
-  // insides; the inlet stub sits within the shell and shows once it fades.
-  // The SERCIC 5-inlet keeps its external rim band in brand blue.
+  // SERSIC 600: "body" is the full-height ribbed shaft, with the two pipe
+  // holes in its plain bottom section, and "body-bottom" a thin band round
+  // that section; both are the casing. The moulded benching ("base") sits in
+  // the foot of the shaft and is the insides. "lid" is the chamber cap on top
+  // of the shaft, in brand blue. The 225 twinwall stubs pass through the
+  // holes: "inlet" at 6 o'clock and "outlet" (a copy added on load) at 12.
+  // On the SERCIC 5-inlet the stub is lined up on the 3 o'clock socket and
+  // the rim, one corrugation of the shaft profile, tops the shaft in blue.
   'inspection-chamber': {
     hero: {
       id: 'sersic600',
+      poster: '/models/posters/sersic600.png',
       label: 'Rhino inspection chamber SERSIC600',
       url: `${LIB}/rhino-inspection-chamber/rhino-inspection-chamber-sersic600.glb`,
-      span: 1950,
+      // Assembled: the cap stands 4.4 mm proud of the 1950 mm shaft.
+      span: 1954.4,
       roles: {
         body: 'casing',
         'body-bottom': 'casing',
         base: 'insides',
-        lid: 'insides',
+        lid: 'accent',
         inlet: 'inlet',
+        outlet: 'inlet',
       },
-      caption: 'A 600 mm surface water chamber; lift the shell away to see the moulded base and inlet.',
+      caption: 'A 600 mm surface water chamber; lift the shell away to see the moulded benching and the pipe stubs in their holes.',
       view: { azimuth: 35, elevation: 18 },
     },
     more: [
       {
         id: 'sercic600-5-inlet',
+      poster: '/models/posters/sercic600-5-inlet.png',
         label: 'Rhino inspection chamber SERCIC600, 5-inlet base',
         url: `${LIB}/rhino-inspection-chamber-5-inlet/rhino-inspection-chamber-sercic600-5-inlet.glb`,
-        span: 1556.3,
+        // Assembled: the 1556.3 mm shaft plus its 72.3 mm rim.
+        span: 1628.6,
         roles: {
           body: 'casing',
           rim: 'accent',
           base: 'insides',
           inlet: 'inlet',
         },
-        caption: 'The 600 mm chamber on the 5-inlet base, with the base visible through the shell.',
+        caption: 'The 600 mm chamber on the 5-inlet base, with the base and a side inlet stub visible through the shell.',
         view: { azimuth: 35, elevation: 18 },
       },
       {
@@ -188,9 +205,12 @@ export const PRODUCT_MODELS: Partial<Record<string, ProductModelSet>> = {
   },
 
   // RhinoRoFlo POC600 (orifice, the SERF range): the ribbed tube and the
-  // smooth lower band ("poc-base", which carries the outlet stub) form the
-  // shell. Divider, pull string and clips are the insides; the orifice plate
-  // and its latch stay brand blue so they read as the working parts. The
+  // smooth lower band ("poc-base", which carries the inlet and outlet stubs)
+  // form the shell. The file's names for two parts are swapped:
+  // "poc-string-clips" is the orifice plate unit, seated on the inner end of
+  // the lower (outlet) stub, and "poc-orifice" the two small clips that hold
+  // its pull string to the wall. The plate and its latch stay brand blue so
+  // they read as the working parts; divider, string and clips are insides. The
   // RoTex models have no shell: the 2024 set is laid out as separate parts
   // and is degraded; the 2025 unit is a wall-mounted regulator whose outlet
   // pipe is the pipe connection.
@@ -205,8 +225,8 @@ export const PRODUCT_MODELS: Partial<Record<string, ProductModelSet>> = {
         'poc-base': 'casing',
         'poc-divider': 'insides',
         'poc-string': 'insides',
-        'poc-string-clips': 'insides',
-        'poc-orifice': 'accent',
+        'poc-string-clips': 'accent',
+        'poc-orifice': 'insides',
         'poc-orifice-latch': 'accent',
       },
       caption: 'A 600 mm orifice chamber; fade the shell to see the divider wall and the orifice plate on its pull string.',
@@ -354,15 +374,19 @@ export const PRODUCT_MODELS: Partial<Record<string, ProductModelSet>> = {
   },
 
   // RhinoDuct: an open drawpit with nothing inside, so no casing. The cover
-  // and frame stay brand blue on the hero; the bare duct is the alternative.
+  // and its frame (split out of the duct part and seated on load) stay brand
+  // blue on the hero. The alternative is the shallower 488 mm duct, stood
+  // upright on load, whose cover is moulded with the body.
   drawpit: {
     hero: {
       id: 'serd-cover',
+      poster: '/models/posters/serd-cover.png',
       label: 'RhinoDuct with cover',
       url: `${LIB}/rhinoduct-with-cover/rhinoduct-serd-cover.glb`,
       span: 930,
       roles: {
         cover: 'accent',
+        frame: 'accent',
       },
       caption: 'A rectangular drawpit with its cover and frame in place.',
       view: { azimuth: 35, elevation: 25 },
@@ -370,11 +394,12 @@ export const PRODUCT_MODELS: Partial<Record<string, ProductModelSet>> = {
     more: [
       {
         id: 'serd',
+      poster: '/models/posters/serd.png',
         label: 'RhinoDuct',
         url: `${LIB}/rhinoduct/rhinoduct-serd.glb`,
         span: 930,
         roles: {},
-        caption: 'The drawpit body without its cover, showing the interlocking wall sections.',
+        caption: 'The shallower 488 mm deep drawpit, with its cover in place on the interlocking wall sections.',
         view: { azimuth: 35, elevation: 30 },
       },
     ],

@@ -62,9 +62,9 @@ export interface ModelSpec {
 export const MODELS: Record<ModelKey, ModelSpec> = {
   chamber: {
     url: `${LIB}/rhino-inspection-chamber/rhino-inspection-chamber-sersic600.glb`,
-    heightMm: 1950,
+    heightMm: 1954,
     radiusMm: 353,
-    roles: { body: 'casing', 'body-bottom': 'casing', base: 'insides', lid: 'insides', inlet: 'inlet' },
+    roles: { body: 'casing', 'body-bottom': 'casing', base: 'insides', lid: 'accent', inlet: 'inlet', outlet: 'inlet' },
   },
   sudsceptor: {
     url: `${LIB}/sudsceptor/sudsceptor-sehds1800.glb`,
@@ -91,8 +91,8 @@ export const MODELS: Record<ModelKey, ModelSpec> = {
       'poc-base': 'casing',
       'poc-divider': 'insides',
       'poc-string': 'insides',
-      'poc-string-clips': 'insides',
-      'poc-orifice': 'accent',
+      'poc-string-clips': 'accent',
+      'poc-orifice': 'insides',
       'poc-orifice-latch': 'accent',
     },
   },
@@ -148,9 +148,9 @@ export const MODELS: Record<ModelKey, ModelSpec> = {
   },
   drawpit: {
     url: `${LIB}/rhinoduct-with-cover/rhinoduct-serd-cover.glb`,
-    heightMm: 707,
+    heightMm: 634,
     radiusMm: 465,
-    roles: { cover: 'accent' },
+    roles: { cover: 'accent', frame: 'accent' },
   },
 }
 

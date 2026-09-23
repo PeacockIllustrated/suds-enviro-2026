@@ -16,8 +16,8 @@ const ProductModelCanvas = dynamic(() => import('./three/ProductModelCanvas'), {
  * frame is near the viewport and the browser is idle. Hovering the model
  * fades its casing to show the insides, and a toggle does the same for
  * keyboard and touch. Below the tablet breakpoint no canvas is mounted in
- * the page: the library thumbnail stands in, and "View in 3D" opens a
- * full-screen viewer.
+ * the page: a poster (see ProductModel.poster) stands in, and "View in 3D"
+ * opens a full-screen viewer.
  */
 
 interface ProductModelViewerProps {
@@ -42,9 +42,9 @@ function useMediaQuery(query: string): boolean {
   )
 }
 
-/** The library keeps a thumbnail beside each glb. */
+/** A poster of the assembled model, else the thumbnail the library keeps beside each glb. */
 function posterFor(model: ProductModel): string {
-  return model.url.replace(/\.glb$/, '.png')
+  return model.poster ?? model.url.replace(/\.glb$/, '.png')
 }
 
 function hasCasing(model: ProductModel): boolean {
