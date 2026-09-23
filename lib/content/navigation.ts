@@ -171,7 +171,11 @@ export const PRIMARY_NAV = {
     columns: RHINO_RANGE_MENU,
     sidebar: ADAPTERS_AND_BASES,
   },
-  links: [{ label: 'Contact', href: '/contact' }] satisfies NavLink[],
+  links: [
+    { label: 'Water Journey', href: '/water-journey' },
+    { label: 'Site Explorer', href: '/site-explorer' },
+    { label: 'Contact', href: '/contact' },
+  ] satisfies NavLink[],
   actions: [
     { label: 'RHINO Range', href: '/products' },
     { label: 'Build your SuDS', href: '/builder' },
@@ -184,6 +188,8 @@ export const FOOTER = {
   links: [
     { label: 'Products', href: '/products' },
     { label: 'Rhino SuDS', href: '/products' },
+    { label: 'Water Journey', href: '/water-journey' },
+    { label: 'Site Explorer', href: '/site-explorer' },
     { label: 'Contact', href: '/contact' },
   ] satisfies NavLink[],
 } as const
