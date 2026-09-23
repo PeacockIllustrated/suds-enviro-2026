@@ -14,6 +14,7 @@ const SECTION_LABELS: Record<SectionId, string> = {
   builderHub: 'Builder hub',
   products: 'Product pages',
   siteExplorer: 'Site Explorer',
+  waterJourney: 'Water journey',
 }
 
 const GROUP_LABELS: Record<string, string> = {
@@ -35,6 +36,8 @@ const GROUP_LABELS: Record<string, string> = {
   CONTACT_FORM: 'Contact form',
   BUILDER_HUB: 'Builder hub heading',
   BUILDER_CARDS: 'Builder cards',
+  WATER_JOURNEY: 'Journey intro and controls',
+  WATER_JOURNEY_STOPS: 'Journey stops',
   chamber: 'Inspection chambers',
   catchpit: 'Catchpits',
   'flow-control': 'Flow control',

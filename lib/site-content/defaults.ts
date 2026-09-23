@@ -1,6 +1,7 @@
 import * as home from '@/lib/content/home'
 import * as contact from '@/lib/content/contact'
 import * as builderHub from '@/lib/content/builder-hub'
+import * as waterJourney from '@/lib/content/water-journey'
 import { PRIMARY_NAV, FOOTER } from '@/lib/content/navigation'
 import { PRODUCT_NARRATIVE } from '@/lib/content/products'
 import { SITE_EXPLORER, SITE_EXPLORER_PLOTS } from '@/lib/content/site-explorer'
@@ -37,6 +38,10 @@ export const CONTENT_DEFAULTS = {
   },
   products: PRODUCT_NARRATIVE,
   siteExplorer: { SITE_EXPLORER, SITE_EXPLORER_PLOTS },
+  waterJourney: {
+    WATER_JOURNEY: waterJourney.WATER_JOURNEY,
+    WATER_JOURNEY_STOPS: waterJourney.WATER_JOURNEY_STOPS,
+  },
 }
 
 export type SiteContent = typeof CONTENT_DEFAULTS
@@ -46,6 +51,7 @@ export type NavigationContent = SiteContent['navigation']
 export type ContactContent = SiteContent['contact']
 export type BuilderHubContent = SiteContent['builderHub']
 export type SiteExplorerContent = SiteContent['siteExplorer']
+export type WaterJourneyContent = SiteContent['waterJourney']
 
 export const SECTION_IDS = Object.keys(CONTENT_DEFAULTS) as SectionId[]
 
@@ -61,4 +67,5 @@ export const SECTION_META: Record<SectionId, { label: string; description: strin
   builderHub: { label: 'Builder hub', description: 'The SuDS Builder hub heading and product cards.', preview: '/builder' },
   products: { label: 'Product pages', description: 'The story on each product page: lockup, intro, clock section and feature sections.', preview: '/products' },
   siteExplorer: { label: 'Site Explorer', description: 'The development types and the product cards on the Site Explorer.', preview: '/site-explorer' },
+  waterJourney: { label: 'Water journey', description: 'The roof-to-river journey page: intro, the copy at each stop and the closing call to action.', preview: '/water-journey' },
 }
