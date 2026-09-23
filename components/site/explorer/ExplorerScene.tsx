@@ -5,7 +5,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { ToonLights } from '@/components/site/three/toon'
-import { CarPark, House, Office, Poplars, Retail } from './Buildings'
+import { Scenery } from './Scenery'
 import { Ground } from './Ground'
 import { Pipes } from './Pipes'
 import { ExplorerProduct } from './Products'
@@ -13,7 +13,6 @@ import { VIEW_DIR, fitBox, type CameraGoal } from './cameraFit'
 import {
   OVERVIEW,
   PLOTS,
-  STRIP,
   productHeight,
   productRadius,
   productZ,
@@ -141,24 +140,11 @@ function Plot({ plot, children }: { plot: PlotLayout; children: React.ReactNode 
   return <group name={plot.id}>{children}</group>
 }
 
-const TREE_SPOTS: [number, number][] = (() => {
-  const out: [number, number][] = []
-  for (let x = STRIP[0] + 1; x <= STRIP[1] - 1; x += 3.3) out.push([x, -21.2])
-  ;[16, 46.5, 75.2].forEach((x) => {
-    for (let z = -18.5; z <= -2.5; z += 3.2) out.push([x, z])
-  })
-  return out
-})()
-
 function Site({ plotId, productId, onSelectPlot, onSelectProduct, hotspots, markerLabel, loadAll }: Omit<ExplorerSceneProps, 'insetBottom' | 'active' | 'reducedMotion'> & { loadAll: boolean }) {
   return (
     <group>
       <Ground />
-      <Poplars spots={TREE_SPOTS} />
-      <Office onSelect={() => onSelectPlot('office')} />
-      <CarPark onSelect={() => onSelectPlot('car-park')} />
-      <Retail onSelect={() => onSelectPlot('retail')} />
-      <House onSelect={() => onSelectPlot('house')} />
+      <Scenery onSelectPlot={onSelectPlot} />
       {PLOTS.map((plot) => (
         <Plot key={plot.id} plot={plot}>
           <Pipes runs={plot.pipes} />

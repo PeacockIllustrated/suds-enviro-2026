@@ -1,15 +1,16 @@
 'use client'
 
-import { useMemo, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Edges } from '@react-three/drei'
 import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { Vec3 } from './explorerLayout'
 
 /**
- * The line-art kit for the Site Explorer: white volumes with thin
- * site-blue ink edges and pale blue glazing, the look of the isometric
- * drawing on the old Webflow site.
+ * Line-art helpers for the Site Explorer's ground slab and product
+ * housings: white volumes with thin site-blue ink edges, the look of the
+ * isometric drawing on the old Webflow site. The scenery itself is drawn
+ * with the reusable kit in components/site/lineart.
  *
  * Fills sit back a touch (polygon offset) so the ink lines that share
  * their edges always draw on top instead of flickering through them.
@@ -86,53 +87,6 @@ export function InkSlab({ from, to, color, ink, lineWidth }: { from: Vec3; to: V
   const position: Vec3 = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2, (from[2] + to[2]) / 2]
   const size: Vec3 = [Math.abs(to[0] - from[0]), Math.abs(to[1] - from[1]), Math.abs(to[2] - from[2])]
   return <InkBox position={position} size={size} color={color} ink={ink} lineWidth={lineWidth} />
-}
-
-/** Rectangles in a plane, as [x, y, width, height] from the bottom-left. */
-export type Rect = [number, number, number, number]
-
-function panelGeometry(rects: Rect[]): THREE.BufferGeometry {
-  const pos: number[] = []
-  const idx: number[] = []
-  rects.forEach(([x, y, w, h], i) => {
-    pos.push(x, y, 0, x + w, y, 0, x + w, y + h, 0, x, y + h, 0)
-    const o = i * 4
-    idx.push(o, o + 1, o + 2, o, o + 2, o + 3)
-  })
-  const g = new THREE.BufferGeometry()
-  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
-  g.setIndex(idx)
-  g.computeVertexNormals()
-  return g
-}
-
-/**
- * Flat panels (windows, doors, signs) on a face, merged into one mesh.
- * The group's own +z is the face normal; rects are laid out in its x/y.
- */
-export function Panels({ rects, position, rotation = [0, 0, 0], color = ART.glass, ink = ART.ink }: {
-  rects: Rect[]
-  position: Vec3
-  rotation?: Vec3
-  color?: string
-  ink?: string
-}) {
-  const geometry = useMemo(() => panelGeometry(rects), [rects])
-  return (
-    <group position={position} rotation={rotation}>
-      <mesh geometry={geometry}>
-        <meshBasicMaterial color={color} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
-        <Edges color={ink} lineWidth={LINE} threshold={20} />
-      </mesh>
-    </group>
-  )
-}
-
-/** A regular grid of windows: cols x rows, each w x h, pitched px x py, from ox, oy. */
-export function windowGrid(cols: number, rows: number, w: number, h: number, px: number, py: number, ox: number, oy: number): Rect[] {
-  const out: Rect[] = []
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) out.push([ox + c * px, oy + r * py, w, h])
-  return out
 }
 
 /** Hover and click handling for anything that selects a plot. */
