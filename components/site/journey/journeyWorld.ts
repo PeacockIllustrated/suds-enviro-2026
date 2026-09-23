@@ -253,8 +253,16 @@ const sepZ = placeZ(FITS.separator)
 const sepIn: Vec3 = [SEPARATOR.x + FITS.separator.inletTipMm[0] * S, SEPARATOR.inletY, sepZ + FITS.separator.inletTipMm[1] * S]
 const sepOut: Vec3 = [SEPARATOR.x + FITS.separator.outletTipMm[0] * S, SEPARATOR.inletY, sepZ + FITS.separator.outletTipMm[1] * S]
 
+/*
+ * The house's rainwater goods, where the kit house (DetachedHouse, drawn
+ * from HOUSE_AT with the sizes in scenery.tsx) puts them: the eaves gutter
+ * sits 0.41 m proud of the front wall with its top 5.175 m up, and the
+ * downpipe drops against the wall at the right-hand corner.
+ */
 const DOWNPIPE_X = HOUSE_AT[0] + 9.75
-const EAVES_Z = HOUSE_AT[2] + 0.18
+const GUTTER_Y = 5.16
+const GUTTER_Z = HOUSE_AT[2] + 0.41
+export const HOUSE_DOWNPIPE = { x: DOWNPIPE_X, z: HOUSE_AT[2] + 0.13, top: 4.72 } as const
 const TANK_IN_Y = TANK.top - 0.35
 const TANK_OUT_Y = TANK.top - 0.5
 
@@ -264,9 +272,10 @@ export const PIPES: PipeRun[] = [
     leg: 0,
     radius: 0.07,
     points: [
-      [HOUSE_AT[0] + 0.2, 5.55, EAVES_Z],
-      [DOWNPIPE_X, 5.5, EAVES_Z],
-      [DOWNPIPE_X, -0.6, EAVES_Z],
+      [HOUSE_AT[0] + 0.1, GUTTER_Y, GUTTER_Z],
+      [DOWNPIPE_X, GUTTER_Y - 0.03, GUTTER_Z],
+      [DOWNPIPE_X, HOUSE_DOWNPIPE.top + 0.05, HOUSE_DOWNPIPE.z],
+      [DOWNPIPE_X, -0.6, HOUSE_DOWNPIPE.z],
       [DOWNPIPE_X, TANK_IN_Y + 0.05, CUT_Z],
       [TANK.x - TANK.radius, TANK_IN_Y, CUT_Z],
     ],
@@ -372,48 +381,80 @@ const dim = (p: ProductPlace) => {
   return { x: p.x + f.radiusMm * S + 0.35, from: baseOf(p), to: topOf(p), z: placeZ(f) + f.radiusMm * S }
 }
 
+/*
+ * Framing. Each product stop frames the product itself (its body, with its
+ * riser up to the surface) grown by a margin across (x) and up and down
+ * (y), and nothing else, so the product lands in the part of the stage the
+ * card leaves clear, a little below its middle so the surface over it shows. The margins set how much of the run and
+ * the scenery shows round it: wide stages get more (and the surface above
+ * for context), tall narrow ones less. Neighbouring products are either
+ * wholly in shot or wholly out of it at 1440 x 900 and 390 x 844, except
+ * where a long neighbour (the separator, the crates) can only show in part.
+ */
+const around = (b: Box, mx: number, below: number, above: number): Box => ({
+  min: [b.min[0] - mx, b.min[1] - below, b.min[2]],
+  max: [b.max[0] + mx, b.max[1] + above, b.max[2]],
+})
+
+/** A library product's extent, from its base to the surface over it. */
+function productBox(p: ProductPlace): Box {
+  const f: ModelFit = FITS[p.fit]
+  const r = f.radiusMm * S
+  const z = placeZ(f)
+  return { min: [p.x - r, baseOf(p), z - r], max: [p.x + r, Math.max(topOf(p), groundAt(p.x)), z + r] }
+}
+
+const TANK_BOX: Box = {
+  min: [TANK.x - TANK.radius, TANK_BASE, CUT_Z - TANK.radius],
+  max: [TANK.x + TANK.radius, groundAt(TANK.x), CUT_Z + TANK.radius],
+}
+const CRATES_BOX: Box = {
+  min: [CRATES.from, CRATES.bottom, 0],
+  max: [CRATES_TO, CRATES_TOP + 0.5, CRATES.module[2] * CRATES.count[2]],
+}
+
 export const STOP_SCENES: Record<StopId, StopScene> = {
   rain: {
     frame: { min: [-9, -1.5, -9], max: [9, 12.5, 1] },
     frameNarrow: { min: [-7, -1.6, -5], max: [8.5, 12.5, 1] },
   },
   harvest: {
-    frame: { min: [2, -3.9, -6], max: [12, 3.5, 1.4] },
-    frameNarrow: { min: [3.6, -3.4, -1.5], max: [10.8, 1, 1.5] },
+    frame: around(TANK_BOX, 2, 1.2, 3.6),
+    frameNarrow: around(TANK_BOX, 1, 0.5, 1.4),
     diagram: 'tank',
     size: '3300 litre tank shown',
     dimension: { x: TANK.x + TANK.radius + 0.35, from: TANK_BASE, to: TANK.top, z: CUT_Z + TANK.radius * 0.6 },
   },
   chamber: {
-    frame: { min: [8.2, -3.7, -4.5], max: [18.2, 2.5, 1.4] },
-    frameNarrow: { min: [10.2, -3.6, -1.5], max: [16.4, 1, 1.5] },
+    frame: around(productBox(CHAMBER), 2, 1.2, 3.6),
+    frameNarrow: around(productBox(CHAMBER), 1, 0.5, 1.5),
     model: FITS.chamber.model,
     size: 'Ø600 mm, 1950 mm high',
     dimension: dim(CHAMBER),
   },
   silt: {
-    frame: { min: [20.5, -4.1, -6], max: [31, 3.5, 1.6] },
-    frameNarrow: { min: [23.4, -4.1, -1.5], max: [29.8, 1, 1.6] },
+    frame: around(productBox(SILT), 2, 1.2, 3.6),
+    frameNarrow: around(productBox(SILT), 1, 0.5, 1.5),
     model: FITS.silt.model,
     size: 'Ø600 mm, 300 mm silt sump',
     dimension: dim(SILT),
   },
   separator: {
-    frame: { min: [28, -9, -6], max: [40.5, 3, 2.8] },
-    frameNarrow: { min: [30.6, -9, -1.5], max: [37.6, 0.8, 2.8] },
+    frame: around(productBox(SEPARATOR), 2, 0.6, 2.2),
+    frameNarrow: around(productBox(SEPARATOR), 1, 0.3, 0.8),
     model: FITS.separator.model,
     size: 'Ø1800 mm, 4290 mm high',
     dimension: dim(SEPARATOR),
   },
   storage: {
-    frame: { min: [40.5, -3.9, -6], max: [55.5, 2.5, 1.8] },
-    frameNarrow: { min: [41.6, -3.8, -1.5], max: [54, 0.6, 1.8] },
+    frame: around(CRATES_BOX, 1.2, 1, 3.2),
+    frameNarrow: around(CRATES_BOX, 0.6, 0.5, 1.6),
     diagram: 'crates',
     size: 'Crate modules, sized per site',
   },
   flow: {
-    frame: { min: [51.5, -4.4, -4.5], max: [61.5, 0.8, 1.4] },
-    frameNarrow: { min: [53.4, -4.3, -1.5], max: [59.6, 0, 1.4] },
+    frame: around(productBox(FLOW), 2, 1.2, 3.6),
+    frameNarrow: around(productBox(FLOW), 1, 0.5, 1.6),
     model: FITS.flow.model,
     size: 'Ø600 mm, 1500 mm high, 300 mm sump',
     dimension: dim(FLOW),
