@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { Component, useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
-import { ArrowDown, ChevronLeft, ChevronRight, Eye, EyeOff, Info } from 'lucide-react'
+import { ArrowDown, ChevronLeft, ChevronRight, Eye, EyeOff, Info, Ruler } from 'lucide-react'
 import type { WaterJourneyContent } from '@/lib/site-content/defaults'
 import { SiteButton } from '../SiteButton'
 import { STOP_SCENES } from './journeyWorld'
@@ -81,7 +81,6 @@ export function WaterJourneyExperience({ content }: { content: WaterJourneyConte
   const mode: Mode = !hydrated ? 'list' : reduced ? 'step' : 'scroll'
 
   const [active, setActive] = useState(0)
-  const [previous, setPrevious] = useState(-1)
   const [announce, setAnnounce] = useState('')
   const [revealedStop, setRevealedStop] = useState<string | null>(null)
   const [mountScene, setMountScene] = useState(false)
@@ -113,7 +112,6 @@ export function WaterJourneyExperience({ content }: { content: WaterJourneyConte
       const prev = activeRef.current
       if (i === prev) return
       activeRef.current = i
-      setPrevious(prev)
       setActive(i)
       setAnnounce(`${copy.stopWord} ${i + 1} of ${count}: ${stops[i].heading.lead} ${stops[i].heading.trail}`)
     },
@@ -266,9 +264,9 @@ export function WaterJourneyExperience({ content }: { content: WaterJourneyConte
           ref={stage}
           className={
             mode === 'scroll'
-              ? 'sticky top-16 h-[calc(100svh-4rem)] overflow-hidden bg-[linear-gradient(180deg,#cde9f7_0%,#eaf6fc_55%,#f7fbfd_100%)]'
+              ? 'sticky top-16 h-[calc(100svh-4rem)] overflow-hidden bg-white'
               : mode === 'step'
-                ? 'relative h-[calc(100svh-4rem)] min-h-[640px] overflow-hidden bg-[linear-gradient(180deg,#cde9f7_0%,#eaf6fc_55%,#f7fbfd_100%)]'
+                ? 'relative h-[calc(100svh-4rem)] min-h-[640px] overflow-hidden bg-white'
                 : 'relative'
           }
         >
@@ -280,7 +278,6 @@ export function WaterJourneyExperience({ content }: { content: WaterJourneyConte
                     stops={stops.map((s) => s.id)}
                     motionRef={motion}
                     active={active}
-                    previous={previous}
                     revealed={revealed}
                     animate={mode === 'scroll'}
                     paused={!onScreen}
@@ -400,6 +397,7 @@ export function WaterJourneyExperience({ content }: { content: WaterJourneyConte
             {stops.map((stop, i) => {
               const current = i === active
               const diagram = Boolean(STOP_SCENES[stop.id]?.diagram)
+              const size = STOP_SCENES[stop.id]?.size
               const state = !enhanced ? '' : current ? 'opacity-100 translate-y-0' : 'pointer-events-none opacity-0 motion-safe:translate-y-3'
               return (
                 <article
@@ -430,6 +428,12 @@ export function WaterJourneyExperience({ content }: { content: WaterJourneyConte
                     </p>
                   ) : null}
                   <p className="mt-2 text-sm/normal text-site-blue-dark lg:mt-3 lg:text-base/relaxed">{stop.body}</p>
+                  {size ? (
+                    <p className="mt-2 flex items-center gap-2 text-xs font-bold text-site-blue-dark lg:mt-3">
+                      <Ruler className="size-4 shrink-0 text-site-blue" aria-hidden />
+                      {size}
+                    </p>
+                  ) : null}
                   {diagram ? (
                     <p className="mt-2 flex items-center gap-2 text-xs font-semibold text-site-blue lg:mt-3">
                       <Info className="size-4 shrink-0" aria-hidden />
