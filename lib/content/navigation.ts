@@ -114,9 +114,9 @@ export const RHINO_RANGE_MENU: NavColumn[] = [
         description: 'Twin-stage filtration for storm-water purity',
       },
       {
-        label: 'RHINO POD',
+        label: 'RhinoPod',
         href: '/products/rhinopod',
-        description: 'Heavy-duty foul-water silt capture system',
+        description: 'Floating filter for dissolved pollutants',
       },
     ],
   },
@@ -126,7 +126,7 @@ export const RHINO_RANGE_MENU: NavColumn[] = [
     links: [
       {
         // Named `*****` and disabled on the Webflow site - unreleased.
-        label: 'RHINO SEHDS',
+        label: 'SudSceptor',
         href: '/products/rhinoceptor',
         description: 'Advanced swirl separation for cleaner outflows',
         comingSoon: true,

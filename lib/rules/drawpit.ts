@@ -4,7 +4,10 @@
  * Validates configuration for cable/service drawpits.
  * Checks physical dimensions (length, width, depth), ring count,
  * structural load rating, and cover type.
- * Compliance per the RHINO Drawpit data sheet: BS EN 124-1, NJUG Vol 4, DMRB.
+ * Compliance per the RhinoDuct data sheet: EN 124 (drawings classify every
+ * range E600, tested to EN 124:1994), NJUG Vol 4, DMRB (National Highways).
+ * Load classes other than E600 are offered by the configurator but must be
+ * confirmed with SuDS Enviro at order.
  */
 
 import type {
@@ -94,9 +97,13 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
 
   return [
     {
-      standard: 'BS EN 124-1:2015',
-      scope: 'Structural Load Rating - Gully Tops and Manhole Covers',
-      status: (valid && data?.loadRating) ? 'Pass' : 'Fail',
+      standard: 'EN 124',
+      scope: data?.loadRating === 'E600'
+        ? 'Load class E600, as classified on the RhinoDuct drawings'
+        : 'Load class other than E600 - confirm with SuDS Enviro at order',
+      status: !(valid && data?.loadRating)
+        ? 'Fail'
+        : data.loadRating === 'E600' ? 'Pass' : 'Warning',
     },
     {
       standard: 'NJUG Volume 4',
@@ -104,7 +111,7 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
       status: valid ? 'Pass' : 'Warning',
     },
     {
-      standard: 'DMRB',
+      standard: 'DMRB (National Highways)',
       scope: 'Design Manual for Roads and Bridges - Highway Chambers',
       status: data?.loadRating ? 'Pass' : 'Warning',
     },

@@ -247,7 +247,7 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 
 export const drawpitConfig: ProductConfig = {
   id: 'drawpit',
-  name: 'Drawpit',
+  name: 'RhinoDuct Drawpit',
   subtitle: 'Interlocking structural access chambers for utilities',
   category: 'drawpits',
   icon: 'drawpit',

@@ -31,11 +31,12 @@ export function SEHDSDiameter() {
       </div>
       <div className="rounded-[10px] border border-border bg-white p-3.5 shadow-[0_2px_12px_rgba(0,77,112,0.10)]">
         <div className="mb-1.5 text-[11px] font-bold text-navy">
-          One-piece GRP construction
+          Single-piece construction
         </div>
         <div className="text-[11px] text-muted">
-          Manufactured per BS EN 13121. Larger diameters serve higher catchment
-          areas; size selection should be confirmed against treatment flow rate.
+          GRP to BS 4994:1987 from SEHDS1200; SEHDS750 is HDPE twinwall.
+          Treatment flow runs from 32 to 259 L/s by model, so confirm the size
+          against the design treatment flow rate.
         </div>
       </div>
     </>

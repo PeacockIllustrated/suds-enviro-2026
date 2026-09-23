@@ -92,8 +92,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </p>
 
             <h1 className="mt-3 text-[clamp(2.25rem,6vw,4rem)] leading-none tracking-tight uppercase">
-              {/* Names that are already a Rhino word (RHINOLIFT) skip the prefix. */}
-              {/^rhino\S/i.test(series) ? null : <span className="text-site-green">RHINO </span>}
+              {/* Names that are already a brand word (RhinoLift, RhinoPod, SudSceptor) skip the prefix. */}
+              {/^(rhino\S|sudsceptor)/i.test(series) ? null : <span className="text-site-green">RHINO </span>}
               <span className="font-bold text-site-blue">{series.replace(/^rhino\s+/i, '')}</span>
             </h1>
 

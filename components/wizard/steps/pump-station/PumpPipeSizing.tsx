@@ -5,7 +5,7 @@ import { OptionCard } from '@/components/ui/OptionCard'
 import type { PipeSize, WizardAction } from '@/lib/types'
 import { Circle } from 'lucide-react'
 
-// 110 to 300mm, as listed on the live RHINOLIFT page (see
+// 110 to 300mm, as listed on the live RhinoLift page (see
 // PUMP_OUTLET_SIZES in the rule engine).
 const pipeSizes: {
   id: PipeSize

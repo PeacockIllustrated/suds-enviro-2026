@@ -15,14 +15,14 @@ const podTypes: {
     id: 'standalone',
     title: 'Standalone',
     subtitle:
-      'Floating filter that drops into an existing chamber, manhole or catch basin',
+      'Floating filter for a road gully, GRP or precast chamber, or an existing oil interceptor',
     icon: <CircleDot className="h-[22px] w-[22px] text-blue" />,
   },
   {
     id: 'plus',
     title: 'Plus',
     subtitle:
-      'Factory-fitted to a RHINO SEHDS hydrodynamic separator',
+      'Paired with a SudSceptor hydrodynamic separator',
     icon: <PackagePlus className="h-[22px] w-[22px] text-green" />,
   },
 ]

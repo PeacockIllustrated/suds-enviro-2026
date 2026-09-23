@@ -27,12 +27,12 @@ export function SEHDSPodAddon() {
         `}
       >
         <div className="text-[14px] font-extrabold leading-tight text-navy">
-          Yes - include RHINO POD
+          Yes - include RhinoPod
         </div>
         <p className="mt-1.5 text-[12px] leading-relaxed text-muted">
-          Polishing filter that adds removal of 33 WFD priority substances
-          (heavy metals, hydrocarbons, nutrients). Recommended for highway and
-          industrial discharges to sensitive receiving waters.
+          Floating cartridge filter for dissolved-phase pollutants: zinc,
+          copper, phosphate and PAHs. Forms a two-stage treatment train with
+          the SudSceptor for both gross and dissolved pollutants.
         </p>
       </button>
 

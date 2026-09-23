@@ -1,9 +1,9 @@
 /**
- * RHINO SEHDS Hydrodynamic Separator Product Configuration
+ * SudSceptor (SEHDS) Hydrodynamic Separator Product Configuration
  *
- * One-piece GRP separator for stormwater pollutant removal.
+ * Single-piece separator for sediment-bound pollutants in surface water.
  * Diameters 750/1200/1800/2500 mm. 360-degree inlet positioning.
- * Optional RHINO POD polishing filter.
+ * Optional RhinoPod polishing filter.
  *
  * Internal product id retained as `rhinoceptor` for backward compatibility
  * with saved configurations and admin URLs.
@@ -25,7 +25,7 @@ import { isPositiveNumber } from '@/lib/rules/numeric'
 import {
   generateProductCode as rhinoGenerateProductCode,
   generateCompliance as rhinoGenerateCompliance,
-  SEHDS_MITIGATION,
+  SEHDS_MITIGATION_LABEL,
 } from '@/lib/rules/rhinoceptor'
 
 // -- INITIAL DATA -----------------------------------------------------
@@ -95,7 +95,7 @@ const rhinoSteps: StepDefinition[] = [
     id: 'sehds-diameter',
     label: 'Diameter',
     heading: 'Separator Diameter',
-    subheading: 'Choose the GRP separator diameter (750-2500 mm).',
+    subheading: 'Choose the SEHDS separator diameter (750-2500 mm).',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRhinoData(state)
@@ -106,7 +106,7 @@ const rhinoSteps: StepDefinition[] = [
     id: 'sehds-inlet-angle',
     label: 'Inlet',
     heading: 'Inlet Angle',
-    subheading: 'SEHDS supports 360-degree inlet positioning. Enter the angle clockwise from north (0-359 degrees).',
+    subheading: 'SudSceptor takes a wide variety of connection options. Enter the inlet angle clockwise from north (0-359 degrees).',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRhinoData(state)
@@ -138,8 +138,8 @@ const rhinoSteps: StepDefinition[] = [
   {
     id: 'sehds-pod-addon',
     label: 'POD Add-on',
-    heading: 'RHINO POD Add-on',
-    subheading: 'Add a RHINO POD polishing filter for removal of 33 WFD priority substances?',
+    heading: 'RhinoPod Add-on',
+    subheading: 'Add a RhinoPod polishing filter for dissolved metals, phosphate and PAHs?',
     component: null as unknown as ComponentType,
     canProceed: (state: WizardState) => {
       const d = getRhinoData(state)
@@ -228,7 +228,7 @@ function getSummaryFields(state: WizardState): SummaryField[] {
     fields.push({ label: 'Application', value: applicationLabel(d.variant) })
   }
   if (d.sehdsDiameter) {
-    fields.push({ label: 'Diameter', value: `${d.sehdsDiameter}mm GRP` })
+    fields.push({ label: 'Diameter', value: `${d.sehdsDiameter}mm ${d.sehdsDiameter === 750 ? 'HDPE' : 'GRP'}` })
   }
   if (d.inletAngleDeg !== null) {
     fields.push({ label: 'Inlet Angle', value: `${d.inletAngleDeg}\u00B0 from N` })
@@ -240,11 +240,11 @@ function getSummaryFields(state: WizardState): SummaryField[] {
     fields.push({ label: 'Treatment Flow', value: `${d.flowRateLs} L/s` })
   }
   if (d.rhinoPodAddOn !== null) {
-    fields.push({ label: 'RHINO POD', value: d.rhinoPodAddOn ? 'Included' : 'Not included' })
+    fields.push({ label: 'RhinoPod', value: d.rhinoPodAddOn ? 'Included' : 'Not included' })
   }
   fields.push({
     label: 'Mitigation Index',
-    value: `${SEHDS_MITIGATION.suspendedSolids}-${SEHDS_MITIGATION.hydrocarbons}-${SEHDS_MITIGATION.debris} (SS/HC/Debris)`,
+    value: SEHDS_MITIGATION_LABEL,
   })
 
   return fields
@@ -262,18 +262,18 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
         if (!d) return []
         return [
           { label: 'Application', value: applicationLabel(d.variant) },
-          { label: 'Diameter (GRP)', value: d.sehdsDiameter ? `${d.sehdsDiameter}mm` : '-' },
+          { label: 'Diameter', value: d.sehdsDiameter ? `${d.sehdsDiameter}mm ${d.sehdsDiameter === 750 ? 'HDPE' : 'GRP'}` : '-' },
           { label: 'Inlet Angle', value: d.inletAngleDeg !== null ? `${d.inletAngleDeg}\u00B0 from N` : '-' },
           { label: 'Drainage Area', value: d.drainageAreaM2 ? `${d.drainageAreaM2} m2` : '-' },
           { label: 'Treatment Flow', value: d.flowRateLs ? `${d.flowRateLs} L/s` : '-' },
           {
-            label: 'RHINO POD',
+            label: 'RhinoPod',
             value: d.rhinoPodAddOn === null ? '-' : d.rhinoPodAddOn ? 'Included' : 'Not included',
             highlight: d.rhinoPodAddOn === true,
           },
           {
             label: 'Mitigation Indices',
-            value: `SS ${SEHDS_MITIGATION.suspendedSolids} | HC ${SEHDS_MITIGATION.hydrocarbons} | Debris ${SEHDS_MITIGATION.debris}`,
+            value: SEHDS_MITIGATION_LABEL,
           },
         ]
       },
@@ -285,8 +285,8 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 
 export const rhinoceptorConfig: ProductConfig = {
   id: 'rhinoceptor',
-  name: 'RHINO SEHDS Hydrodynamic Separator',
-  subtitle: 'GRP stormwater pollutant removal (SS/HC/Debris)',
+  name: 'SudSceptor Hydrodynamic Separator',
+  subtitle: 'SEHDS separator for sediment-bound pollutants',
   category: 'stormwater',
   icon: 'rhinoceptor',
   steps: rhinoSteps,

@@ -1,17 +1,21 @@
 /**
- * RHINO SEHDS Hydrodynamic Separator Rule Engine
+ * SudSceptor Hydrodynamic Separator Rule Engine (SEHDS codes)
  *
- * Source: SuDS RHINO SEHDS SERIES HYDRODYNAMIC SEPARATOR product data sheet.
+ * Source: SudSceptor data sheet (public/brochures/rhino-sehds.html), rebuilt
+ * from the official SEHDS1200 / 1800 / 2500 / 3000 sheets and drawings.
  *
- * Single-piece GRP hydrodynamic separator for stormwater pollutant removal
- * (suspended solids, hydrocarbons, debris).
+ * Single-piece hydrodynamic separator for sediment-bound pollutants in
+ * surface water runoff.
  *
- *   Diameters     : 750, 1200, 1800, 2500 mm
- *   Material      : One-piece GRP per BS EN 13121
- *   Inlet         : 360-degree positioning (any angle)
- *   Mitigation    : 5-4-5 (Suspended Solids / Hydrocarbons / Debris)
- *   Standards     : EN 858-1, BS EN 13121, SfA7, DCG
- *   Optional      : RHINO POD polishing filter (adds removal of 33 WFD priority substances)
+ *   Range         : SEHDS750 to SEHDS3000 (configurator offers 750, 1200,
+ *                   1800, 2500 mm)
+ *   Material      : GRP from SEHDS1200 (BS 4994:1987); HDPE twinwall for SEHDS750
+ *   Inlet         : wide variety of connection options (configurator takes
+ *                   an angle from north)
+ *   Mitigation    : TSS 0.5, metals 0.40, hydrocarbons 0.40
+ *   Standards     : NJDEP protocol 2015 and 2020, DIBt, British Water CoP,
+ *                   CIRIA C753 Simple Index Approach, BS 4994:1987 (GRP)
+ *   Optional      : RhinoPod polishing filter for dissolved pollutants
  */
 
 import type {
@@ -23,12 +27,17 @@ import type {
 import { isPositiveNumber } from '@/lib/rules/numeric'
 
 // ── Mitigation Indices (fixed per data sheet) ────────────────
+// SudSceptor column of the data sheet's mitigation index table
+// (CIRIA C753 Simple Index Approach, via the British Water How to Guide).
 
 export const SEHDS_MITIGATION = {
-  suspendedSolids: 5,
-  hydrocarbons: 4,
-  debris: 5,
+  tss: '0.5',
+  metals: '0.40',
+  hydrocarbons: '0.40',
 } as const
+
+export const SEHDS_MITIGATION_LABEL =
+  `TSS ${SEHDS_MITIGATION.tss} | Metals ${SEHDS_MITIGATION.metals} | Hydrocarbons ${SEHDS_MITIGATION.hydrocarbons}`
 
 // ── HELPER: Extract data from WizardState ────────────────────
 
@@ -71,7 +80,7 @@ export function validateConfig(state: WizardState): ValidationResult {
   }
 
   if (data.rhinoPodAddOn === null) {
-    errors.push('RHINO POD add-on decision required')
+    errors.push('RhinoPod add-on decision required')
   }
 
   return { valid: errors.length === 0, errors }
@@ -99,39 +108,42 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
   const hasValidFlow = isPositiveNumber(data?.flowRateLs)
   const hasValidArea = isPositiveNumber(data?.drainageAreaM2)
 
+  // SEHDS750 is HDPE twinwall; BS 4994 covers the GRP models only.
+  const isHdpe = data?.sehdsDiameter === 750
+
   return [
     {
-      standard: 'BS EN 858-1',
-      scope: 'Separator Systems for Light Liquids',
+      standard: 'NJDEP protocol 2015 and 2020',
+      scope: 'Hydrodynamic Separator Performance (TSS)',
       status: (valid && hasValidFlow) ? 'Pass' : 'Warning',
     },
     {
-      standard: 'BS EN 13121',
-      scope: 'GRP Tanks and Vessels',
-      status: 'Pass',
-    },
-    {
-      standard: 'Sewers for Adoption 7th Ed. (SfA7)',
-      scope: 'Adoptable Surface Water Treatment',
+      standard: 'British Water Code of Practice',
+      scope: 'Hydrodynamic Separator Design and Testing',
       status: hasValidArea ? 'Pass' : 'Warning',
     },
     {
-      standard: 'DCG (Design and Construction Guidance)',
-      scope: 'Surface Water Pollutant Removal',
+      standard: 'DIBt',
+      scope: 'Design Compliance (per SudSceptor data sheet)',
       status: valid ? 'Pass' : 'Warning',
     },
     {
-      standard: 'CIRIA C753 SuDS Manual',
-      scope: `Mitigation Indices ${SEHDS_MITIGATION.suspendedSolids}-${SEHDS_MITIGATION.hydrocarbons}-${SEHDS_MITIGATION.debris} (SS/HC/Debris)`,
+      standard: 'CIRIA C753 Simple Index Approach',
+      scope: `Mitigation Indices ${SEHDS_MITIGATION_LABEL}`,
       status: 'Pass',
     },
     {
-      standard: data?.rhinoPodAddOn
-        ? 'WFD Priority Substances (with RHINO POD)'
-        : 'WFD Priority Substances',
+      standard: isHdpe ? 'HDPE twinwall body' : 'BS 4994:1987',
+      scope: isHdpe
+        ? 'SEHDS750 made from BBA-certificated HDPE twinwall pipe'
+        : 'GRP Vessels and Tanks in Reinforced Plastics',
+      status: data?.sehdsDiameter ? 'Pass' : 'Warning',
+    },
+    {
+      standard: 'RhinoPod polishing filter',
       scope: data?.rhinoPodAddOn
-        ? '33-substance polishing filter included'
-        : 'Not included - add RHINO POD for full WFD compliance',
+        ? 'Included - dissolved zinc, copper, phosphate and PAHs'
+        : 'Not included - add RhinoPod for dissolved pollutants',
       status: data?.rhinoPodAddOn ? 'Pass' : 'Warning',
     },
   ]

@@ -67,8 +67,8 @@ export function SEHDSInletAngle() {
 
       <AlertBox
         type="info"
-        title="360-degree inlet positioning"
-        body="The SEHDS separator supports any inlet angle. Use the design pipe alignment from the upstream catchment to set the inlet position."
+        title="Inlet position"
+        body="SudSceptor takes a wide variety of connection options. Use the design pipe alignment from the upstream catchment to set the inlet angle; our team confirms it on the order drawing."
       />
     </>
   )

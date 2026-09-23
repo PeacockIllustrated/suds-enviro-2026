@@ -67,6 +67,10 @@ export function DPLoadRating() {
           }
         />
       ))}
+      <p className="mt-1 text-[11px] leading-relaxed text-muted">
+        The RhinoDuct drawings classify every range E600. Any other load class
+        is confirmed with SuDS Enviro at order.
+      </p>
     </div>
   )
 }

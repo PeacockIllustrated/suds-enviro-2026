@@ -88,12 +88,13 @@ export interface CatchpitData extends ChamberBaseFields {
   grateType: GrateType | null
 }
 
-// SEHDS Hydrodynamic Separator - per RHINO SEHDS data sheet.
-// One-piece GRP unit with 360-degree inlet positioning.
-// Mitigation indices: 5-4-5 (SS / Hydrocarbons / Debris).
+// SudSceptor hydrodynamic separator (SEHDS codes) - per the SudSceptor data sheet.
+// Single-piece unit: GRP from SEHDS1200, HDPE twinwall for SEHDS750. The
+// sheet runs SEHDS750 to SEHDS3000; the configurator offers these four.
+// Mitigation indices: TSS 0.5, metals 0.40, hydrocarbons 0.40.
 export type SEHDSDiameter = 750 | 1200 | 1800 | 2500
-// Inlet position is a free angle in degrees (0-359) clockwise from north,
-// per the data sheet's 360-degree inlet positioning capability.
+// Inlet position is a free angle in degrees (0-359) clockwise from north;
+// the sheet offers a wide variety of connection options.
 export type SEHDSApplication = 'highway' | 'commercial' | 'industrial' | 'forecourt' | 'other'
 
 // Type aliases retained for legacy saved configs.
@@ -109,7 +110,7 @@ export interface RhinoCeptorData {
   inletAngleDeg: number | null
   drainageAreaM2: string
   flowRateLs: string
-  // Optional Rhino Pod polishing filter add-on
+  // Optional RhinoPod polishing filter add-on
   rhinoPodAddOn: boolean | null
   // Legacy fields - kept for backward compatibility with old saved configs.
   // No longer surfaced in the wizard.
@@ -135,7 +136,7 @@ export interface FlowControlData {
 
 export type ControllerType = 'manual' | 'auto-float' | 'auto-level' | 'plc'
 
-// RHINOLIFT data sheet: vortex pumps (solids to 50mm) or optional
+// RhinoLift data sheet: vortex pumps (solids to 50mm) or optional
 // macerator pumps for fine grinding.
 export type PumpType = 'vortex' | 'macerator'
 

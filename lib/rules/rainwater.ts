@@ -3,7 +3,8 @@
  *
  * Validates configuration for rainwater harvesting systems.
  * Checks system type, tank capacity, roof area, and annual rainfall.
- * Compliance checked against BS 8515:2009 and BS EN 16941-1.
+ * Compliance checked against BS EN 16941-1:2018, which replaced
+ * BS 8515:2009+A1:2013.
  */
 
 import type {
@@ -79,14 +80,9 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
 
   return [
     {
-      standard: 'BS 8515:2009+A1:2013',
-      scope: 'Rainwater Harvesting Systems - Code of Practice',
-      status: valid ? 'Pass' : 'Warning',
-    },
-    {
       standard: 'BS EN 16941-1:2018',
       scope: 'On-site Non-potable Water Systems - Rainwater',
-      status: (data?.capacityLitres && hasValidArea) ? 'Pass' : 'Warning',
+      status: (valid && data?.capacityLitres && hasValidArea) ? 'Pass' : 'Warning',
     },
     {
       standard: 'Water Supply (Water Fittings) Regulations 1999',

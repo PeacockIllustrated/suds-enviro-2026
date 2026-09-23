@@ -874,7 +874,7 @@ function generateTitleBlock(
   out.push(text(x + 7.75, y + 9.1, 'SE', 'tb-logo-t', 3.6, 'middle'))
   out.push(text(x + 15, y + 7.4, 'SuDS Enviro Ltd', 'tb-co-name', 3.3))
   out.push(text(x + 15, y + 11.4, 'The Home of SuDS Rhino', 'tb-co-sub', 2.0))
-  out.push(text(x + 3, y + 18.6, '01224 057 700  |  hello@sudsenviro.com', 'tb-co-sub', 1.85))
+  out.push(text(x + 3, y + 18.6, '01224 057 700  |  sales@sudsenviro.com', 'tb-co-sub', 1.85))
   out.push(text(x + 3, y + 22.3, '9 Ambleside Court', 'tb-co-sub', 1.85))
   out.push(text(x + 3, y + 26, 'Chester-le-Street  DH3 2EB', 'tb-co-sub', 1.85))
 

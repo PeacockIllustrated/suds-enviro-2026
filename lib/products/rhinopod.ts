@@ -80,7 +80,7 @@ const rhinoPodSteps: StepDefinition[] = [
     subheading: (state: WizardState) => {
       const d = getRhinoPodData(state)
       if (d?.podType === 'plus') {
-        return 'RhinoPod Plus is factory-fitted to a RHINO SEHDS separator. Select the SEHDS diameter.'
+        return 'RhinoPod Plus is paired with a SudSceptor separator. Select the SEHDS diameter.'
       }
       return 'Is this a retrofit to an existing chamber?'
     },
@@ -203,7 +203,7 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 export const rhinopodConfig: ProductConfig = {
   id: 'rhinopod',
   name: 'RhinoPod',
-  subtitle: 'Floating polishing filter, standalone or fitted to SEHDS',
+  subtitle: 'Floating cartridge filter, standalone or paired with SudSceptor',
   category: 'silt',
   icon: 'rhinopod',
   steps: rhinoPodSteps,
