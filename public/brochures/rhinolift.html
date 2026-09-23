@@ -2,275 +2,603 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>RHINOLIFT - Packaged Pumping Stations</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RhinoLift Packaged Pumping Stations - Data Sheet | SuDS Enviro</title>
+<meta name="description" content="RhinoLift packaged pumping station data sheet: MDPE and GRP chambers, vortex or macerator pumps, single or duty-standby, general arrangement drawings, compliance and contact.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="_shared.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* RhinoRoFlo data sheet. Layout follows the approved SEHDS data sheet
+     template: two columns, blue feature panel, green specification panel,
+     dimensioned product drawing, Montserrat Medium and Thin. Styles are
+     local to this sheet on purpose. */
+  :root {
+    --blue: #1e80ba;
+    --blue-d: #005576;
+    --green: #58b550;
+    --red: #c44c4b;
+    --ink: #404041;
+    --thin: #8a8b8e;
+    --rule: #cfdbe4;
+    --tint: #f3f7fa;
+    --pad: 12mm;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    color: var(--ink);
+    background: #e6ecf1;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page { size: A4 portrait; margin: 0; }
+
+  /* ---------- screen chrome ---------- */
+  .print-bar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; justify-content: center; gap: 10px;
+    padding: 10px; background: rgba(230, 236, 241, 0.92);
+  }
+  .print-btn {
+    font: 500 13px 'Montserrat', Arial, sans-serif; letter-spacing: 0.04em;
+    color: #fff; background: var(--blue); border: 0; border-radius: 999px;
+    padding: 9px 20px; cursor: pointer;
+  }
+  .print-btn:hover { background: var(--blue-d); }
+  .print-bar a {
+    font: 500 13px 'Montserrat', Arial, sans-serif; color: var(--blue-d);
+    align-self: center; text-decoration: none;
+  }
+
+  /* ---------- page ---------- */
+  .page {
+    width: 210mm; height: 297mm;
+    margin: 14px auto; background: #fff;
+    position: relative; overflow: hidden;
+    box-shadow: 0 6px 30px rgba(0, 40, 60, 0.12);
+    break-after: page; page-break-after: always;
+  }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+  @media print {
+    html, body { background: #fff; }
+    .print-bar { display: none; }
+    .page { margin: 0; box-shadow: none; }
+  }
+  @media screen and (max-width: 820px) {
+    /* phones: scale each A4 sheet to the viewport rather than scroll sideways */
+    body { overflow-x: hidden; }
+    .page { zoom: 0.46; }
+  }
+
+  /* ---------- type ---------- */
+  h2 {
+    font-weight: 500; font-size: 13pt; line-height: 1.15;
+    color: var(--blue); text-transform: uppercase; letter-spacing: 0.01em;
+    margin-bottom: 1.6mm;
+  }
+  p { font-size: 8.4pt; line-height: 1.45; color: var(--blue-d); }
+  p + p { margin-top: 1.6mm; }
+  .fine { font-size: 6.8pt; line-height: 1.4; color: var(--blue-d); }
+  .thin { font-weight: 200; }
+  .rule { height: 0; border-top: 0.35mm solid var(--rule); margin: 3.2mm 0; width: 82%; }
+  ul.dots { list-style: none; }
+  ul.dots li {
+    position: relative; padding-left: 4mm;
+    font-size: 8.4pt; line-height: 1.4; color: var(--blue-d);
+  }
+  ul.dots li + li { margin-top: 0.8mm; }
+  ul.dots li::before {
+    content: ''; position: absolute; left: 0.6mm; top: 0.62em;
+    width: 1.1mm; height: 1.1mm; border-radius: 50%; background: var(--green);
+  }
+
+  /* ---------- masthead (page 1) ---------- */
+  .mast {
+    position: absolute; left: 0; top: 0; width: 124mm;
+    padding: 9mm 8mm 5mm var(--pad);
+    border-right: 0.35mm solid var(--blue); border-bottom: 0.35mm solid var(--blue);
+    border-bottom-right-radius: 9mm;
+  }
+  .mast-title { font-size: 34pt; line-height: 0.95; font-weight: 500; letter-spacing: -0.01em; }
+  .mast-title .b { color: var(--blue); }
+  .mast-title .g { color: var(--green); }
+  .mast-sub {
+    font-weight: 200; font-size: 12.5pt; color: var(--thin);
+    text-transform: uppercase; letter-spacing: 0.02em; margin-top: 1.6mm;
+  }
+  .codebar {
+    display: inline-block; margin-top: 2mm;
+    background: var(--green); color: #fff;
+    font-size: 10.5pt; font-weight: 500; letter-spacing: 0.02em;
+    padding: 1.3mm 3mm 1.2mm; text-transform: uppercase;
+  }
+  .codebar .thin { font-weight: 200; }
+  .logo { position: absolute; right: var(--pad); top: 8mm; width: 58mm; }
+  .logo img { width: 100%; display: block; }
+
+  /* ---------- running header (pages 2+) ---------- */
+  .runhead {
+    position: absolute; left: 0; right: 0; top: 0; height: 24mm;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--pad);
+  }
+  .runhead .t { font-size: 17pt; font-weight: 500; line-height: 1; }
+  .runhead .t .b { color: var(--blue); } .runhead .t .g { color: var(--green); }
+  .runhead .s {
+    font-weight: 200; font-size: 9pt; color: var(--thin);
+    text-transform: uppercase; letter-spacing: 0.04em; margin-top: 1.2mm;
+  }
+  .runhead img { height: 15mm; display: block; }
+  .runhead::after {
+    content: ''; position: absolute; left: var(--pad); right: var(--pad); bottom: 0;
+    border-bottom: 0.35mm solid var(--rule);
+  }
+
+  /* ---------- footer ---------- */
+  .foot {
+    position: absolute; left: 0; bottom: 6mm; width: 176mm; height: 10.5mm;
+    background: var(--blue); border-top-right-radius: 6mm; border-bottom-right-radius: 6mm;
+    display: flex; align-items: center; gap: 7mm; padding: 0 6mm 0 var(--pad);
+    color: #fff; font-size: 8.8pt; font-weight: 500;
+  }
+  .foot span { display: inline-flex; align-items: center; gap: 2mm; white-space: nowrap; }
+  .foot svg { width: 4.6mm; height: 4.6mm; stroke: #fff; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .foot .sep { width: 0.3mm; height: 5mm; background: rgba(255,255,255,0.55); gap: 0; }
+  .pgno {
+    position: absolute; right: var(--pad); bottom: 9.2mm;
+    font-size: 7.4pt; font-weight: 200; color: var(--thin); letter-spacing: 0.06em;
+  }
+
+  /* ---------- panels ---------- */
+  .panel-blue {
+    background: var(--blue); color: #fff;
+    border-top-left-radius: 7mm; border-bottom-left-radius: 7mm;
+    padding: 5mm 7mm 5.5mm 7mm;
+  }
+  .panel-blue h2, .panel-green h2 { color: #fff; }
+  .panel-blue ul.dots li, .panel-green ul.dots li { color: #fff; }
+  .panel-blue ul.dots li::before { background: #fff; }
+  .panel-green ul.dots li::before { background: #fff; }
+  .panel-blue p, .panel-green p { color: #fff; }
+  .panel-green {
+    background: var(--green); color: #fff;
+    border-top-left-radius: 11mm;
+    padding: 5.5mm 7mm 6mm 8mm;
+  }
+  table.spec { width: 100%; border-collapse: collapse; }
+  table.spec th, table.spec td {
+    text-align: left; vertical-align: top; font-size: 7.7pt; line-height: 1.35;
+    padding: 1.15mm 0; border-bottom: 0.25mm solid rgba(255,255,255,0.45);
+  }
+  table.spec tr:last-child th, table.spec tr:last-child td { border-bottom: 0; }
+  table.spec th { font-weight: 500; width: 31%; padding-right: 3mm; }
+  table.spec td { font-weight: 300; }
+
+  /* ---------- figures ---------- */
+  figure { margin: 0; }
+  figure img { display: block; width: 100%; height: auto; }
+  figcaption {
+    font-size: 7pt; line-height: 1.35; color: var(--thin); font-weight: 400;
+    margin-top: 1.4mm;
+  }
+  figcaption b { color: var(--blue-d); font-weight: 500; }
+  .nts {
+    display: inline-block; font-size: 6.4pt; font-weight: 500; letter-spacing: 0.06em;
+    color: var(--red); border: 0.3mm solid var(--red); border-radius: 1mm;
+    padding: 0.2mm 1.4mm; text-transform: uppercase; vertical-align: 0.2mm;
+  }
+
+  /* ===== PAGE 1 ===== */
+  .p1-left { position: absolute; left: var(--pad); top: 55mm; width: 108mm; }
+  .p1-draw { position: absolute; right: 13mm; top: 45mm; width: 54mm; }
+  .p1-feat { position: absolute; right: 0; top: 140mm; width: 76mm; padding-top: 4.5mm; padding-bottom: 4.5mm; }
+  .p1-feat ul.dots li { font-size: 8pt; }
+  .p1-feat ul.dots li + li { margin-top: 0.4mm; }
+  .p1-iso  { position: absolute; left: 89mm; top: 201mm; width: 38mm; }
+  .p1-spec { position: absolute; right: 0; bottom: 20mm; width: 80mm; padding-top: 4.5mm; padding-bottom: 4mm; }
+  .p1-spec table.spec th, .p1-spec table.spec td { font-size: 7.3pt; padding: 0.75mm 0; }
+  .p1-spec table.spec th { white-space: nowrap; width: 1%; padding-right: 3.5mm; }
+  .p1-bottom { position: absolute; left: var(--pad); top: 199mm; width: 76mm; }
+  .p1-bottom h2 { font-size: 11.5pt; }
+
+  .sizes { display: flex; gap: 2mm; margin: 2mm 0 0.5mm; }
+  .sizes div {
+    border: 0.35mm solid var(--blue); border-radius: 2mm; padding: 1.2mm 2.4mm;
+    font-size: 8pt; color: var(--blue); text-align: center; line-height: 1.2;
+  }
+  .sizes div b { display: block; font-weight: 500; font-size: 10pt; }
+  .sizes div span { font-weight: 200; }
+
+  /* ===== PAGE 2 (general arrangement) ===== */
+  .ga { position: absolute; left: var(--pad); right: 0; top: 30mm; bottom: 20mm; display: flex; flex-direction: column; gap: 5mm; }
+  .ga-row1 { display: grid; grid-template-columns: 104mm 1fr; gap: 6mm; align-items: start; }
+  .ga-row1 .panel-green { margin-top: 6mm; }
+  .ga-elev { margin-right: var(--pad); }
+  .ga-elev img { width: auto; max-width: 100%; max-height: 92mm; margin: 0 auto; }
+  .ga-note { margin-right: var(--pad); display: grid; grid-template-columns: 1fr 1fr; column-gap: 7mm; }
+  .ga-note h2 { grid-column: 1 / -1; }
+  .frame {
+    border: 0.3mm solid var(--rule); border-radius: 3mm; padding: 4mm;
+    background: #fff;
+  }
+  .viewlabel {
+    font-size: 7.4pt; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 2mm;
+  }
+  .viewlabel .thin { color: var(--thin); }
+
+  /* ===== PAGE 3 (how it works) ===== */
+  .hw-left { position: absolute; left: var(--pad); top: 31mm; width: 104mm; }
+  .hw-right { position: absolute; right: var(--pad); top: 31mm; width: 64mm; }
+  .step { display: grid; grid-template-columns: 9mm 1fr; gap: 3mm; margin-bottom: 4.2mm; }
+  .step .n {
+    width: 9mm; height: 9mm; border-radius: 50%; background: var(--blue); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 11pt; font-weight: 500;
+  }
+  .step:nth-child(2n) .n { background: var(--green); }
+  .step h3 { font-size: 9.6pt; font-weight: 500; color: var(--blue); text-transform: uppercase; margin: 0.6mm 0 1mm; letter-spacing: 0.01em; }
+  .hw-figs { position: absolute; left: var(--pad); top: 153mm; width: 110mm; display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; align-items: start; }
+  .hw-figs .frame { padding: 3.5mm; }
+  .hw-figs figcaption { margin-top: 2.5mm; }
+  .hw-inputs { position: absolute; right: 0; bottom: 20mm; width: 76mm; }
+
+  /* ===== PAGE 4 (size range, install, compliance, contact) ===== */
+  .range { position: absolute; left: var(--pad); right: var(--pad); top: 30mm; }
+  .range-figs { display: grid; grid-template-columns: 0.8fr 1fr 1fr; gap: 7mm; align-items: end; margin-top: 3mm; }
+  .range-figs figure .fig { height: 102mm; display: flex; align-items: flex-end; justify-content: center; }
+  .range-figs figure img { width: auto; max-width: 100%; max-height: 102mm; }
+  .range-figs figcaption { text-align: center; white-space: nowrap; }
+  table.range-t { width: 100%; border-collapse: collapse; margin-top: 5mm; }
+  table.range-t th, table.range-t td {
+    font-size: 7.6pt; line-height: 1.3; padding: 1.4mm 2mm; text-align: center;
+    border-bottom: 0.25mm solid var(--rule);
+  }
+  table.range-t thead th {
+    background: var(--blue); color: #fff; font-weight: 500; text-transform: uppercase;
+    font-size: 6.9pt; letter-spacing: 0.04em;
+  }
+  table.range-t thead th:first-child { border-top-left-radius: 2mm; }
+  table.range-t thead th:last-child { border-top-right-radius: 2mm; }
+  table.range-t tbody th { text-align: left; font-weight: 500; color: var(--blue); }
+  table.range-t tbody td { color: var(--blue-d); font-weight: 400; }
+  table.range-t td:not(:nth-child(3)) { white-space: nowrap; }
+  table.range-t tbody tr:nth-child(2n) { background: var(--tint); }
+
+  .p4-cols { position: absolute; left: var(--pad); top: 200mm; width: 104mm; }
+  .p4-contact { position: absolute; right: 0; bottom: 20mm; width: 80mm; }
+  .contact { display: grid; grid-template-columns: 19mm 1fr; column-gap: 3mm; row-gap: 1.5mm; margin-top: 1mm; }
+  .contact dt { font-size: 7pt; font-weight: 400; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; align-self: baseline; }
+  .contact dd { font-size: 8.6pt; font-weight: 500; color: #fff; align-self: baseline; white-space: nowrap; }
+  .contact dd a { color: #fff; text-decoration: none; }
+  .comp { display: grid; grid-template-columns: 1fr 1fr; column-gap: 6mm; }
+
+  /* ---------- local to the RhinoLift / RhinoPod / RhinoDuct sheets ---------- */
+  .flow { position: absolute; left: var(--pad); right: var(--pad); top: 30mm; bottom: 20mm;
+          display: flex; flex-direction: column; gap: 4.5mm; }
+  .row { display: grid; gap: 5mm; align-items: start; }
+  .row.c2 { grid-template-columns: 1fr 1fr; }
+  .row.c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .frame img { width: 100%; height: auto; display: block; }
+  .frame.fit img { width: auto; max-width: 100%; margin: 0 auto; }
+  .bleed-right { margin-right: calc(-1 * var(--pad)); }
+  .bleed-right.panel-green, .bleed-right.panel-blue { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .panel-blue.solo { border-radius: 7mm 0 0 7mm; }
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; column-gap: 7mm; }
+  .cols2 h2 { grid-column: 1 / -1; }
+  table.range-t.left td, table.range-t.left th { text-align: left; }
+  table.range-t td:not(:nth-child(3)) { white-space: normal; }
+  table.range-t.nowrap td { white-space: nowrap; }
+  .draft {
+    display: inline-block; font-size: 6.6pt; font-weight: 500; letter-spacing: 0.06em;
+    color: var(--red); border: 0.3mm solid var(--red); border-radius: 1mm;
+    padding: 0.3mm 1.6mm; text-transform: uppercase; margin-top: 2mm;
+  }
+  .kicker { font-size: 7.4pt; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); margin-bottom: 1.2mm; }
+  .src { font-size: 6.4pt; line-height: 1.35; color: var(--thin); font-weight: 400; }
+
+  .p1-left { width: 106mm; }
+  .p1-draw { position: absolute; right: 9mm; top: 44mm; width: 76mm; }
+  .p1-feat { top: 124mm; width: 78mm; }
+  .p1-bottom { top: 176mm; width: 104mm; }
+  .p1-spec { width: 80mm; }
+  .sizes div { padding: 1.2mm 2mm; }
+</style>
 </head>
 <body>
-
 <div class="print-bar">
-  <button class="print-btn" onclick="window.print()">Save as PDF</button>
+  <button class="print-btn" type="button" onclick="window.print()">Save as PDF</button>
+  <a href="/products/pump-station">Back to Pumping Stations</a>
 </div>
 
-<div class="page cover">
-  <div class="cover-decoration"></div>
-  <div class="cover-inner">
-    <div class="cover-top">
-      <img src="../logos/suds/logo-slogan-white.png" alt="SuDS Enviro" class="cover-logo">
-      <div class="cover-tag">Product Data Sheet<br>2026 Edition</div>
+<section class="page" aria-label="Page 1 - overview">
+  <header class="mast">
+    <div class="mast-title"><span class="b">Rhino</span><span class="g">Lift</span></div>
+    <div class="mast-sub">Packaged pumping stations</div>
+    <div class="codebar">Single pump <span class="thin">|</span> Duty-standby <span class="thin">|</span> Data sheet</div>
+  </header>
+  <div class="logo"><img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro - Bespoke, standardised"></div>
+
+  <div class="p1-left">
+    <h2>Overview</h2>
+    <p>RhinoLift packaged pumping stations move foul water, stormwater and grey water where gravity drainage is impractical or impossible. Each station is custom-built to the flow and storage the project needs, from a single dwelling to large commercial sites.</p>
+    <p>Chambers are MDPE or GRP for strength and durability. Stations are fitted with vortex or macerator pumps, as a single pump or a dual duty-standby pair.</p>
+
+    <div class="rule"></div>
+    <h2>How it works</h2>
+    <p>Flow collects in the chamber and is pumped from the low-lying area to a higher point for onward treatment or disposal. Vortex pumps pass solids of up to 50 mm diameter. In a duty-standby station one pump runs while the other stands ready, so the station keeps working through peak demand or maintenance.</p>
+
+    <div class="rule"></div>
+    <h2>Design compliance</h2>
+    <ul class="dots">
+      <li>BS EN 12050-1 lifting plants for wastewater containing faecal matter</li>
+      <li>Building Regulations Part H</li>
+      <li>Water Industry Act 1991</li>
+      <li>Electrical Equipment (Safety) Regulations</li>
+    </ul>
+  </div>
+
+  <figure class="p1-draw">
+    <img src="drawings/rhinolift/serlt-iso.png" alt="Isometric view of the SERLT 30000 packaged pump station: horizontal ribbed tank with an Ø1200 access shaft, a pump kiosk and pumped outlets">
+    <figcaption><b>SERLT 30000.</b> A bespoke packaged pump station from the SuDS Enviro drawing pack.</figcaption>
+  </figure>
+
+  <div class="panel-blue p1-feat">
+    <h2>Features &amp; benefits</h2>
+    <ul class="dots">
+      <li>MDPE or GRP chamber</li>
+      <li>Single vortex pump or dual duty-standby</li>
+      <li>Vortex pumps pass solids up to 50 mm</li>
+      <li>Optional macerator pumps for fine grinding</li>
+      <li>Built to order for each site</li>
+      <li>Optional high-level alarms and telemetry</li>
+      <li>Optional Bluetooth monitoring and diagnostics</li>
+    </ul>
+  </div>
+
+  <div class="p1-bottom">
+    <h2>Chamber sizes</h2>
+    <div class="sizes" aria-label="Chamber sizes">
+      <div><b>600</b><span>mm</span></div>
+      <div><b>750</b><span>mm</span></div>
+      <div><b>900</b><span>mm</span></div>
+      <div><b>1050</b><span>mm</span></div>
+      <div><b>1200</b><span>mm</span></div>
     </div>
-    <div class="cover-middle">
-      <div class="cover-eyebrow">RHINOLIFT</div>
-      <h1 class="cover-title">Packaged<br>Pumping<br><span class="accent">Stations</span></h1>
-      <p class="cover-subtitle">Custom-built MDPE and GRP pumping stations for foul water, stormwater and grey water, delivered site-ready within 24 to 48 hours.</p>
+    <p style="margin-top:1.6mm">Standard chambers in MDPE or GRP. Larger bespoke stations are built to order, as in the drawings on pages 2 and 3.</p>
+    <div class="rule"></div>
+    <h2>Applications</h2>
+    <ul class="dots">
+      <li>Sewage from residential, commercial and industrial sites</li>
+      <li>Stormwater from driveways, car parks and roofs</li>
+      <li>Grey water systems in homes and commercial buildings</li>
+    </ul>
+  </div>
+
+  <div class="panel-green p1-spec">
+    <h2>Specification</h2>
+    <table class="spec">
+      <tr><th>Chamber</th><td>MDPE or GRP</td></tr>
+      <tr><th>Sizes</th><td>600, 750, 900, 1050, 1200 mm</td></tr>
+      <tr><th>Pumps</th><td>Vortex (solids to 50 mm) or macerator</td></tr>
+      <tr><th>Configuration</th><td>Single pump or dual duty-standby</td></tr>
+      <tr><th>Controls</th><td>High-level alarm, telemetry, Bluetooth options</td></tr>
+      <tr><th>Lead time</th><td>Built and delivered in 24 to 48 hours</td></tr>
+      <tr><th>Warranty</th><td>1 year, terms apply</td></tr>
+    </table>
+  </div>
+  <footer class="foot">
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>www.sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>sales@sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>01224 057 700</span>
+  </footer>
+  <div class="pgno">01 / 04</div>
+</section>
+<section class="page" aria-label="Page 2 - general arrangement SERLT 30000">
+  <header class="runhead">
+    <div>
+      <div class="t"><span class="b">Rhino</span><span class="g">Lift</span></div>
+      <div class="s">General arrangement - SERLT 30000</div>
     </div>
-    <div class="cover-bottom">
-      <div class="cover-meta">
-        <span class="cover-meta-label">Product Range</span>
-        <span class="cover-meta-value">Pumping Stations</span>
+    <img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro">
+  </header>
+  <div class="flow">
+    <div class="row" style="grid-template-columns: 1fr 64mm;">
+      <figure class="frame">
+        <div class="viewlabel">Plan view</div>
+        <img src="drawings/rhinolift/serlt-plan.svg" alt="SERLT 30000 plan: Ø2500 horizontal tank, pump kiosk 1100 x 900 with twin Flygt pumps at 6 L/s and 3 inch pipework, Ø1200 access, pumped outlets 300 and 600 apart">
+      </figure>
+      <div class="panel-green bleed-right">
+        <h2>SERLT 30000</h2>
+        <table class="spec">
+          <tr><th>Type</th><td>Packaged pump station</td></tr>
+          <tr><th>Tank</th><td>Ø2500 mm, 6550 mm long</td></tr>
+          <tr><th>Pumps</th><td>Twin Flygt, 6 L/s, 3 inch pipework</td></tr>
+          <tr><th>Outlets</th><td>2 pumped outlets, 2135 mm above base</td></tr>
+          <tr><th>Inlets</th><td>160 and 110, inverts 2300 mm above base</td></tr>
+          <tr><th>Access</th><td>Ø1200, 4000 mm shaft supplied</td></tr>
+          <tr><th>Levels</th><td>Cover 107.579, invert 103.400 (4.179 m)</td></tr>
+          <tr><th>Cover</th><td>By others</td></tr>
+        </table>
       </div>
-      <div class="cover-meta">
-        <span class="cover-meta-label">Configurations</span>
-        <span class="cover-meta-value">Single / Duty-Standby</span>
+    </div>
+    <figure class="frame fit">
+      <div class="viewlabel">Side elevation</div>
+      <img style="max-height:66mm" src="drawings/rhinolift/serlt-elev.svg" alt="SERLT 30000 side elevation: 6550 mm length, twin pumped outlets at 2135 mm, 110 duct, 4000 mm access shaft">
+    </figure>
+    <div class="row" style="grid-template-columns: 0.95fr 0.8fr 1fr;">
+      <figure class="frame">
+        <div class="viewlabel">End elevation</div>
+        <img src="drawings/rhinolift/serlt-end.svg" alt="SERLT 30000 end elevation: cover level 107.579, invert level 103.400, 4.179 m, 2300 mm inlet inverts for the 160 and 110 inlets">
+      </figure>
+      <figure class="frame">
+        <div class="viewlabel">Section A-A</div>
+        <img src="drawings/rhinolift/serlt-section.svg" alt="SERLT 30000 section A-A through the pump kiosk showing the pump on the pump floor and the rising main">
+      </figure>
+      <div>
+        <h2>Reading the drawing</h2>
+        <p>Drawing SERLT 30000 shows a bespoke station built around a Ø2500 horizontal tank. Two Flygt pumps sit on a pump floor under a 1100 x 900 kiosk and discharge through twin pumped outlets.</p>
+        <p>The 160 and 110 inlets enter at 2300 mm above the tank base, 4.179 m below cover level.</p>
+        <p class="fine" style="margin-top:1.6mm"><span class="nts">Not to scale</span>&nbsp; Reproduced from the SuDS Enviro drawing pack for illustration. Dimensions in millimetres unless stated. Confirm project dimensions against the order drawing.</p>
       </div>
-      <div class="cover-meta">
-        <span class="cover-meta-label">Lead Time</span>
-        <span class="cover-meta-value">24 - 48 Hours</span>
+    </div>
+  </div>
+  <footer class="foot">
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>www.sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>sales@sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>01224 057 700</span>
+  </footer>
+  <div class="pgno">02 / 04</div>
+</section>
+<section class="page" aria-label="Page 3 - general arrangement SEBT2550SHD">
+  <header class="runhead">
+    <div>
+      <div class="t"><span class="b">Rhino</span><span class="g">Lift</span></div>
+      <div class="s">General arrangement - SEBT2550SHD backwash tank</div>
+    </div>
+    <img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro">
+  </header>
+  <div class="flow">
+    <figure class="frame fit">
+      <div class="viewlabel">Plan view</div>
+      <img style="max-height:50mm" src="drawings/rhinolift/sebt-plan.svg" alt="SEBT2550SHD plan: two Ø600 access shafts and a 1200 x 800 pump chamber along the tank, set out at 1145, 4150, 3950 and 1425 mm">
+    </figure>
+    <figure class="frame fit">
+      <div class="viewlabel">Side elevation</div>
+      <img style="max-height:63mm" src="drawings/rhinolift/sebt-elev.svg" alt="SEBT2550SHD side elevation: 10670 mm overall, 9420 mm body with 625 mm ends, 225 inlet at 2262 mm, 2 inch pumped outlet with invert to be confirmed, 1450 mm shafts supplied loose">
+    </figure>
+    <div class="row" style="grid-template-columns: 0.72fr 1fr 1.05fr;">
+      <figure class="frame">
+        <div class="viewlabel">End elevation</div>
+        <img src="drawings/rhinolift/sebt-end.svg" alt="SEBT2550SHD end elevation, 2500 diameter tank with 110 vents">
+      </figure>
+      <figure class="frame">
+        <div class="viewlabel">Section A-A</div>
+        <img src="drawings/rhinolift/sebt-section.svg" alt="SEBT2550SHD section A-A: Lowara Domo pumps on the pump floor, guiderails supplied loose">
+      </figure>
+      <div class="panel-green bleed-right">
+        <h2>SEBT2550SHD</h2>
+        <table class="spec">
+          <tr><th>Type</th><td>Packaged pump station, backwash tank</td></tr>
+          <tr><th>Tank</th><td>2500 dia, 10670 mm overall</td></tr>
+          <tr><th>Inlet</th><td>225, 2262 mm above base</td></tr>
+          <tr><th>Outlet</th><td>2 inch pumped, invert to be confirmed</td></tr>
+          <tr><th>Pumps</th><td>2 off Lowara DOMO 10VX, 3 L/s</td></tr>
+          <tr><th>Access</th><td>2 x Ø600 and 1 x 1200 x 800, 1450 mm, supplied loose</td></tr>
+          <tr><th>Pump kit</th><td>2 x DN50 stools, 4 x 10 m Taurus floats, 2 x 3 m chains and shackles, guiderails supplied loose</td></tr>
+        </table>
+      </div>
+    </div>
+    <p class="fine"><span class="nts">Not to scale</span>&nbsp; Reproduced from the SuDS Enviro drawing pack for illustration. Dimensions in millimetres. Confirm project dimensions against the order drawing.</p>
+  </div>
+  <footer class="foot">
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>www.sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>sales@sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>01224 057 700</span>
+  </footer>
+  <div class="pgno">03 / 04</div>
+</section>
+<section class="page" aria-label="Page 4 - design, compliance and contact">
+  <header class="runhead">
+    <div>
+      <div class="t"><span class="b">Rhino</span><span class="g">Lift</span></div>
+      <div class="s">Design, compliance and contact</div>
+    </div>
+    <img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro">
+  </header>
+  <div class="flow">
+    <div class="row c2">
+      <div>
+        <h2>Invert depth</h2>
+        <ul class="dots">
+          <li>Adoptable installations: invert depth up to 2000 mm to the soffit of the pipe</li>
+          <li>Non-adoptable installations: invert depth up to 3000 mm</li>
+          <li>Deeper bespoke stations are designed to order, as in drawing SERLT 30000</li>
+        </ul>
+        <div class="rule"></div>
+        <h2>Pump options</h2>
+        <ul class="dots">
+          <li>Vortex pumps for solid waste up to 50 mm diameter</li>
+          <li>Macerator pumps where fine grinding of solids is needed</li>
+          <li>Single pump, or dual pumps in a duty-standby arrangement</li>
+        </ul>
+        <div class="rule"></div>
+        <h2>Controls and monitoring</h2>
+        <ul class="dots">
+          <li>High-level alarms</li>
+          <li>Telemetry systems for remote monitoring and control</li>
+          <li>Bluetooth connectivity for monitoring and diagnostics</li>
+        </ul>
+      </div>
+      <div>
+        <div class="panel-blue solo bleed-right">
+          <h2>Sizing inputs</h2>
+          <ul class="dots">
+            <li>System type: foul, surface water or grey water</li>
+            <li>Design flow rate (L/s)</li>
+            <li>Total head (m)</li>
+            <li>Single pump or duty-standby</li>
+            <li>Vortex or macerator pump</li>
+            <li>Controller: standard, alarm, telemetry or Bluetooth</li>
+            <li>Chamber diameter and depth</li>
+            <li>Adoptable or non-adoptable</li>
+            <li>Outlet pipe size: 110, 160, 225 or 300 mm</li>
+          </ul>
+          <p class="fine" style="margin-top:2mm;color:#fff">Our technical team returns a station built to your flow, storage and site conditions.</p>
+        </div>
+        <div style="margin-top:6mm">
+          <h2>Compliance</h2>
+          <ul class="dots">
+            <li>BS EN 12050-1 lifting plants for wastewater containing faecal matter</li>
+            <li>Building Regulations Part H, drainage and waste disposal</li>
+            <li>Water Industry Act 1991, relevant sections for drainage</li>
+            <li>Electrical Equipment (Safety) Regulations for electrical components</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="grid-template-columns: 70mm 1fr; align-items:center">
+      <figure>
+        <img src="drawings/rhinolift/sebt-iso.png" alt="Isometric view of the SEBT2550SHD backwash tank with three access shafts">
+      </figure>
+      <div>
+        <h2>Built to the brief</h2>
+        <p>Every RhinoLift is configured to the flow rate, storage and site conditions of the project. The SEBT2550SHD backwash tank on page 3 shows how far the range scales: a 10.67 m tank with two access shafts and a pump chamber, with the pumps, floats and guiderails supplied as a complete kit.</p>
+      </div>
+    </div>
+    <div class="row" style="grid-template-columns: 1fr 80mm; margin-top:auto">
+      <div>
+        <h2>Lead time and warranty</h2>
+        <p>Stations are built and delivered to site within 24 to 48 hours. Each station comes with a 1-year warranty (terms apply).</p>
+      </div>
+      <div class="panel-blue solo bleed-right">
+    <h2>Specify RhinoLift</h2>
+    <p style="margin-bottom:2.6mm">Send us the flow, head and storage your site needs and our technical team will configure a station.</p>
+    <dl class="contact">
+      <dt>Company</dt><dd>SuDS Enviro</dd>
+      <dt>Enquiries</dt><dd><a href="mailto:sales@sudsenviro.com">sales@sudsenviro.com</a></dd>
+      <dt>Telephone</dt><dd><a href="tel:+441224057700">01224 057 700</a></dd>
+      <dt>Web</dt><dd><a href="https://www.sudsenviro.com">www.sudsenviro.com</a></dd>
+    </dl>
       </div>
     </div>
   </div>
-</div>
-
-<div class="page">
-  <div class="page-header">
-    <div class="page-header-left">
-      <div class="page-header-mark">01</div>
-      <div class="page-header-text">Product Overview</div>
-    </div>
-    <div class="page-header-num">SECTION ONE</div>
-  </div>
-
-  <div class="section-eyebrow">Reliable Water Movement</div>
-  <h2 class="section-title">Move water, up.<br>Keep sites <span class="accent">running.</span></h2>
-
-  <p class="section-lead">RHINOLIFT Packaged Pumping Stations are designed to provide reliable, efficient and robust solutions for managing foul water, stormwater and grey water. From single-dwelling residential to large-scale commercial applications, RHINOLIFT systems flex to specific project needs with a range of single and dual-pump configurations.</p>
-
-  <div class="body-text">
-    <p>Constructed from MDPE and GRP chambers, RHINOLIFT pumping stations provide exceptional strength and durability. Each station is equipped with vortex or macerator pumps to handle varying flow rates and ensure efficient, trouble-free operation. Stations are built and delivered to site within 24 to 48 hours, allowing you to meet even the tightest deadlines.</p>
-  </div>
-
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-value">24-48<span class="unit">hr</span></div>
-      <div class="stat-label">Lead Time</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">50<span class="unit">mm</span></div>
-      <div class="stat-label">Max Solid Size</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">5<span class="unit">sizes</span></div>
-      <div class="stat-label">Chamber Options</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">2<span class="unit">pumps</span></div>
-      <div class="stat-label">Duty / Standby</div>
-    </div>
-  </div>
-
-  <div class="section-eyebrow" style="margin-top: 22px;">Available Chamber Sizes</div>
-  <div class="size-strip">
-    <div class="size-chip">600<span class="suffix">mm</span></div>
-    <div class="size-chip">750<span class="suffix">mm</span></div>
-    <div class="size-chip">900<span class="suffix">mm</span></div>
-    <div class="size-chip">1050<span class="suffix">mm</span></div>
-    <div class="size-chip">1200<span class="suffix">mm</span></div>
-  </div>
-
-  <div class="callout">
-    <div class="callout-label">Custom-Built to Order</div>
-    <div class="callout-text">Every RHINOLIFT is configured to specific flow rates, storage capacities and site conditions. Single-pump or duty-standby, vortex or macerator, telemetry and Bluetooth diagnostics options available.</div>
-  </div>
-
-  <div class="page-footer">
-    <span>RHINOLIFT</span>
-    <span class="green-dot"></span>
-    <span>Page 02</span>
-  </div>
-</div>
-
-<div class="page">
-  <div class="page-header">
-    <div class="page-header-left">
-      <div class="page-header-mark">02</div>
-      <div class="page-header-text">How It Works</div>
-    </div>
-    <div class="page-header-num">SECTION TWO</div>
-  </div>
-
-  <div class="section-eyebrow">Gravity Is Optional</div>
-  <h2 class="section-title">Pump low-lying flow<br>to <span class="accent">higher ground.</span></h2>
-
-  <p class="section-lead">RHINOLIFT pumping stations are designed to move foul water, stormwater or grey water from low-lying areas to higher elevations for onward treatment or disposal. Vortex or macerator pumps handle solids of up to 50mm diameter. Dual-pump configurations provide duty-standby resilience, with one pump running while the other stands ready.</p>
-
-  <div class="body-text">
-    <p>The packaged approach eliminates the need for gravity drainage where site conditions make it impractical or impossible. From basement developments to commercial hard-standing, RHINOLIFT provides the hydraulic lift without the complexity of bespoke build-on-site pump chambers.</p>
-  </div>
-
-  <div class="section-eyebrow" style="margin-top: 26px;">Design Advantages</div>
-
-  <div class="feature-grid">
-    <div class="feature">
-      <span class="feature-badge">Structure</span>
-      <div class="feature-title">MDPE or GRP Chamber</div>
-      <div class="feature-desc">Superior strength and durability, specified in the material that best suits the site and service application.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge blue">Resilience</span>
-      <div class="feature-title">Single or Duty-Standby</div>
-      <div class="feature-desc">Choose a single vortex pump or a dual configuration for continuous operation under demand or service.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge">Options</span>
-      <div class="feature-title">Macerator Pump Option</div>
-      <div class="feature-desc">Optional macerator pumps are available for applications requiring fine grinding of solids.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge blue">Delivery</span>
-      <div class="feature-title">24-48 Hour Turnaround</div>
-      <div class="feature-desc">Stations are built and delivered to site within 24 to 48 hours, matching the tightest project timelines.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge">Monitoring</span>
-      <div class="feature-title">Telemetry and Alarms</div>
-      <div class="feature-desc">Optional high-level alarms and telemetry systems for enhanced monitoring and control.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge blue">Connectivity</span>
-      <div class="feature-title">Bluetooth Diagnostics</div>
-      <div class="feature-desc">Optional Bluetooth compatibility allows remote system monitoring and diagnostics.</div>
-    </div>
-  </div>
-
-  <div class="page-footer">
-    <span>RHINOLIFT</span>
-    <span class="green-dot"></span>
-    <span>Page 03</span>
-  </div>
-</div>
-
-<div class="page">
-  <div class="page-header">
-    <div class="page-header-left">
-      <div class="page-header-mark">03</div>
-      <div class="page-header-text">Specification and Compliance</div>
-    </div>
-    <div class="page-header-num">SECTION THREE</div>
-  </div>
-
-  <div class="section-eyebrow">Technical Specifications</div>
-  <h2 class="section-title">Built to your<br>brief. <span class="accent">Built fast.</span></h2>
-
-  <table class="spec-table">
-    <thead>
-      <tr><th>Parameter</th><th>Specification</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Chamber Material</td><td>MDPE or GRP</td></tr>
-      <tr><td>Chamber Sizes</td><td>600mm, 750mm, 900mm, 1050mm, 1200mm</td></tr>
-      <tr><td>Vortex Pumps</td><td>Handle solids up to 50mm diameter</td></tr>
-      <tr><td>Macerator Pumps</td><td>Optional, for fine grinding of solids</td></tr>
-      <tr><td>Configurations</td><td>Single pump or dual pump duty-standby</td></tr>
-      <tr><td>Adoptable Depth</td><td>Up to 2000mm to pipe soffit</td></tr>
-      <tr><td>Non-Adoptable Depth</td><td>Up to 3000mm to pipe soffit</td></tr>
-      <tr><td>Control Options</td><td>High-level alarms, telemetry, Bluetooth diagnostics</td></tr>
-      <tr><td>Warranty</td><td>1 year (terms apply)</td></tr>
-      <tr><td>Lead Time</td><td>Built and delivered within 24-48 hours</td></tr>
-    </tbody>
-  </table>
-
-  <div class="two-col" style="margin-top: 28px;">
-    <div class="col-block">
-      <h4>Applications</h4>
-      <ul>
-        <li>Residential foul water</li>
-        <li>Commercial foul water</li>
-        <li>Industrial sewage</li>
-        <li>Stormwater from car parks and roofs</li>
-        <li>Grey water systems</li>
-        <li>Basement and sub-ground drainage</li>
-      </ul>
-    </div>
-    <div class="col-block">
-      <h4>Key Benefits</h4>
-      <ul>
-        <li>Custom-built to site</li>
-        <li>Rapid 24-48 hour delivery</li>
-        <li>MDPE or GRP chamber options</li>
-        <li>Vortex or macerator pumps</li>
-        <li>Duty-standby resilience</li>
-        <li>Telemetry and remote diagnostics</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="section-eyebrow" style="margin-top: 30px;">Compliance</div>
-
-  <div class="compliance-list">
-    <div class="compliance-row">
-      <div class="compliance-code">EN 12050-1</div>
-      <div class="compliance-desc">European standard for lifting plants for wastewater containing faecal matter.</div>
-    </div>
-    <div class="compliance-row">
-      <div class="compliance-code">Building Regs Part H</div>
-      <div class="compliance-desc">UK building regulations for drainage and pumping systems.</div>
-    </div>
-    <div class="compliance-row">
-      <div class="compliance-code">Water Industry Act 1991</div>
-      <div class="compliance-desc">Compliant with relevant sections for drainage and water supply.</div>
-    </div>
-    <div class="compliance-row">
-      <div class="compliance-code">Electrical Safety</div>
-      <div class="compliance-desc">Electrical Equipment (Safety) Regulations compliance for electrical components and operation.</div>
-    </div>
-  </div>
-
-  <div class="page-footer">
-    <span>RHINOLIFT</span>
-    <span class="green-dot"></span>
-    <span>Page 04</span>
-  </div>
-</div>
-
-<div class="page closing">
-  <img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro" class="closing-brand">
-  <div class="closing-mark">
-    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-  </div>
-  <div class="closing-eyebrow">Specify With Confidence</div>
-  <h2 class="closing-title">Configured,<br>built, delivered.</h2>
-  <p class="closing-text">RHINOLIFT Packaged Pumping Stations are built to your brief and delivered to site within 24-48 hours. Contact our technical team with your flow, solids and storage requirements.</p>
-  <div class="contact-card">
-    <div class="contact-row">
-      <span class="label">Product</span>
-      <span class="value">RHINOLIFT</span>
-    </div>
-    <div class="contact-row">
-      <span class="label">Manufacturer</span>
-      <span class="value">SuDS Enviro Ltd</span>
-    </div>
-    <div class="contact-row">
-      <span class="label">Enquiries</span>
-      <span class="value">hello@sudsenviro.com</span>
-    </div>
-    <div class="contact-row">
-      <span class="label">Configurator</span>
-      <span class="value">sudsenviro.com</span>
-    </div>
-  </div>
-</div>
+  <footer class="foot">
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>www.sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>sales@sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>01224 057 700</span>
+  </footer>
+  <div class="pgno">04 / 04</div>
+</section>
 
 </body>
 </html>

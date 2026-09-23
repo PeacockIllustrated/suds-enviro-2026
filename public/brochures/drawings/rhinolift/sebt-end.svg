@@ -1,0 +1,404 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" viewBox="0 0 322.36 507.93">
+<defs>
+<clipPath id="clip_1">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M1460.98 382.42H1783.34V890.36H1460.98Z"/>
+</clipPath>
+<clipPath id="clip_2">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M0 0H2448V1584H0Z"/>
+</clipPath>
+<clipPath id="clip_3">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_4">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_5">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_6">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_7">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_8">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_9">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_10">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_11">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_12">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_13">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_14">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_15">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_16">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_17">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_18">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<clipPath id="clip_19">
+<path transform="matrix(1,0,0,-1,-1460.98,890.36)" d="M-1224-792V2376H3672V-792Z"/>
+</clipPath>
+<path id="font_20_1086" d="M.037002565 0V.067993167L.32200624 .34300233C.34733583 .3669993 .36616517 .38816325 .37849427 .40649415 .39083354 .4248352 .39916993 .4418386 .40350343 .45750428 .4078369 .47316996 .41000367 .4883372 .41000367 .503006 .41000367 .53900656 .39733378 .56733706 .37199403 .58799746 .34666444 .608668 .30966697 .6190033 .2610016 .6190033 .22366841 .6190033 .19000244 .6128337 .16000366 .6004944 .13000489 .5881653 .104003909 .56900027 .08200073 .54299929L.014007568 .602005C.040669759 .6360016 .0764974 .66216537 .12149048 .6804962 .16649373 .6988271 .21599834 .70799258 .27000428 .70799258 .31866966 .70799258 .3610026 .7001597 .39700318 .684494 .43300376 .6688283 .46083579 .6463267 .48049928 .61698916 .5001628 .58766177 .5099945 .55299887 .5099945 .5130005 .5099945 .4903361 .5069936 .46800233 .5009918 .44599916 .4950002 .42399598 .483668 .4006602 .46699525 .37599183 .45033265 .35133363 .42633567 .32366944 .39500428 .29299928L.14100647 .04800415 .117004398 .087005618H.5399933V0H.037002565Z"/>
+<path id="font_20_1089" d="M.27400209-.0079956059C.22466533-.0079956059 .17682903-.0003306071 .13049317 .01499939 .08416748 .030329386 .046335859 .050994874 .016998291 .07699585L.06300354 .15600586C.08633932 .13400269 .11667379 .115997318 .15400696 .101989749 .19134014 .08799235 .23100281 .08099365 .272995 .08099365 .32632957 .08099365 .36732994 .092325847 .3959961 .114990238 .42466227 .1376648 .43899537 .16799927 .43899537 .20599365 .43899537 .23199463 .43266297 .25465904 .41999818 .27398683 .40733338 .2933248 .38549806 .3081614 .3544922 .3184967 .3234965 .328832 .28100077 .33399964 .227005 .33399964H.067993167L.10499573 .69999697H.5V.6130066H.14199829L.19400025 .66200259 .16499329 .3730011 .11300659 .42100526H.2480011C.31799827 .42100526 .3743286 .41200257 .4169922 .3939972 .45966593 .37600199 .49066673 .35117088 .5099945 .31950379 .52933248 .2878367 .53900149 .25133769 .53900149 .21000672 .53900149 .16999817 .52933248 .13349407 .5099945 .100494388 .49066673 .06749471 .46150209 .041163129 .4225006 .021499634 .38349916 .001836141 .33399964-.0079956059 .27400209-.0079956059Z"/>
+<path id="font_20_1084" d="M.33399964-.0079956059C.2793325-.0079956059 .23049927 .0060017907 .1875 .033996583 .14450073 .062001546 .11049906 .10266622 .085494998 .1559906 .0605011 .20932515 .04800415 .27399699 .04800415 .3500061 .04800415 .42600505 .0605011 .49066673 .085494998 .5439911 .11049906 .5973256 .14450073 .6379903 .1875 .6659851 .23049927 .69399008 .2793325 .70799258 .33399964 .70799258 .3879954 .70799258 .43666078 .69399008 .47999574 .6659851 .5233307 .6379903 .55733236 .5973256 .58200076 .5439911 .6066691 .49066673 .6190033 .42600505 .6190033 .3500061 .6190033 .27399699 .6066691 .20932515 .58200076 .1559906 .55733236 .10266622 .5233307 .062001546 .47999574 .033996583 .43666078 .0060017907 .3879954-.0079956059 .33399964-.0079956059M.33399964 .08099365C.3706716 .08099365 .40283714 .09099325 .43049623 .11099243 .4581655 .13100179 .47983299 .16100566 .49549867 .20100403 .51116439 .2410024 .5189972 .29066978 .5189972 .3500061 .5189972 .40933229 .51116439 .45899455 .49549867 .49899293 .47983299 .53900149 .4581655 .5690053 .43049623 .5890045 .40283714 .6090037 .3706716 .6190033 .33399964 .6190033 .29733787 .6190033 .2650045 .6090037 .23699951 .5890045 .20900472 .5690053 .18716939 .53900149 .17149353 .49899293 .15582784 .45899455 .147995 .40933229 .147995 .3500061 .147995 .29066978 .15582784 .2410024 .17149353 .20100403 .18716939 .16100566 .20900472 .13100179 .23699951 .11099243 .2650045 .09099325 .29733787 .08099365 .33399964 .08099365Z"/>
+<path id="font_20_1154" d=""/>
+<path id="font_20_56" d="M.10499573 0V.69999697H.3999939C.47466026 .69999697 .54049178 .6853282 .5974884 .6559906 .65449526 .6266632 .6988322 .58566287 .73049929 .5329895 .7621663 .48032633 .7779999 .41933189 .7779999 .3500061 .7779999 .28067018 .7621663 .21966553 .73049929 .16699219 .6988322 .11432902 .65449526 .07332865 .5974884 .04399109 .54049178 .014663696 .47466026 0 .3999939 0H.10499573M.20500183 .087005618H.3939972C.45200096 .087005618 .50216677 .09800211 .5444946 .11999512 .5868327 .14199829 .6196645 .17283122 .6429901 .2124939 .66632589 .25216676 .6779938 .29800416 .6779938 .3500061 .6779938 .40266929 .66632589 .44866435 .6429901 .48799134 .6196645 .5273285 .5868327 .55799868 .5444946 .58000186 .50216677 .602005 .45200096 .6130066 .3939972 .6130066H.20500183V.087005618Z"/>
+<path id="font_20_134" d="M.10499573 0V.69999697H.20500183V0H.10499573Z"/>
+<path id="font_20_1" d="M-.0010070801 0 .31599427 .69999697H.4149933L.7330017 0H.628006L.34500123 .6439972H.3849945L.102005008 0H-.0010070801M.13400269 .17500305 .16099549 .25500489H.5549927L.58399966 .17500305H.13400269Z"/>
+<path id="font_20_1085" d="M.16600037 0V.66000369L.20899964 .6130066H.0079956059V.69999697H.2649994V0H.16600037Z"/>
+<path id="font_20_325" d="M.30700685 0-.0010070801 .69999697H.10699463L.3899994 .054000856H.32800294L.6130066 .69999697H.71299746L.40600587 0H.30700685Z"/>
+<path id="font_20_72" d="M.10499573 0V.69999697H.598999V.6130066H.20500183V.087005618H.6130066V0H.10499573M.19599915 .31300355V.397995H.55599978V.31300355H.19599915Z"/>
+<path id="font_20_189" d="M.10499573 0V.69999697H.18699646L.6499939 .125H.6069946V.69999697H.70700076V0H.625L.16200257 .57499697H.20500183V0H.10499573Z"/>
+<path id="font_20_279" d="M.2440033 0V.6130066H.0039978029V.69999697H.58299258V.6130066H.34300233V0H.2440033Z"/>
+<path id="font_20_342" d="M.27400209 0V.26800538L.29699708 .20599365-.0039978029 .69999697H.102996829L.3560028 .28300477H.29800416L.55200198 .69999697H.651001L.35099793 .20599365 .3730011 .26800538V0H.27400209Z"/>
+<path id="font_20_246" d="M.10499573 0V.69999697H.37800599C.43933616 .69999697 .4916687 .69032797 .53500369 .67099 .5783386 .6516622 .6116689 .6236623 .6349945 .58699038 .65833029 .55032858 .66999819 .506663 .66999819 .45599366 .66999819 .40533448 .65833029 .36183677 .6349945 .3255005 .6116689 .28916423 .5783386 .26116435 .53500369 .24150086 .4916687 .22183736 .43933616 .21200562 .37800599 .21200562H.16000366L.20500183 .2590027V0H.10499573M.20500183 .24899292 .16000366 .29899598H.375C.43899537 .29899598 .4874929 .31266276 .52049258 .33999635 .5535024 .36732994 .5700073 .4059957 .5700073 .45599366 .5700073 .5060018 .5535024 .54467269 .52049258 .5720062 .4874929 .5993398 .43899537 .6130066 .375 .6130066H.16000366L.20500183 .6629944V.24899292Z"/>
+<path id="font_20_1165" d="M.11399841-.005996704C.095331829-.005996704 .079330448 .00050354006 .06599426 .013504028 .052668256 .026504517 .04600525 .043004354 .04600525 .06300354 .04600525 .083002727 .052668256 .09933472 .06599426 .11199951 .079330448 .12466431 .095331829 .1309967 .11399841 .1309967 .13200379 .1309967 .14750164 .12466431 .16049195 .11199951 .17349243 .09933472 .17999268 .083002727 .17999268 .06300354 .17999268 .043004354 .17349243 .026504517 .16049195 .013504028 .14750164 .00050354006 .13200379-.005996704 .11399841-.005996704Z"/>
+</defs>
+<g clip-path="url(#clip_1)">
+<g clip-path="url(#clip_2)">
+<g clip-path="url(#clip_3)">
+<g inkscape:groupmode="layer" inkscape:label="0">
+</g>
+</g>
+<g clip-path="url(#clip_4)">
+<g inkscape:groupmode="layer" inkscape:label="0">
+</g>
+</g>
+<g clip-path="url(#clip_5)">
+<g inkscape:groupmode="layer" inkscape:label="0">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Hatch (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+<path stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M168.56 314.18L168.56 172.52"/>
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+<path stroke-width=".54" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M310.4 314.26C310.4 235.98 246.94 172.51 168.65 172.51C90.37 172.51 26.9 235.98 26.9 314.26C26.9 392.54 90.37 456.01 168.65 456.01C246.94 456.01 310.4 392.54 310.4 314.26M236.95 172.51L236.95 185.47M100.33 172.51L100.33 185.47M314.36 314.27C314.36 233.8 249.13 168.56 168.65 168.56C88.18 168.56 22.94 233.8 22.94 314.27C22.94 394.74 88.18 459.98 168.65 459.98C249.13 459.98 314.36 394.74 314.36 314.27M140.12 213.82C140.12 212.08 138.71 210.67 136.97 210.67C135.23 210.67 133.82 212.08 133.82 213.82C133.82 215.56 135.23 216.97 136.97 216.97C138.71 216.97 140.12 215.56 140.12 213.82M141.38 213.82C141.38 211.39 139.41 209.41 136.97 209.41C134.54 209.41 132.56 211.39 132.56 213.82C132.56 216.25 134.54 218.23 136.97 218.23C139.41 218.23 141.38 216.25 141.38 213.82M136.96 216.43C138.4 216.43 139.57 215.27 139.57 213.82C139.57 212.38 138.4 211.21 136.96 211.21C135.52 211.21 134.35 212.38 134.35 213.82C134.35 215.27 135.52 216.43 136.96 216.43M208.16 213.82C208.16 212.08 206.75 210.67 205.01 210.67C203.27 210.67 201.86 212.08 201.86 213.82C201.86 215.56 203.27 216.97 205.01 216.97C206.75 216.97 208.16 215.56 208.16 213.82M209.42 213.82C209.42 211.39 207.45 209.41 205.01 209.41C202.58 209.41 200.6 211.39 200.6 213.82C200.6 216.25 202.58 218.23 205.01 218.23C207.45 218.23 209.42 216.25 209.42 213.82M205.01 216.43C206.45 216.43 207.62 215.27 207.62 213.82C207.62 212.38 206.45 211.21 205.01 211.21C203.57 211.21 202.4 212.38 202.4 213.82C202.4 215.27 203.57 216.43 205.01 216.43M99.26 8L99.26 160.46L98.54 160.64L98.54 172.52M99.26 8L236.6 8L236.6 160.46M98.54 172.51L134.9 172.51M202.4 172.51L237.32 172.51L237.32 160.63L236.6 160.45L99.26 160.45M98.54 160.64L237.32 160.64M90.8 156.85L90.8 142.81"/>
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+<path stroke-width="1.08" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M90.97 157.03L90.97 142.63"/>
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+<path stroke-width=".54" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M90.81 142.47C90.69 142.5 90.61 142.61 90.61 142.73M90.61 156.77C90.61 156.89 90.69 157 90.81 157.03M92.95 157.57L92.95 141.91M96.02 156.68L96.02 142.82M95.66 156.68L95.66 142.82M93.32 156.5L93.32 143.18M90.97 142.64L92.95 141.92M90.97 157.03L92.95 157.57M99.26 156.5L96.02 156.5M99.26 143.18L96.02 143.18M96.02 156.68L95.66 156.68M96.02 142.82L95.66 142.82M95.66 156.5L93.32 156.5M95.66 143.18L93.32 143.18M93.32 156.5L92.96 157.58M93.32 143.18L92.96 141.92"/>
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+</g>
+<g clip-path="url(#clip_6)">
+<g inkscape:groupmode="layer" inkscape:label="Visible (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Visible Narrow (ANSI)">
+</g>
+</g>
+<g clip-path="url(#clip_7)">
+<g inkscape:groupmode="layer" inkscape:label="Section Line (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Border (ANSI)">
+</g>
+</g>
+<g clip-path="url(#clip_8)">
+<g inkscape:groupmode="layer" inkscape:label="Border (ANSI)">
+</g>
+</g>
+<g clip-path="url(#clip_9)">
+<g inkscape:groupmode="layer" inkscape:label="Title (ANSI)">
+</g>
+</g>
+<g clip-path="url(#clip_10)">
+</g>
+<g clip-path="url(#clip_11)">
+</g>
+<g clip-path="url(#clip_12)">
+</g>
+<g clip-path="url(#clip_13)">
+</g>
+<g clip-path="url(#clip_14)">
+</g>
+<g clip-path="url(#clip_15)">
+<g inkscape:groupmode="layer" inkscape:label="Centerline (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Center Mark (ANSI)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Centerline (ANSI)">
+</g>
+</g>
+<g clip-path="url(#clip_16)">
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Dimension (ANSI)">
+<g clip-path="url(#clip_17)">
+<g inkscape:groupmode="layer" inkscape:label="Center Mark (ANSI)">
+<path stroke-width=".72" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M136.88 222.91L136.88 213.91L136.88 204.91M204.92 222.91L204.92 213.91L204.92 204.91"/>
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Centerline (ANSI)">
+<path stroke-width=".72" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M136.88 213.91L123.56 213.91M204.92 213.91L218.24 213.91M136.88 213.91L150.2 213.91M204.92 213.91L191.6 213.91M150.2 213.91L156.86 213.91M165.32 213.91L176.66 213.91M185.12 213.91L191.96 213.91"/>
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Dimension (ANSI)">
+<path stroke-width=".72" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M33.92 498.5L26.9 498.5"/>
+<path transform="matrix(1,0,0,-1,33.92,497.24)" d="M0 0-7.02-1.26 0-2.7Z" fill-rule="evenodd"/>
+<path stroke-width=".72" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M33.92 497.24L26.9 498.5L33.92 499.94L33.92 497.24M303.2 498.5L310.4 498.5"/>
+<path transform="matrix(1,0,0,-1,303.20,499.93)" d="M0 0 7.2 1.44 0 2.7Z" fill-rule="evenodd"/>
+<path stroke-width=".72" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M303.2 499.93L310.4 498.49L303.2 497.23L303.2 499.93M33.92 498.5L303.2 498.5M26.9 317.06L26.9 504.26M310.4 317.06L310.4 504.26"/>
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Center Mark (ANSI)">
+<path stroke-width=".72" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#404041" d="M168.56 314.18L177.56 314.18M186.2 314.18L319.4 314.18M168.56 314.18L159.56 314.18M151.09 314.18L17.89 314.18M168.56 314.18L168.56 305.18M168.56 314.18L168.56 323.18M168.56 331.64L168.56 465.02"/>
+</g>
+</g>
+</g>
+<g inkscape:groupmode="layer" inkscape:label="Symbol (ANSI)">
+</g>
+<g clip-path="url(#clip_18)">
+<g inkscape:groupmode="layer" inkscape:label="Dimension (ANSI)">
+</g>
+</g>
+<g clip-path="url(#clip_19)">
+<g inkscape:groupmode="layer" inkscape:label="Dimension (ANSI)">
+</g>
+</g>
+<use data-text="2" xlink:href="#font_20_1086" transform="matrix(17.49,0,0,-17.49,128.03,493.93)"/>
+<use data-text="5" xlink:href="#font_20_1089" transform="matrix(17.49,0,0,-17.49,138.07,493.93)"/>
+<use data-text="0" xlink:href="#font_20_1084" transform="matrix(17.49,0,0,-17.49,148.12,493.93)"/>
+<use data-text="0" xlink:href="#font_20_1084" transform="matrix(17.49,0,0,-17.49,159.79,493.93)"/>
+<use data-text=" " xlink:href="#font_20_1154" transform="matrix(17.49,0,0,-17.49,171.46,493.93)"/>
+<use data-text="D" xlink:href="#font_20_56" transform="matrix(17.49,0,0,-17.49,176.16,493.93)"/>
+<use data-text="I" xlink:href="#font_20_134" transform="matrix(17.49,0,0,-17.49,190.61,493.93)"/>
+<use data-text="A" xlink:href="#font_20_1" transform="matrix(17.49,0,0,-17.49,196.04,493.93)"/>
+<use data-text="1" xlink:href="#font_20_1085" transform="matrix(17.49,0,0,-17.49,8,137.71)"/>
+<use data-text="1" xlink:href="#font_20_1085" transform="matrix(17.49,0,0,-17.49,14.47,137.71)"/>
+<use data-text="0" xlink:href="#font_20_1084" transform="matrix(17.49,0,0,-17.49,20.94,137.71)"/>
+<use data-text=" " xlink:href="#font_20_1154" transform="matrix(17.49,0,0,-17.49,32.61,137.71)"/>
+<use data-text="V" xlink:href="#font_20_325" transform="matrix(17.49,0,0,-17.49,37.32,137.71)"/>
+<use data-text="E" xlink:href="#font_20_72" transform="matrix(17.49,0,0,-17.49,49.78,137.71)"/>
+<use data-text="N" xlink:href="#font_20_189" transform="matrix(17.49,0,0,-17.49,61.50,137.71)"/>
+<use data-text="T" xlink:href="#font_20_279" transform="matrix(17.49,0,0,-17.49,75.70,137.71)"/>
+<use data-text="T" xlink:href="#font_20_279" transform="matrix(17.49,0,0,-17.49,8,160.93)"/>
+<use data-text="Y" xlink:href="#font_20_342" transform="matrix(17.49,0,0,-17.49,18.27,160.93)"/>
+<use data-text="P" xlink:href="#font_20_246" transform="matrix(17.49,0,0,-17.49,29.59,160.93)"/>
+<use data-text="." xlink:href="#font_20_1165" transform="matrix(17.49,0,0,-17.49,42.22,160.93)"/>
+</g>
+</g>
+</svg>
