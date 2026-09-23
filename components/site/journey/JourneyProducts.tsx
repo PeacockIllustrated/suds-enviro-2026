@@ -85,7 +85,7 @@ export function Riser({ x, z, radius, from, to }: { x: number; z: number; radius
         </mesh>
       ))}
       {/* Cover and frame at the surface. */}
-      <mesh position={[0, to - 0.04, 0]}>
+      <mesh position={[0, to - 0.015, 0]}>
         <cylinderGeometry args={[radius * 1.18, radius * 1.18, 0.1, 32]} />
         <Paper color={ART.asphalt} />
         <Edges color={ART.asphaltInk} lineWidth={LINE} threshold={20} />

@@ -2,23 +2,43 @@
 
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Edges } from '@react-three/drei'
 import * as THREE from 'three'
-import { InkOutlines, toonRamp, useWaterMaterial } from '@/components/site/three/toon'
-import { ART, InkBox, InkSlab, LINE, Panels, Paper, type Rect } from '@/components/site/explorer/lineArt'
-import { Car, Poplars } from '@/components/site/explorer/Buildings'
+import { useWaterMaterial } from '@/components/site/three/toon'
+import { drawBench } from '@/components/site/lineart/Bench'
+import { drawBollard } from '@/components/site/lineart/Bollard'
+import { drawCar } from '@/components/site/lineart/Car'
+import { drawDetachedHouse } from '@/components/site/lineart/DetachedHouse'
+import { joints, railing, seeded } from '@/components/site/lineart/details'
+import { drawDownpipe } from '@/components/site/lineart/Downpipe'
+import { drawEVCharger } from '@/components/site/lineart/EVCharger'
+import { drawFence } from '@/components/site/lineart/Fence'
+import { drawGully } from '@/components/site/lineart/Gully'
+import { drawHedge } from '@/components/site/lineart/Hedge'
+import { LineArt } from '@/components/site/lineart/LineArt'
+import { drawLitterBin } from '@/components/site/lineart/LitterBin'
+import { drawManholeCover } from '@/components/site/lineart/ManholeCover'
+import { cachedSketch } from '@/components/site/lineart/materials'
+import { LA } from '@/components/site/lineart/palette'
+import { drawParkingBays } from '@/components/site/lineart/ParkingBays'
+import { drawPerson } from '@/components/site/lineart/Person'
+import { drawRetailParade } from '@/components/site/lineart/RetailParade'
+import { drawRoad } from '@/components/site/lineart/Road'
+import type { Sketch, Vec2 } from '@/components/site/lineart/sketch'
+import { drawStreetLamp } from '@/components/site/lineart/StreetLamp'
+import { Trees, type TreeSpec } from '@/components/site/lineart/Trees'
+import { drawVan } from '@/components/site/lineart/Van'
 
 /**
  * The water journey's scenery, and only its scenery: the house, garden,
- * drive, road, car park, lawn, trees, cloud and rain, the river and its
- * headwall, and the ground slab cut in section under all of it.
+ * drive, road, car park, open space, trees, cloud and rain, the river and
+ * its headwall, the access covers on the section line, and the ground
+ * slab cut in section under all of it.
  *
- * This file is the one adapter between the journey and whichever line-art
- * kit draws the world. Everything here is built from the Site Explorer's
- * line-art primitives (white volumes, thin site-blue ink, pale blue
- * glazing), so the two pages read as one drawing. To move the journey onto
- * another kit, change the bodies of these components and keep their props:
- * nothing else in the journey draws scenery.
+ * This file is the one adapter between the journey and the line-art
+ * scenery kit (components/site/lineart), the same kit the Site Explorer
+ * draws with, so the two pages read as one drawing. Each component here
+ * bakes everything it draws into one cached Sketch (at most four draw
+ * calls however much detail it carries); the trees are instanced.
  *
  * Units are metres. The ground surface is y = 0 away from the river, the
  * section cut is the plane z = 0 and the site runs back towards -z.
@@ -38,103 +58,140 @@ export interface SurfaceSpan {
   kind: SurfaceKind
 }
 
-/** A small seeded random source, so scattered details land the same every time. */
-function random(seed: number): () => number {
-  let s = seed
-  return () => {
-    s = (s * 16807) % 2147483647
-    return s / 2147483647
+/** A drawing cached on its inputs, so re-renders cost nothing. */
+function Drawing<P>({ name, props, draw }: { name: string; props: P; draw: (s: Sketch, p: P) => void }) {
+  return <LineArt drawing={cachedSketch(`journey-${name}:${JSON.stringify(props)}`, (s) => draw(s, props))} />
+}
+
+/** Height of the profile at x. */
+function heightAt(profile: ProfilePoint[], x: number): number {
+  for (let i = 1; i < profile.length; i++) {
+    const [ax, ay] = profile[i - 1]
+    const [bx, by] = profile[i]
+    if (x >= ax && x <= bx && bx > ax) return ay + ((x - ax) / (bx - ax)) * (by - ay)
   }
+  return x < profile[0][0] ? profile[0][1] : profile[profile.length - 1][1]
+}
+
+/** The profile clipped to [from, to], with its ends interpolated. */
+function clipProfile(profile: ProfilePoint[], from: number, to: number): ProfilePoint[] {
+  const out: ProfilePoint[] = [[from, heightAt(profile, from)]]
+  profile.forEach(([x, y]) => {
+    if (x > from && x < to) out.push([x, y])
+  })
+  out.push([to, heightAt(profile, to)])
+  return out
+}
+
+/** Mix two hex colours in sRGB. */
+function mix(a: string, b: string, t: number): string {
+  const ca = new THREE.Color(a)
+  const cb = new THREE.Color(b)
+  return `#${ca.lerp(cb, t).getHexString()}`
 }
 
 // ── the ground slab ─────────────────────────────────────────────────
 
 /** Surfacing, then two soil bands; the third band runs to the slab bottom. */
 const BANDS = [0.35, 1.35, 3.75] as const
+const SOIL = ['#c29a6b', '#a4764b', '#825633'] as const
+const SOIL_INK = '#5e3d22'
 const TOPSOIL = '#8c6a48'
-const TOPSOIL_INK = '#5e3d22'
-
-/** The profile clipped to [from, to], with its ends interpolated. */
-function clipProfile(profile: ProfilePoint[], from: number, to: number): ProfilePoint[] {
-  const out: ProfilePoint[] = []
-  const at = (x: number): number => {
-    for (let i = 1; i < profile.length; i++) {
-      const [ax, ay] = profile[i - 1]
-      const [bx, by] = profile[i]
-      if (x >= ax && x <= bx && bx > ax) return ay + ((x - ax) / (bx - ax)) * (by - ay)
-    }
-    return profile[profile.length - 1][1]
-  }
-  out.push([from, at(from)])
-  profile.forEach(([x, y]) => {
-    if (x > from && x < to) out.push([x, y])
-  })
-  out.push([to, at(to)])
-  return out
-}
-
-/** A band of the slab between `top` and `bottom` metres under the profile (or down to `floor`). */
-function bandShape(line: ProfilePoint[], top: number, bottom: number | null, floor: number): THREE.Shape {
-  const upper = line.map(([x, y]) => new THREE.Vector2(x, y - top))
-  const lower = line.map(([x, y]) => new THREE.Vector2(x, bottom === null ? floor : y - bottom)).reverse()
-  return new THREE.Shape([...upper, ...lower])
-}
-
-function Band({ shape, back, front, top, ink }: { shape: THREE.Shape; back: number; front: string; top: string; ink: string }) {
-  const geometry = useMemo(() => new THREE.ExtrudeGeometry(shape, { depth: -back, bevelEnabled: false, steps: 1 }), [shape, back])
-  const materials = useMemo(() => {
-    const mat = (color: string) =>
-      new THREE.MeshBasicMaterial({ color, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 })
-    // Extrusion groups: 0 is the two caps (the section face), 1 the sides (the top).
-    return [mat(front), mat(top)]
-  }, [front, top])
-  return (
-    <mesh geometry={geometry} material={materials} position={[0, 0, back]}>
-      <Edges color={ink} lineWidth={LINE} threshold={20} />
-    </mesh>
-  )
-}
-
-/** Pebbles in the section face, so the soil reads as soil. */
-function SoilSpecks({ profile, depth }: { profile: ProfilePoint[]; depth: number }) {
-  const geometry = useMemo(() => {
-    const pos: number[] = []
-    const x0 = profile[0][0]
-    const x1 = profile[profile.length - 1][0]
-    const line = clipProfile(profile, x0, x1)
-    const surface = (x: number) => {
-      for (let i = 1; i < line.length; i++) {
-        const [ax, ay] = line[i - 1]
-        const [bx, by] = line[i]
-        if (x >= ax && x <= bx && bx > ax) return ay + ((x - ax) / (bx - ax)) * (by - ay)
-      }
-      return 0
-    }
-    const rand = random(11)
-    const count = Math.round((x1 - x0) * 4.5)
-    for (let i = 0; i < count; i++) {
-      const x = x0 + 0.3 + rand() * (x1 - x0 - 0.6)
-      const top = surface(x) - BANDS[0] - 0.25
-      const y = top - rand() * (top + depth - 0.3)
-      const w = 0.1 + rand() * 0.2
-      const h = w * (0.45 + rand() * 0.3)
-      pos.push(x - w / 2, y, 0.004, x + w / 2, y, 0.004, x, y + h, 0.004)
-    }
-    const g = new THREE.BufferGeometry()
-    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
-    return g
-  }, [profile, depth])
-  return (
-    <mesh geometry={geometry}>
-      <meshBasicMaterial color={ART.soilInk} transparent opacity={0.3} />
-    </mesh>
-  )
-}
+const ROAD_SURFACE = '#5b5c5f'
+const BANK = '#b9a57f'
 
 const SURFACE_STYLE: Record<SurfaceKind, { front: string; top: string; ink: string }> = {
-  paving: { front: ART.asphalt, top: ART.ground, ink: ART.asphaltInk },
-  road: { front: ART.asphalt, top: '#5a5b5e', ink: ART.asphaltInk },
-  grass: { front: TOPSOIL, top: ART.grass, ink: TOPSOIL_INK },
+  paving: { front: LA.asphalt, top: LA.ground, ink: LA.asphaltInk },
+  road: { front: LA.asphalt, top: ROAD_SURFACE, ink: LA.asphaltInk },
+  grass: { front: TOPSOIL, top: LA.grass, ink: SOIL_INK },
+}
+
+/** The outline of a band `top` to `bottom` metres under the line (or down to `floor`). */
+function bandOutline(line: ProfilePoint[], top: number, bottom: number | null, floor: number): Vec3[] {
+  const upper = line.map(([x, y]) => [x, y - top, 0] as Vec3)
+  const lower = line.map(([x, y]) => [x, bottom === null ? floor : y - bottom, 0] as Vec3).reverse()
+  return [...upper, ...lower]
+}
+
+interface GroundProps {
+  profile: ProfilePoint[]
+  surfaces: SurfaceSpan[]
+  depth: number
+  back: number
+}
+
+function drawGround(s: Sketch, { profile, surfaces, depth, back }: GroundProps) {
+  const x0 = profile[0][0]
+  const x1 = profile[profile.length - 1][0]
+  const whole = clipProfile(profile, x0, x1)
+  const floor = -depth
+  // The soil bands on the cut face, and their ends at the right-hand edge.
+  const bands: [number, number | null][] = [[BANDS[0], BANDS[1]], [BANDS[1], BANDS[2]], [BANDS[2], null]]
+  bands.forEach(([top, bottom], i) => {
+    s.polygon(bandOutline(whole, top, bottom, floor), { fill: SOIL[i], ink: SOIL_INK, weight: 'line', shade: false })
+    const yTop = whole[whole.length - 1][1] - top
+    const yBottom = bottom === null ? floor : whole[whole.length - 1][1] - bottom
+    s.polygon([[x1, yTop, 0], [x1, yBottom, 0], [x1, yBottom, back], [x1, yTop, back]], { fill: SOIL[i], ink: SOIL_INK, weight: 'fine' })
+  })
+  // Surfacing: the cut face, its top across the site, and an end where it meets the edge.
+  for (const span of surfaces) {
+    const line = clipProfile(profile, span.from, span.to)
+    const st = SURFACE_STYLE[span.kind]
+    s.polygon(bandOutline(line, 0, BANDS[0], floor), { fill: st.front, ink: st.ink, weight: 'line', shade: false })
+    for (let i = 1; i < line.length; i++) {
+      const [ax, ay] = line[i - 1]
+      const [bx, by] = line[i]
+      const steep = Math.abs(by - ay) > (bx - ax) * 1.2
+      s.polygon([[ax, ay, 0], [bx, by, 0], [bx, by, back], [ax, ay, back]], { fill: steep ? BANK : st.top, ink: null })
+      // A steep bank is earth, not lawn: strata lines along it.
+      if (steep) {
+        for (const f of [0.25, 0.5, 0.75]) {
+          const x = ax + (bx - ax) * f
+          const y = ay + (by - ay) * f
+          s.line([x, y, 0], [x, y, back], SOIL_INK, 'fine')
+        }
+        s.line([bx, by, 0], [bx, by, back], SOIL_INK, 'fine')
+        s.line([ax, ay, 0], [ax, ay, back], LA.grassInk, 'line')
+      }
+    }
+    s.polyline(line.map(([x, y]) => [x, y + 0.002, back] as Vec3), span.kind === 'grass' ? LA.grassInk : LA.pavingInk, 'fine')
+    s.line([span.from, heightAt(profile, span.from) + 0.002, 0], [span.from, heightAt(profile, span.from) + 0.002, back], span.kind === 'grass' ? LA.grassInk : LA.pavingInk, 'fine')
+    if (span.to >= x1) {
+      const [, y] = line[line.length - 1]
+      s.polygon([[x1, y, 0], [x1, y - BANDS[0], 0], [x1, y - BANDS[0], back], [x1, y, back]], { fill: st.front, ink: st.ink, weight: 'fine' })
+    }
+    // Grass tufts along the cut edge, so the lawn reads as turf in section.
+    if (span.kind === 'grass') {
+      const rand = seeded(Math.round(span.from * 10) + 101)
+      for (let x = span.from + 0.2; x < span.to - 0.2; x += 0.28 + rand() * 0.3) {
+        const y = heightAt(profile, x)
+        const h = 0.08 + rand() * 0.1
+        s.line([x, y, 0.005], [x - 0.05, y + h, 0.005], LA.grassInk, 'fine')
+        s.line([x, y, 0.005], [x + 0.04, y + h * 0.8, 0.005], LA.grassInk, 'fine')
+      }
+      // Roots in the topsoil.
+      for (let x = span.from + 0.6; x < span.to - 0.6; x += 1.4 + rand() * 1.6) {
+        const y = heightAt(profile, x) - 0.08
+        s.polyline([[x, y, 0.004], [x + 0.06, y - 0.12, 0.004], [x + 0.02, y - 0.24, 0.004]], SOIL_INK, 'fine')
+      }
+    }
+  }
+  // Pebbles in the soil bands.
+  const rand = seeded(11)
+  const count = Math.round((x1 - x0) * 5)
+  for (let i = 0; i < count; i++) {
+    const x = x0 + 0.3 + rand() * (x1 - x0 - 0.6)
+    const top = heightAt(profile, x) - BANDS[0] - 0.2
+    const y = top - rand() * (top - floor - 0.3)
+    const band = heightAt(profile, x) - y < BANDS[1] ? 0 : heightAt(profile, x) - y < BANDS[2] ? 1 : 2
+    const w = 0.1 + rand() * 0.22
+    const h = w * (0.45 + rand() * 0.3)
+    s.polygon([[x - w / 2, y, 0.004], [x + w / 2, y, 0.004], [x + w * 0.2, y + h, 0.004], [x - w * 0.25, y + h * 0.8, 0.004]], {
+      fill: mix(SOIL[band], SOIL_INK, 0.38),
+      ink: null,
+      shade: false,
+    })
+  }
 }
 
 /**
@@ -142,270 +199,349 @@ const SURFACE_STYLE: Record<SurfaceKind, { front: string; top: string; ink: stri
  * layer (paving, road or topsoil under grass) over three soil bands, all
  * following the ground profile, so the slab steps down to the river.
  */
-export function JourneyGround({ profile, surfaces, depth, back }: {
-  profile: ProfilePoint[]
-  surfaces: SurfaceSpan[]
-  depth: number
-  back: number
-}) {
-  const shapes = useMemo(() => {
-    const x0 = profile[0][0]
-    const x1 = profile[profile.length - 1][0]
-    const whole = clipProfile(profile, x0, x1)
-    return {
-      surfacing: surfaces.map((s) => ({ key: `${s.from}-${s.kind}`, kind: s.kind, shape: bandShape(clipProfile(profile, s.from, s.to), 0, BANDS[0], -depth) })),
-      bands: [
-        bandShape(whole, BANDS[0], BANDS[1], -depth),
-        bandShape(whole, BANDS[1], BANDS[2], -depth),
-        bandShape(whole, BANDS[2], null, -depth),
-      ],
-    }
-  }, [profile, surfaces, depth])
-  return (
-    <group>
-      {shapes.surfacing.map(({ key, kind, shape }) => (
-        <Band key={key} shape={shape} back={back} {...SURFACE_STYLE[kind]} />
-      ))}
-      {shapes.bands.map((shape, i) => (
-        <Band key={i} shape={shape} back={back} front={ART.soil[i]} top={ART.soil[i]} ink={ART.soilInk} />
-      ))}
-      <SoilSpecks profile={profile} depth={depth} />
-    </group>
-  )
+export function JourneyGround(props: GroundProps) {
+  return <Drawing name="ground" props={props} draw={drawGround} />
 }
 
 // ── the house ───────────────────────────────────────────────────────
 
-const HOUSE_FRONT: Rect[] = [
-  [0.9, 0.9, 1.9, 1.4],
-  [7.2, 0.9, 1.9, 1.4],
-  [0.9, 3.4, 1.9, 1.35],
-  [4.05, 3.4, 1.9, 1.35],
-  [7.2, 3.4, 1.9, 1.35],
-]
-const HOUSE_DOOR: Rect[] = [[4.35, 0, 1.3, 2.3]]
-const HOUSE_SIDE: Rect[] = [
-  [1.6, 0.9, 1.6, 1.4],
-  [1.6, 3.4, 1.6, 1.35],
-  [4.4, 3.4, 1.6, 1.35],
-]
+/** The house's size; the gutter and downpipe levels in journeyWorld.ts follow the kit house. */
+export const HOUSE = { width: 10, depth: 7, eaves: 5.6, rise: 2.9 } as const
 
-/** A pitched roof over a w x d plan, ridge along x, from the eaves at y = 0. */
-function Roof({ width, depth, rise }: { width: number; depth: number; rise: number }) {
-  const geometry = useMemo(() => {
-    const half = depth / 2 + 0.35
-    const shape = new THREE.Shape()
-    shape.moveTo(-half, 0)
-    shape.lineTo(half, 0)
-    shape.lineTo(0, rise)
-    shape.closePath()
-    const g = new THREE.ExtrudeGeometry(shape, { depth: width + 0.6, bevelEnabled: false })
-    g.translate(0, 0, -(width + 0.6) / 2)
-    return g
-  }, [width, depth, rise])
-  return (
-    <mesh geometry={geometry} rotation={[0, Math.PI / 2, 0]}>
-      <Paper color="#eef5fa" />
-      <Edges color={ART.ink} lineWidth={LINE} threshold={20} />
-    </mesh>
-  )
+interface HouseProps {
+  position: Vec3
+  garage: boolean
+  downpipe: { x: number; z: number; top: number } | null
 }
 
-/** Where the house's gutter runs and its downpipe drops, for the drainage. */
-export const HOUSE = { width: 10, depth: 7, eaves: 5.6 } as const
-
-/**
- * A two-storey detached house. `position` is the bottom-left corner of its
- * front wall; the house runs to +x and back to -z. The gutter along the
- * front eaves is drawn by the drainage, not here.
- */
-export function JourneyHouse({ position }: { position: Vec3 }) {
-  const { width, depth, eaves } = HOUSE
-  return (
-    <group position={position}>
-      <InkSlab from={[0, 0, -depth]} to={[width, eaves, 0]} />
-      <group position={[width / 2, eaves, -depth / 2]}>
-        <Roof width={width} depth={depth} rise={2.9} />
-      </group>
-      <InkSlab from={[width - 2.4, eaves + 1.2, -depth / 2 - 1.2]} to={[width - 1.5, eaves + 3.4, -depth / 2 - 0.3]} />
-      <Panels rects={HOUSE_FRONT} position={[0, 0, 0.015]} />
-      <Panels rects={HOUSE_DOOR} position={[0, 0, 0.02]} color={ART.paper} />
-      <Panels rects={HOUSE_SIDE} position={[width + 0.015, 0, 0]} rotation={[0, Math.PI / 2, 0]} />
-      <InkSlab from={[4.1, 2.45, 0]} to={[5.9, 2.6, 0.8]} />
-    </group>
-  )
-}
-
-// ── garden, drive, road, car park, lawn ─────────────────────────────
-
-const FENCE_BOARDS: Rect[] = Array.from({ length: 11 }, (_, i) => [0.02 + i * 0.16, 0.05, 0.14, 1.1] as Rect)
-
-function FencePanel({ position, turn = 0 }: { position: Vec3; turn?: number }) {
-  return (
-    <group position={position} rotation={[0, turn, 0]}>
-      <InkBox position={[0.9, 0.6, 0]} size={[1.8, 1.2, 0.06]} color={ART.timber} ink={ART.timberInk} />
-      <Panels rects={FENCE_BOARDS} position={[0, 0, 0.035]} color={ART.timber} ink={ART.timberInk} />
-      <InkBox position={[0, 0.65, 0]} size={[0.12, 1.3, 0.12]} color={ART.timber} ink={ART.timberInk} />
-    </group>
-  )
-}
-
-/** A back garden: a timber fence down its far side, from x `from` to `to`. */
-export function JourneyGarden({ from, to, back }: { from: number; to: number; back: number }) {
-  const panels = useMemo(() => {
-    const out: number[] = []
-    for (let z = -1.2; z > back; z -= 1.8) out.push(z)
-    return out
-  }, [back])
-  return (
-    <group>
-      {panels.map((z) => (
-        <FencePanel key={z} position={[to - 0.1, 0, z]} turn={Math.PI / 2} />
-      ))}
-      {/* A flower bed and a bench, to say garden. */}
-      <InkSlab from={[from + 0.6, 0, -2.2]} to={[from + 3.6, 0.12, -1.2]} color="#e9dcc5" ink={ART.timberInk} />
-      <InkSlab from={[to - 2.8, 0.42, -4.6]} to={[to - 1.2, 0.5, -4.1]} color={ART.timber} ink={ART.timberInk} />
-      <InkSlab from={[to - 2.7, 0, -4.5]} to={[to - 2.55, 0.42, -4.2]} color={ART.timber} ink={ART.timberInk} />
-      <InkSlab from={[to - 1.45, 0, -4.5]} to={[to - 1.3, 0.42, -4.2]} color={ART.timber} ink={ART.timberInk} />
-    </group>
-  )
-}
-
-/** A paved drive with a car on it, from x `from` to `to`. */
-export function JourneyDrive({ from, to }: { from: number; to: number }) {
-  const setts: Rect[] = useMemo(() => [[0, 0, to - from, 0.25]], [from, to])
-  return (
-    <group>
-      <Panels rects={setts} position={[from, 0.012, -0.05]} rotation={[-Math.PI / 2, 0, 0]} color="#dfe6ea" ink={ART.ink} />
-      <Car position={[(from + to) / 2, 0, -4.2]} turn={Math.PI / 2} />
-    </group>
-  )
+function drawHouse(s: Sketch, { position, garage, downpipe }: HouseProps) {
+  const [x, y, z] = position
+  drawDetachedHouse(s, {
+    position: [x + HOUSE.width / 2, y, z],
+    width: HOUSE.width,
+    depth: HOUSE.depth,
+    eaves: HOUSE.eaves,
+    rise: HOUSE.rise,
+    garage,
+    downpipes: downpipe === null,
+    frontPath: -z,
+  })
+  // The downpipe itself is a drainage run; draw its hopper, brackets and gully.
+  if (downpipe) drawDownpipe(s, { position: [downpipe.x, y, downpipe.z], top: downpipe.top, radius: 0.08 })
 }
 
 /**
- * A two-lane road crossing the section, from x `from` to `to`, with kerbs,
- * footways, a centre line and a gully grating in the kerb at `gullyX`.
+ * A two-storey detached house (the kit's DetachedHouse). `position` is the
+ * bottom-left corner of its front wall; the house runs to +x and back to
+ * -z, with its garage against the +x gable. Where `downpipe` is given the
+ * journey draws the gutter and downpipe as a flowing run, so only the
+ * fittings are drawn here; otherwise the kit draws its own downpipes.
  */
-export function JourneyRoad({ from, to, back, gullyX }: { from: number; to: number; back: number; gullyX: number }) {
+export function JourneyHouse({ position, garage = true, downpipe = null }: {
+  position: Vec3
+  garage?: boolean
+  downpipe?: { x: number; z: number; top: number } | null
+}) {
+  return <Drawing name="house" props={{ position, garage, downpipe }} draw={drawHouse} />
+}
+
+// ── garden, drive, road, car park, open space ───────────────────────
+
+interface GardenProps {
+  from: number
+  to: number
+  back: number
+}
+
+function drawGarden(s: Sketch, { from, to, back }: GardenProps) {
+  const houseX0 = from - HOUSE.width
+  const houseBack = -1.2 - HOUSE.depth
+  // Block-paved drive in front of the garage, out to the cut.
+  s.patch(from + 0.1, -1.55, from + 3.3, -0.02, 0.008, { fill: '#eceff1', ink: LA.ink, weight: 'fine' })
+  joints(s, from + 0.1, -1.55, from + 3.3, -0.02, 0.01, 0.4, 0.3)
+  // Lawn beside it, edged by a flower bed and a front hedge.
+  s.box([from + 3.6, 0, -3.4], [to - 0.5, 0.12, -2.4], { fill: '#e9dcc5', ink: LA.timberInk, weight: 'fine' })
+  const rand = seeded(23)
+  for (let x = from + 3.9; x < to - 0.7; x += 0.45) {
+    s.disc([x, 0.3 + rand() * 0.12, -2.9 + (rand() - 0.5) * 0.4], 0.16 + rand() * 0.06, { fill: rand() > 0.5 ? LA.hedge : LA.treeLight, ink: LA.hedgeInk, weight: 'fine' })
+  }
+  drawHedge(s, { position: [(from + 3.6 + to - 0.3) / 2, 0, -0.35], length: to - 0.3 - from - 3.6, height: 0.85, depth: 0.55, seed: 5 })
+  drawBench(s, { position: [to - 1.8, 0, -5.4] })
+  // Boundary fences: down the side to the back, and across the back.
+  drawFence(s, { points: [[to - 0.1, -0.5], [to - 0.1, back], [houseX0 - 1.8, back]] })
+  drawFence(s, { points: [[houseX0 - 1.8, back], [houseX0 - 1.8, houseBack - 0.2]] })
+  // Patio behind the house and a timber shed at the end of the garden.
+  s.patch(houseX0 + 0.5, houseBack - 2.4, houseX0 + 6.5, houseBack, 0.008, { fill: LA.paving, ink: LA.pavingInk })
+  joints(s, houseX0 + 0.5, houseBack - 2.4, houseX0 + 6.5, houseBack, 0.01, 0.6, 0.6)
+  const shedX = houseX0 + 6.9
+  const shedZ = back + 0.6
+  s.box([shedX, 0, shedZ], [shedX + 2.4, 2.0, shedZ + 2.0], { fill: LA.timber, ink: LA.timberInk })
+  s.frame({ position: [shedX + 1.2, 2.0, shedZ + 1.0] }, () => {
+    s.prism([[-1.35, 0], [1.35, 0], [0, 0.7]], -1.15, 1.15, { fill: LA.timber, ink: LA.timberInk })
+  })
+  for (let x = shedX + 0.15; x < shedX + 2.4; x += 0.15) s.line([x, 0, shedZ + 2.004], [x, 2.0, shedZ + 2.004], LA.timberInk, 'fine')
+  s.rect(shedX + 0.8, 0, 0.8, 1.7, shedZ + 2.01, { fill: '#e7d6b8', ink: LA.timberInk, weight: 'fine' })
+}
+
+/**
+ * The garden between the house and the drive, from x `from` (the house's
+ * gable) to `to`: a paved drive to the garage, a lawn with a bed and a
+ * front hedge, a bench, boundary fences, a patio and a shed behind.
+ */
+export function JourneyGarden(props: GardenProps) {
+  return <Drawing name="garden" props={props} draw={drawGarden} />
+}
+
+interface DriveProps {
+  from: number
+  to: number
+}
+
+function drawDrive(s: Sketch, { from, to }: DriveProps) {
+  const footway = to - 1.4
+  // A block-paved parking court with a charge point, and the footway by the road.
+  s.patch(from + 0.05, -9.6, footway - 0.05, -0.02, 0.006, { fill: '#eceff1', ink: LA.ink, weight: 'fine' })
+  joints(s, from + 0.05, -9.6, footway - 0.05, -0.02, 0.008, 0.6, 0.6)
+  s.box([footway, 0, -24], [to, 0.12, 0], { fill: LA.paving, ink: LA.ink, weight: 'fine' })
+  joints(s, footway, -24, to, 0, 0.124, 0.7, 0.9)
+  drawCar(s, { position: [from + 2.2, 0, -5.6], rotation: Math.PI / 2, color: '#e7f1f8' })
+  drawEVCharger(s, { position: [from + 0.6, 0, -8.6] })
+  drawBollard(s, { position: [footway + 0.3, 0.12, -1.1] })
+  drawBollard(s, { position: [footway + 0.3, 0.12, -3.1] })
+}
+
+/** A paved parking court with a car on charge, from x `from` to `to`, and the footway along the road. */
+export function JourneyDrive(props: DriveProps) {
+  return <Drawing name="drive" props={props} draw={drawDrive} />
+}
+
+interface RoadProps {
+  from: number
+  to: number
+  back: number
+  gullyX: number
+}
+
+function drawJourneyRoad(s: Sketch, { from, to, back, gullyX }: RoadProps) {
   const mid = (from + to) / 2
-  const dashes = useMemo(() => {
-    const out: Rect[] = []
-    for (let z = 0.6; z < -back - 1; z += 3) out.push([-0.06, z, 0.12, 1.6])
-    return out
-  }, [back])
-  const bars = useMemo(() => Array.from({ length: 5 }, (_, i) => [0.06 + i * 0.1, 0.05, 0.05, 0.5] as Rect), [])
-  return (
-    <group>
-      {/* Kerbs, a little proud of the road. */}
-      <InkSlab from={[from, 0, back]} to={[from + 0.25, 0.14, 0]} />
-      <InkSlab from={[to - 0.25, 0, back]} to={[to, 0.14, 0]} />
-      <Panels rects={dashes} position={[mid, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} color={ART.paper} ink={ART.paper} />
-      {/* Gully grating in the channel by the kerb. */}
-      <group position={[gullyX - 0.3, 0.012, -0.05]} rotation={[-Math.PI / 2, 0, 0]}>
-        <Panels rects={[[0, 0, 0.6, 0.6]]} position={[0, 0, 0]} color={ART.asphaltInk} ink={ART.asphaltInk} />
-        <Panels rects={bars} position={[0, 0, 0.002]} color="#8a8c90" ink="#8a8c90" />
-      </group>
-      <Car position={[mid - 1.8, 0, -9]} turn={Math.PI / 2} color="#e7f1f8" />
-      <Car position={[mid + 1.8, 0, -16]} turn={-Math.PI / 2} />
-    </group>
+  const width = to - from - 0.3
+  // The kit road runs along its own x; turned a quarter it runs back from the cut.
+  drawRoad(s, { position: [mid, 0, back / 2], rotation: Math.PI / 2, length: -back, width, footway: 0, gullies: 0, surface: ROAD_SURFACE })
+  // Gullies in both channels; the one at the cut is where the gully pot drains to the run.
+  const other = from + (to - gullyX)
+  for (const z of [-0.36, -12.3]) drawGully(s, { position: [gullyX, 0, z], rotation: Math.PI / 2 })
+  for (const z of [-6.3, -18.3]) drawGully(s, { position: [other, 0, z], rotation: Math.PI / 2 })
+  // The far footway.
+  s.box([to, 0, back], [to + 1.4, 0.12, 0], { fill: LA.paving, ink: LA.ink, weight: 'fine' })
+  joints(s, to, back, to + 1.4, 0, 0.124, 0.7, 0.9)
+  // Traffic, well back from the section so the pipes below stay clear.
+  drawVan(s, { position: [from + 1.9, 0, -13.5], rotation: -Math.PI / 2 })
+  drawCar(s, { position: [to - 2.0, 0, -19.5], rotation: Math.PI / 2 })
+  drawStreetLamp(s, { position: [to + 0.9, 0.12, -9.5], rotation: Math.PI })
+  drawLitterBin(s, { position: [to + 0.9, 0.12, -14.5] })
+  drawPerson(s, { position: [to + 0.7, 0.12, -5.2], pose: 'walk', shirt: LA.shirtGreen })
+}
+
+/**
+ * A two-lane road running back from the section, kerb to kerb from x
+ * `from` to `to`: carriageway, centre line, bevelled kerbs, gullies in the
+ * channels (one at `gullyX` by the cut, over the journey's gully pot), a
+ * footway beyond, parked traffic and a lamp.
+ */
+export function JourneyRoad(props: RoadProps) {
+  return <Drawing name="road" props={props} draw={drawJourneyRoad} />
+}
+
+interface CarParkProps {
+  from: number
+  to: number
+  back: number
+}
+
+const CAR_TINTS = [LA.paper, '#e7f1f8', '#e9f4e6', '#f4efe6'] as const
+
+function drawCarPark(s: Sketch, { from, to, back }: CarParkProps) {
+  const x0 = from + 0.25
+  const bay = 2.5
+  const n = Math.floor((to - from - 0.3) / bay)
+  const row2 = -16.2
+  drawParkingBays(s, { position: [x0, 0, -1.4], count: n, ev: [n - 2, n - 1] })
+  drawParkingBays(s, { position: [x0 + n * bay, 0, row2], rotation: Math.PI, count: n })
+  // A slot drain across the foot of the bays, draining to the run.
+  s.patch(from + 0.2, -0.95, to - 0.2, -0.72, 0.01, { fill: LA.metal, ink: LA.ink, weight: 'fine' })
+  s.line([from + 0.2, 0.012, -0.835], [to - 0.2, 0.012, -0.835], LA.metalDark, 'line')
+  for (let k = 0; k < n; k++) {
+    const x = x0 + (k + 0.5) * bay
+    if (k !== 2) drawCar(s, { position: [x, 0, -3.8], rotation: Math.PI / 2, color: CAR_TINTS[k % 4], body: k % 2 ? 'estate' : 'hatch' })
+    if (k !== 1) drawCar(s, { position: [x, 0, row2 + 2.4], rotation: -Math.PI / 2, color: CAR_TINTS[(k + 2) % 4] })
+  }
+  // Charge points at the head of the electric bays, and lighting down the aisle.
+  for (const k of [n - 2, n - 1]) drawEVCharger(s, { position: [x0 + (k + 0.5) * bay + 0.9, 0, -6.5] })
+  drawStreetLamp(s, { position: [from + 0.4, 0, -9.2], double: false })
+  drawStreetLamp(s, { position: [to - 0.4, 0, -9.2], rotation: Math.PI })
+  drawPerson(s, { position: [from + 5.2, 0, -8.8], pose: 'walk', flip: true })
+  // A hedge along the back, and a small shopping parade beyond it for context.
+  drawHedge(s, { position: [(from + to) / 2, 0, row2 - 0.5], length: to - from - 0.4, height: 1.1, depth: 0.7, seed: 12 })
+  s.patch(from, back + 4.8, to, row2 - 1.3, 0.006, { fill: LA.paving, ink: LA.pavingInk })
+  joints(s, from, back + 4.8, to, row2 - 1.3, 0.008, 0.9, 0.9)
+  drawRetailParade(s, {
+    position: [(from + to) / 2, 0, back + 4.8],
+    width: to - from - 0.2,
+    depth: 4.6,
+    units: [{ fascia: LA.ink, lettering: LA.paper, awning: LA.red }, { fascia: LA.green, lettering: LA.paper, awning: LA.green }, { fascia: LA.paper, lettering: LA.ink, awning: null }],
+    cafeTables: 0,
+    roofPlant: false,
+  })
+}
+
+/**
+ * A surface car park from x `from` to `to`: two rows of marked bays (two
+ * for electric charging), parked cars, a slot drain along the front,
+ * lighting, and a hedge with a small shopping parade behind.
+ */
+export function JourneyCarPark(props: CarParkProps) {
+  return <Drawing name="car-park" props={props} draw={drawCarPark} />
+}
+
+interface ParkProps {
+  profile: ProfilePoint[]
+  from: number
+  to: number
+}
+
+function drawPark(s: Sketch, { profile, from, to }: ParkProps) {
+  // A footpath across the open space, with a bench, a bin and a walker.
+  const pz = -7.6
+  for (let x = from; x < to; x += 0.5) {
+    const a = heightAt(profile, x) + 0.01
+    const b = heightAt(profile, Math.min(to, x + 0.5)) + 0.01
+    s.polygon([[x, a, pz + 0.8], [Math.min(to, x + 0.5), b, pz + 0.8], [Math.min(to, x + 0.5), b, pz - 0.8], [x, a, pz - 0.8]], { fill: '#f1ebdf', ink: null })
+  }
+  s.polyline(clipProfile(profile, from, to).map(([x, y]) => [x, y + 0.012, pz + 0.8] as Vec3), LA.timberInk, 'fine')
+  s.polyline(clipProfile(profile, from, to).map(([x, y]) => [x, y + 0.012, pz - 0.8] as Vec3), LA.timberInk, 'fine')
+  const bx = from + (to - from) * 0.42
+  drawBench(s, { position: [bx, heightAt(profile, bx), pz - 1.3] })
+  drawLitterBin(s, { position: [bx + 1.6, heightAt(profile, bx + 1.6), pz - 1.2] })
+  const px = from + (to - from) * 0.7
+  drawPerson(s, { position: [px, heightAt(profile, px), pz], pose: 'walk', shirt: LA.shirtGreen, flip: true })
+}
+
+/** Open space over the storage: a footpath with a bench, a bin and a walker, following the ground. */
+export function JourneyPark(props: ParkProps) {
+  return <Drawing name="park" props={props} draw={drawPark} />
+}
+
+/** Trees at [x, z] spots on flat ground, plus any others given in full; one instanced draw for all. */
+const NO_TREES: TreeSpec[] = []
+
+export function JourneyTrees({ spots, extra = NO_TREES }: { spots: [number, number][]; extra?: TreeSpec[] }) {
+  const trees = useMemo(
+    () => [
+      ...spots.map(([x, z], i): TreeSpec => ({ position: [x, 0.02, z], kind: i % 4 === 3 ? 'broadleaf' : 'poplar', height: i % 4 === 3 ? 5.6 : 7 })),
+      ...extra,
+    ],
+    [spots, extra],
   )
+  return <Trees trees={trees} />
 }
 
-function LampPost({ position }: { position: Vec3 }) {
-  return (
-    <group position={position}>
-      <InkSlab from={[-0.08, 0, -0.08]} to={[0.08, 5.2, 0.08]} />
-      <InkSlab from={[-0.08, 5.05, -0.08]} to={[0.9, 5.2, 0.08]} />
-      <InkSlab from={[0.55, 4.95, -0.14]} to={[1.05, 5.05, 0.14]} color={ART.glass} />
-    </group>
-  )
-}
-
-/** A surface car park from x `from` to `to`: bay lines, parked cars and lighting. */
-export function JourneyCarPark({ from, to, back }: { from: number; to: number; back: number }) {
-  const bays = useMemo(() => {
-    const out: Rect[] = []
-    for (let x = from + 0.6; x <= to - 0.6; x += 2.5) {
-      out.push([x - from, 1.4, 0.1, 4.8])
-      out.push([x - from, 10.4, 0.1, 4.8])
-    }
-    return out
-  }, [from, to])
-  const cars = useMemo(() => {
-    const spots: { x: number; z: number; color: string }[] = []
-    let k = 0
-    for (let x = from + 1.85; x < to - 1; x += 2.5) {
-      k++
-      if (k % 3 !== 2) spots.push({ x, z: -3.8, color: k % 2 ? ART.paper : '#e7f1f8' })
-      if (k % 4 !== 1) spots.push({ x, z: -12.8, color: k % 2 ? '#e7f1f8' : ART.paper })
-    }
-    return spots
-  }, [from, to])
-  return (
-    <group>
-      <Panels rects={bays} position={[from, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]} color={ART.ink} />
-      {cars.map((c) => (
-        <Car key={`${c.x}-${c.z}`} position={[c.x, 0, c.z]} turn={Math.PI / 2} color={c.color} />
-      ))}
-      <LampPost position={[from + 0.6, 0, -8.3]} />
-      <LampPost position={[to - 1.6, 0, -8.3]} />
-      {/* A low wall along the back of the car park. */}
-      <InkSlab from={[from, 0, back + 3.4]} to={[to, 0.8, back + 3.1]} />
-    </group>
-  )
-}
-
-/** Trees, as the Site Explorer's poplars, at [x, z] spots on flat ground. */
-export function JourneyTrees({ spots }: { spots: [number, number][] }) {
-  return <Poplars spots={spots} />
-}
-
-/** A single tree at any height, for sloping ground and river banks. */
+/** A single broadleaf tree at any height, for sloping ground and river banks; `height` scales it. */
 export function JourneyTree({ position, height = 1 }: { position: Vec3; height?: number }) {
-  return (
-    <group position={position}>
-      <mesh position={[0, 0.7, 0]}>
-        <cylinderGeometry args={[0.1, 0.13, 1.4, 8]} />
-        <meshBasicMaterial color={ART.trunk} />
-      </mesh>
-      <mesh position={[0, 1.3 + 2.6 * height, 0]} scale={[0.95, 2.6 * height, 0.95]}>
-        <sphereGeometry args={[1, 16, 12]} />
-        <meshToonMaterial color={ART.tree} gradientMap={toonRamp()} />
-        <InkOutlines thickness={1.4} color={ART.treeInk} />
-      </mesh>
-    </group>
-  )
+  const trees = useMemo((): TreeSpec[] => [{ position, kind: 'broadleaf', height: 6 * height }], [position, height])
+  return <Trees trees={trees} />
+}
+
+interface CarProps {
+  position: Vec3
+  turn: number
+  color?: string
 }
 
 /** A car, nose towards +x. */
 export function JourneyCar({ position, turn = 0, color }: { position: Vec3; turn?: number; color?: string }) {
-  return <Car position={position} turn={turn} color={color} />
+  return <Drawing<CarProps> name="car" props={{ position, turn, color }} draw={(s, p) => drawCar(s, { position: p.position, rotation: p.turn, color: p.color })} />
+}
+
+// ── covers on the section line ──────────────────────────────────────
+
+export interface CoverSpec {
+  x: number
+  y: number
+  /** Clear opening. */
+  size: number
+  shape?: 'round' | 'square'
+}
+
+function drawCovers(s: Sketch, { covers }: { covers: CoverSpec[] }) {
+  for (const c of covers) drawManholeCover(s, { position: [c.x, c.y + 0.004, 0], size: c.size, shape: c.shape ?? 'round', cut: true })
+}
+
+/** Access covers over the products, cut in half on the section line like the Site Explorer's. */
+export function JourneyCovers({ covers }: { covers: CoverSpec[] }) {
+  return <Drawing name="covers" props={{ covers }} draw={drawCovers} />
 }
 
 // ── weather ─────────────────────────────────────────────────────────
 
-const PUFFS: { p: Vec3; r: number }[] = [
-  { p: [-2.2, 0, 0], r: 1.25 },
-  { p: [-0.6, 0.55, 0.2], r: 1.65 },
-  { p: [1.3, 0.35, -0.1], r: 1.45 },
-  { p: [2.8, -0.05, 0.1], r: 1.05 },
-  { p: [0.4, -0.35, 0.8], r: 1.1 },
+const PUFFS: [number, number, number][] = [
+  [-2.3, 0.05, 1.2],
+  [-0.7, 0.6, 1.6],
+  [1.2, 0.4, 1.45],
+  [2.75, 0.0, 1.05],
 ]
+const CLOUD_BASE = -0.6
 
-/** A line-art cloud: white puffs inked in site blue, flat underneath. */
-export function JourneyCloud({ position }: { position: Vec3 }) {
-  return (
-    <group position={position}>
-      {PUFFS.map(({ p, r }, i) => (
-        <mesh key={i} position={p} scale={[r, r * 0.82, r]}>
-          <sphereGeometry args={[1, 24, 16]} />
-          <meshBasicMaterial color="#ffffff" />
-          <InkOutlines thickness={1.6} color={ART.ink} />
-        </mesh>
-      ))}
-      <InkBox position={[0.3, -0.62, 0.1]} size={[5.6, 0.05, 1.8]} color="#ffffff" ink="#ffffff" />
-    </group>
-  )
+/** The top of the union of the puffs at `a`, or null outside them. */
+function cloudTop(a: number): number | null {
+  let top: number | null = null
+  for (const [cx, cy, r] of PUFFS) {
+    const d = a - cx
+    if (Math.abs(d) >= r) continue
+    const y = cy + Math.sqrt(r * r - d * d)
+    if (top === null || y > top) top = y
+  }
+  return top !== null && top > CLOUD_BASE ? top : null
+}
+
+function drawCloud(s: Sketch, { position, scale }: { position: Vec3; scale: number }) {
+  const pts: Vec2[] = []
+  const a0 = Math.min(...PUFFS.map(([cx, , r]) => cx - r))
+  const a1 = Math.max(...PUFFS.map(([cx, , r]) => cx + r))
+  const steps = 90
+  for (let i = 0; i <= steps; i++) {
+    const a = a0 + ((a1 - a0) * i) / steps
+    const t = cloudTop(a)
+    if (t !== null) pts.push([a * scale, t * scale])
+  }
+  const left = pts[0][0]
+  const right = pts[pts.length - 1][0]
+  const outline: Vec2[] = [[left, CLOUD_BASE * scale], ...pts, [right, CLOUD_BASE * scale]]
+  s.billboard(position, outline, { fill: LA.paper, ink: LA.ink, weight: 'bold' })
+  // A cool underside and the inner scallops where the puffs overlap.
+  s.billboard(position, [[left + 0.25 * scale, CLOUD_BASE * scale], [right - 0.25 * scale, CLOUD_BASE * scale], [right - 0.6 * scale, (CLOUD_BASE + 0.28) * scale], [left + 0.6 * scale, (CLOUD_BASE + 0.28) * scale]], { fill: '#e8f3fa', ink: null }, 1)
+  for (const [cx, cy, r] of PUFFS.slice(1)) {
+    const arcPts: Vec2[] = []
+    for (let k = 0; k <= 12; k++) {
+      const t = Math.PI * (0.62 + 0.3 * (k / 12))
+      const a = cx + Math.cos(t) * r * 0.98
+      const b = cy + Math.sin(t) * r * 0.98
+      if (b > CLOUD_BASE + 0.15) arcPts.push([a * scale, b * scale])
+    }
+    if (arcPts.length > 1) s.billboard(position, [...arcPts, ...[...arcPts].reverse()], { fill: null, ink: LA.inkSoft, weight: 'line' }, 2)
+  }
+}
+
+/** A line-art cloud: one flat-bottomed outline in site blue, turned to the viewer. */
+export function JourneyCloud({ position, scale = 1 }: { position: Vec3; scale?: number }) {
+  return <Drawing name="cloud" props={{ position, scale }} draw={drawCloud} />
+}
+
+function random(seed: number): () => number {
+  let s = seed
+  return () => {
+    s = (s * 16807) % 2147483647
+    return s / 2147483647
+  }
 }
 
 /**
@@ -419,7 +555,7 @@ export function JourneyRain({ centre, size, top, bottom, animate }: {
   bottom: number
   animate: boolean
 }) {
-  const count = 150
+  const count = 170
   const ref = useRef<THREE.LineSegments>(null)
   const seeds = useMemo(() => {
     const rand = random(5)
@@ -428,6 +564,7 @@ export function JourneyRain({ centre, size, top, bottom, animate }: {
       z: centre[1] + (rand() - 0.5) * size[1],
       phase: rand(),
       speed: 0.8 + rand() * 0.4,
+      length: 0.3 + rand() * 0.25,
     }))
   }, [centre, size])
   const geometry = useMemo(() => {
@@ -442,7 +579,7 @@ export function JourneyRain({ centre, size, top, bottom, animate }: {
     seeds.forEach((s, i) => {
       const y = top - (((s.phase + t * s.speed * 0.9) % 1) * span)
       attr.setXYZ(i * 2, s.x, y, s.z)
-      attr.setXYZ(i * 2 + 1, s.x - 0.05, y - 0.42, s.z)
+      attr.setXYZ(i * 2 + 1, s.x - 0.05, y - s.length, s.z)
     })
     attr.needsUpdate = true
     geometry.computeBoundingSphere()
@@ -457,7 +594,7 @@ export function JourneyRain({ centre, size, top, bottom, animate }: {
   })
   return (
     <lineSegments ref={ref} geometry={geometry}>
-      <lineBasicMaterial color={ART.glassInk} transparent opacity={0.85} />
+      <lineBasicMaterial color={LA.ink} transparent opacity={0.75} />
     </lineSegments>
   )
 }
@@ -465,86 +602,150 @@ export function JourneyRain({ centre, size, top, bottom, animate }: {
 // ── the river ───────────────────────────────────────────────────────
 
 /** The part of the profile below `level`, closed along the water line. */
-function waterShape(profile: ProfilePoint[], level: number): THREE.Shape | null {
-  const pts: THREE.Vector2[] = []
+function waterOutline(profile: ProfilePoint[], level: number): ProfilePoint[] {
+  const pts: ProfilePoint[] = []
   for (let i = 1; i < profile.length; i++) {
     const [ax, ay] = profile[i - 1]
     const [bx, by] = profile[i]
-    if (ay < level) pts.push(new THREE.Vector2(ax, ay))
+    if (ay < level) pts.push([ax, ay])
     if ((ay < level) !== (by < level)) {
       const t = (level - ay) / (by - ay)
-      pts.push(new THREE.Vector2(ax + (bx - ax) * t, level))
+      pts.push([ax + (bx - ax) * t, level])
     }
   }
-  return pts.length > 2 ? new THREE.Shape(pts) : null
+  return pts
+}
+
+interface RiverProps {
+  profile: ProfilePoint[]
+  level: number
+  back: number
+}
+
+function drawRiver(s: Sketch, { profile, level, back }: RiverProps) {
+  const water = waterOutline(profile, level)
+  if (water.length < 3) return
+  const xs = water.map(([x]) => x)
+  const left = Math.min(...xs)
+  const right = Math.max(...xs)
+  // The water cut in section, with a few current lines.
+  s.polygon(water.map(([x, y]) => [x, y, 0.002] as Vec3), { fill: '#bfe3f5', ink: LA.glassInk, weight: 'line', shade: false })
+  const depth = level - Math.min(...water.map(([, y]) => y))
+  for (const f of [0.3, 0.6]) {
+    const y = level - depth * f
+    for (let x = left + 0.5 + f; x < right - 0.8; x += 1.6) s.polyline([[x, y, 0.004], [x + 0.3, y + 0.05, 0.004], [x + 0.6, y, 0.004]], LA.glassInk, 'fine')
+  }
+  // Water's edge along both banks.
+  s.line([left, level + 0.01, 0], [left, level + 0.01, back], LA.glassInk, 'line')
+  s.line([right, level + 0.01, 0], [right, level + 0.01, back], LA.glassInk, 'line')
+  // Reeds in clumps along both edges, and stones at the foot of the far bank.
+  const rand = seeded(3)
+  const blade = (x: number, y: number, z: number, h: number) => {
+    const lean = (rand() - 0.5) * 0.3
+    s.line([x, y, z], [x + lean, y + h, z + (rand() - 0.5) * 0.1], LA.greenDark, 'line')
+  }
+  for (let z = -1.0; z > back + 1.5; z -= 1.6 + rand() * 1.8) {
+    for (const x of [left + 0.35 + rand() * 0.3, right - 0.45 - rand() * 0.4]) {
+      for (let k = 0; k < 6; k++) blade(x + (k - 2.5) * 0.07, level, z + (rand() - 0.5) * 0.35, 0.5 + rand() * 0.55)
+      if (rand() > 0.4) s.block([x + 0.05, level + 0.95, z], [0.06, 0.2, 0.06], { fill: LA.trunk, ink: LA.timberInk, weight: 'fine' })
+    }
+  }
+  for (let z = -0.4; z > back + 0.5; z -= 0.45 + rand() * 0.5) {
+    const x = right + 0.1 + rand() * 0.8
+    s.disc([x, heightAt(profile, x) + 0.06, z], 0.1 + rand() * 0.1, { fill: rand() > 0.5 ? '#dfe6eb' : '#e9eef2', ink: LA.metalDark, weight: 'fine' }, 8)
+  }
+  // A timber footbridge across the river, well back from the section.
+  const bz = back + 6.5
+  const deck = heightAt(profile, left - 0.8) + 0.3
+  const bx0 = left - 1.4
+  const bx1 = right + 4.2
+  const end = heightAt(profile, bx1) + 0.3
+  s.frame({ position: [0, 0, bz] }, () => {
+    // Abutments on each bank.
+    s.box([bx0 - 0.2, heightAt(profile, bx0) - 0.1, -1.1], [bx0 + 0.6, deck - 0.2, 1.1], { fill: LA.concrete, ink: LA.ink, weight: 'fine' })
+    s.box([bx1 - 0.6, heightAt(profile, bx1) - 0.1, -1.1], [bx1 + 0.2, end - 0.2, 1.1], { fill: LA.concrete, ink: LA.ink, weight: 'fine' })
+    s.prism([[bx0, deck - 0.25], [bx1, end - 0.25], [bx1, end], [bx0, deck]], -0.9, 0.9, { fill: LA.timber, ink: LA.timberInk })
+    for (let x = bx0 + 0.3; x < bx1; x += 0.3) {
+      const y = deck + ((x - bx0) / (bx1 - bx0)) * (end - deck) + 0.002
+      s.line([x, y, -0.9], [x, y, 0.9], LA.timberInk, 'fine')
+    }
+    for (const side of [-0.85, 0.85]) {
+      const posts = 12
+      for (let k = 0; k <= posts; k++) {
+        const x = bx0 + ((bx1 - bx0) * k) / posts
+        const y = deck + ((x - bx0) / (bx1 - bx0)) * (end - deck)
+        s.line([x, y, side], [x, y + 1.0, side], LA.timberInk, 'line')
+      }
+      s.line([bx0, deck + 1.0, side], [bx1, end + 1.0, side], LA.timberInk, 'line')
+      s.line([bx0, deck + 0.5, side], [bx1, end + 0.5, side], LA.timberInk, 'fine')
+    }
+  })
 }
 
 /**
  * The river running across the site (along z) in the channel the ground
  * profile cuts, filled to `level`: a cut water section at the front, a
- * flowing surface, and reeds along both edges.
+ * flowing surface, reeds and stones along the banks and a footbridge.
  */
-export function JourneyRiver({ profile, level, back }: {
-  profile: ProfilePoint[]
-  level: number
-  back: number
-}) {
-  const shape = useMemo(() => waterShape(profile, level), [profile, level])
-  const geometry = useMemo(
-    () => (shape ? new THREE.ExtrudeGeometry(shape, { depth: -back, bevelEnabled: false }) : null),
-    [shape, back],
-  )
+export function JourneyRiver({ profile, level, back }: RiverProps) {
   const span = useMemo(() => {
-    if (!shape) return [0, 0] as [number, number]
-    const xs = shape.getPoints().map((p) => p.x)
-    return [Math.min(...xs), Math.max(...xs)] as [number, number]
-  }, [shape])
+    const xs = waterOutline(profile, level).map(([x]) => x)
+    return xs.length ? ([Math.min(...xs), Math.max(...xs)] as [number, number]) : null
+  }, [profile, level])
   const flow = useWaterMaterial(26)
-  const cut = useMemo(() => new THREE.MeshBasicMaterial({ color: '#bfe3f5', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }), [])
-  const reeds = useMemo(() => {
-    const out: Vec3[] = []
-    const rand = random(3)
-    // Clumps of three along both edges, a few metres apart.
-    for (let z = -1.2; z > back + 1.5; z -= 2.2 + rand() * 1.6) {
-      const edges = [span[0] + 0.25 + rand() * 0.3, span[1] - 0.3 - rand() * 0.5]
-      edges.forEach((x) => {
-        for (let k = 0; k < 3; k++) out.push([x + (k - 1) * 0.12, level, z + (rand() - 0.5) * 0.3])
-      })
-    }
-    return out
-  }, [span, level, back])
-  if (!geometry) return null
-  const width = span[1] - span[0]
   return (
     <group>
-      <mesh geometry={geometry} material={[cut, cut]} position={[0, 0, back]}>
-        <Edges color={ART.glassInk} lineWidth={LINE} threshold={20} />
-      </mesh>
-      {/* The surface, streaking downstream (towards -z). */}
-      <group position={[(span[0] + span[1]) / 2, level + 0.006, back / 2]} rotation={[-Math.PI / 2, 0, 0]}>
-        <mesh rotation={[0, 0, -Math.PI / 2]} material={flow}>
-          <planeGeometry args={[-back, width]} />
-        </mesh>
-      </group>
-      {reeds.map((p, i) => (
-        <InkSlab key={i} from={[p[0] - 0.025, p[1], p[2] - 0.025]} to={[p[0] + 0.025, p[1] + 0.45 + (i % 3) * 0.18, p[2] + 0.025]} color={ART.grassInk} ink={ART.treeInk} />
-      ))}
+      <Drawing name="river" props={{ profile, level, back }} draw={drawRiver} />
+      {span ? (
+        /* The surface, streaking downstream (towards -z). */
+        <group position={[(span[0] + span[1]) / 2, level + 0.006, back / 2]} rotation={[-Math.PI / 2, 0, 0]}>
+          <mesh rotation={[0, 0, -Math.PI / 2]} material={flow}>
+            <planeGeometry args={[-back, span[1] - span[0]]} />
+          </mesh>
+        </group>
+      ) : null}
     </group>
   )
 }
 
+interface HeadwallProps {
+  x: number
+  top: number
+  bottom: number
+  outlet: Vec3 | null
+}
+
+function drawHeadwall(s: Sketch, { x, top, bottom, outlet }: HeadwallProps) {
+  const concrete = { fill: '#eef2f5', ink: LA.ink } as const
+  const z0 = -2.5
+  const z1 = 0.55
+  // The wall, its coping, and board marks on the river face.
+  s.box([x - 0.45, bottom - 0.3, z0], [x + 0.1, top, z1], concrete)
+  s.box([x - 0.55, top, z0 - 0.1], [x + 0.2, top + 0.16, z1 + 0.05], { ...concrete, weight: 'fine' })
+  for (let y = bottom + 0.3; y < top - 0.1; y += 0.3) s.line([x + 0.102, y, z0], [x + 0.102, y, z1], LA.pavingInk, 'fine')
+  // A splayed wingwall back along the bank, its top falling to the bed.
+  s.frame({ position: [x + 0.1, 0, z0], rotation: 1.0 }, () => {
+    s.prism([[0, bottom - 0.3], [1.7, bottom - 0.3], [1.7, bottom + 0.55], [0, top]], 0, 0.3, concrete)
+    s.prism([[0, top], [1.7, bottom + 0.55], [1.7, bottom + 0.7], [0, top + 0.14]], -0.04, 0.34, { ...concrete, weight: 'fine' })
+  })
+  // Apron and toe wall on the bed, where the outfall lands.
+  s.box([x + 0.1, bottom - 0.1, z0 - 0.4], [x + 1.7, bottom + 0.08, z1], concrete)
+  s.box([x + 1.55, bottom - 0.3, z0 - 0.4], [x + 1.75, bottom + 0.14, z1], { ...concrete, weight: 'fine' })
+  // A flap valve on the outfall and a guard rail along the top.
+  if (outlet) {
+    const [ox, oy, oz] = outlet
+    s.cylinder([ox, oy, oz], 0.19, 0.05, { axis: 'x', fill: LA.metal, ink: LA.inkDark, segments: 16 })
+    s.block([ox + 0.03, oy + 0.22, oz], [0.08, 0.06, 0.24], { fill: LA.metalDark, ink: LA.inkDark, weight: 'fine' })
+  }
+  railing(s, [[x - 0.25, z1 - 0.05], [x - 0.25, z0 - 0.05]], top + 0.16, 1.1, 1.0)
+}
+
 /**
- * A concrete outfall headwall on the river bank at `x`: a wall from the
- * river bed up to `top`, with wing walls back into the bank. The outfall
- * pipe passes through it at the cut.
+ * A concrete outfall headwall on the river bank at `x`: the wall from the
+ * river bed up to `top` with its coping and guard rail, a splayed wingwall
+ * back along the bank, an apron and toe wall on the bed, and a flap valve
+ * on the outfall at `outlet`.
  */
-export function JourneyHeadwall({ x, top, bottom }: { x: number; top: number; bottom: number }) {
-  return (
-    <group>
-      <InkSlab from={[x - 0.5, bottom, -2.6]} to={[x + 0.05, top, 0.4]} color={ART.paperShade} />
-      <InkSlab from={[x - 0.6, top, -2.7]} to={[x + 0.12, top + 0.16, 0.5]} color={ART.paperShade} />
-      {/* Apron on the river bed, where the outfall lands. */}
-      <InkSlab from={[x + 0.05, bottom - 0.05, -2.6]} to={[x + 1.3, bottom + 0.1, 0.4]} color="#e1e8ec" />
-    </group>
-  )
+export function JourneyHeadwall({ x, top, bottom, outlet = null }: { x: number; top: number; bottom: number; outlet?: Vec3 | null }) {
+  return <Drawing name="headwall" props={{ x, top, bottom, outlet }} draw={drawHeadwall} />
 }
