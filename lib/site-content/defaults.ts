@@ -3,6 +3,7 @@ import * as contact from '@/lib/content/contact'
 import * as builderHub from '@/lib/content/builder-hub'
 import { PRIMARY_NAV, FOOTER } from '@/lib/content/navigation'
 import { PRODUCT_NARRATIVE } from '@/lib/content/products'
+import { SITE_EXPLORER, SITE_EXPLORER_PLOTS } from '@/lib/content/site-explorer'
 
 /**
  * The site's copy as shipped in the code, grouped into the sections the
@@ -35,6 +36,7 @@ export const CONTENT_DEFAULTS = {
     BUILDER_CARDS: builderHub.BUILDER_CARDS,
   },
   products: PRODUCT_NARRATIVE,
+  siteExplorer: { SITE_EXPLORER, SITE_EXPLORER_PLOTS },
 }
 
 export type SiteContent = typeof CONTENT_DEFAULTS
@@ -43,6 +45,7 @@ export type HomeContent = SiteContent['home']
 export type NavigationContent = SiteContent['navigation']
 export type ContactContent = SiteContent['contact']
 export type BuilderHubContent = SiteContent['builderHub']
+export type SiteExplorerContent = SiteContent['siteExplorer']
 
 export const SECTION_IDS = Object.keys(CONTENT_DEFAULTS) as SectionId[]
 
@@ -57,4 +60,5 @@ export const SECTION_META: Record<SectionId, { label: string; description: strin
   contact: { label: 'Contact page', description: 'Heading, support cards, existing customer block and the form labels.', preview: '/contact' },
   builderHub: { label: 'Builder hub', description: 'The SuDS Builder hub heading and product cards.', preview: '/builder' },
   products: { label: 'Product pages', description: 'The story on each product page: lockup, intro, clock section and feature sections.', preview: '/products' },
+  siteExplorer: { label: 'Site Explorer', description: 'The development types and the product cards on the Site Explorer.', preview: '/site-explorer' },
 }
