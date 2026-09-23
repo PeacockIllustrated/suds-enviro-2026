@@ -1,171 +1,433 @@
-import * as THREE from 'three'
 import { PRODUCT_MODELS, type ProductModel } from '@/lib/content/product-models'
 import type { JourneyStop } from '@/lib/content/water-journey'
+import { PRODUCT_SCALE } from '@/components/site/explorer/explorerLayout'
+import type { ProfilePoint, SurfaceSpan, Vec3 } from './scenery'
 
 /**
- * The little world the water journey happens on, and where each stop sits.
+ * Where everything sits on the water journey: one continuous isometric
+ * section through a small development, from the roof of a house to a river
+ * outfall, drawn in the Site Explorer's line-art style.
  *
- * The world is a thick disc seen side-on, like a slice through a small
- * planet: houses, roads and a river on its rim, and the drainage run in
- * the cut face below ground. Positions are polar: `phi` is degrees round
- * from the top, clockwise (left of the top is negative), `r` is the
- * distance from the centre. The front face is at z = 0 and the disc runs
- * back to z = -DEPTH.
+ * Units are metres. The section cut is the plane z = 0; the site runs back
+ * to -z, drainage runs along the cut (z = CUT_Z) and products stand in the
+ * cut soil, half proud of it.
+ *
+ * Scale: scenery (house, cars, road, river) is true size. Products and
+ * their pipes are the library's millimetre models (and data-sheet sizes
+ * for the two illustrative items) at S = PRODUCT_SCALE, the Site
+ * Explorer's factor: 1.6 times true size, the same for every product, so
+ * their sizes stay honest against each other (a 600 mm chamber reads a
+ * third the width of the 1800 mm separator) and still read beside a house.
+ * Depths below ground are scaled by the same factor, so each product's
+ * cover level and pipe inverts sit where its model puts them.
+ *
+ * Pipe levels come from the models (manifest.json part bounding boxes):
+ * each product is hung from the level of its inlet, and the run falls
+ * product to product. Products that end up below the surface get an access
+ * riser up to it, as their data sheets describe.
+ *
+ * The page copy is in lib/content/water-journey.ts, keyed by stop `id`; the
+ * size callouts are here with the models they describe, so the editor can
+ * change the words but never what is drawn.
  */
 
-export const R = 14
-export const DEPTH = 4
-/** The river notch in the rim, in degrees. */
-export const RIVER: [number, number] = [50, 61]
-export const RIVER_BED = R - 1.3
-export const RIVER_LEVEL = R - 0.72
+export const S = PRODUCT_SCALE
 
 export type StopId = JourneyStop['id']
+export type Box = { min: Vec3; max: Vec3 }
 
-/** A procedural stand-in, drawn as a diagram, where no product model exists. */
+/** The section face; pipes and product centres sit just proud of it. */
+export const CUT_Z = 0.15
+export const GROUND_DEPTH = 10.4
+export const BACK = -24
+export const X_MIN = -26
+export const X_MAX = 82
+
+/** The ground along the cut: level to the car park, falling to the river. */
+export const RIVER = { level: -3.8, bed: -4.35, headwallX: 59.6 } as const
+export const PROFILE: ProfilePoint[] = [
+  [X_MIN, 0],
+  [41, 0],
+  [59.6, -1.2],
+  [59.9, RIVER.bed],
+  [66.2, RIVER.bed],
+  [69.8, -1.2],
+  [X_MAX, -1.2],
+]
+
+/** Ground level at x, away from the river. */
+export function groundAt(x: number): number {
+  for (let i = 1; i < PROFILE.length; i++) {
+    const [ax, ay] = PROFILE[i - 1]
+    const [bx, by] = PROFILE[i]
+    if (x >= ax && x <= bx && bx > ax) return ay + ((x - ax) / (bx - ax)) * (by - ay)
+  }
+  return 0
+}
+
+export const SURFACES: SurfaceSpan[] = [
+  { from: X_MIN, to: 10.2, kind: 'grass' },
+  { from: 10.2, to: 16.4, kind: 'paving' },
+  { from: 16.4, to: 23.6, kind: 'road' },
+  { from: 23.6, to: 25, kind: 'paving' },
+  { from: 25, to: 28.2, kind: 'grass' },
+  { from: 28.2, to: 41, kind: 'paving' },
+  { from: 41, to: X_MAX, kind: 'grass' },
+]
+
+/** The house: front wall on z = -1.2, from x = -6.4 to 3.6. */
+export const HOUSE_AT: Vec3 = [-6.4, 0, -1.2]
+export const ROAD = { from: 16.4, to: 23.6, gullyX: 23.1 } as const
+export const CAR_PARK = { from: 28.2, to: 41 } as const
+
+// ── products ────────────────────────────────────────────────────────
+
+const heroOf = (slug: string): ProductModel => {
+  const hero = PRODUCT_MODELS[slug]?.hero
+  if (!hero) throw new Error(`No 3D model for ${slug}`)
+  return hero
+}
+
+/** A library model and where its pipes connect, in its own millimetres. */
+export interface ModelFit {
+  model: ProductModel
+  heightMm: number
+  radiusMm: number
+  /** Plan centre of the body in the file, so it can be recentred. */
+  centreMm?: [number, number]
+  /** Turn about the vertical so its inlet faces -x (upstream). */
+  turn?: number
+  /** Centre height of the inlet and outlet stubs above the base. */
+  inletMm: number
+  outletMm: number
+  /** Stub ends along x from the body centre, after the turn. */
+  inletXMm: number
+  outletXMm: number
+  /** Stand wholly in front of the cut (the file is already drawn cut open). */
+  proud?: boolean
+  /** Plan position of the body centre off the cut, metres, where set. */
+  z?: number
+  /** Stub ends in plan, [x, z] mm from the body centre after the turn, where not along x. */
+  inletTipMm?: [number, number]
+  outletTipMm?: [number, number]
+}
+
+/*
+ * Measured from manifest.json (bboxMm of each part):
+ * - SERSIC600 chamber: 1950 mm body, Ø705 over the ribs; its 225 stubs sit
+ *   in holes centred 192.5 mm up on the 12 / 6 o'clock line (z in the file),
+ *   so it is turned a quarter to put them along the run.
+ * - SERPT600 catchpit: tubing 1495 mm, inlet and outlet stubs centred 374 mm
+ *   up, ends at x = -540 and +540. The file is drawn cut in half.
+ * - SEHDS1800 separator: 4290 mm, Ø1800 shell; inlet and outlet stubs
+ *   centred 3520 mm up, 90 degrees apart (inlet tip at x -1200, outlet tip
+ *   at z -1250 from the shell centre). Turned an eighth so both point back
+ *   at 45 degrees either side, and stood forward of the cut so both stub
+ *   ends reach the section face and the run visibly passes through it.
+ * - POC600 orifice chamber: 1495 mm tube, Ø696; stubs on the lower band
+ *   centred 356 mm up, ends at x = +/-452. The orifice plate sits on the
+ *   -x stub, so it is turned half round to put the outlet downstream.
+ */
+export const FITS = {
+  chamber: {
+    model: heroOf('inspection-chamber'),
+    heightMm: 1950,
+    radiusMm: 353,
+    turn: Math.PI / 2,
+    inletMm: 192.5,
+    outletMm: 192.5,
+    inletXMm: -353,
+    outletXMm: 353,
+  },
+  silt: {
+    model: heroOf('catchpit-silt-trap'),
+    heightMm: 1495,
+    radiusMm: 348,
+    centreMm: [0, -273],
+    inletMm: 374,
+    outletMm: 374,
+    inletXMm: -540,
+    outletXMm: 540,
+    proud: true,
+  },
+  separator: {
+    model: heroOf('rhinoceptor'),
+    heightMm: 4290,
+    radiusMm: 905,
+    centreMm: [147, 172],
+    turn: -Math.PI / 4,
+    inletMm: 3520,
+    outletMm: 3520,
+    inletXMm: -764,
+    outletXMm: 883,
+    inletTipMm: [-764, -932],
+    outletTipMm: [883, -883],
+    z: 1.3,
+  },
+  flow: {
+    model: heroOf('flow-control'),
+    heightMm: 1495,
+    radiusMm: 348,
+    turn: Math.PI,
+    inletMm: 356,
+    outletMm: 356,
+    inletXMm: -452,
+    outletXMm: 452,
+  },
+} satisfies Record<string, ModelFit>
+
+export type FitKey = keyof typeof FITS
+
+export interface ProductPlace {
+  fit: FitKey
+  x: number
+  /** Level of the inlet pipe centre; the product hangs from it. */
+  inletY: number
+}
+
+/** Plan position of a product's centre off the cut. */
+export function placeZ(fit: ModelFit): number {
+  if (fit.z !== undefined) return fit.z
+  return fit.proud ? fit.radiusMm * S + 0.05 : CUT_Z
+}
+
+export function baseOf(p: ProductPlace): number {
+  return p.inletY - FITS[p.fit].inletMm * S
+}
+
+export function topOf(p: ProductPlace): number {
+  return baseOf(p) + FITS[p.fit].heightMm * S
+}
+
+/*
+ * The run, product by product. The chamber is set with its cover at the
+ * surface, which puts its pipes about 1.8 m down (2.86 m drawn); every
+ * product downstream hangs a little lower, so the water always falls.
+ */
+export const CHAMBER: ProductPlace = { fit: 'chamber', x: 13.2, inletY: -0.05 - (1950 - 192.5) * S }
+export const SILT: ProductPlace = { fit: 'silt', x: 26.6, inletY: CHAMBER.inletY - 0.09 }
+export const SEPARATOR: ProductPlace = { fit: 'separator', x: 34, inletY: SILT.inletY - 0.1 }
+export const FLOW: ProductPlace = { fit: 'flow', x: 56.4, inletY: SEPARATOR.inletY - 0.2 }
+
+/*
+ * The illustrative items, at data-sheet sizes times S.
+ * - Rainwater tank: the data sheet gives capacities (1000 to 3300 L) but
+ *   says dimensions are confirmed at order, so this is a 3300 L tank drawn
+ *   at an assumed Ø1700 x 1450 mm body with a Ø600 access neck.
+ * - Attenuation: modules of 1000 x 500 x 400 mm (a common crate size),
+ *   six long, three high and two deep: 7.2 m3 gross. Sized per site.
+ */
+export const TANK = { x: 6.9, radius: 0.85 * S * 1000, height: 1.45 * S * 1000, top: -1.15, neck: 0.3 * S * 1000 }
+export const TANK_BASE = TANK.top - TANK.height
+export const CRATES = {
+  from: 43,
+  module: [1.0 * S * 1000, 0.4 * S * 1000, 0.5 * S * 1000] as Vec3,
+  count: [6, 3, 2] as [number, number, number],
+  bottom: SEPARATOR.inletY - 0.28,
+}
+export const CRATES_TO = CRATES.from + CRATES.module[0] * CRATES.count[0]
+export const CRATES_TOP = CRATES.bottom + CRATES.module[1] * CRATES.count[1]
+
+/** The road gully by the kerb: a Ø450 pot, 900 mm deep. */
+export const GULLY = { x: ROAD.gullyX, radius: 0.225 * S * 1000, height: 0.9 * S * 1000, top: -0.02 }
+
+// ── pipe runs ───────────────────────────────────────────────────────
+
+export type Stream = 'surface' | 'foul'
+
+export interface PipeRun {
+  /** Water reaches it on the way from stop `leg` to stop `leg + 1`. */
+  leg: number
+  /** Downstream order. */
+  points: Vec3[]
+  /** Outside radius, metres (pipe bore times S plus the wall). */
+  radius: number
+  stream?: Stream
+}
+
+const stubX = (p: ProductPlace, end: 'in' | 'out') =>
+  p.x + (end === 'in' ? FITS[p.fit].inletXMm : FITS[p.fit].outletXMm) * S
+const outY = (p: ProductPlace) => baseOf(p) + FITS[p.fit].outletMm * S
+const siltZ = placeZ(FITS.silt)
+const sepZ = placeZ(FITS.separator)
+const sepIn: Vec3 = [SEPARATOR.x + FITS.separator.inletTipMm[0] * S, SEPARATOR.inletY, sepZ + FITS.separator.inletTipMm[1] * S]
+const sepOut: Vec3 = [SEPARATOR.x + FITS.separator.outletTipMm[0] * S, SEPARATOR.inletY, sepZ + FITS.separator.outletTipMm[1] * S]
+
+const DOWNPIPE_X = HOUSE_AT[0] + 9.75
+const EAVES_Z = HOUSE_AT[2] + 0.18
+const TANK_IN_Y = TANK.top - 0.35
+const TANK_OUT_Y = TANK.top - 0.5
+
+export const PIPES: PipeRun[] = [
+  // Roof: along the gutter and down the downpipe, into the ground and to the tank.
+  {
+    leg: 0,
+    radius: 0.07,
+    points: [
+      [HOUSE_AT[0] + 0.2, 5.55, EAVES_Z],
+      [DOWNPIPE_X, 5.5, EAVES_Z],
+      [DOWNPIPE_X, -0.6, EAVES_Z],
+      [DOWNPIPE_X, TANK_IN_Y + 0.05, CUT_Z],
+      [TANK.x - TANK.radius, TANK_IN_Y, CUT_Z],
+    ],
+  },
+  // Tank overflow, dropping to the chamber.
+  {
+    leg: 1,
+    radius: 0.11,
+    points: [
+      [TANK.x + TANK.radius, TANK_OUT_Y, CUT_Z],
+      [11.3, TANK_OUT_Y - 0.15, CUT_Z],
+      [12.1, CHAMBER.inletY, CUT_Z],
+      [stubX(CHAMBER, 'in'), CHAMBER.inletY, CUT_Z],
+    ],
+  },
+  // Chamber to the catchpit, under the road.
+  {
+    leg: 2,
+    radius: 0.17,
+    points: [
+      [stubX(CHAMBER, 'out'), outY(CHAMBER), CUT_Z],
+      [24.9, SILT.inletY + 0.04, CUT_Z],
+      [stubX(SILT, 'in'), SILT.inletY, siltZ],
+    ],
+  },
+  // The road gully joining the run.
+  {
+    leg: 2,
+    radius: 0.1,
+    points: [
+      [GULLY.x + GULLY.radius, GULLY.top - GULLY.height + 0.35, CUT_Z],
+      [23.9, GULLY.top - GULLY.height + 0.3, CUT_Z],
+      [24.5, SILT.inletY + 0.12, CUT_Z],
+    ],
+  },
+  // Catchpit to the separator.
+  {
+    leg: 3,
+    radius: 0.14,
+    points: [
+      [stubX(SILT, 'out'), outY(SILT), siltZ],
+      [28.2, outY(SILT) - 0.02, CUT_Z],
+      [sepIn[0] - 0.7, SEPARATOR.inletY + 0.01, CUT_Z],
+      sepIn,
+    ],
+  },
+  // Separator to storage.
+  {
+    leg: 4,
+    radius: 0.24,
+    points: [
+      sepOut,
+      [sepOut[0] + 0.7, outY(SEPARATOR) - 0.01, CUT_Z],
+      [CRATES.from, CRATES.bottom + 0.3, CUT_Z],
+    ],
+  },
+  // Storage to the flow control.
+  {
+    leg: 5,
+    radius: 0.13,
+    points: [
+      [CRATES_TO, CRATES.bottom + 0.2, CUT_Z],
+      [stubX(FLOW, 'in'), FLOW.inletY, CUT_Z],
+    ],
+  },
+  // Out through the headwall to the river.
+  {
+    leg: 6,
+    radius: 0.13,
+    points: [
+      [stubX(FLOW, 'out'), outY(FLOW), CUT_Z],
+      [RIVER.headwallX + 0.2, outY(FLOW) - 0.08, CUT_Z],
+    ],
+  },
+]
+
+/** Where the outfall pours into the river. */
+export const OUTFALL: Vec3 = [RIVER.headwallX + 0.2, outY(FLOW) - 0.08, CUT_Z]
+
+/** A foul sewer under the road, seen end on: surface water is kept apart. */
+export const FOUL_SEWER = { x: 19.4, y: -2.1, radius: 0.19 } as const
+
+// ── stops ───────────────────────────────────────────────────────────
+
+/** A procedural stand-in, drawn as an illustration, where no product model exists. */
 export type DiagramKind = 'tank' | 'crates'
 
 export interface StopScene {
-  /** Where the camera looks and the product rises from. */
-  phi: number
-  r: number
-  /** Camera lift above the stop, and how far back it sits. */
-  lift: number
-  distance: number
+  /** What the camera frames on a wide stage, and on a tall narrow one. */
+  frame: Box
+  frameNarrow: Box
   /** A real product model from the 3D library. */
   model?: ProductModel
   diagram?: DiagramKind
-  /** Degrees to turn the model so its best side leads. */
-  yaw?: number
+  /** Size callout, from the data sheet (or the model where they differ). */
+  size?: string
+  /** The dimension line: x, base, top and the z it is drawn at. */
+  dimension?: { x: number; from: number; to: number; z: number }
 }
 
-const heroOf = (slug: string): ProductModel | undefined => PRODUCT_MODELS[slug]?.hero
+const dim = (p: ProductPlace) => {
+  const f: ModelFit = FITS[p.fit]
+  return { x: p.x + f.radiusMm * S + 0.35, from: baseOf(p), to: topOf(p), z: placeZ(f) + f.radiusMm * S }
+}
 
 export const STOP_SCENES: Record<StopId, StopScene> = {
-  rain: { phi: -55, r: R + 1.7, lift: 0.3, distance: 10 },
-  harvest: { phi: -47.5, r: R - 0.75, lift: 0.9, distance: 7.2, diagram: 'tank' },
-  chamber: { phi: -31, r: R - 0.7, lift: 0.9, distance: 7.2, model: heroOf('inspection-chamber'), yaw: 30 },
-  silt: { phi: -13, r: R - 0.7, lift: 0.9, distance: 7.2, model: heroOf('catchpit-silt-trap'), yaw: 20 },
-  separator: { phi: 5, r: R - 0.7, lift: 0.9, distance: 7.2, model: heroOf('rhinoceptor'), yaw: -110 },
-  storage: { phi: 23, r: R - 0.8, lift: 0.9, distance: 7.2, diagram: 'crates' },
-  flow: { phi: 39, r: R - 0.7, lift: 0.9, distance: 7.2, model: heroOf('flow-control'), yaw: 30 },
-  river: { phi: 54.5, r: R - 0.45, lift: 0.9, distance: 8.2 },
+  rain: {
+    frame: { min: [-9, -1.5, -9], max: [9, 12.5, 1] },
+    frameNarrow: { min: [-7, -1.6, -5], max: [8.5, 12.5, 1] },
+  },
+  harvest: {
+    frame: { min: [2, -3.9, -6], max: [12, 3.5, 1.4] },
+    frameNarrow: { min: [3.6, -3.4, -1.5], max: [10.8, 1, 1.5] },
+    diagram: 'tank',
+    size: '3300 litre tank shown',
+    dimension: { x: TANK.x + TANK.radius + 0.35, from: TANK_BASE, to: TANK.top, z: CUT_Z + TANK.radius * 0.6 },
+  },
+  chamber: {
+    frame: { min: [8.2, -3.7, -4.5], max: [18.2, 2.5, 1.4] },
+    frameNarrow: { min: [10.2, -3.6, -1.5], max: [16.4, 1, 1.5] },
+    model: FITS.chamber.model,
+    size: 'Ø600 mm, 1950 mm high',
+    dimension: dim(CHAMBER),
+  },
+  silt: {
+    frame: { min: [20.5, -4.1, -6], max: [31, 3.5, 1.6] },
+    frameNarrow: { min: [23.4, -4.1, -1.5], max: [29.8, 1, 1.6] },
+    model: FITS.silt.model,
+    size: 'Ø600 mm, 300 mm silt sump',
+    dimension: dim(SILT),
+  },
+  separator: {
+    frame: { min: [28, -9, -6], max: [40.5, 3, 2.8] },
+    frameNarrow: { min: [30.6, -9, -1.5], max: [37.6, 0.8, 2.8] },
+    model: FITS.separator.model,
+    size: 'Ø1800 mm, 4290 mm high',
+    dimension: dim(SEPARATOR),
+  },
+  storage: {
+    frame: { min: [40.5, -3.9, -6], max: [55.5, 2.5, 1.8] },
+    frameNarrow: { min: [41.6, -3.8, -1.5], max: [54, 0.6, 1.8] },
+    diagram: 'crates',
+    size: 'Crate modules, sized per site',
+  },
+  flow: {
+    frame: { min: [51.5, -4.4, -4.5], max: [61.5, 0.8, 1.4] },
+    frameNarrow: { min: [53.4, -4.3, -1.5], max: [59.6, 0, 1.4] },
+    model: FITS.flow.model,
+    size: 'Ø600 mm, 1500 mm high, 300 mm sump',
+    dimension: dim(FLOW),
+  },
+  river: {
+    frame: { min: [53, -4.8, -16], max: [76, 4, 1] },
+    frameNarrow: { min: [55.5, -4.8, -7], max: [71, 2, 1] },
+  },
 }
 
-// ── polar helpers ───────────────────────────────────────────────────
-
-const DEG = Math.PI / 180
-
-/** Unit vector pointing out of the rim at `phi` degrees. */
-export function radial(phi: number, out = new THREE.Vector3()): THREE.Vector3 {
-  return out.set(Math.sin(phi * DEG), Math.cos(phi * DEG), 0)
-}
-
-/** A point at `phi` degrees, radius `r`, depth `z`. */
-export function polar(phi: number, r: number, z = 0, out = new THREE.Vector3()): THREE.Vector3 {
-  return out.set(Math.sin(phi * DEG) * r, Math.cos(phi * DEG) * r, z)
-}
-
-/** Rotation about z that stands an object upright on the rim at `phi`. */
-export const uprightAt = (phi: number) => -phi * DEG
-
-// ── the drainage run ────────────────────────────────────────────────
-
-/** Depth of the pipe below the rim, falling gently along the run. */
-export const PIPE_FROM = -54.3
-export const PIPE_TO = 51.2
-export function pipeRadius(phi: number): number {
-  const t = (phi - PIPE_FROM) / (PIPE_TO - PIPE_FROM)
-  return R - 0.78 - 0.32 * Math.min(1, Math.max(0, t))
-}
-
-/** Where the roof gutter and downpipe sit, relative to the house. */
-export const HOUSE_PHI = -56.5
-export const DOWNPIPE_PHI = -53.9
-export const GUTTER_R = R + 1.02
-export const HOUSE_Z = -1.9
-export const PIPE_Z = 0.07
-
-/**
- * The route the water takes, gutter to river, as one curve. Above ground
- * it runs along the gutter and down the downpipe at the house front;
- * below ground it follows the cut face, stepping down into each stop.
- */
-export function waterRoute(): THREE.CatmullRomCurve3 {
-  const pts: THREE.Vector3[] = []
-  const gz = HOUSE_Z + 0.62
-  // Gutter along the eaves, then down the downpipe.
-  for (let phi = -58.4; phi <= DOWNPIPE_PHI; phi += 0.9) pts.push(polar(phi, GUTTER_R, gz))
-  pts.push(polar(DOWNPIPE_PHI, GUTTER_R - 0.12, gz))
-  for (let r = GUTTER_R - 0.35; r >= R + 0.05; r -= 0.3) pts.push(polar(DOWNPIPE_PHI, r, gz))
-  pts.push(polar(DOWNPIPE_PHI, R - 0.05, gz))
-  // Into the ground, out onto the cut face (the step through the soil is hidden).
-  pts.push(polar(DOWNPIPE_PHI + 0.05, R - 0.32, PIPE_Z))
-  pts.push(polar(DOWNPIPE_PHI + 0.4, pipeRadius(PIPE_FROM), PIPE_Z))
-  // The main run under the rim.
-  for (let phi = PIPE_FROM + 1.2; phi <= PIPE_TO; phi += 0.6) pts.push(polar(phi, pipeRadius(phi), PIPE_Z))
-  // Out of the headwall and into the river.
-  pts.push(polar(PIPE_TO + 0.9, pipeRadius(PIPE_TO) - 0.06, PIPE_Z))
-  pts.push(polar(PIPE_TO + 1.8, RIVER_LEVEL - 0.25, PIPE_Z))
-  return new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.1)
-}
-
-/**
- * How far along the route (0..1) the water has reached when the camera
- * arrives at each stop. Rain has not left the roof yet; the river is the
- * end of the line.
- */
-export function stopFractions(curve: THREE.Curve<THREE.Vector3>, stops: StopId[]): number[] {
-  const samples = 900
-  const pts = curve.getSpacedPoints(samples)
-  return stops.map((id, i) => {
-    if (i === 0) return 0
-    if (i === stops.length - 1) return 1
-    const s = STOP_SCENES[id]
-    const target = polar(s.phi, pipeRadius(s.phi), PIPE_Z)
-    let best = 0
-    let bestD = Infinity
-    pts.forEach((p, k) => {
-      const d = p.distanceToSquared(target)
-      if (d < bestD) {
-        bestD = d
-        best = k
-      }
-    })
-    return best / samples
-  })
-}
-
-// ── shapes on the face ──────────────────────────────────────────────
-
-/** An annular sector in the x-y plane, as a flat shape. */
-export function sectorShape(r0: number, r1: number, phi0: number, phi1: number, step = 0.5): THREE.Shape {
-  const shape = new THREE.Shape()
-  const outer: THREE.Vector2[] = []
-  const inner: THREE.Vector2[] = []
-  for (let phi = phi0; phi <= phi1 + 1e-6; phi += step) {
-    const a = Math.min(phi, phi1) * DEG
-    outer.push(new THREE.Vector2(Math.sin(a) * r1, Math.cos(a) * r1))
-    inner.push(new THREE.Vector2(Math.sin(a) * r0, Math.cos(a) * r0))
-  }
-  shape.setFromPoints([...outer, ...inner.reverse()])
-  return shape
-}
-
-/** The disc's outline: a full circle with the river notched into it. */
-export function discShape(): THREE.Shape {
-  const pts: THREE.Vector2[] = []
-  const [a, b] = RIVER
-  for (let phi = -180; phi < 180; phi += 0.75) {
-    const inRiver = phi > a && phi < b
-    // Sloped banks: ease the radius down over the first and last 2 degrees.
-    let r = R
-    if (inRiver) {
-      const edge = Math.min(phi - a, b - phi)
-      const k = Math.min(1, edge / 2.2)
-      r = R - (R - RIVER_BED) * (k * k * (3 - 2 * k))
-    }
-    pts.push(new THREE.Vector2(Math.sin(phi * DEG) * r, Math.cos(phi * DEG) * r))
-  }
-  return new THREE.Shape(pts)
-}
+/** The products and where each is drawn, by stop. */
+export const PRODUCT_STOPS: { stop: StopId; place: ProductPlace }[] = [
+  { stop: 'chamber', place: CHAMBER },
+  { stop: 'silt', place: SILT },
+  { stop: 'separator', place: SEPARATOR },
+  { stop: 'flow', place: FLOW },
+]

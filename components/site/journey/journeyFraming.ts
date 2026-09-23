@@ -1,11 +1,16 @@
+import * as THREE from 'three'
+import { VIEW_DIR } from '@/components/site/explorer/cameraFit'
+import type { Box } from './journeyWorld'
+
 /**
  * Shared state between the page and the 3D scene, and how the scene is
  * framed around the copy.
  *
  * The page writes `target` (where along the journey the reader is, in
  * stops) and `free` (the part of the stage the copy and timeline leave
- * clear). The scene eases `u` towards the target and frames the world and
- * the product inside the free area, so the panel never sits on the model.
+ * clear). The scene eases `u` towards the target and fits each stop's box
+ * into the free area with the Site Explorer's isometric-style camera, so
+ * the card never sits on the product.
  */
 
 export interface FreeArea {
@@ -16,24 +21,12 @@ export interface FreeArea {
   y1: number
 }
 
-export interface Framing {
-  /** Screen fraction where the stop on the world sits. */
-  focus: [number, number]
-  /** Screen fraction where the product settles. */
-  hero: [number, number]
-  /** Product's largest side, as a fraction of the view height at its distance. */
-  heroSize: number
-  /** How far back the camera sits for the free area it has. */
-  distance: number
-}
-
 export interface JourneyMotionState {
   target: number
   u: number
   /** Jump rather than glide (reduced motion, or a first placement). */
   snap: boolean
   free: FreeArea
-  framing: Framing
 }
 
 export function createMotion(): JourneyMotionState {
@@ -42,33 +35,55 @@ export function createMotion(): JourneyMotionState {
     u: 0,
     snap: true,
     free: { x0: 0, x1: 1, y0: 0.1, y1: 0.55 },
-    framing: { focus: [0.5, 0.35], hero: [0.7, 0.35], heroSize: 0.3, distance: 8 },
   }
 }
 
-const mix = (a: number, b: number, t: number) => a + (b - a) * t
+/** The camera's screen axes in the world, for the fixed view direction. */
+const FORWARD = VIEW_DIR.clone().negate()
+export const SCREEN_RIGHT = new THREE.Vector3().crossVectors(FORWARD, new THREE.Vector3(0, 1, 0)).normalize()
+export const SCREEN_UP = new THREE.Vector3().crossVectors(SCREEN_RIGHT, FORWARD).normalize()
+
+/** A camera goal in screen-axis coordinates: where it looks, and its zoom. */
+export interface Shot {
+  r: number
+  u: number
+  zoom: number
+}
+
+const corner = new THREE.Vector3()
+
+/** Whether the free area is tall enough to want the narrow framing. */
+export function isNarrow(free: FreeArea, width: number, height: number): boolean {
+  return ((free.x1 - free.x0) * width) / Math.max(1, (free.y1 - free.y0) * height) < 1.15
+}
 
 /**
- * Frame for a stage of `width` x `height` pixels. `heroness` is how much
- * a product is on stage (0..1); without one the world centres in the free
- * area, with one they share it, world left and product right.
+ * The shot that fits `box` into the free area of a `width` x `height`
+ * stage with `pad` pixels to spare. The camera looks at the middle of the
+ * stage, so the box centre is offset by the free area's offset from it.
  */
-export function frameFor(free: FreeArea, width: number, height: number, heroness: number, fovDeg: number, out: Framing): Framing {
-  const fw = (free.x1 - free.x0) * width
-  const fh = (free.y1 - free.y0) * height
-  const cy = (free.y0 + free.y1) / 2
-  const cx = (free.x0 + free.x1) / 2
-  const wide = fw > fh * 1.25
-  out.focus[0] = mix(cx, free.x0 + (free.x1 - free.x0) * (wide ? 0.3 : 0.28), heroness)
-  out.focus[1] = mix(cy, cy + (free.y1 - free.y0) * 0.08, heroness)
-  out.hero[0] = free.x0 + (free.x1 - free.x0) * (wide ? 0.7 : 0.68)
-  out.hero[1] = cy
-  // The product fills most of the free height, but never more than a
-  // little under half the free width.
-  out.heroSize = Math.min((wide ? 0.84 : 0.8) * fh, (wide ? 0.46 : 0.54) * fw) / height
-  // Back the camera off until about this many world units fit across the free width.
-  const span = wide ? 7.6 : 4.6
-  const tanHalf = Math.tan(((fovDeg / 2) * Math.PI) / 180)
-  out.distance = span / (2 * tanHalf * (width / height) * Math.max(0.2, (free.x1 - free.x0)))
+export function fitShot(box: Box, free: FreeArea, width: number, height: number, pad: number, out: Shot): Shot {
+  let minR = Infinity
+  let maxR = -Infinity
+  let minU = Infinity
+  let maxU = -Infinity
+  for (let i = 0; i < 8; i++) {
+    corner.set(i & 1 ? box.max[0] : box.min[0], i & 2 ? box.max[1] : box.min[1], i & 4 ? box.max[2] : box.min[2])
+    const r = corner.dot(SCREEN_RIGHT)
+    const u = corner.dot(SCREEN_UP)
+    minR = Math.min(minR, r)
+    maxR = Math.max(maxR, r)
+    minU = Math.min(minU, u)
+    maxU = Math.max(maxU, u)
+  }
+  const fw = Math.max(1, (free.x1 - free.x0) * width - pad * 2)
+  const fh = Math.max(1, (free.y1 - free.y0) * height - pad * 2)
+  const zoom = Math.min(fw / (maxR - minR), fh / (maxU - minU))
+  // Pixel offset of the free area's centre from the stage's centre.
+  const dx = ((free.x0 + free.x1) / 2 - 0.5) * width
+  const dy = (0.5 - (free.y0 + free.y1) / 2) * height
+  out.r = (minR + maxR) / 2 - dx / zoom
+  out.u = (minU + maxU) / 2 - dy / zoom
+  out.zoom = zoom
   return out
 }
