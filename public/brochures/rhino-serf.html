@@ -2,280 +2,599 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SuDS RHINO SERF - Orifice Flow Control Chambers</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RhinoRoFlo Orifice Flow Control Chamber - SERF300, SERF450, SERF600 Data Sheet | SuDS Enviro</title>
+<meta name="description" content="RhinoRoFlo orifice flow control chamber data sheet (SERF300, SERF450, SERF600): features, specification, general arrangement drawings, drain-down and overflow options, installation and compliance.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="_shared.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* RhinoRoFlo data sheet. Layout follows the approved SEHDS data sheet
+     template: two columns, blue feature panel, green specification panel,
+     dimensioned product drawing, Montserrat Medium and Thin. Styles are
+     local to this sheet on purpose. */
+  :root {
+    --blue: #1e80ba;
+    --blue-d: #005576;
+    --green: #58b550;
+    --red: #c44c4b;
+    --ink: #404041;
+    --thin: #8a8b8e;
+    --rule: #cfdbe4;
+    --tint: #f3f7fa;
+    --pad: 12mm;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 500;
+    color: var(--ink);
+    background: #e6ecf1;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page { size: A4 portrait; margin: 0; }
+
+  /* ---------- screen chrome ---------- */
+  .print-bar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; justify-content: center; gap: 10px;
+    padding: 10px; background: rgba(230, 236, 241, 0.92);
+  }
+  .print-btn {
+    font: 500 13px 'Montserrat', Arial, sans-serif; letter-spacing: 0.04em;
+    color: #fff; background: var(--blue); border: 0; border-radius: 999px;
+    padding: 9px 20px; cursor: pointer;
+  }
+  .print-btn:hover { background: var(--blue-d); }
+  .print-bar a {
+    font: 500 13px 'Montserrat', Arial, sans-serif; color: var(--blue-d);
+    align-self: center; text-decoration: none;
+  }
+
+  /* ---------- page ---------- */
+  .page {
+    width: 210mm; height: 297mm;
+    margin: 14px auto; background: #fff;
+    position: relative; overflow: hidden;
+    box-shadow: 0 6px 30px rgba(0, 40, 60, 0.12);
+    break-after: page; page-break-after: always;
+  }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+  @media print {
+    html, body { background: #fff; }
+    .print-bar { display: none; }
+    .page { margin: 0; box-shadow: none; }
+  }
+  @media screen and (max-width: 820px) {
+    /* phones: scale each A4 sheet to the viewport rather than scroll sideways */
+    body { overflow-x: hidden; }
+    .page { zoom: 0.46; }
+  }
+
+  /* ---------- type ---------- */
+  h2 {
+    font-weight: 500; font-size: 13pt; line-height: 1.15;
+    color: var(--blue); text-transform: uppercase; letter-spacing: 0.01em;
+    margin-bottom: 1.6mm;
+  }
+  p { font-size: 8.4pt; line-height: 1.45; color: var(--blue-d); }
+  p + p { margin-top: 1.6mm; }
+  .fine { font-size: 6.8pt; line-height: 1.4; color: var(--blue-d); }
+  .thin { font-weight: 200; }
+  .rule { height: 0; border-top: 0.35mm solid var(--rule); margin: 3.2mm 0; width: 82%; }
+  ul.dots { list-style: none; }
+  ul.dots li {
+    position: relative; padding-left: 4mm;
+    font-size: 8.4pt; line-height: 1.4; color: var(--blue-d);
+  }
+  ul.dots li + li { margin-top: 0.8mm; }
+  ul.dots li::before {
+    content: ''; position: absolute; left: 0.6mm; top: 0.62em;
+    width: 1.1mm; height: 1.1mm; border-radius: 50%; background: var(--green);
+  }
+
+  /* ---------- masthead (page 1) ---------- */
+  .mast {
+    position: absolute; left: 0; top: 0; width: 124mm;
+    padding: 9mm 8mm 5mm var(--pad);
+    border-right: 0.35mm solid var(--blue); border-bottom: 0.35mm solid var(--blue);
+    border-bottom-right-radius: 9mm;
+  }
+  .mast-title { font-size: 34pt; line-height: 0.95; font-weight: 500; letter-spacing: -0.01em; }
+  .mast-title .b { color: var(--blue); }
+  .mast-title .g { color: var(--green); }
+  .mast-sub {
+    font-weight: 200; font-size: 12.5pt; color: var(--thin);
+    text-transform: uppercase; letter-spacing: 0.02em; margin-top: 1.6mm;
+  }
+  .codebar {
+    display: inline-block; margin-top: 2mm;
+    background: var(--green); color: #fff;
+    font-size: 10.5pt; font-weight: 500; letter-spacing: 0.02em;
+    padding: 1.3mm 3mm 1.2mm; text-transform: uppercase;
+  }
+  .codebar .thin { font-weight: 200; }
+  .logo { position: absolute; right: var(--pad); top: 8mm; width: 58mm; }
+  .logo img { width: 100%; display: block; }
+
+  /* ---------- running header (pages 2+) ---------- */
+  .runhead {
+    position: absolute; left: 0; right: 0; top: 0; height: 24mm;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--pad);
+  }
+  .runhead .t { font-size: 17pt; font-weight: 500; line-height: 1; }
+  .runhead .t .b { color: var(--blue); } .runhead .t .g { color: var(--green); }
+  .runhead .s {
+    font-weight: 200; font-size: 9pt; color: var(--thin);
+    text-transform: uppercase; letter-spacing: 0.04em; margin-top: 1.2mm;
+  }
+  .runhead img { height: 15mm; display: block; }
+  .runhead::after {
+    content: ''; position: absolute; left: var(--pad); right: var(--pad); bottom: 0;
+    border-bottom: 0.35mm solid var(--rule);
+  }
+
+  /* ---------- footer ---------- */
+  .foot {
+    position: absolute; left: 0; bottom: 6mm; width: 176mm; height: 10.5mm;
+    background: var(--blue); border-top-right-radius: 6mm; border-bottom-right-radius: 6mm;
+    display: flex; align-items: center; gap: 7mm; padding: 0 6mm 0 var(--pad);
+    color: #fff; font-size: 8.8pt; font-weight: 500;
+  }
+  .foot span { display: inline-flex; align-items: center; gap: 2mm; white-space: nowrap; }
+  .foot svg { width: 4.6mm; height: 4.6mm; stroke: #fff; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .foot .sep { width: 0.3mm; height: 5mm; background: rgba(255,255,255,0.55); gap: 0; }
+  .pgno {
+    position: absolute; right: var(--pad); bottom: 9.2mm;
+    font-size: 7.4pt; font-weight: 200; color: var(--thin); letter-spacing: 0.06em;
+  }
+
+  /* ---------- panels ---------- */
+  .panel-blue {
+    background: var(--blue); color: #fff;
+    border-top-left-radius: 7mm; border-bottom-left-radius: 7mm;
+    padding: 5mm 7mm 5.5mm 7mm;
+  }
+  .panel-blue h2, .panel-green h2 { color: #fff; }
+  .panel-blue ul.dots li, .panel-green ul.dots li { color: #fff; }
+  .panel-blue ul.dots li::before { background: #fff; }
+  .panel-green ul.dots li::before { background: #fff; }
+  .panel-blue p, .panel-green p { color: #fff; }
+  .panel-green {
+    background: var(--green); color: #fff;
+    border-top-left-radius: 11mm;
+    padding: 5.5mm 7mm 6mm 8mm;
+  }
+  table.spec { width: 100%; border-collapse: collapse; }
+  table.spec th, table.spec td {
+    text-align: left; vertical-align: top; font-size: 7.7pt; line-height: 1.35;
+    padding: 1.15mm 0; border-bottom: 0.25mm solid rgba(255,255,255,0.45);
+  }
+  table.spec tr:last-child th, table.spec tr:last-child td { border-bottom: 0; }
+  table.spec th { font-weight: 500; width: 31%; padding-right: 3mm; }
+  table.spec td { font-weight: 300; }
+
+  /* ---------- figures ---------- */
+  figure { margin: 0; }
+  figure img { display: block; width: 100%; height: auto; }
+  figcaption {
+    font-size: 7pt; line-height: 1.35; color: var(--thin); font-weight: 400;
+    margin-top: 1.4mm;
+  }
+  figcaption b { color: var(--blue-d); font-weight: 500; }
+  .nts {
+    display: inline-block; font-size: 6.4pt; font-weight: 500; letter-spacing: 0.06em;
+    color: var(--red); border: 0.3mm solid var(--red); border-radius: 1mm;
+    padding: 0.2mm 1.4mm; text-transform: uppercase; vertical-align: 0.2mm;
+  }
+
+  /* ===== PAGE 1 ===== */
+  .p1-left { position: absolute; left: var(--pad); top: 55mm; width: 108mm; }
+  .p1-draw { position: absolute; right: 13mm; top: 45mm; width: 54mm; }
+  .p1-feat { position: absolute; right: 0; top: 140mm; width: 76mm; padding-top: 4.5mm; padding-bottom: 4.5mm; }
+  .p1-feat ul.dots li { font-size: 8pt; }
+  .p1-feat ul.dots li + li { margin-top: 0.4mm; }
+  .p1-iso  { position: absolute; left: 89mm; top: 201mm; width: 38mm; }
+  .p1-spec { position: absolute; right: 0; bottom: 20mm; width: 80mm; padding-top: 4.5mm; padding-bottom: 4mm; }
+  .p1-spec table.spec th, .p1-spec table.spec td { font-size: 7.3pt; padding: 0.75mm 0; }
+  .p1-spec table.spec th { white-space: nowrap; width: 1%; padding-right: 3.5mm; }
+  .p1-bottom { position: absolute; left: var(--pad); top: 199mm; width: 76mm; }
+  .p1-bottom h2 { font-size: 11.5pt; }
+
+  .sizes { display: flex; gap: 2mm; margin: 2mm 0 0.5mm; }
+  .sizes div {
+    border: 0.35mm solid var(--blue); border-radius: 2mm; padding: 1.2mm 2.4mm;
+    font-size: 8pt; color: var(--blue); text-align: center; line-height: 1.2;
+  }
+  .sizes div b { display: block; font-weight: 500; font-size: 10pt; }
+  .sizes div span { font-weight: 200; }
+
+  /* ===== PAGE 2 (general arrangement) ===== */
+  .ga { position: absolute; left: var(--pad); right: 0; top: 30mm; bottom: 20mm; display: flex; flex-direction: column; gap: 5mm; }
+  .ga-row1 { display: grid; grid-template-columns: 104mm 1fr; gap: 6mm; align-items: start; }
+  .ga-row1 .panel-green { margin-top: 6mm; }
+  .ga-elev { margin-right: var(--pad); }
+  .ga-elev img { width: auto; max-width: 100%; max-height: 92mm; margin: 0 auto; }
+  .ga-note { margin-right: var(--pad); display: grid; grid-template-columns: 1fr 1fr; column-gap: 7mm; }
+  .ga-note h2 { grid-column: 1 / -1; }
+  .frame {
+    border: 0.3mm solid var(--rule); border-radius: 3mm; padding: 4mm;
+    background: #fff;
+  }
+  .viewlabel {
+    font-size: 7.4pt; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 2mm;
+  }
+  .viewlabel .thin { color: var(--thin); }
+
+  /* ===== PAGE 3 (how it works) ===== */
+  .hw-left { position: absolute; left: var(--pad); top: 31mm; width: 104mm; }
+  .hw-right { position: absolute; right: var(--pad); top: 31mm; width: 64mm; }
+  .step { display: grid; grid-template-columns: 9mm 1fr; gap: 3mm; margin-bottom: 4.2mm; }
+  .step .n {
+    width: 9mm; height: 9mm; border-radius: 50%; background: var(--blue); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 11pt; font-weight: 500;
+  }
+  .step:nth-child(2n) .n { background: var(--green); }
+  .step h3 { font-size: 9.6pt; font-weight: 500; color: var(--blue); text-transform: uppercase; margin: 0.6mm 0 1mm; letter-spacing: 0.01em; }
+  .hw-figs { position: absolute; left: var(--pad); top: 153mm; width: 110mm; display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; align-items: start; }
+  .hw-figs .frame { padding: 3.5mm; }
+  .hw-figs figcaption { margin-top: 2.5mm; }
+  .hw-inputs { position: absolute; right: 0; bottom: 20mm; width: 76mm; }
+
+  /* ===== PAGE 4 (size range, install, compliance, contact) ===== */
+  .range { position: absolute; left: var(--pad); right: var(--pad); top: 30mm; }
+  .range-figs { display: grid; grid-template-columns: 0.8fr 1fr 1fr; gap: 7mm; align-items: end; margin-top: 3mm; }
+  .range-figs figure .fig { height: 102mm; display: flex; align-items: flex-end; justify-content: center; }
+  .range-figs figure img { width: auto; max-width: 100%; max-height: 102mm; }
+  .range-figs figcaption { text-align: center; white-space: nowrap; }
+  table.range-t { width: 100%; border-collapse: collapse; margin-top: 5mm; }
+  table.range-t th, table.range-t td {
+    font-size: 7.6pt; line-height: 1.3; padding: 1.4mm 2mm; text-align: center;
+    border-bottom: 0.25mm solid var(--rule);
+  }
+  table.range-t thead th {
+    background: var(--blue); color: #fff; font-weight: 500; text-transform: uppercase;
+    font-size: 6.9pt; letter-spacing: 0.04em;
+  }
+  table.range-t thead th:first-child { border-top-left-radius: 2mm; }
+  table.range-t thead th:last-child { border-top-right-radius: 2mm; }
+  table.range-t tbody th { text-align: left; font-weight: 500; color: var(--blue); }
+  table.range-t tbody td { color: var(--blue-d); font-weight: 400; }
+  table.range-t td:not(:nth-child(3)) { white-space: nowrap; }
+  table.range-t tbody tr:nth-child(2n) { background: var(--tint); }
+
+  .p4-cols { position: absolute; left: var(--pad); top: 200mm; width: 104mm; }
+  .p4-contact { position: absolute; right: 0; bottom: 20mm; width: 80mm; }
+  .contact { display: grid; grid-template-columns: 19mm 1fr; column-gap: 3mm; row-gap: 1.5mm; margin-top: 1mm; }
+  .contact dt { font-size: 7pt; font-weight: 400; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; align-self: baseline; }
+  .contact dd { font-size: 8.6pt; font-weight: 500; color: #fff; align-self: baseline; white-space: nowrap; }
+  .contact dd a { color: #fff; text-decoration: none; }
+  .comp { display: grid; grid-template-columns: 1fr 1fr; column-gap: 6mm; }
+</style>
 </head>
 <body>
 
 <div class="print-bar">
-  <button class="print-btn" onclick="window.print()">Save as PDF</button>
+  <button class="print-btn" type="button" onclick="window.print()">Save as PDF</button>
+  <a href="/products/flow-control">Back to Flow Control</a>
 </div>
 
-<div class="page cover">
-  <div class="cover-decoration"></div>
-  <div class="cover-inner">
-    <div class="cover-top">
-      <img src="../logos/suds/logo-slogan-white.png" alt="SuDS Enviro" class="cover-logo">
-      <div class="cover-tag">Product Data Sheet<br>2026 Edition</div>
+<!-- ===================================================== PAGE 1 -->
+<section class="page" aria-label="Page 1 - overview">
+  <header class="mast">
+    <div class="mast-title"><span class="b">Rhino</span><span class="g">RoFlo</span></div>
+    <div class="mast-sub">Orifice flow control chamber</div>
+    <div class="codebar">SERF300 <span class="thin">|</span> SERF450 <span class="thin">|</span> SERF600 <span class="thin">|</span> Data sheet</div>
+  </header>
+  <div class="logo"><img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro - Bespoke, standardised"></div>
+
+  <div class="p1-left">
+    <h2>Overview</h2>
+    <p>RhinoRoFlo is the orifice flow control chamber in the RHINO range, sold as SERF300, SERF450 and SERF600. A removable orifice plate cap on the outlet restricts the passage of water to a pre-set maximum rate, holding back peak stormwater flow and protecting downstream drainage from overload.</p>
+    <p>Each unit is delivered factory-fitted as a one-piece HDPE twinwall chamber. A flow bypass wire and bypass plate give an integral drain-down that is operated from ground level, so the chamber can be emptied for servicing without anyone entering it.</p>
+    <div class="sizes" aria-label="Chamber sizes">
+      <div><b>SERF300</b><span>Ø300 mm</span></div>
+      <div><b>SERF450</b><span>Ø450 mm</span></div>
+      <div><b>SERF600</b><span>Ø600 mm</span></div>
     </div>
-    <div class="cover-middle">
-      <div class="cover-eyebrow">RHINO SERF Series</div>
-      <h1 class="cover-title">Orifice<br>Flow Control<br><span class="accent">Chambers</span></h1>
-      <p class="cover-subtitle">Factory-fitted HDPE flow control chambers with integral drain-down, engineered to regulate stormwater discharge and prevent downstream overload.</p>
+
+    <div class="rule"></div>
+    <h2>How the orifice works</h2>
+    <p>Stormwater enters through the inlet and can only leave through the orifice in the outlet cap. The orifice diameter is calculated from the site design head and the permitted discharge. As the water level rises during a storm, the chamber and upstream network hold the excess and release it at the controlled rate. A 300 mm sump sits below the outlet.</p>
+
+    <div class="rule"></div>
+    <h2>Design compliance</h2>
+    <ul class="dots">
+      <li>BS EN 13598-2 (2009) plastic inspection chambers</li>
+      <li>Sewers for Adoption 7th Edition (SfA7)</li>
+      <li>Design and Construction Guidance (DCG), Type D and E chambers</li>
+      <li>Building Regulations Part H1</li>
+      <li>Adoptable and non-adoptable applications</li>
+    </ul>
+  </div>
+
+  <figure class="p1-draw">
+    <img src="drawings/roflo/serf600-section.svg" alt="SERF600 section A-A: Ø600 chamber, 1160 mm inlet invert, 1200 mm outlet invert, 300 mm sump, flow bypass wire running from the top of the chamber to the bypass plate on the outlet">
+    <figcaption><b>SERF600 section A-A.</b> Dimensions in mm from drawing SERF600150-1.5. <span class="nts">Not to scale</span></figcaption>
+  </figure>
+
+  <div class="panel-blue p1-feat">
+    <h2>Features &amp; benefits</h2>
+    <ul class="dots">
+      <li>Orifice sized to the site design head</li>
+      <li>Removable orifice plate cap</li>
+      <li>Ground-level drain-down via bypass wire and plate</li>
+      <li>Factory-fitted one-piece unit, no benching or site assembly</li>
+      <li>Passive control, no power supply</li>
+      <li>Flexible inlet positions around the clock face</li>
+      <li>Thermoformed base resists fracture</li>
+      <li>Light-duty to full-traffic loading</li>
+    </ul>
+  </div>
+
+  <div class="p1-bottom">
+    <h2>Chamber options</h2>
+    <p>Optional reduction cap with a Ø320 mm opening for restricted access. A bespoke overflow option adds a 110 mm overflow pipe above the orifice for exceedance flows. Standard and custom sump depths are available.</p>
+    <div class="rule"></div>
+    <h2>Installation</h2>
+    <p>Installation design should consider traffic loading, ground conditions and variable groundwater levels. If in any doubt consult the scheme designer or engineer. A suitably qualified professional is required to sign off the installation.</p>
+  </div>
+
+  <figure class="p1-iso">
+    <img src="drawings/roflo/serf600-iso.svg" alt="SERF600 isometric view with optional reduction cap">
+    <figcaption><b>SERF600</b> with optional reduction cap.</figcaption>
+  </figure>
+
+  <div class="panel-green p1-spec">
+    <h2>Specification</h2>
+    <table class="spec">
+      <tr><th>Sizes</th><td>SERF300, SERF450, SERF600 (Ø300, 450, 600 mm)</td></tr>
+      <tr><th>Material</th><td>HDPE twinwall, extruded and thermoformed</td></tr>
+      <tr><th>Control</th><td>Removable orifice plate cap, orifice sized to site criteria</td></tr>
+      <tr><th>Drain-down</th><td>Bypass wire and plate, operated from ground level</td></tr>
+      <tr><th>Sump</th><td>300 mm on standard units</td></tr>
+      <tr><th>Depth</th><td>Adoptable up to 2000 mm, non-adoptable up to 3000 mm to pipe soffit</td></tr>
+      <tr><th>Design input</th><td>Design head (m)</td></tr>
+    </table>
+  </div>
+
+  <footer class="foot">
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>www.sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>sales@sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>01224 057 700</span>
+  </footer>
+  <div class="pgno">01 / 04</div>
+</section>
+
+<!-- ===================================================== PAGE 2 -->
+<section class="page" aria-label="Page 2 - general arrangement">
+  <header class="runhead">
+    <div>
+      <div class="t"><span class="b">Rhino</span><span class="g">RoFlo</span></div>
+      <div class="s">General arrangement - SERF600</div>
     </div>
-    <div class="cover-bottom">
-      <div class="cover-meta">
-        <span class="cover-meta-label">Product Range</span>
-        <span class="cover-meta-value">Flow Control</span>
+    <img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro">
+  </header>
+
+  <div class="ga">
+    <div class="ga-row1">
+      <figure class="frame">
+        <div class="viewlabel">Plan view <span class="thin">| outlet at 12, inlet at 6</span></div>
+        <img src="drawings/roflo/serf600-plan.svg" alt="SERF600 plan view: 150 twinwall outlet at 12 o'clock with the removable orifice plate cap, 150 twinwall inlet at 6 o'clock, clock positions 2 to 10 marked">
+      </figure>
+      <div class="panel-green">
+        <h2>SERF600150-1.5</h2>
+        <table class="spec">
+          <tr><th>Chamber</th><td>Ø600 mm</td></tr>
+          <tr><th>Overall height</th><td>1500 mm</td></tr>
+          <tr><th>Inlet</th><td>150 twinwall at 6 o'clock</td></tr>
+          <tr><th>Outlet</th><td>150 twinwall at 12 o'clock</td></tr>
+          <tr><th>Inlet invert</th><td>1160 mm below top</td></tr>
+          <tr><th>Outlet invert</th><td>1200 mm below top</td></tr>
+          <tr><th>Sump</th><td>300 mm</td></tr>
+          <tr><th>Access</th><td>Optional reduction cap, Ø320 mm opening</td></tr>
+        </table>
       </div>
-      <div class="cover-meta">
-        <span class="cover-meta-label">Mechanism</span>
-        <span class="cover-meta-value">Orifice Plate</span>
+    </div>
+    <figure class="frame ga-elev">
+      <div class="viewlabel">Front elevation and section A-A</div>
+      <img src="drawings/roflo/serf600-elev-section.svg" alt="SERF600 front elevation, 1500 mm overall height, and section A-A: Ø600, 1160 mm inlet invert, 1200 mm outlet invert, 300 mm sump, flow bypass wire and bypass plate">
+    </figure>
+    <div class="ga-note">
+      <h2>Reading the drawing</h2>
+      <div>
+        <p>Drawing SERF600150-1.5 shows a Ø600 chamber with 150 mm twinwall inlet and outlet and a 1.5 m overall height. Invert levels are measured down from the top of the chamber.</p>
+        <p>The outlet invert sits 40 mm below the inlet invert and 300 mm above the base, leaving the sump below it.</p>
       </div>
-      <div class="cover-meta">
-        <span class="cover-meta-label">Input Required</span>
-        <span class="cover-meta-value">Design Head (m)</span>
+      <div>
+        <p>Inlet orientation depends on the chosen pipework configuration and diameter. The orifice diameter is calculated to suit the site design criteria.</p>
+        <p class="fine" style="margin-top:1.6mm"><span class="nts">Not to scale</span>&nbsp; Reproduced from the SuDS Enviro drawing pack for illustration. Dimensions in millimetres. Confirm project dimensions against the order drawing.</p>
       </div>
     </div>
   </div>
-</div>
 
-<div class="page">
-  <div class="page-header">
-    <div class="page-header-left">
-      <div class="page-header-mark">01</div>
-      <div class="page-header-text">Product Overview</div>
+  <footer class="foot">
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>www.sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>sales@sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>01224 057 700</span>
+  </footer>
+  <div class="pgno">02 / 04</div>
+</section>
+
+<!-- ===================================================== PAGE 3 -->
+<section class="page" aria-label="Page 3 - how it works">
+  <header class="runhead">
+    <div>
+      <div class="t"><span class="b">Rhino</span><span class="g">RoFlo</span></div>
+      <div class="s">How it works - orifice, drain-down, overflow</div>
     </div>
-    <div class="page-header-num">SECTION ONE</div>
-  </div>
+    <img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro">
+  </header>
 
-  <div class="section-eyebrow">Engineered For Stormwater Control</div>
-  <h2 class="section-title">Restrict discharge.<br>Protect <span class="accent">downstream.</span></h2>
-
-  <p class="section-lead">The SuDS RHINO SERF Series is specifically engineered for the efficient management of stormwater. A strategically sized orifice restricts the passage of water to a pre-set maximum rate, maintaining optimal water levels and preventing excessive runoff during storm events.</p>
-
-  <div class="body-text">
-    <p>Chambers are delivered as factory-fitted one-piece units with an integral service drain-down capability that can be activated from ground level. This makes SERF chambers a highly efficient, user-friendly, plug-and-play stormwater management solution.</p>
-  </div>
-
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-value">3<span class="unit">sizes</span></div>
-      <div class="stat-label">Chamber Diameters</div>
+  <div class="hw-left">
+    <div class="step">
+      <div class="n">1</div>
+      <div>
+        <h3>Orifice control</h3>
+        <p>The orifice plate is fitted in a removable cap on the outlet. Its diameter is calculated for the site so that, at the design head, discharge does not exceed the permitted rate. There are no moving parts and no power supply in normal operation.</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-value">2000<span class="unit">mm</span></div>
-      <div class="stat-label">Max Adoptable</div>
+    <div class="step">
+      <div class="n">2</div>
+      <div>
+        <h3>Storage and sump</h3>
+        <p>Inflow above the controlled rate backs up in the chamber and the upstream attenuation, then drains down as the storm passes. The sump below the outlet collects silt and debris so they can be removed during routine maintenance.</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-value">3000<span class="unit">mm</span></div>
-      <div class="stat-label">Max Non-Adopt.</div>
+    <div class="step">
+      <div class="n">3</div>
+      <div>
+        <h3>Ground-level drain-down</h3>
+        <p>A flow bypass wire runs from the top of the chamber down to a bypass plate at the outlet. Pulling the wire from ground level opens the bypass so the chamber can be drained for inspection or to clear a blocked orifice, without confined-space entry.</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-value">350<span class="unit">mm</span></div>
-      <div class="stat-label">Restricted Access</div>
-    </div>
-  </div>
-
-  <div class="section-eyebrow" style="margin-top: 22px;">Available Diameters</div>
-  <div class="size-strip">
-    <div class="size-chip">300<span class="suffix">mm</span></div>
-    <div class="size-chip">450<span class="suffix">mm</span></div>
-    <div class="size-chip">600<span class="suffix">mm</span></div>
-  </div>
-
-  <div class="callout">
-    <div class="callout-label">Ground-Level Drain Down</div>
-    <div class="callout-text">Unique to the SERF range, the integral service drain-down capability can be activated from ground level. This makes servicing efficient and user-friendly, with no need to access the chamber internals.</div>
-  </div>
-
-  <div class="page-footer">
-    <span>RHINO SERF Series</span>
-    <span class="green-dot"></span>
-    <span>Page 02</span>
-  </div>
-</div>
-
-<div class="page">
-  <div class="page-header">
-    <div class="page-header-left">
-      <div class="page-header-mark">02</div>
-      <div class="page-header-text">How It Works</div>
-    </div>
-    <div class="page-header-num">SECTION TWO</div>
-  </div>
-
-  <div class="section-eyebrow">Orifice Flow Regulation</div>
-  <h2 class="section-title">A calibrated aperture,<br>calmly <span class="accent">holding peak.</span></h2>
-
-  <p class="section-lead">An orifice plate sized to the design head of the catchment controls the volume of water released from the chamber. During storm events, the chamber holds back peak flow, releasing at a controlled rate and protecting downstream infrastructure from overload.</p>
-
-  <div class="body-text">
-    <p>The SERF Series is manufactured from High-Density Polyethylene using advanced extrusion and thermoforming technologies. Chambers arrive fully assembled as a one-piece unit, designed to handle both light-duty and full-traffic loading. The thermoformed base enhances structural strength and prevents fractures, ensuring a reliable installation.</p>
-  </div>
-
-  <div class="section-eyebrow" style="margin-top: 26px;">Design Advantages</div>
-
-  <div class="feature-grid">
-    <div class="feature">
-      <span class="feature-badge">Control</span>
-      <div class="feature-title">Orifice Flow Control</div>
-      <div class="feature-desc">Regulates stormwater discharge, preventing peak runoff from overwhelming downstream drainage systems.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge blue">Operation</span>
-      <div class="feature-title">Integral Drain-Down</div>
-      <div class="feature-desc">Unique to SERF, drain-down is activated from ground level for safe and rapid maintenance.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge">Installation</span>
-      <div class="feature-title">Factory-Fitted One-Piece</div>
-      <div class="feature-desc">Complete unit arrives ready to install. No benching, no on-site assembly.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge blue">Layout</span>
-      <div class="feature-title">Multi-Inlet Configurations</div>
-      <div class="feature-desc">Flexible inlet and outlet orientation options accommodate project-specific site layouts.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge">Durability</span>
-      <div class="feature-title">Anti-Fracture HDPE Base</div>
-      <div class="feature-desc">Thermoformed base supports deeper installations with minimised fracture risk.</div>
-    </div>
-    <div class="feature">
-      <span class="feature-badge blue">Custom</span>
-      <div class="feature-title">Bespoke Sump Depths</div>
-      <div class="feature-desc">Standard and custom configurations available to suit a wide variety of site requirements.</div>
+    <div class="step">
+      <div class="n">4</div>
+      <div>
+        <h3>Bespoke overflow option</h3>
+        <p>Where exceedance flows must be passed forward, a 110 mm vertical overflow pipe on a support plate rises from the outlet tee. In the example shown (SERF600160-3-6-9-1.5) the overflow top sits 135 mm below the chamber top, above a Ø41 orifice plate with bypass plate and wire.</p>
+      </div>
     </div>
   </div>
 
-  <div class="page-footer">
-    <span>RHINO SERF Series</span>
-    <span class="green-dot"></span>
-    <span>Page 03</span>
-  </div>
-</div>
+  <figure class="hw-right">
+    <img src="drawings/roflo/serf600of-cutaways.svg" alt="Two cutaway views of a SERF600 with the bespoke overflow option: 110 overflow pipe and support plate, outlet tee, Ø41 orifice plate with bypass plate and wire">
+    <figcaption><b>Overflow option cutaways.</b> Drawing SERF600160-3-6-9-1.5.</figcaption>
+  </figure>
 
-<div class="page">
-  <div class="page-header">
-    <div class="page-header-left">
-      <div class="page-header-mark">03</div>
-      <div class="page-header-text">Specification and Compliance</div>
+  <div class="hw-figs">
+    <figure class="frame">
+      <div class="viewlabel">Plan <span class="thin">| 3 inlets at 3, 6, 9</span></div>
+      <img src="drawings/roflo/serf600of-plan.svg" alt="Plan of SERF600 overflow option: 160 EN1401 outlet at 12 o'clock and 160 EN1401 inlets at 3, 6 and 9 o'clock">
+      <figcaption><b>SERF600160-3-6-9-1.5.</b> Ø600, 160 EN1401 outlet at 12 and three 160 EN1401 inlets. 1495 mm overall height. <span class="nts">Not to scale</span></figcaption>
+    </figure>
+    <figure class="frame">
+      <div class="viewlabel">Section A-A</div>
+      <img src="drawings/roflo/serf600of-section.svg" alt="Section of SERF600 overflow option: Ø600, 1250 mm inlet inverts (3 off), 1285 mm outlet invert, 210 mm sump, overflow top 135 mm below chamber top, support plate 400 mm below top">
+    </figure>
+  </div>
+
+  <div class="panel-blue hw-inputs">
+    <h2>Sizing inputs</h2>
+    <ul class="dots">
+      <li>Design head in metres (the only essential input)</li>
+      <li>Permitted discharge rate, if set by consent</li>
+      <li>Chamber size: SERF300, SERF450 or SERF600</li>
+      <li>Inlet and outlet pipe size and type</li>
+      <li>Inlet clock positions</li>
+      <li>Invert depths and cover level</li>
+      <li>Adoptable or non-adoptable</li>
+      <li>Overflow required, yes or no</li>
+    </ul>
+    <p class="fine" style="margin-top:2mm;color:#fff">Our technical team returns a calibrated unit with the orifice plate factory-fitted and matched to the site.</p>
+  </div>
+
+  <footer class="foot">
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>www.sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>sales@sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>01224 057 700</span>
+  </footer>
+  <div class="pgno">03 / 04</div>
+</section>
+
+<!-- ===================================================== PAGE 4 -->
+<section class="page" aria-label="Page 4 - size range, installation, compliance and contact">
+  <header class="runhead">
+    <div>
+      <div class="t"><span class="b">Rhino</span><span class="g">RoFlo</span></div>
+      <div class="s">Size range - SERF300, SERF450, SERF600</div>
     </div>
-    <div class="page-header-num">SECTION THREE</div>
+    <img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro">
+  </header>
+
+  <div class="range">
+    <div class="range-figs">
+      <figure>
+        <div class="fig"><img src="drawings/roflo/serf300-section.svg" alt="SERF300 section: Ø300, 2160 mm inlet invert, 2200 mm outlet invert, 300 mm sump"></div>
+        <figcaption><b>SERF300</b> - drawing SERF300110-2.5</figcaption>
+      </figure>
+      <figure>
+        <div class="fig"><img src="drawings/roflo/serf450-section.svg" alt="SERF450 section: Ø450, 660 mm inlet invert, 700 mm outlet invert, 300 mm sump"></div>
+        <figcaption><b>SERF450</b> - drawing SERF450150-1</figcaption>
+      </figure>
+      <figure>
+        <div class="fig"><img src="drawings/roflo/serf600-section.svg" alt="SERF600 section: Ø600, 1160 mm inlet invert, 1200 mm outlet invert, 300 mm sump"></div>
+        <figcaption><b>SERF600</b> - drawing SERF600150-1.5</figcaption>
+      </figure>
+    </div>
+    <p class="fine" style="margin-top:2mm"><span class="nts">Not to scale</span>&nbsp; Sections are shown at different scales so each fits the column. Each is one drawn configuration; overall height, pipework and inlet positions are made to order.</p>
+
+    <table class="range-t">
+      <thead>
+        <tr><th>Code</th><th>Chamber</th><th>Drawn pipework</th><th>Overall height</th><th>Inlet invert</th><th>Outlet invert</th><th>Sump</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>SERF300</th><td>Ø300 mm</td><td>110 EN1401 (150 twinwall, 160 EN1401 optional)</td><td>2500 mm</td><td>2160 mm</td><td>2200 mm</td><td>300 mm</td></tr>
+        <tr><th>SERF450</th><td>Ø450 mm</td><td>150 twinwall</td><td>1000 mm</td><td>660 mm</td><td>700 mm</td><td>300 mm</td></tr>
+        <tr><th>SERF600</th><td>Ø600 mm</td><td>150 twinwall</td><td>1500 mm</td><td>1160 mm</td><td>1200 mm</td><td>300 mm</td></tr>
+      </tbody>
+    </table>
+    <p class="fine" style="margin-top:1.4mm">Invert levels are measured down from the top of the chamber. SERF300 is built from 300 mm twinwall with a 1 m extension and body coupler.</p>
   </div>
 
-  <div class="section-eyebrow">Technical Specifications</div>
-  <h2 class="section-title">Design head in,<br>controlled flow <span class="accent">out.</span></h2>
-
-  <table class="spec-table">
-    <thead>
-      <tr><th>Parameter</th><th>Specification</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Chamber Sizes</td><td>300mm, 450mm, 600mm diameter</td></tr>
-      <tr><td>Material</td><td>High-Density Polyethylene (HDPE), extrusion and thermoformed</td></tr>
-      <tr><td>Flow Control</td><td>Pre-sized orifice plate, calibrated to design head</td></tr>
-      <tr><td>Drain Down</td><td>Integral service capability, operated from ground level</td></tr>
-      <tr><td>Configuration</td><td>Factory-fitted one-piece with multi-inlet options</td></tr>
-      <tr><td>Adoptable Depth</td><td>Up to 2000mm to pipe soffit</td></tr>
-      <tr><td>Non-Adoptable Depth</td><td>Up to 3000mm to pipe soffit</td></tr>
-      <tr><td>Restricted Access</td><td>Maximum 350mm diameter at depths over 1m (DCG)</td></tr>
-    </tbody>
-  </table>
-
-  <div class="callout" style="margin-top: 18px;">
-    <div class="callout-label">Specifier's Note</div>
-    <div class="callout-text">To size a SERF chamber, the only input required is the Design Head in metres. Our technical team will return a calibrated unit with a factory-fitted orifice plate matched to the site.</div>
-  </div>
-
-  <div class="two-col" style="margin-top: 24px;">
-    <div class="col-block">
-      <h4>Applications</h4>
-      <ul>
-        <li>Stormwater flow control</li>
-        <li>Inspection of surface pipework</li>
-        <li>Adoptable installations to 2000mm</li>
-        <li>Non-adoptable installations to 3000mm</li>
-        <li>Sustainable drainage systems</li>
-        <li>Downstream protection</li>
+  <div class="p4-cols">
+    <h2>Installation</h2>
+    <ul class="dots">
+      <li>Bed and surround to suit the traffic loading and ground conditions</li>
+      <li>Allow for variable groundwater levels and flotation</li>
+      <li>Set the outlet to the design invert; the orifice plate is factory-fitted</li>
+      <li>Keep the bypass wire free and reachable from cover level</li>
+      <li>Have the installation signed off by a suitably qualified professional</li>
+    </ul>
+    <div class="rule"></div>
+    <h2>Compliance</h2>
+    <div class="comp">
+      <ul class="dots">
+        <li>BS EN 13598-2 (2009)</li>
+        <li>SfA7 (Sewers for Adoption)</li>
+        <li>DCG Type D and E chambers</li>
+      </ul>
+      <ul class="dots">
+        <li>Building Regulations Part H1</li>
+        <li>DCG restricted access: max 350 mm opening over 1 m depth</li>
       </ul>
     </div>
-    <div class="col-block">
-      <h4>Key Benefits</h4>
-      <ul>
-        <li>Ground-level service access</li>
-        <li>Passive, zero-power flow control</li>
-        <li>Rapid factory-fitted installation</li>
-        <li>Chemical and corrosion resistant</li>
-        <li>Light-duty to full-traffic rated</li>
-        <li>Custom sump depth options</li>
-      </ul>
-    </div>
   </div>
 
-  <div class="section-eyebrow" style="margin-top: 30px;">Compliance</div>
-
-  <div class="compliance-list">
-    <div class="compliance-row">
-      <div class="compliance-code">EN 13598 Part 2</div>
-      <div class="compliance-desc">European standard for thermoplastic inspection chambers, edition 2009.</div>
-    </div>
-    <div class="compliance-row">
-      <div class="compliance-code">DCG Type D &amp; E</div>
-      <div class="compliance-desc">Design and Construction Guidance. Compliant for Type D and Type E chambers.</div>
-    </div>
-    <div class="compliance-row">
-      <div class="compliance-code">SfA 7th Edition</div>
-      <div class="compliance-desc">Sewers for Adoption 7th Edition. Compliant for adoptable systems.</div>
-    </div>
-    <div class="compliance-row">
-      <div class="compliance-code">Building Regs Part H1</div>
-      <div class="compliance-desc">UK Building Regulations Part H1 for drainage.</div>
-    </div>
-    <div class="compliance-row">
-      <div class="compliance-code">Restricted Access</div>
-      <div class="compliance-desc">Maximum 350mm access diameter where pipework is installed at depths over 1 metre.</div>
-    </div>
+  <div class="panel-blue p4-contact">
+    <h2>Specify RhinoRoFlo</h2>
+    <p style="margin-bottom:2.6mm">Send us the design head and our team will return a calibrated unit ready for site.</p>
+    <dl class="contact">
+      <dt>Company</dt><dd>SuDS Enviro</dd>
+      <dt>Sales</dt><dd><a href="mailto:sales@sudsenviro.com">sales@sudsenviro.com</a></dd>
+      <dt>Telephone</dt><dd><a href="tel:+441224057700">01224 057 700</a></dd>
+      <dt>Web</dt><dd><a href="https://www.sudsenviro.com">www.sudsenviro.com</a></dd>
+    </dl>
   </div>
 
-  <div class="page-footer">
-    <span>RHINO SERF Series</span>
-    <span class="green-dot"></span>
-    <span>Page 04</span>
-  </div>
-</div>
-
-<div class="page closing">
-  <img src="../logos/suds/logo-slogan-main.png" alt="SuDS Enviro" class="closing-brand">
-  <div class="closing-mark">
-    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-  </div>
-  <div class="closing-eyebrow">Specify With Confidence</div>
-  <h2 class="closing-title">Peak flow, held.<br>Downstream, protected.</h2>
-  <p class="closing-text">The RHINO SERF Series regulates stormwater with a precision-sized orifice plate in a factory-fitted HDPE chamber. Share the design head and our team will return a calibrated unit ready for site.</p>
-  <div class="contact-card">
-    <div class="contact-row">
-      <span class="label">Product</span>
-      <span class="value">RHINO SERF Series</span>
-    </div>
-    <div class="contact-row">
-      <span class="label">Manufacturer</span>
-      <span class="value">SuDS Enviro Ltd</span>
-    </div>
-    <div class="contact-row">
-      <span class="label">Enquiries</span>
-      <span class="value">hello@sudsenviro.com</span>
-    </div>
-    <div class="contact-row">
-      <span class="label">Configurator</span>
-      <span class="value">sudsenviro.com</span>
-    </div>
-  </div>
-</div>
+  <footer class="foot">
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>www.sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>sales@sudsenviro.com</span>
+    <span class="sep"></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>01224 057 700</span>
+  </footer>
+  <div class="pgno">04 / 04</div>
+</section>
 
 </body>
 </html>
