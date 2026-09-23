@@ -5,8 +5,8 @@ import { useFrame } from '@react-three/fiber'
 import { Edges } from '@react-three/drei'
 import * as THREE from 'three'
 import { InkOutlines, toonRamp, useWaterMaterial } from '@/components/site/three/toon'
-import { ART, InkBox, InkSlab, LINE, Panels, Paper, type Rect } from '@/components/site/explorer/lineArt'
-import { Car, Poplars } from '@/components/site/explorer/Buildings'
+import { ART, InkBox, InkSlab, LINE, Panels, Paper, type Rect } from './legacyLineArt'
+import { Car, Poplars } from './legacyBuildings'
 
 /**
  * The water journey's scenery, and only its scenery: the house, garden,
