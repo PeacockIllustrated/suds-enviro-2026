@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabase'
-import { generateCompliance, generateProductCode, getRuleModule } from '@/lib/rule-engine'
-import { getEffectiveOutletSize } from '@/lib/rules/chamber'
-import { generateDrawingHTML } from '@/lib/pdf/drawing-template'
-import type { ChamberBaseFields, WizardState } from '@/lib/types'
+import { buildSpecSheetData } from '@/lib/pdf/spec-sheet-data'
+import { generateSpecSheetHTML } from '@/lib/pdf/spec-sheet'
+import type { ProductData } from '@/lib/types'
 
 interface RouteParams {
   params: Promise<{ configId: string }>
@@ -29,66 +28,28 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Configuration not found' }, { status: 404 })
   }
 
-  // Extract chamber data from the product_data JSONB
-  const productData = config.product_data as { kind: string; data: ChamberBaseFields } | null
+  const productData = config.product_data as ProductData | null
   if (!productData || !productData.data) {
     return NextResponse.json({ error: 'No product data found in configuration' }, { status: 400 })
   }
 
-  // The drawing template models a round chamber with clock-position
-  // inlets. Other products would be drawn with made-up chamber geometry,
-  // so they are refused rather than given a misleading drawing.
-  if (productData.kind !== 'chamber' && productData.kind !== 'catchpit') {
+  // The drawing models a round chamber with clock-position inlets, so
+  // only the inspection chamber and catchpit get one. Other products
+  // would be drawn with made-up geometry and are refused instead.
+  const sheet = buildSpecSheetData(productData, {
+    configId: config.id as string,
+    quoteRef: (config.quote_ref as string) || null,
+    productCode: (config.product_code as string) || null,
+    date: new Date().toISOString(),
+  })
+  if (!sheet) {
     return NextResponse.json(
       { error: 'An engineering drawing is not available for this product' },
       { status: 422 }
     )
   }
 
-  const chamberData = productData.data
-
-  // Reconstruct a minimal WizardState for code/compliance generation
-  const wizardState: WizardState = {
-    step: (config.wizard_step as number) || 9,
-    product: (config.product as WizardState['product']) || 'chamber',
-    productData: productData as WizardState['productData'],
-    configId: config.id as string,
-  }
-
-  const productCode = (config.product_code as string) || generateProductCode(wizardState)
-  const compliance = generateCompliance(wizardState)
-
-  // Determine outlet size: R2 lock, user choice, or the largest inlet (R6)
-  const outletSize = getEffectiveOutletSize({
-    outletLocked: chamberData.outletLocked ?? null,
-    pipeSizes: chamberData.pipeSizes ?? {},
-  }) ?? '160mm EN1401'
-
-  // Depth limits differ by product (R4)
-  const depthRules = getRuleModule(productData.kind)
-  const maxDepthAdoptable = depthRules.getMaxDepth ? depthRules.getMaxDepth(true) : 3000
-  const maxDepthNonAdoptable = depthRules.getMaxDepth ? depthRules.getMaxDepth(false) : 6000
-
-  const html = generateDrawingHTML({
-    productCode,
-    quoteRef: (config.quote_ref as string) || null,
-    diameter: chamberData.diameter || 600,
-    depth: chamberData.depth || 1500,
-    inletCount: chamberData.inletCount || 1,
-    positions: (chamberData.positions || []) as string[],
-    pipeSizes: (chamberData.pipeSizes || {}) as Record<string, string>,
-    outletSize,
-    outletLocked: chamberData.outletLocked !== null && chamberData.outletLocked !== undefined,
-    systemType: chamberData.systemType || 'surface',
-    adoptable: chamberData.adoptable ?? false,
-    flowControl: chamberData.flowControl ?? false,
-    flowType: chamberData.flowType || null,
-    flowRate: chamberData.flowRate || '',
-    compliance,
-    maxDepthAdoptable,
-    maxDepthNonAdoptable,
-    date: new Date().toISOString(),
-  })
+  const html = generateSpecSheetHTML(sheet)
 
   // Fire-and-forget PDF log
   const durationMs = Date.now() - startTime
