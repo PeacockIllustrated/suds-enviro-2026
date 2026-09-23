@@ -74,8 +74,8 @@ export function Ground() {
       <Layer top={s3} bottom={-GROUND_DEPTH} color={ART.soil[2]} ink={ART.soilInk} />
       <SoilSpecks />
       {/* Grass verges between the plots, where the poplars stand. */}
-      {[16, 46.5, 75.2].map((x) => (
-        <InkSlab key={x} from={[x - 1.3, 0, -21.8]} to={[x + 1.3, 0.04, -0.8]} color={ART.grass} ink={ART.grassInk} />
+      {([[16, 1.3], [46.5, 1.3], [76.7, 0.9]] as const).map(([x, w]) => (
+        <InkSlab key={x} from={[x - w, 0, -21.8]} to={[x + w, 0.04, -0.8]} color={ART.grass} ink={ART.grassInk} />
       ))}
       <InkSlab from={[STRIP[0] + 0.3, 0, -22.7]} to={[STRIP[1] - 0.3, 0.04, -19.8]} color={ART.grass} ink={ART.grassInk} />
     </group>

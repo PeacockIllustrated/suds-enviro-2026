@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import { Edges, Html, Line } from '@react-three/drei'
 import * as THREE from 'three'
 import { InkOutlines, TOON, ToonModel, toonRamp } from '@/components/site/three/toon'
-import { ART, InkBox, LINE, Paper } from '@/components/site/explorer/lineArt'
+import { ART, InkBox, LINE } from '@/components/site/explorer/lineArt'
 import {
   CRATES,
   CRATES_TOP,
@@ -26,6 +26,7 @@ import {
 import type { Vec3 } from './scenery'
 import type { JourneyMotionState } from './journeyFraming'
 import { VIEW_DIR } from '@/components/site/explorer/cameraFit'
+import { Riser } from '@/components/site/explorer/Products'
 
 /**
  * The drainage products in the section: the real library models at one
@@ -55,42 +56,6 @@ function Placeholder({ height, radius }: { height: number; radius: number }) {
       <meshBasicMaterial color="#e6f4fb" transparent opacity={0.85} />
       <Edges color={ART.ink} lineWidth={LINE} threshold={20} />
     </mesh>
-  )
-}
-
-/**
- * An access riser from `from` up to `to`: a ribbed plastic shaft with a
- * cover frame at the surface, as on the products' data sheets.
- */
-export function Riser({ x, z, radius, from, to }: { x: number; z: number; radius: number; from: number; to: number }) {
-  const rings = useMemo(() => {
-    const out: number[] = []
-    const pitch = 0.16
-    for (let y = from; y < to - 0.14; y += pitch) out.push(y)
-    return out
-  }, [from, to])
-  const height = to - from
-  if (height <= 0.02) return null
-  return (
-    <group position={[x, 0, z]}>
-      <mesh position={[0, from + height / 2, 0]}>
-        <cylinderGeometry args={[radius, radius, height, 32]} />
-        <meshToonMaterial color={TOON.body} gradientMap={toonRamp()} />
-        <InkOutlines thickness={1.1} color={TOON.ink} angle={0} />
-      </mesh>
-      {rings.map((y) => (
-        <mesh key={y} position={[0, y + 0.02, 0]}>
-          <cylinderGeometry args={[radius * 1.04, radius * 1.04, 0.04, 32]} />
-          <meshToonMaterial color={TOON.bodyShade} gradientMap={toonRamp()} />
-        </mesh>
-      ))}
-      {/* Cover and frame at the surface. */}
-      <mesh position={[0, to - 0.015, 0]}>
-        <cylinderGeometry args={[radius * 1.18, radius * 1.18, 0.1, 32]} />
-        <Paper color={ART.asphalt} />
-        <Edges color={ART.asphaltInk} lineWidth={LINE} threshold={20} />
-      </mesh>
-    </group>
   )
 }
 
