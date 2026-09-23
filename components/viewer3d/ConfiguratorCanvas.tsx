@@ -15,7 +15,8 @@ import {
   InkOutlines,
 } from '@/components/site/three/toon'
 import type { Vec3 } from './geometry'
-import type { CalloutTone, ViewerModel, ViewerRole } from './viewer-model'
+import { kitGeometry, kitUrls } from './kit-geometry'
+import type { CalloutTone, KitPart, ViewerModel, ViewerRole } from './viewer-model'
 
 /**
  * The configurator's 3D preview canvas, in the site's toon style.
@@ -116,6 +117,10 @@ function labelItems(model: ViewerModel): LabelItem[] {
     }),
   )
   model.parts.forEach((p) => {
+    if (p.role === 'water' || p.labelled === false) return
+    items.push({ id: `p:${p.id}`, kind: 'part', target: p.id, anchor: null, title: p.label, tone: 'part', priority: 3, hideWhenExploded: false })
+  })
+  model.kit.forEach((p) => {
     if (p.role === 'water' || p.labelled === false) return
     items.push({ id: `p:${p.id}`, kind: 'part', target: p.id, anchor: null, title: p.label, tone: 'part', priority: 3, hideWhenExploded: false })
   })
@@ -360,11 +365,11 @@ interface Bounds {
   exploded: THREE.Box3
 }
 
-function computeBounds(model: ViewerModel, libParts: LibraryPart[][]): Bounds {
+function computeBounds(model: ViewerModel, libParts: LibraryPart[][], kit: DrawnKit[]): Bounds {
   const assembled = new THREE.Box3()
   const exploded = new THREE.Box3()
   const tmp = new THREE.Box3()
-  model.parts.forEach((p) => {
+  ;[...model.parts, ...kit].forEach((p) => {
     if (!p.geometry.boundingBox) p.geometry.computeBoundingBox()
     const bb = p.geometry.boundingBox
     if (!bb) return
@@ -437,16 +442,40 @@ interface SceneProps extends ConfiguratorCanvasProps {
   interaction: Interaction
 }
 
+/** A kit part with its assembled geometry. */
+interface DrawnKit {
+  id: string
+  part: KitPart
+  geometry: THREE.BufferGeometry
+  explode: Vec3
+}
+
 function Scene(props: SceneProps) {
-  if (props.model.libraries.length === 0) return <SceneContent {...props} libParts={[]} />
+  if (props.model.libraries.length === 0 && props.model.kit.length === 0) return <SceneContent {...props} libParts={[]} kit={[]} />
   return <LibraryScene {...props} />
 }
 
 function LibraryScene(props: SceneProps) {
-  const urls = useMemo(() => props.model.libraries.map((l) => l.url), [props.model])
+  const { model } = props
+  // Every file this model reads, whole-file models and kit sources alike,
+  // loaded together so the preview appears in one piece.
+  const urls = useMemo(() => [...new Set([...model.libraries.map((l) => l.url), ...kitUrls(model.kit)])], [model])
   const gltfs = useGLTF(urls)
-  const libParts = useMemo(() => urls.map((url, i) => libraryPartsFromScene(url, gltfs[i].scene)), [urls, gltfs])
-  return <SceneContent {...props} libParts={libParts} />
+  const byUrl = useMemo(() => {
+    const map = new Map<string, LibraryPart[]>()
+    urls.forEach((url, i) => map.set(url, libraryPartsFromScene(url, gltfs[i].scene)))
+    return map
+  }, [urls, gltfs])
+  const libParts = useMemo(() => model.libraries.map((l) => byUrl.get(l.url) ?? []), [model, byUrl])
+  const kit = useMemo(
+    () =>
+      model.kit.flatMap((part): DrawnKit[] => {
+        const geometry = kitGeometry(part, (url, name) => byUrl.get(url)?.find((p) => p.name === name)?.geometry)
+        return geometry ? [{ id: part.id, part, geometry, explode: part.explode }] : []
+      }),
+    [model, byUrl],
+  )
+  return <SceneContent {...props} libParts={libParts} kit={kit} />
 }
 
 // Scratch objects for the render loop.
@@ -469,7 +498,8 @@ function SceneContent({
   items,
   els,
   interaction,
-}: SceneProps & { libParts: LibraryPart[][] }) {
+  kit,
+}: SceneProps & { libParts: LibraryPart[][]; kit: DrawnKit[] }) {
   const flowWater = useWaterMaterial(5)
   // Still water is see-through so tank and sump internals stay readable; it
   // has no outline shell, so the opaque-water caveat in toon.tsx does not apply.
@@ -495,7 +525,7 @@ function SceneContent({
   const controls = useRef<OrbitControlsImpl>(null)
   const thickness = compact ? 1.7 : 2.3
 
-  const bounds = useMemo(() => computeBounds(model, libParts), [model, libParts])
+  const bounds = useMemo(() => computeBounds(model, libParts, kit), [model, libParts, kit])
   const aspect = useThree((s) => s.size.width / Math.max(1, s.size.height))
   const fit = useMemo(() => {
     const box = exploded ? bounds.exploded : bounds.assembled
@@ -691,6 +721,20 @@ function SceneContent({
             registry={registry}
             interaction={interaction}
             water={part.water === 'flow' ? flowWater : stillWater}
+          />
+        ))}
+        {kit.map((k) => (
+          <DrawPart
+            key={k.id}
+            id={k.id}
+            geometry={k.geometry}
+            role={k.part.role}
+            color={k.part.color}
+            explode={k.explode}
+            fade={fade}
+            thickness={thickness}
+            registry={registry}
+            interaction={interaction}
           />
         ))}
         {model.libraries.map((lib, i) => (

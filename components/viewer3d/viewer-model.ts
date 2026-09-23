@@ -5,9 +5,10 @@ import type { Vec3 } from './geometry'
  * What the configurator's 3D preview draws, independent of React.
  *
  * A model is a set of parts in millimetres (Y up, base at y = 0). Parts are
- * either procedural (geometry built from the wizard selections) or come
- * from a 3D library file. Every part knows how it is drawn (its role), what
- * it is called, and where it moves to in the breakout view.
+ * procedural (geometry built from the wizard selections), whole library
+ * files, or kit parts: real library geometry cut, stacked and placed to
+ * suit the selections. Every part knows how it is drawn (its role), what it
+ * is called, and where it moves to in the breakout view.
  */
 
 /**
@@ -67,6 +68,55 @@ export interface LibraryUse {
   swing?: Record<string, { pivot: readonly [number, number]; angle: number }>
 }
 
+/**
+ * One step in turning a library part into a kit piece. Applied in order to
+ * the part's geometry (millimetres, in the file's own axes).
+ *
+ *   sliceY      keep only triangles lying wholly between two heights (cut on
+ *               existing vertex rings so stacked slices meet exactly)
+ *   dropNear    drop triangles with a vertex nearer the Y axis than `radius`
+ *   stackY      repeat the geometry `count` times, `pitch` apart up Y
+ *   radial      remap each vertex's distance from the Y axis through a
+ *               piecewise-linear curve of [from, to] knots, extended
+ *               linearly past the ends (widen a shell without thickening it)
+ *   scale       scale about the origin
+ *   rotateX     turn about X, radians (stand a part up)
+ *   rotateY     turn about Y, radians
+ *   translate   move, mm
+ */
+export type KitOp =
+  | { op: 'sliceY'; y0: number; y1: number }
+  | { op: 'dropNear'; radius: number }
+  | { op: 'stackY'; count: number; pitch: number }
+  | { op: 'radial'; knots: readonly (readonly [number, number])[] }
+  | { op: 'scale'; v: Vec3 }
+  | { op: 'rotateX'; angle: number }
+  | { op: 'rotateY'; angle: number }
+  | { op: 'translate'; v: Vec3 }
+
+/** Geometry cut, stacked or placed from one part of a library file. */
+export interface KitPiece {
+  url: string
+  /** Part node name in the file. */
+  part: string
+  ops: KitOp[]
+}
+
+/**
+ * A part of the model assembled from real library geometry: one or more
+ * pieces merged into a single mesh, drawn and broken out like a
+ * procedural part.
+ */
+export interface KitPart {
+  id: string
+  label: string
+  role: ViewerRole
+  pieces: KitPiece[]
+  explode: Vec3
+  color?: string
+  labelled?: boolean
+}
+
 export type CalloutTone = 'inlet' | 'outlet' | 'info' | 'accent'
 
 /** A pipe or dimension callout drawn as an HTML label with a leader. */
@@ -93,12 +143,30 @@ export interface Callout {
  */
 export type MatchKind = 'configured' | 'exact' | 'nearest' | 'indicative'
 
+/**
+ * A line in the viewer's parts legend.
+ *   library  a real part from the 3D library at its true size
+ *   scaled   a real part resized to suit the selection
+ *   drawn    drawn to suit (no library part exists for it)
+ */
+export interface LegendEntry {
+  kind: 'library' | 'scaled' | 'drawn'
+  text: string
+}
+
 export interface ViewerModel {
   /** Changes whenever the drawn geometry changes. */
   key: string
   match: { kind: MatchKind; text: string; note?: string }
   parts: ProcPart[]
   libraries: LibraryUse[]
+  /** Parts assembled from library geometry (cut, stacked, placed). */
+  kit: KitPart[]
+  /**
+   * What the preview is made of, for the legend strip: library parts first
+   * (with how they were used), then anything drawn to suit.
+   */
+  legend: LegendEntry[]
   callouts: Callout[]
   /** Camera start: degrees round from +Z towards +X, and above the horizon. */
   view: { azimuth: number; elevation: number }
