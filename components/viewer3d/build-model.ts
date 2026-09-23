@@ -16,6 +16,7 @@ import type {
   WizardState,
 } from '@/lib/types'
 import { getMinSumpDepth } from '@/lib/rules/catchpit'
+import { PIPE_DIMS, type PipeDims } from '@/lib/pipe-dims'
 import { GREASE_TRAP_SPECS } from '@/lib/rules/grease-trap'
 import {
   box,
@@ -65,24 +66,8 @@ import type { Callout, LibraryUse, MatchKind, ProcPart, ViewerModel } from './vi
 
 // ── pipes ───────────────────────────────────────────────────────────
 
-interface PipeDims {
-  /** Outside diameter drawn, mm. */
-  od: number
-  /** Bore, mm. */
-  bore: number
-}
-
-/**
- * EN 1401 sizes are outside diameters (SN4 walls); twinwall sizes are
- * nominal bores, with the typical corrugated outside diameter.
- */
-const PIPE: Record<PipeSize, PipeDims> = {
-  '110mm EN1401': { od: 110, bore: 104 },
-  '160mm EN1401': { od: 160, bore: 151 },
-  '225mm Twinwall': { od: 270, bore: 225 },
-  '300mm Twinwall': { od: 350, bore: 300 },
-  '450mm Twinwall': { od: 520, bore: 450 },
-}
+// Shared with the engineering drawing so both place pipes identically.
+const PIPE = PIPE_DIMS
 
 const DEFAULT_PIPE: PipeSize = '160mm EN1401'
 
