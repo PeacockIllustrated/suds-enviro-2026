@@ -6,7 +6,7 @@ import { AlertBox } from '@/components/ui/AlertBox'
 import { getAllowedDiameters, getMaxDepth } from '@/lib/rules/pump-station'
 import type { DepthMm, WizardAction } from '@/lib/types'
 
-// RHINOLIFT data sheet: 600-1200mm chambers, depth to pipe soffit up to
+// RhinoLift data sheet: 600-1200mm chambers, depth to pipe soffit up to
 // 2000mm adoptable / 3000mm non-adoptable.
 const diameters = getAllowedDiameters()
 const depths: DepthMm[] = [1000, 1500, 2000, 2500, 3000]
@@ -100,7 +100,7 @@ export function PumpWellSizing() {
         <AlertBox
           type="info"
           title="Adoptable depth limit"
-          body={`Adoptable RHINOLIFT installations are limited to ${getMaxDepth(true)}mm to pipe soffit.`}
+          body={`Adoptable RhinoLift installations are limited to ${getMaxDepth(true)}mm to pipe soffit.`}
         />
       )}
     </>

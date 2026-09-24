@@ -6,7 +6,7 @@ import { OptionCard } from '@/components/ui/OptionCard'
 import type { ControllerType, PumpType, WizardAction } from '@/lib/types'
 import { Hand, Waves, BarChart3, Cpu, Fan, Cog } from 'lucide-react'
 
-// RHINOLIFT data sheet: vortex pumps handle solids up to 50mm; macerator
+// RhinoLift data sheet: vortex pumps handle solids up to 50mm; macerator
 // pumps are optional, for applications needing fine grinding of solids.
 const pumpTypeOptions: {
   id: PumpType

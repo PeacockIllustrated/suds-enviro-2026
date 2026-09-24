@@ -1,7 +1,7 @@
 /**
- * Pump Station Rule Engine - RHINOLIFT Packaged Pumping Stations
+ * Pump Station Rule Engine - RhinoLift Packaged Pumping Stations
  *
- * Source: TOM RHINOLIFT PUMPING STATIONS data sheet.
+ * Source: RhinoLift data sheet (public/brochures/rhinolift.html).
  *
  * Material      : MDPE or GRP (not HDPE)
  * Diameters     : 600, 750, 900, 1050, 1200 mm
@@ -35,7 +35,7 @@ export function isAllowedDiameter(diameter: Diameter): boolean {
 }
 
 // ── Outlet pipe sizes ────────────────────────────────────────
-// The live RHINOLIFT page lists pipe sizes 110 / 150 / 225 / 300mm, so
+// The live RhinoLift page lists pipe sizes 110 / 150 / 225 / 300mm, so
 // the 450mm option is not offered. (150 vs 160 is an open question in
 // HANDOVER.md; the existing 160 label is kept.)
 
@@ -100,12 +100,12 @@ export function validateConfig(state: WizardState): ValidationResult {
   if (!data.pipeSizeOutlet) {
     errors.push('Outlet pipe size not selected')
   } else if (!PUMP_OUTLET_SIZES.includes(data.pipeSizeOutlet)) {
-    errors.push(`${data.pipeSizeOutlet} outlet is not offered on RHINOLIFT`)
+    errors.push(`${data.pipeSizeOutlet} outlet is not offered on RhinoLift`)
   }
 
   if (data.wetWellDiameter && !isAllowedDiameter(data.wetWellDiameter)) {
     errors.push(
-      `${data.wetWellDiameter}mm wet well is not available for RHINOLIFT (600, 750, 900, 1050, 1200 only)`
+      `${data.wetWellDiameter}mm wet well is not available for RhinoLift (600, 750, 900, 1050, 1200 only)`
     )
   }
 

@@ -69,7 +69,7 @@ export const WATER_JOURNEY_STOPS: JourneyStop[] = [
     label: 'Harvesting',
     heading: { lead: 'Rainwater', trail: 'Harvester' },
     tags: ['Below ground', '1000 to 3300 litres'],
-    body: 'Roof water is the cleanest water on site, so the first stop keeps some. A buried tank stores it for toilets, gardens and washdown, which cuts both the mains bill and what the drains further down have to carry.',
+    body: 'Roof water is the cleanest water on site, so the first stop keeps some. It is filtered into a buried tank that stores it for toilets, gardens and washdown, and overflows to the surface water drain when full. That cuts both the mains bill and what the drains further down have to carry.',
     actions: [
       { label: 'View product', href: '/products/rainwater-harvesting' },
       { label: 'Configure', href: '/configurator?product=rainwater' },

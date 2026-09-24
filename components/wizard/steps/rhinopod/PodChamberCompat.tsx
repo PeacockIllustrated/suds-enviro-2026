@@ -5,8 +5,9 @@ import { SizeCard } from '@/components/ui/SizeCard'
 import { POD_PLUS_DIAMETERS } from '@/lib/rules/rhinopod'
 import type { WizardAction } from '@/lib/types'
 
-// Plus is factory-fitted to a RHINO SEHDS, so it takes the SEHDS sizes
-// (RHINO POD data sheet: "Standalone, or factory-fitted to RHINO SEHDS").
+// Plus pairs the pod with a SudSceptor, so it takes the configurator's SEHDS
+// sizes. The current RhinoPod data sheet describes pairing with a SudSceptor
+// upstream rather than a factory-fitted variant.
 const diameters = POD_PLUS_DIAMETERS
 
 export function PodChamberCompat() {

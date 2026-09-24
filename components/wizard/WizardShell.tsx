@@ -104,7 +104,7 @@ const STEP_COMPONENT_MAP: Record<string, ComponentType | null> = {
   'silt-options': SiltOptions,
   'catchpit-variant': CatchpitVariantSelect,
 
-  // RHINO SEHDS Hydrodynamic Separator
+  // SudSceptor (SEHDS) Hydrodynamic Separator
   'sehds-application': SEHDSApplicationSelect,
   'sehds-diameter': SEHDSDiameter,
   'sehds-inlet-angle': SEHDSInletAngle,

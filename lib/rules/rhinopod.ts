@@ -1,15 +1,18 @@
 /**
  * RhinoPod Rule Engine
  *
- * Validates configuration for RhinoPod filtration units.
- * Two variants per the RHINO POD data sheet:
- *   - Standalone: floating filter dropped into any chamber, manhole or
- *     catch basin (often a retrofit)
- *   - Plus: factory-fitted to a RHINO SEHDS hydrodynamic separator, so
- *     the diameter is one of the SEHDS sizes (750 / 1200 / 1800 / 2500)
+ * Validates configuration for RhinoPod floating cartridge filters.
+ * Two configurator variants:
+ *   - Standalone: floating filter placed in a road gully, GRP or precast
+ *     chamber or existing oil interceptor (often a retrofit)
+ *   - Plus: paired with a SudSceptor (SEHDS) hydrodynamic separator, so
+ *     the diameter is one of the configurator's SEHDS sizes
+ *     (750 / 1200 / 1800 / 2500)
  *
- * Compliance follows the data sheet: EA PPG3, CIRIA C753, EU WFD and
- * CAR (Scotland).
+ * Compliance follows the RhinoPod data sheet
+ * (public/brochures/rhino-pod.html): tested against pollutants relevant to
+ * the EU Water Framework Directive, and supports Schedule 3 SuDS design
+ * guidance. The earlier PPG3, CIRIA C753 and CAR entries had no source.
  */
 
 import type {
@@ -21,7 +24,7 @@ import type {
 } from '@/lib/types'
 
 // ── PLUS VARIANT HOST SIZES ──────────────────────────────────
-// Plus is "factory-fitted to RHINO SEHDS", so it takes the SEHDS sizes.
+// Plus pairs the pod with a SudSceptor, so it takes the SEHDS sizes.
 
 export const POD_PLUS_DIAMETERS: Diameter[] = [750, 1200, 1800, 2500]
 
@@ -53,7 +56,7 @@ export function validateConfig(state: WizardState): ValidationResult {
     if (!data.chamberDiameter) {
       errors.push('SEHDS diameter not selected for RhinoPod Plus')
     } else if (!POD_PLUS_DIAMETERS.includes(data.chamberDiameter)) {
-      errors.push(`RhinoPod Plus is factory-fitted to SEHDS separators (750, 1200, 1800, 2500mm), not ${data.chamberDiameter}mm`)
+      errors.push(`RhinoPod Plus is paired with SudSceptor SEHDS separators (750, 1200, 1800, 2500mm), not ${data.chamberDiameter}mm`)
     }
   }
 
@@ -89,22 +92,12 @@ export function generateCompliance(state: WizardState): ComplianceResult[] {
   return [
     {
       standard: 'EU Water Framework Directive (2000/60/EC)',
-      scope: 'Water Quality - Pollutant Filtration',
+      scope: 'Tested against pollutants relevant to the WFD',
       status: valid ? 'Pass' : 'Warning',
     },
     {
-      standard: 'Environment Agency PPG3',
-      scope: 'Pollution Prevention - Surface Water Runoff',
-      status: data?.podType ? 'Pass' : 'Warning',
-    },
-    {
-      standard: 'CIRIA C753 SuDS Manual',
-      scope: 'Polishing Treatment for SuDS Treatment Trains',
-      status: valid ? 'Pass' : 'Warning',
-    },
-    {
-      standard: 'CAR (Scotland)',
-      scope: 'Water Environment (Controlled Activities) Regulations',
+      standard: 'Schedule 3 SuDS design guidance',
+      scope: 'Dissolved-pollutant interception at drainage points',
       status: data?.podType ? 'Pass' : 'Warning',
     },
   ]

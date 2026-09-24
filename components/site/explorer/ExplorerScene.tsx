@@ -8,13 +8,14 @@ import { ToonLights } from '@/components/site/three/toon'
 import { Scenery } from './Scenery'
 import { Ground } from './Ground'
 import { Pipes } from './Pipes'
-import { ExplorerProduct } from './Products'
+import { ExplorerProduct, ExplorerStorage } from './Products'
 import { VIEW_DIR, fitBox, type CameraGoal } from './cameraFit'
 import {
   OVERVIEW,
   PLOTS,
-  productHeight,
+  productBase,
   productRadius,
+  productTop,
   productZ,
   type Box3Spec,
   type PlotLayout,
@@ -59,10 +60,13 @@ export interface ExplorerSceneProps {
 const CAMERA_DISTANCE = 200
 
 function focusBox(p: ProductPlacement, narrow: boolean): Box3Spec {
-  const base = p.top - productHeight(p)
+  const base = productBase(p)
+  const top = Math.max(0, productTop(p))
+  const z = productZ(p)
+  const r = productRadius(p)
   return narrow
-    ? { min: [p.x - 3, base - 0.5, -2], max: [p.x + 3, Math.max(0, p.top) + 1.6, 1.5] }
-    : { min: [p.x - 7.5, base - 0.8, -8], max: [p.x + 7.5, 4, 1.5] }
+    ? { min: [p.x - 3, base - 0.5, Math.min(-2, z - r - 1)], max: [p.x + 3, top + 1.6, Math.max(1.5, z + r)] }
+    : { min: [p.x - 7.5, base - 0.8, Math.min(-8, z - r - 2)], max: [p.x + 7.5, top + 4, Math.max(1.5, z + r)] }
 }
 
 function CameraRig({ goalFor, reducedMotion }: { goalFor: (w: number, h: number) => CameraGoal; reducedMotion: boolean }) {
@@ -113,7 +117,7 @@ function Hotspot({ placement, info, selected, label, onSelect }: {
   onSelect: (id: string) => void
 }) {
   // Just above the product's cover, so the marker never hides the product.
-  const y = Math.max(placement.top, 0) + 0.85
+  const y = Math.max(productTop(placement), 0) + 0.85
   const z = productZ(placement) + productRadius(placement) * 0.5
   return (
     <Html position={[placement.x, y, z]} center zIndexRange={[30, 10]}>
@@ -148,6 +152,7 @@ function Site({ plotId, productId, onSelectPlot, onSelectProduct, hotspots, mark
       {PLOTS.map((plot) => (
         <Plot key={plot.id} plot={plot}>
           <Pipes runs={plot.pipes} />
+          {plot.storage ? <ExplorerStorage spec={plot.storage} /> : null}
           {loadAll || plot.id === plotId
             ? plot.products.map((p) => (
                 <ExplorerProduct

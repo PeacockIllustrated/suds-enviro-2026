@@ -98,7 +98,7 @@ const DOC_CARDS: DocCard[] = [
     href: '/brochures/index.html',
     title: 'Product Brochure Library',
     description:
-      'Every product datasheet in one place, including SERSIC, SERFIC, SERS, SERDS, SERF, ROTEX, SEHDS and RHINOLIFT.',
+      'Every product datasheet in one place, including SERSIC, SERFIC, SERS, SERDS, RhinoRoFlo, RhinoRoTex, SudSceptor and RhinoLift.',
     icon: Library,
     meta: '14 product datasheets',
     external: true,

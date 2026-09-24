@@ -219,7 +219,7 @@ export function pumpStationReducer(
       }
 
     case 'PUMP_SET_ADOPTABLE': {
-      // R4 (RHINOLIFT data sheet): 2000mm adoptable / 3000mm non-adoptable.
+      // R4 (RhinoLift data sheet): 2000mm adoptable / 3000mm non-adoptable.
       // Clear a depth that the new status no longer allows.
       const maxD = getMaxDepth(action.payload)
       return {
@@ -341,7 +341,7 @@ function getReviewBlocks(_state: WizardState): ReviewBlockDef[] {
 
 export const pumpStationConfig: ProductConfig = {
   id: 'pump-station',
-  name: 'RHINOLIFT Pumping Station',
+  name: 'RhinoLift Pumping Station',
   subtitle: 'Packaged MDPE or GRP pumping station, vortex or macerator',
   category: 'pumps',
   icon: 'pump-station',

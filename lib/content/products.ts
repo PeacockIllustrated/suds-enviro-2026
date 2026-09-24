@@ -103,19 +103,20 @@ export const PRODUCT_NARRATIVE: Partial<Record<ProductId, ProductNarrative>> = {
 
   'flow-control': {
     lockup: {
-      series: 'SERF Series',
+      series: 'RhinoRoFlo and RhinoRoTex',
       stream: 'Stormwater',
       category: 'Flow control chambers',
     },
     intro: [
-      'The SuDS RHINO SERF Series Flow Control Chambers deliver optimal performance, ease of installation, and full compliance with industry standards.',
+      'RhinoRoFlo (SERF) orifice and RhinoRoTex (ROTEX) vortex flow control chambers hold stormwater discharge to a pre-set maximum rate, protecting downstream drainage from overload during heavy rainfall.',
+      'Both are passive, with no power supply, and are designed to the Sewers for Adoption 7th Edition, DCG Type D and E chambers and BS EN 13598-2.',
     ],
     sections: [
       {
-        heading: { lead: 'RHINO', trail: 'Vortex flow control' },
+        heading: { lead: 'RhinoRoTex', trail: 'Vortex flow control' },
         body: [
-          'The RHINO Vortex Flow Control is an advanced and highly innovative solution for managing stormwater flow in drainage systems.',
-          'Engineered for versatility, it can be fixed to either curved or flat surfaces as standard, making it adaptable to the specific requirements of various projects.',
+          'RhinoRoTex (ROTEX600 to ROTEX1200) uses a passive vortex regulator on the outlet. As inflow rises the vortex strengthens and holds the outflow to a pre-set maximum rate.',
+          'It fits curved or flat surfaces as standard, and is supplied factory-fitted in an HDPE twinwall chamber or as a standalone unit for an existing concrete chamber.',
         ],
         highlights: [
           {
@@ -128,19 +129,19 @@ export const PRODUCT_NARRATIVE: Partial<Record<ProductId, ProductNarrative>> = {
               'With no moving components, the system is highly robust and requires minimal servicing.',
           },
           {
-            term: 'Space efficient',
+            term: 'Emergency bypass',
             detail:
-              'Compact design fits into a wide range of chamber sizes without taking up excessive space.',
+              'A bypass door on the flow controller is opened by a cable from the surface, so the chamber can be drained without entry.',
           },
           {
-            term: 'Environmental benefits',
+            term: 'Chamber range',
             detail:
-              'Helps manage stormwater in a controlled manner, preventing erosion and protecting downstream waterways from sediment and pollution.',
+              'Housed in 600 to 1200 mm chambers, with the flow controller designed to suit the site design head and discharge rate.',
           },
         ],
       },
       {
-        heading: { lead: 'RHINO', trail: 'Orifice flow control' },
+        heading: { lead: 'RhinoRoFlo', trail: 'Orifice flow control' },
         highlights: [
           {
             term: 'Stormwater applications',
@@ -154,7 +155,7 @@ export const PRODUCT_NARRATIVE: Partial<Record<ProductId, ProductNarrative>> = {
           {
             term: 'Plug and play',
             detail:
-              'A one-piece, factory-fitted unit with a built-in service drain down feature activated from ground level, simplifying installation.',
+              'SERF300, SERF450 and SERF600: a one-piece, factory-fitted unit with a removable orifice plate cap and a drain-down operated from ground level.',
           },
         ],
       },
@@ -163,25 +164,25 @@ export const PRODUCT_NARRATIVE: Partial<Record<ProductId, ProductNarrative>> = {
 
   catchpit: {
     lockup: {
-      series: 'Advanced Catchpit Range',
+      series: 'SERS and SERDS Series',
       stream: 'Silt management',
       category: 'Catch-pit chambers',
     },
     intro: [
-      'The SuDS RHINO 600 Series Advanced Plus Range is specifically engineered for the efficient catchment and removal of silt and debris from impermeable or hard surface areas such as paths, driveways, patios, roofs, car parks, roads and highways.',
-      'Featuring an innovative primary and secondary filtration system, this range plays a critical role in surface water management.',
+      'RHINO SERDS, the Advanced Plus 600 Series, is engineered for the efficient catchment and removal of silt and debris from impermeable or hard surface areas such as paths, driveways, patios, roofs, car parks, roads and highways.',
+      'A primary and secondary filtration system improves downstream water quality and reduces the risk of flooding. The RHINO SERS Series adds a removable silt bucket in 300, 450 and 600 mm chambers, lifted out and emptied from above ground.',
     ],
   },
 
   'pump-station': {
     lockup: {
-      series: 'RHINOLIFT',
+      series: 'RhinoLift',
       stream: 'Packaged',
       category: 'Pumping stations',
     },
     intro: [
-      'The RHINOLIFT Packaged Pumping Stations are designed to provide reliable, efficient and robust solutions for managing foul water, stormwater and grey water.',
-      'Whether for residential or large-scale commercial applications, RHINOLIFT systems offer flexibility and durability, with a range of single and dual pump configurations for duty/standby arrangements. Each system is custom-built to meet specific project needs.',
+      'RhinoLift packaged pumping stations move foul water, stormwater and grey water where gravity drainage is impractical or impossible.',
+      'From a single dwelling to large commercial sites, each station is custom-built to the flow and storage the project needs, in an MDPE or GRP chamber with vortex or macerator pumps, as a single pump or a dual duty-standby pair.',
     ],
   },
 }
