@@ -15,7 +15,7 @@ The SuDS Enviro drop is already a section through the ground: green land on top,
 
 | Path | What it is |
 |---|---|
-| `brand-book.html` | The brand book, 43 fixed pages (1400 x 990), self-contained: fonts and images embedded |
+| `brand-book.html` | The brand book, 42 fixed pages (1400 x 990), self-contained: fonts and images embedded |
 | `brand-book.pdf` | The same book as a print PDF (screen grain off) |
 | `pages/page-NN.jpg` | A JPG of every page, for review and slides |
 | `logos/*.svg` | Logo suite in vector: horizontal lockup in five colourways, the drop in five, the SuDS RHINO lockup in four, the Clockwork seal (filled, filled deep, line), app icons, avatars |

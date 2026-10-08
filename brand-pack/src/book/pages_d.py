@@ -327,19 +327,22 @@ def files():
 
 def sump():
     body = f'''
-<div class="abs" style="left:0;top:0;width:1400px;height:990px;background:{INVERT}"></div>
-<svg class="abs" style="left:0;top:0" width="1400" height="990">{''.join(f'<rect x="0" y="{620 + i * 30}" width="1400" height="31" fill="{depth_tint(5200 + i * 130)}" opacity=".9"/>' for i in range(13))}</svg>
-<div class="abs" style="left:0;right:0;top:250px;display:flex;flex-direction:column;align-items:center;gap:26px">
-  <div style="width:110px">{svg('suds-drop-colour.svg')}</div>
-  <div class="two" style="font-size:64px;text-align:center"><span class="lt" style="color:{GREEN}">Every drop,</span><br><b style="color:#fff">accounted for.</b></div>
-  <p class="mono" style="color:{SKY};font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;margin:0;text-align:center">The sump. 350 mm below the outlet, where the silt settles and this book ends.</p>
+<img class="abs" src="{img('../photography/hero/hero-6-outfall.jpg', 1800)}" style="left:0;top:0;width:1400px;height:990px;object-fit:cover;object-position:50% 40%" alt="A clean outfall into a beck">
+<div class="abs" style="left:0;top:0;width:1400px;height:990px;background:linear-gradient(180deg,rgba(6,42,58,.55) 0%,rgba(6,42,58,0) 26%,rgba(6,42,58,0) 38%,rgba(6,42,58,.82) 62%,{INVERT} 84%)"></div>
+<div class="abs" style="left:64px;top:56px;width:300px">{svg('suds-enviro-horizontal-white.svg')}</div>
+<div class="abs mono" style="right:136px;top:62px;text-align:right;font-size:11px;letter-spacing:.14em;line-height:1.8;color:#fff;text-transform:uppercase">From roof to river<br><span style="color:{SKY}">The outfall</span></div>
+<div class="abs" style="left:64px;top:590px;width:1000px">
+  <h2 class="two" style="font-size:96px;line-height:.92;text-wrap:nowrap"><span class="lt" style="color:{GREEN}">Every drop,</span><br><b style="color:#fff">accounted for.</b></h2>
+  <div style="margin-top:26px;font:700 15px var(--display);letter-spacing:.16em;text-transform:uppercase;color:{SKY}">Bespoke, <i>standardised</i></div>
 </div>
-<div class="abs mono" style="left:64px;right:136px;bottom:46px;display:flex;justify-content:space-between;font-size:10.5px;color:{SKY};letter-spacing:.08em">
-  <span>SuDS Enviro Ltd · 9 Ambleside Court, Chester-le-Street DH3 2EB · 01224 057 700 · sales@sudsenviro.com</span><span>Brand book, edition 1, October 2026</span></div>'''
+<div class="abs" style="right:136px;top:600px;width:200px">{svg('suds-clockwork-seal-filled-deep.svg')}</div>
+<div class="abs mono" style="left:64px;right:136px;bottom:44px;display:flex;justify-content:space-between;gap:30px;font-size:10.5px;color:{SKY};letter-spacing:.08em;border-top:1px solid rgba(175,219,244,.22);padding-top:14px">
+  <span>SuDS Enviro Ltd · 9 Ambleside Court, Chester-le-Street DH3 2EB</span><span>01224 057 700 · sales@sudsenviro.com · sudsenviro.com</span><span>Brand book, edition 1, October 2026</span></div>
+<div class="abs" style="left:0;bottom:0;width:1400px;height:10px;display:flex"><i style="flex:24;background:{GREEN}"></i><i style="flex:42;background:{BLUE}"></i><i style="flex:10;background:{GREEN}"></i><i style="flex:24;background:{RED}"></i></div>'''
     page('sump', body, dark=True, head=False)
 
 def build():
     screen_opener(); screen_site(); screen_phones(); social()
     print_opener(); cards(); brochure()
-    van(); site_things(); laser()
+    site_things(); laser()
     motion(); files(); sump()
