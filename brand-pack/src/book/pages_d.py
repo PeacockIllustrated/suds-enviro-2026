@@ -278,7 +278,7 @@ def laser():
 # ---------------------------------------------------------------- motion
 def motion():
     frames = sorted(glob.glob(os.path.join(HERE, '..', 'film', 'stills', 'still-*.jpg')))
-    caps = ['Rain on the turf line', 'The cut opens', 'Down the shaft, the gauge counts', 'Five ways in', 'The bands settle, the wordmark rises', 'Every drop, accounted for']
+    caps = ['Rain on the turf line', 'The drop\'s bands wash past, scene to scene', 'Down the shaft, the gauge counts', 'Five ways in', 'The bands settle, the wordmark rises', 'Every drop, accounted for']
     if frames:
         cells = ''.join(f'<figure style="margin:0;min-width:0"><img src="{img(os.path.relpath(f, os.path.join(HERE, "..")), 700, q=82)}" style="width:100%;aspect-ratio:16/9;object-fit:cover" alt=""><figcaption class="cap" style="margin-top:6px">{i + 1:02d} · {caps[i] if i < len(caps) else ""}</figcaption></figure>' for i, f in enumerate(frames[:6]))
     else:
@@ -292,6 +292,7 @@ def motion():
     <tr><td>Camera</td><td class="num">Down only. Never up, never sideways</td></tr>
     <tr><td>Type</td><td class="num">Soft rise 12 px, 600 ms, ease out</td></tr>
     <tr><td>Drop</td><td class="num">Bands settle bottom first, 220 ms apart</td></tr>
+    <tr><td>Transitions</td><td class="num">Water only: ripples, a wave of the four bands, a wash, a rising level</td></tr>
     <tr><td>Grain</td><td class="num">Light and even, screen only</td></tr>
     <tr><td>Formats</td><td class="num">16:9 and 9:16, laid out again for each</td></tr>
   </table>
