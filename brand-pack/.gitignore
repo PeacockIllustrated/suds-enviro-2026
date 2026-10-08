@@ -5,3 +5,4 @@ src/film/stills/
 src/film/score.wav
 src/film/film.html
 film/*-silent.mp4
+__pycache__/
