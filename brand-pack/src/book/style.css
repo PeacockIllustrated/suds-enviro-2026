@@ -1,0 +1,76 @@
+/* Layout: fixed 1400 x 990 pages (A4 landscape proportion) stacked on a desk, scaled to the screen by --k.
+   The book commits to one look (the brand's own grounds), so colours are set explicitly rather than themed. */
+:root{
+  --blue:#1d80b9; --deep:#005576; --green:#54b54d; --red:#c34c4a;
+  --surface:#eef3f5; --invert:#062a3a; --paper:#ffffff; --sky:#afdbf4; --field:#3d8537; --ink:#0b2b3c; --yello:#ffe313;
+  --desk:#d5dfe4;
+  --display:"Montserrat", "Avenir Next", "Segoe UI", Arial, sans-serif;
+  --mono:"Plex Mono", "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --k:1; color-scheme:light;
+}
+html,body{background:var(--desk)}
+body{margin:0;padding-block:24px;padding-inline:16px;font-family:var(--display);color:var(--deep);-webkit-font-smoothing:antialiased}
+.book{display:flex;flex-direction:column;align-items:center;gap:calc(28px * var(--k))}
+.slot{width:calc(1400px * var(--k));height:calc(990px * var(--k));position:relative;flex:none}
+.pg{position:absolute;left:0;top:0;width:1400px;height:990px;transform:scale(var(--k));transform-origin:0 0;background:var(--paper);overflow:hidden;box-shadow:0 1px 0 rgba(0,40,60,.08)}
+.pg.surf{background:var(--surface)}
+.pg.dark{background:var(--invert);color:#fff}
+.pg *{box-sizing:border-box}
+.gauge{position:absolute;inset:0;width:1400px;height:990px;pointer-events:none}
+.g-num{font:500 9px var(--mono)}
+.g-lab{font:500 9.5px var(--mono);letter-spacing:.02em}
+.rh{position:absolute;top:30px;left:64px;right:130px;display:flex;justify-content:space-between;font:500 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--deep);opacity:.75}
+.rh i{font-style:normal;color:var(--blue);padding:0 .35em}
+.dark .rh{color:var(--sky);opacity:.85}
+.folio{position:absolute;bottom:26px;left:64px;right:130px;display:flex;align-items:baseline;gap:10px;font:500 10.5px var(--mono);letter-spacing:.1em;color:var(--deep)}
+.folio .fn{font-size:13px;font-weight:600}
+.folio .ft{opacity:.6;text-transform:uppercase}
+.folio .fs{margin-left:auto;font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+.folio .fs em{font-weight:700}
+.dark .folio{color:var(--sky)} .dark .folio .fs{color:var(--sky)}
+.mono{font-family:var(--mono)}
+/* two voices: light + bold, uppercase, as on the live site */
+.two{text-transform:uppercase;margin:0;letter-spacing:-.005em;line-height:.98;text-wrap:balance}
+.two .lt{font-weight:300;color:var(--field)}
+.two b{font-weight:800;color:var(--blue)}
+.dark .two .lt{color:var(--green)} .dark .two b{color:#fff}
+.h0{font-size:118px}.h1{font-size:64px}.h2{font-size:40px}.h3{font-size:26px}.h4{font-size:19px}
+.eyebrow{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin:0 0 14px}
+.dark .eyebrow{color:var(--green)}
+p,li{font-size:15.5px;line-height:1.58;margin:0 0 12px;max-width:62ch}
+.lede{font-size:21px;line-height:1.45;font-weight:500;color:var(--deep);max-width:40ch}
+.dark .lede,.dark p,.dark li{color:#dcebf3}
+.small{font-size:13px;line-height:1.5}
+.cap{font:400 11.5px/1.45 var(--mono);color:var(--deep);opacity:.85;letter-spacing:.01em}
+.dark .cap{color:var(--sky)}
+.hl{color:var(--field);font-weight:600}
+.dark .hl{color:var(--green)}
+.area{position:absolute;left:64px;right:136px;top:84px;bottom:70px}
+.grid{display:grid;gap:24px}
+.abs{position:absolute}
+.rule{height:1px;background:currentColor;opacity:.18}
+.tile{border:1px solid rgba(0,85,118,.16);background:var(--paper);position:relative}
+.dark .tile{border-color:rgba(175,219,244,.18);background:rgba(255,255,255,.03)}
+.tag{display:inline-block;font:600 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:4px 7px;border:1px solid currentColor;border-radius:2px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+td,th{padding:8px 10px;border-bottom:1px solid rgba(0,85,118,.14);text-align:left;vertical-align:top}
+th{font:600 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+.dark td,.dark th{border-color:rgba(175,219,244,.16)}
+.num{font-variant-numeric:tabular-nums;font-family:var(--mono)}
+img{display:block;max-width:100%}
+.sectcol{position:absolute;left:0;top:0;width:300px;height:990px}
+.opener .area{left:360px}
+.depthno{font:800 150px/0.85 var(--display);letter-spacing:-.04em;color:var(--deep);font-variant-numeric:tabular-nums}
+.dark .depthno{color:#fff}
+.depthno small{font-size:28px;font-weight:600;letter-spacing:0;margin-left:8px;color:var(--blue)}
+.fact{font:500 13px/1.5 var(--mono);color:var(--deep);border-left:3px solid var(--green);padding:2px 0 2px 14px;max-width:44ch}
+.dark .fact{color:var(--sky)}
+@media print{
+  html,body{background:none;padding:0}
+  .book{gap:0}
+  .slot{width:1400px;height:990px;break-after:page}
+  .pg{transform:none;box-shadow:none}
+}
+@media (prefers-reduced-motion:no-preference){ .slot{scroll-margin-top:12px} }
+
+table.roomy td{padding:12px 10px}

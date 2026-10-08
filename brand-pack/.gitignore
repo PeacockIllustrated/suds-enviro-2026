@@ -1,0 +1,7 @@
+# Raw renders and model outputs; the compressed copies live in ../photography
+src/photo/
+src/catalogue/out/
+src/film/stills/
+src/film/score.wav
+src/film/film.html
+film/*-silent.mp4

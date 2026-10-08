@@ -1,0 +1,253 @@
+<!doctype html><html><head><meta charset="utf-8"><title>SuDS Enviro identity film</title>
+<style>
+@font-face{font-family:"Montserrat";src:url(FONT_M) format("woff2");font-weight:300 900}
+@font-face{font-family:"Plex Mono";src:url(FONT_P5) format("woff2");font-weight:500}
+html,body{margin:0;background:#000}canvas{display:block}
+</style></head><body><canvas id="c"></canvas>
+<script>
+/*DATA*/
+const q = new URLSearchParams(location.search);
+const PORTRAIT = q.get('fmt') === 'portrait';
+const W = PORTRAIT ? 1080 : 1920, H = PORTRAIT ? 1920 : 1080;
+const cv = document.getElementById('c'); cv.width = W; cv.height = H;
+const x = cv.getContext('2d');
+const C = {blue:'#1d80b9', deep:'#005576', green:'#54b54d', red:'#c34c4a', surface:'#eef3f5', invert:'#062a3a', sky:'#afdbf4', field:'#3d8537', paper:'#ffffff'};
+const BPM = 100, BEAT = 60 / BPM, BAR = BEAT * 4, DUR = 36;
+const S = Math.min(W, H) / 1080; // unit scale
+// ---------- helpers
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const eo = t => 1 - Math.pow(1 - t, 3);          // ease out
+const eio = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function hex(h) { return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); }
+function mix(a, b, t) { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',') + ')'; }
+function tint(mm) {
+  const st = [[0, C.surface], [1200, C.sky], [2800, C.blue], [4600, C.deep], [6350, C.invert]];
+  for (let i = 0; i < st.length - 1; i++) if (mm <= st[i + 1][0]) return mix(st[i][1], st[i + 1][1], (mm - st[i][0]) / (st[i + 1][0] - st[i][0]));
+  return C.invert;
+}
+function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+// grain tiles, built once from a seeded PRNG so every render is identical
+const grain = [];
+for (let g = 0; g < 6; g++) {
+  const c = document.createElement('canvas'); c.width = c.height = 256; const gx = c.getContext('2d');
+  const id = gx.createImageData(256, 256), r = mulberry(1234 + g);
+  for (let i = 0; i < id.data.length; i += 4) { const v = r() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 14; }
+  gx.putImageData(id, 0, 0); grain.push(c);
+}
+const P = {};
+function prep(set) { return set.p.map(p => ({ f: p.f, path: new Path2D(p.d) })); }
+P.hz = prep(D.hz); P.drop = prep(D.drop);
+const IM = {}; let loaded = 0; const want = Object.keys(D.xr).length + 1;
+for (const k in D.xr) { const i = new Image(); i.onload = () => loaded++; i.src = D.xr[k]; IM[k] = i; }
+{ const i = new Image(); i.onload = () => loaded++; i.src = D.photo; IM.photo = i; }
+window.READY = () => loaded === want && document.fonts.check('800 40px Montserrat') && document.fonts.check('500 20px "Plex Mono"');
+document.fonts.load('800 40px Montserrat'); document.fonts.load('300 40px Montserrat'); document.fonts.load('500 20px "Plex Mono"');
+
+function txt(s, X, Y, size, weight, col, align = 'left', fam = 'Montserrat', track = 0) {
+  x.font = `${weight} ${size}px ${fam === 'mono' ? '"Plex Mono"' : 'Montserrat'}`;
+  x.fillStyle = col; x.textAlign = align; x.textBaseline = 'alphabetic';
+  if (track) { x.letterSpacing = track + 'px'; } else x.letterSpacing = '0px';
+  x.fillText(s, X, Y);
+}
+// two voices: light then bold, uppercase, soft rise
+function two(light, bold, X, Y, size, t0, t, colL, colB, align = 'left', lineBreak = false) {
+  const k = eo(lin(t, t0, t0 + .6)); if (k <= 0) return;
+  x.save(); x.globalAlpha = k; const dy = (1 - k) * 18 * S;
+  x.font = `300 ${size}px Montserrat`; const wl = light ? x.measureText(light.toUpperCase() + ' ').width : 0;
+  x.font = `800 ${size}px Montserrat`; const wb = x.measureText(bold.toUpperCase()).width;
+  if (lineBreak) {
+    const ax = align === 'center' ? X - Math.max(wl, wb) / 2 : X;
+    const xl = align === 'center' ? X - (wl) / 2 : ax, xb = align === 'center' ? X - wb / 2 : ax;
+    if (light) txt(light.toUpperCase(), xl, Y + dy, size, 300, colL);
+    const k2 = eo(lin(t, t0 + .15, t0 + .75)); x.globalAlpha = k2;
+    txt(bold.toUpperCase(), xb, Y + size * 1.0 + (1 - k2) * 18 * S, size, 800, colB);
+  } else {
+    const total = wl + wb; const ax = align === 'center' ? X - total / 2 : X;
+    if (light) txt(light.toUpperCase() + ' ', ax, Y + dy, size, 300, colL);
+    txt(bold.toUpperCase(), ax + wl, Y + dy, size, 800, colB);
+  }
+  x.restore();
+}
+function drawSet(set, vb, X, Y, Hh, filter, alphaFn) {
+  const s = Hh / vb[3];
+  x.save(); x.translate(X, Y); x.scale(s, s); x.translate(-vb[0], -vb[1]);
+  set.forEach((p, i) => { if (filter && !filter(p, i)) return; x.save(); const a = alphaFn ? alphaFn(p, i) : null; if (a) { x.globalAlpha = a.al; x.translate(0, a.dy); } x.fillStyle = p.f; x.fill(p.path); x.restore(); });
+  x.restore();
+}
+function clock(cx, cy, r, inlets, t, t0, dark) {
+  const ink = dark ? C.sky : C.deep;
+  x.save(); x.lineWidth = r * .07; x.strokeStyle = ink;
+  const ka = eo(lin(t, t0, t0 + .8));
+  x.beginPath(); x.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ka); x.stroke();
+  for (let h = 0; h < 12; h++) { const th = h * Math.PI / 6; x.globalAlpha = .35 * ka; x.lineWidth = r * .025; x.beginPath(); x.moveTo(cx + (r - r * .1) * Math.sin(th), cy - (r - r * .1) * Math.cos(th)); x.lineTo(cx + (r - r * .2) * Math.sin(th), cy - (r - r * .2) * Math.cos(th)); x.stroke(); }
+  x.globalAlpha = 1;
+  const nodes = [3, 5, 6, 7, 9];
+  nodes.forEach((h, i) => {
+    const th = h * Math.PI / 6, on = inlets.includes(h);
+    const tn = t0 + .9 + i * BEAT; const k = eo(lin(t, tn, tn + .35));
+    const px = cx + r * Math.sin(th), py = cy - r * Math.cos(th), nr = r * .13;
+    x.fillStyle = dark ? C.invert : C.paper; x.strokeStyle = ink; x.lineWidth = nr * .25;
+    x.globalAlpha = .6 * ka; x.beginPath(); x.arc(px, py, nr * .62, 0, 7); x.fill(); x.stroke(); x.globalAlpha = 1;
+    if (on && k > 0) {
+      x.strokeStyle = C.blue; x.lineWidth = nr * 1.25; x.beginPath(); x.moveTo(px, py); x.lineTo(cx + (r + nr * 2.6 * k) * Math.sin(th), cy - (r + nr * 2.6 * k) * Math.cos(th)); x.stroke();
+      x.fillStyle = C.blue; x.beginPath(); x.arc(px, py, nr * k, 0, 7); x.fill();
+    }
+    txt(String(h), cx + (r + nr * 4.6) * Math.sin(th), cy - (r + nr * 4.6) * Math.cos(th) + nr * .55, nr * 1.5, 500, ink, 'center', 'mono');
+  });
+  const to = t0 + .9 + 5 * BEAT; const k = eo(lin(t, to, to + .4));
+  if (k > 0) { const nr = r * .13; x.strokeStyle = C.green; x.lineWidth = nr * 1.6; x.beginPath(); x.moveTo(cx, cy - r); x.lineTo(cx, cy - r - nr * 2.6 * k); x.stroke(); x.fillStyle = C.green; x.beginPath(); x.arc(cx, cy - r, nr * 1.25 * k, 0, 7); x.fill(); txt('12', cx, cy - r - nr * 3.4, nr * 1.5, 500, ink, 'center', 'mono'); }
+  x.restore();
+}
+function gaugeDraw(t, depth, dark, top, bot, gx) {
+  const k = (bot - top) / 6350, w = 30 * S;
+  const ink = dark ? C.sky : C.deep;
+  x.save(); x.fillStyle = C.blue; x.globalAlpha = .18; x.fillRect(gx, top, w, depth * k); x.globalAlpha = 1;
+  for (let m = 0; m < 7; m++) { const y0 = top + m * 1000 * k, y1 = Math.min(bot, top + (m + 1) * 1000 * k); if (y0 >= bot) break; x.fillStyle = m % 2 ? C.blue : ink; x.fillRect(gx + w - 4 * S, y0, 4 * S, y1 - y0); }
+  for (let mm = 0; mm <= 6350; mm += 100) { const y = top + mm * k, L = (mm % 1000 ? (mm % 500 ? 6 : 12) : 18) * S; x.fillStyle = (Math.floor(mm / 1000) % 2) ? C.blue : ink; x.fillRect(gx + w - 4 * S - L, y - .7 * S, L, 1.4 * S); if (mm % 1000 === 0 && mm <= 6000) txt(String(mm / 1000), gx + 2 * S, y + 4 * S, 11 * S, 500, ink, 'left', 'mono'); }
+  const y = top + depth * k; x.fillStyle = C.green; x.fillRect(gx - 6 * S, y - 1.5 * S, w + 6 * S, 3 * S);
+  x.beginPath(); x.moveTo(gx - 6 * S, y); x.lineTo(gx - 18 * S, y - 8 * S); x.lineTo(gx - 18 * S, y + 8 * S); x.fill();
+  txt(Math.round(depth) + ' mm', gx - 24 * S, y + 5 * S, 15 * S, 500, ink, 'right', 'mono');
+  x.restore();
+}
+
+// ---------- timeline (seconds), cut on bars
+const T = { rain: 0, cut: 2 * BAR, down: 4 * BAR, plan: 7 * BAR, xray: 9 * BAR, drop: 11 * BAR, end: 13 * BAR };
+
+function render(t) {
+  x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1; x.clearRect(0, 0, W, H);
+  // camera pulse on each bar
+  const bp = (t % BAR) / BAR; const pulse = 1 + .012 * Math.exp(-bp * 10);
+  x.translate(W / 2, H / 2); x.scale(pulse, pulse); x.translate(-W / 2, -H / 2);
+  const G = PORTRAIT ? H * .52 : H * .58; // ground line on screen
+  if (t < T.down) sceneGround(t, G);
+  else if (t < T.plan) sceneDown(t, G);
+  else if (t < T.xray) scenePlan(t);
+  else if (t < T.drop) sceneXray(t);
+  else if (t < T.end) sceneDrop(t);
+  else sceneEnd(t);
+  // grain, even
+  x.setTransform(1, 0, 0, 1, 0, 0);
+  const gi = grain[Math.floor(t * 24) % grain.length]; x.globalAlpha = 1;
+  for (let yy = 0; yy < H; yy += 256) for (let xx = 0; xx < W; xx += 256) x.drawImage(gi, xx, yy);
+}
+
+function strata(G, cam, k, reveal) {
+  for (let mm = 0; mm < 6350; mm += 250) {
+    const y0 = G + (mm - cam) * k, h = 250 * k + 1;
+    if (y0 > H || y0 + h < 0) continue;
+    const ry = Math.min(h, Math.max(0, reveal - (mm - 0) * k));
+    x.fillStyle = tint(mm + 125); x.fillRect(0, y0, W, reveal === Infinity ? h : ry);
+  }
+}
+function sceneGround(t, G) {
+  x.fillStyle = C.paper; x.fillRect(0, 0, W, H);
+  x.fillStyle = C.surface; x.fillRect(0, G, W, H - G);
+  const k = (H * .9) / 6350;
+  // rain
+  const r = mulberry(7);
+  x.strokeStyle = C.blue; x.lineWidth = 2.2 * S; x.lineCap = 'round';
+  for (let i = 0; i < 70; i++) {
+    const px = r() * W, sp = (700 + r() * 500) * S, ph = r() * 3, len = (26 + r() * 30) * S;
+    const y = ((t + ph) * sp) % (G + 200 * S) - 100 * S;
+    const fade = 1 - lin(t, T.cut + BAR * .5, T.cut + BAR * 1.5);
+    if (y < G - len) { x.globalAlpha = .55 * fade; x.beginPath(); x.moveTo(px, y); x.lineTo(px, y + len); x.stroke(); }
+    else { const rp = (y - (G - len)) / (200 * S); x.globalAlpha = .5 * (1 - rp) * fade; x.beginPath(); x.ellipse(px, G - 4 * S, 6 * S + rp * 40 * S, 2 * S + rp * 6 * S, 0, 0, 7); x.stroke(); }
+  }
+  x.globalAlpha = 1;
+  // the cut opens: strata revealed downward from the turf line
+  const rv = eio(lin(t, T.cut, T.cut + BAR * 1.4)) * (H - G + 10);
+  if (rv > 0) strata(G, 0, k, rv);
+  // turf line draws across
+  const tl = eo(lin(t, .2, 1.4)); x.fillStyle = C.green; x.fillRect(0, G - 6 * S, W * tl, 10 * S);
+  // shaft
+  if (t > T.cut + BAR * .6) {
+    const ks = eio(lin(t, T.cut + BAR * .6, T.cut + BAR * 1.8));
+    const sx = PORTRAIT ? W * .74 : W * .66, sw = 150 * S;
+    x.fillStyle = 'rgba(255,255,255,.92)'; x.fillRect(sx, G - 30 * S, sw, (H - G + 40) * ks);
+    x.fillStyle = C.deep; x.fillRect(sx - 8 * S, G - 30 * S, 8 * S, (H - G + 40) * ks); x.fillRect(sx + sw, G - 30 * S, 8 * S, (H - G + 40) * ks);
+    x.fillStyle = '#0b2b3c'; x.fillRect(sx - 26 * S, G - 38 * S, sw + 52 * S, 10 * S * ks);
+  }
+  if (t > T.cut) gaugeDraw(t, 0, false, 60 * S, H - 60 * S, W - 70 * S);
+  // words
+  const tx = PORTRAIT ? W * .12 : 120 * S;
+  two('From roof', 'to river.', tx, G - (PORTRAIT ? 380 : 260) * S, (PORTRAIT ? 92 : 104) * S, .9, t, C.field, C.blue, 'left', true);
+  if (t > T.cut + BAR) two('Drawn', 'in section.', tx, G + (PORTRAIT ? 260 : 200) * S, (PORTRAIT ? 70 : 72) * S, T.cut + BAR, t, '#ffffff', '#ffffff', 'left', true);
+}
+function sceneDown(t, G) {
+  const k = (H * .9) / 6350;
+  const p = eio(lin(t, T.down, T.plan - BEAT));
+  const camMm = p * 6000;                               // depth at the ground line position
+  const kk = k * 4.5;                                    // zoomed in while descending
+  x.fillStyle = tint(camMm); x.fillRect(0, 0, W, H);
+  for (let mm = 0; mm < 6350; mm += 50) {
+    const y0 = G + (mm - camMm) * kk, h = 50 * kk + 1; if (y0 > H || y0 + h < 0) continue;
+    x.fillStyle = tint(mm + 25); x.fillRect(0, y0, W, h);
+  }
+  // ground (above) when near the top
+  const gy = G - camMm * kk; if (gy > 0) { x.fillStyle = C.paper; x.fillRect(0, 0, W, gy); x.fillStyle = C.green; x.fillRect(0, gy - 6 * S, W, 10 * S); }
+  const sx = PORTRAIT ? W * .74 : W * .66, sw = 150 * S;
+  x.fillStyle = 'rgba(255,255,255,.9)'; x.fillRect(sx, Math.max(0, gy), sw, H);
+  x.fillStyle = C.deep; x.fillRect(sx - 8 * S, Math.max(0, gy), 8 * S, H); x.fillRect(sx + sw, Math.max(0, gy), 8 * S, H);
+  // depth level line at the screen ground position
+  x.fillStyle = C.green; x.fillRect(0, G - 1.5 * S, W, 3 * S);
+  const dark = camMm > 2000;
+  gaugeDraw(t, camMm, dark, 60 * S, H - 60 * S, W - 70 * S);
+  const tx = PORTRAIT ? W * .1 : 120 * S;
+  txt(String(Math.round(camMm / 10) * 10).padStart(4, '0'), tx, G - 40 * S, (PORTRAIT ? 190 : 210) * S, 800, dark ? '#ffffff' : C.deep);
+  txt('MM BELOW GROUND', tx + 8 * S, G + 46 * S, 20 * S, 500, dark ? C.sky : C.deep, 'left', 'mono', 3 * S);
+  const facts = [[1000, '1000 mm. The shallowest chamber.'], [3000, '3000 mm. The deepest adoptable chamber.'], [6000, '6000 mm. The bottom of the range.']];
+  facts.forEach(([mm, s]) => { const a = lin(camMm, mm - 250, mm) * (1 - lin(camMm, mm + 350, mm + 600)); if (a > 0 && camMm < 6001) { x.globalAlpha = a; txt(s, tx + 8 * S, G + 110 * S, (PORTRAIT ? 28 : 30) * S, 500, dark ? '#dcebf3' : C.deep, 'left', 'mono'); x.globalAlpha = 1; } });
+}
+function scenePlan(t) {
+  x.fillStyle = C.invert; x.fillRect(0, 0, W, H);
+  const cx = PORTRAIT ? W / 2 : W * .71, cy = PORTRAIT ? H * .36 : H / 2 + 10 * S, r = (PORTRAIT ? 290 : 265) * S;
+  clock(cx, cy, r, [3, 5, 6, 7, 9], t, T.plan, true);
+  const tx = PORTRAIT ? W / 2 : 140 * S, al = PORTRAIT ? 'center' : 'left';
+  two('Five ways in.', 'One way out.', tx, PORTRAIT ? H * .68 : H * .44, (PORTRAIT ? 84 : 84) * S, T.plan + BAR * .5, t, C.green, '#ffffff', al, true);
+  const k = eo(lin(t, T.plan + BAR, T.plan + BAR + .6));
+  x.globalAlpha = k; txt('INLETS 3 · 5 · 6 · 7 · 9   OUTLET 12', tx, (PORTRAIT ? H * .68 + 190 * S : H * .44 + 160 * S), 22 * S, 500, C.sky, al, 'mono', 2 * S); x.globalAlpha = 1;
+}
+function sceneXray(t) {
+  x.fillStyle = C.surface; x.fillRect(0, 0, W, H);
+  const list = [['sersic600', 'Inspect', 'RHINO SERSIC600'], ['serpt600', 'Settle', 'RhinoPit SERPT600'], ['sehds1800', 'Separate', 'SudSceptor SEHDS1800'], ['rotexc1200', 'Control', 'RhinoRoTex C1200']];
+  const i = Math.min(3, Math.floor((t - T.xray) / (BEAT * 2)));
+  const tl = (t - T.xray) - i * BEAT * 2;
+  const [k, verb, name] = list[i];
+  const im = IM[k]; const sz = (PORTRAIT ? 860 : 860) * S;
+  const ix = PORTRAIT ? (W - sz) / 2 : W * .52, iy = PORTRAIT ? H * .12 : (H - sz) / 2;
+  const a = eo(clamp(tl / .35)); x.globalAlpha = a; x.drawImage(im, ix, iy + (1 - a) * 20 * S, sz, sz); x.globalAlpha = 1;
+  const tx = PORTRAIT ? W / 2 : 140 * S, al = PORTRAIT ? 'center' : 'left', ty = PORTRAIT ? H * .74 : H * .48;
+  two('', verb + '.', tx, ty, (PORTRAIT ? 110 : 120) * S, T.xray + i * BEAT * 2, t, C.field, C.blue, al);
+  txt(name, tx, ty + 70 * S, 26 * S, 500, C.deep, al, 'mono', 1 * S);
+  // progress of the journey: four pips
+  for (let j = 0; j < 4; j++) { x.fillStyle = j <= i ? C.blue : 'rgba(0,85,118,.2)'; const px = (PORTRAIT ? W / 2 - 66 * S : 140 * S) + j * 44 * S; x.fillRect(px, ty + 110 * S, 32 * S, 6 * S); }
+}
+function sceneDrop(t) {
+  x.fillStyle = C.paper; x.fillRect(0, 0, W, H);
+  const vb = D.hz.vb; const hh = (PORTRAIT ? 120 : 150) * S; const ww = hh * vb[2] / vb[3];
+  const X = (W - ww) / 2, Y = (PORTRAIT ? H * .40 : H * .42) - hh / 2;
+  // drop paths are indexes 5..9 in the master; settle bottom first: red, small green, blue (+speck), top green
+  const order = { 7: 0, 9: 1, 8: 2, 5: 2, 6: 3 };
+  const t0 = T.drop + .2;
+  drawSet(P.hz, vb, X, Y, hh, (p, i) => i in order, (p, i) => { const k = eo(lin(t, t0 + order[i] * .22 * 2, t0 + order[i] * .44 + .6)); return { al: k, dy: -(1 - k) * 40 }; });
+  const kw = eo(lin(t, t0 + 1.8, t0 + 2.5));
+  drawSet(P.hz, vb, X, Y, hh, (p, i) => !(i in order), () => ({ al: kw, dy: (1 - kw) * 8 }));
+  const ks = eo(lin(t, t0 + 2.7, t0 + 3.3));
+  x.globalAlpha = ks; txt('BESPOKE,', W / 2 - 8 * S, Y + hh + 90 * S, 30 * S, 700, C.blue, 'right', 'Montserrat', 4 * S);
+  x.font = `italic 700 ${30 * S}px Montserrat`; x.fillStyle = C.blue; x.textAlign = 'left'; x.letterSpacing = 4 * S + 'px'; x.fillText(' STANDARDISED', W / 2 - 8 * S, Y + hh + 90 * S); x.globalAlpha = 1;
+}
+function sceneEnd(t) {
+  x.fillStyle = C.invert; x.fillRect(0, 0, W, H);
+  const k = eo(lin(t, T.end, T.end + 1.2));
+  // sump strata at the foot
+  for (let i = 0; i < 12; i++) { x.fillStyle = tint(5200 + i * 100); x.globalAlpha = k; x.fillRect(0, H * .72 + i * 26 * S, W, 27 * S); } x.globalAlpha = 1;
+  const vb = D.drop.vb, dh = 120 * S, dw = dh * vb[2] / vb[3];
+  drawSet(P.drop, vb, W / 2 - dw / 2, H * (PORTRAIT ? .30 : .20), dh, null, () => ({ al: k, dy: 0 }));
+  two('Every drop,', 'accounted for.', W / 2, H * (PORTRAIT ? .46 : .48), (PORTRAIT ? 86 : 100) * S, T.end + .4, t, C.green, '#ffffff', 'center', true);
+  const k2 = eo(lin(t, T.end + 1.4, T.end + 2)); x.globalAlpha = k2;
+  txt('SUDSENVIRO.COM', W / 2, H * (PORTRAIT ? .64 : .70), 24 * S, 500, C.sky, 'center', 'mono', 6 * S); x.globalAlpha = 1;
+  const kf = lin(t, DUR - .8, DUR); if (kf > 0) { x.fillStyle = `rgba(0,0,0,${kf})`; x.fillRect(0, 0, W, H); }
+}
+window.render = render; window.DUR = DUR;
+</script></body></html>

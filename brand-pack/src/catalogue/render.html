@@ -1,0 +1,76 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+// Catalogue format: one camera, one light rig, one ground, for every product.
+// Camera 22 deg above horizontal, 35 deg round from front-left. Key light top-left.
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+const q = new URLSearchParams(location.search);
+const file = q.get('f'), S = +(q.get('s') || 1600), mode = q.get('m') || 'solid';
+const ground = q.get('g') || '#eef3f5';
+const yaw = +(q.get('yaw') || 35), pitch = +(q.get('pitch') || 22);
+const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+r.setSize(S, S); r.setPixelRatio(1); r.outputColorSpace = THREE.SRGBColorSpace;
+r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.0;
+r.shadowMap.enabled = true; r.shadowMap.type = THREE.VSMShadowMap;
+document.body.appendChild(r.domElement);
+const scene = new THREE.Scene();
+if (mode === 'solid') scene.background = new THREE.Color(ground);
+const pm = new THREE.PMREMGenerator(r); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = mode === "xray" ? 0.0 : 0.8;
+const key = new THREE.DirectionalLight(0xffffff, 2.2); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 22; key.shadow.blurSamples = 25; key.shadow.bias = -0.0004;
+scene.add(key); scene.add(new THREE.HemisphereLight(0xf4fbff, 0x9fb3bf, 0.7));
+const body = new THREE.MeshStandardMaterial({ color: 0x27343d, roughness: 0.62, metalness: 0.0 });
+const blue = new THREE.MeshStandardMaterial({ color: 0x1d80b9, roughness: 0.5 });
+const green = new THREE.MeshStandardMaterial({ color: 0x54b54d, roughness: 0.5 });
+const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
+loader.load(file, g => {
+  const root = g.scene; const kill = [];
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    if (/cube/i.test(o.name) || /cube/i.test(o.parent && o.parent.name || '')) { kill.push(o); return; }
+    o.castShadow = o.receiveShadow = true;
+    const n = (o.name + ' ' + (o.material && o.material.name || '')).toLowerCase();
+    const c = o.material && o.material.color ? o.material.color.getHSL({}) : { s: 0, l: 0.2 };
+    const accent = c.s > 0.35 && c.l > 0.25;
+    if (mode === 'xray') {
+      const hue = accent ? (o.material.color.g > o.material.color.b ? 0x54b54d : 0x1d80b9) : 0x1d80b9;
+      o.material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.55, depthWrite: false, side: THREE.DoubleSide });
+      const e = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 28), new THREE.LineBasicMaterial({ color: hue, transparent: true, opacity: 0.9 }));
+      o.add(e);
+    } else {
+      o.material = accent ? (o.material.color.g > o.material.color.b * 1.1 ? green : blue) : body;
+    }
+  });
+  kill.forEach(o => o.parent.remove(o));
+  scene.add(root);
+  const box = new THREE.Box3().setFromObject(root, true), size = box.getSize(new THREE.Vector3()), ctr = box.getCenter(new THREE.Vector3());
+  const rad = size.length() / 2;
+  const cam = new THREE.PerspectiveCamera(22, 1, rad / 50, rad * 50);
+  const yr = THREE.MathUtils.degToRad(yaw), pr = THREE.MathUtils.degToRad(pitch);
+  const dir = new THREE.Vector3(-Math.sin(yr) * Math.cos(pr), Math.sin(pr), Math.cos(yr) * Math.cos(pr));
+  // fit: even margin, product fills ~76% of the frame
+  let dist = rad / Math.sin(THREE.MathUtils.degToRad(11)) * 0.80;
+  cam.position.copy(ctr).addScaledVector(dir, dist); cam.lookAt(ctr);
+  key.position.copy(ctr).add(new THREE.Vector3(-rad * 2.2, rad * 3.2, rad * 1.6)); key.target.position.copy(ctr); scene.add(key.target);
+  const sc = key.shadow.camera; sc.left = sc.bottom = -rad * 1.6; sc.right = sc.top = rad * 1.6; sc.near = rad * 0.1; sc.far = rad * 10; sc.updateProjectionMatrix();
+  if (mode !== 'xray') {
+    const gp = new THREE.Mesh(new THREE.PlaneGeometry(rad * 20, rad * 20), new THREE.ShadowMaterial({ opacity: 0.16 }));
+    gp.rotation.x = -Math.PI / 2; gp.position.y = box.min.y; gp.receiveShadow = true; scene.add(gp);
+  }
+  // re-centre in screen space so margins are even
+  r.render(scene, cam);
+  const pts = []; for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) pts.push(new THREE.Vector3(x, y, z).project(cam));
+  const minx = Math.min(...pts.map(p => p.x)), maxx = Math.max(...pts.map(p => p.x)), miny = Math.min(...pts.map(p => p.y)), maxy = Math.max(...pts.map(p => p.y));
+  const span = Math.max(maxx - minx, maxy - miny);
+  cam.setViewOffset(S, S, ((minx + maxx) / 2) * S / 2, -((miny + maxy) / 2) * S / 2, S, S);
+  cam.zoom = 1.56 / span; cam.updateProjectionMatrix();
+  r.render(scene, cam);
+  window.DONE = true;
+}, undefined, e => { document.title = 'ERR ' + e; window.DONE = true; });
+</script></body></html>

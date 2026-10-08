@@ -1,0 +1,77 @@
+[
+ {
+  "id": "sersic600",
+  "name": "RHINO SERSIC 600",
+  "file": "rhino-inspection-chamber/rhino-inspection-chamber-sersic600.glb"
+ },
+ {
+  "id": "sercic600-5",
+  "name": "RHINO SERCIC 600, five inlet",
+  "file": "rhino-inspection-chamber-5-inlet/rhino-inspection-chamber-sercic600-5-inlet.glb"
+ },
+ {
+  "id": "seb1050",
+  "name": "RHINO chamber base SEB1050",
+  "file": "rhino-inspection-chamber-base/rhino-inspection-chamber-base-seb1050.glb"
+ },
+ {
+  "id": "serpt600",
+  "name": "RhinoPit SERPT600",
+  "file": "rhinopit/rhinopit-serpt600.glb"
+ },
+ {
+  "id": "sehds1800",
+  "name": "SudSceptor SEHDS1800",
+  "file": "sudsceptor/sudsceptor-sehds1800.glb"
+ },
+ {
+  "id": "serpod1850",
+  "name": "RhinoPod SERPOD1850",
+  "file": "rhinopod/rhinopod-serpod1850.glb"
+ },
+ {
+  "id": "poc600",
+  "name": "RhinoRoFlo POC600",
+  "file": "rhinoroflo/rhinoroflo-poc600.glb"
+ },
+ {
+  "id": "rotexc1200",
+  "name": "RhinoRoTex C1200",
+  "file": "rhinorotex/rhinorotex-c1200.glb"
+ },
+ {
+  "id": "ps50",
+  "name": "RhinoLift PS50",
+  "file": "rhinolift-pump-tank/rhinolift-ps50.glb"
+ },
+ {
+  "id": "mini2000d",
+  "name": "RhinoLift Mini 2000D",
+  "file": "rhinolift-mini/rhinolift-mini2000d.glb"
+ },
+ {
+  "id": "maxi1600d",
+  "name": "RhinoLift Maxi 1600D",
+  "file": "rhinolift-maxi/rhinolift-maxi1600d.glb"
+ },
+ {
+  "id": "aqua190s",
+  "name": "RhinoLift Aqua 190S",
+  "file": "rhinolift-aqua/rhinolift-aqua190s.glb"
+ },
+ {
+  "id": "jumbomicro",
+  "name": "RHINO GT Jumbo Micro",
+  "file": "grease-trap-jumbo-micro/grease-trap-jumbo-micro.glb"
+ },
+ {
+  "id": "serd",
+  "name": "RhinoDuct SERD",
+  "file": "rhinoduct-with-cover/rhinoduct-serd-cover.glb"
+ },
+ {
+  "id": "flolock",
+  "name": "Rhino FloLock",
+  "file": "rhino-flolock/rhino-flolock.glb"
+ }
+]
