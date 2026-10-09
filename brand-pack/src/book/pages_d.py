@@ -308,13 +308,13 @@ def files():
         dark = any(k in n for k in ['reversed', 'white'])
         bg = DEEP if dark else '#ffffff'
         sv = svg(n).replace('<svg ', '<svg style="max-width:100%;max-height:68px" ')
-        tiles += f'<div style="min-width:0"><div style="height:92px;background:{bg};display:flex;align-items:center;justify-content:center;padding:12px">{sv}</div><div class="mono" style="font-size:9.5px;color:{SKY};margin-top:5px;word-break:break-all">{n}</div></div>'
+        tiles += f'<div style="min-width:0"><div style="height:92px;background:{bg};display:flex;align-items:center;justify-content:center;padding:12px">{sv}</div><div class="mono" style="font-size:10px;color:{SKY};margin-top:5px;white-space:nowrap">{n[5:-4]}</div></div>'
     body = f'''
 <div class="area">
   <p class="eyebrow">6000 mm <span style="color:{SKY}">/</span> The files</p>
   <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:30px">
     <h2 class="two h2"><span class="lt">Everything,</span> <b>at the bottom of the range</b></h2>
-    <p class="small" style="max-width:520px;margin:0">Every mark below is in <span class="mono">brand-pack/logos</span> as SVG and as a transparent PNG at 2400 px. Type in the seal is converted to outlines, so sign makers and lasers need no fonts.</p>
+    <p class="small" style="max-width:520px;margin:0">Every mark below is in <span class="mono">brand-pack/logos</span> as SVG and as a transparent PNG at 2400 px, named <span class="mono">suds-</span> plus the label shown. Type in the seal is converted to outlines, so sign makers and lasers need no fonts.</p>
   </div>
   <div class="grid" style="grid-template-columns:repeat(6,1fr);gap:14px 14px;margin-top:22px">{tiles}</div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:24px;margin-top:22px">

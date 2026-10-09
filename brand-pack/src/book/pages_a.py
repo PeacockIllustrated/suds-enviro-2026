@@ -48,10 +48,10 @@ def cover():
 # ---------------------------------------------------------------- contents
 def contents():
     top, bot = 190, 900
-    k = (bot - top) / MAX_MM
+    k = (bot - top - 40) / 6000
     rows = []
     for key, d, (lt, bd), fact in CHAPTERS:
-        y = top + d * k
+        y = top + min(d, 6000) * k + (40 if d > 6000 else 0)
         nm = (f'<span class="lt">{lt}</span> ' if lt else '') + f'<b>{bd}</b>'
         label = f'{d}' if d <= 6000 else '+350'
         rows.append(f'''<div class="abs" style="left:430px;right:136px;top:{y - 16:.1f}px;height:32px;display:flex;align-items:center;gap:18px;border-top:1px solid rgba(0,85,118,.14)">

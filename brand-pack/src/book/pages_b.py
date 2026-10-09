@@ -27,6 +27,51 @@ def colour_opener():
 <div class="abs grid" style="left:360px;right:136px;top:590px;grid-template-columns:repeat(4,1fr);gap:16px">{cores.replace('height:470px', 'height:200px')}</div>'''
     page('colour', body, cls='opener')
 
+def colour_meaning():
+    W, H, G = 600, 600, 150          # diagram size, turf line
+    strata = ''.join(f'<rect x="0" y="{G + 14 + i * 20}" width="{W}" height="21" fill="{depth_tint(500 + i * 6000 / 22)}"/>' for i in range(22))
+    rain = ''.join(f'<line x1="{x}" y1="{y}" x2="{x - 6}" y2="{y + 18}" stroke="{SKY}" stroke-width="2.5" stroke-linecap="round"/>' for x, y in [(60, 30), (130, 70), (200, 24), (270, 86), (350, 40), (420, 92), (490, 30), (560, 74), (95, 108), (310, 116), (530, 120)])
+    grass = ''.join(f'<line x1="{x}" y1="{G}" x2="{x + 3}" y2="{G - 9}" stroke="{FIELD}" stroke-width="2"/>' for x in range(8, W, 17))
+    pin = lambda n, x, y: f'<circle cx="{x}" cy="{y}" r="15" fill="#fff" stroke="{DEEP}" stroke-width="2"/><text x="{x}" y="{y + 5}" text-anchor="middle" style="font:700 14px var(--mono)" fill="{DEEP}">{n}</text>'
+    diagram = f'''<svg width="{W}" height="{H}" viewBox="0 0 {W} {H}">
+  <rect x="0" y="0" width="{W}" height="{G}" fill="{SURFACE}"/>{rain}
+  {strata}
+  <rect x="0" y="{G}" width="{W}" height="14" fill="{GREEN}"/>{grass}
+  <rect x="262" y="{G - 6}" width="86" height="372" fill="{PAPER}" stroke="{DEEP}" stroke-width="3"/>
+  <rect x="254" y="{G - 12}" width="102" height="8" fill="{DEEP}"/>
+  <rect x="262" y="476" width="86" height="40" fill="{SKY}" opacity=".7"/>
+  <rect x="0" y="288" width="262" height="24" fill="{BLUE}" stroke="#fff" stroke-width="2"/>
+  <rect x="348" y="306" width="{W - 348 - 34}" height="24" fill="{BLUE}" stroke="#fff" stroke-width="2"/>
+  <path d="M{W - 34} 300 L{W - 6} 318 L{W - 34} 336 Z" fill="{GREEN}"/>
+  <text x="{W - 10}" y="292" text-anchor="end" style="font:500 11px var(--mono);letter-spacing:.08em" fill="#fff">LEAVES CLEANER</text>
+  <rect x="0" y="548" width="{W}" height="20" fill="{RED}" stroke="#fff" stroke-width="2"/>
+  <text x="12" y="590" style="font:500 11px var(--mono);letter-spacing:.08em" fill="{SKY}">FOUL, KEPT APART AND BELOW</text>
+  {pin(1, 40, 60)}{pin(2, 40, G + 7)}{pin(3, 130, 300)}{pin(4, 470, 450)}{pin(5, 470, 558)}
+</svg>'''
+    rows = [
+        (1, SKY, 'Sky', 'Rain', 'The sky and the rain before it lands.', 'Lines, rules and text on dark grounds.'),
+        (2, GREEN, 'Green', 'The ground, and cleaner water', 'The land the rain falls on: roofs, roads, gardens, the site. The small green in the drop is water leaving cleaner than it arrived.', 'The light voice, the outlet node, the turf line.'),
+        (3, BLUE, 'Blue', 'Surface water', 'Rain and runoff: the water SuDS Enviro catches, settles, separates and controls.', 'The bold voice, buttons, clean-water products.'),
+        (4, DEEP, 'Deep', 'Below ground', 'Depth, structure and the engineering. Water darkens the further down it goes.', 'Body copy, navigation, the reversed ground.'),
+        (5, RED, 'Red', 'Foul water', 'Sewage, grease and off-mains treatment, kept at the bottom and apart from everything above it.', 'The one accent on foul material. Used sparingly, always low down.'),
+    ]
+    li = ''.join(f'''<div style="display:grid;grid-template-columns:30px 64px 1fr;gap:16px;align-items:start;padding:14px 0;border-top:1px solid rgba(0,85,118,.14)">
+      <div class="mono" style="font-size:13px;font-weight:600;color:{DEEP};padding-top:4px">{n}</div>
+      <div style="width:64px;height:64px;background:{c}"></div>
+      <div><div style="font:800 17px var(--display);text-transform:uppercase;color:{DEEP}">{nm} <span style="font-weight:300;color:{FIELD if c != RED else RED}">{what}</span></div>
+      <p class="small" style="margin:4px 0 2px;max-width:none">{d}</p><div class="cap">{use}</div></div></div>''' for n, c, nm, what, d, use in rows)
+    body = f'''
+<div class="area">
+  <p class="eyebrow">1000 mm <span style="color:{DEEP}">/</span> What the colours mean</p>
+  <h2 class="two h2"><span class="lt">Every colour</span> <b>is a layer of the ground</b></h2>
+</div>
+<div class="abs" style="left:64px;top:200px">{diagram}</div>
+<div class="abs" style="left:714px;right:136px;top:192px">{li}
+  <p class="small" style="margin-top:16px;max-width:none"><b>The order never changes.</b> Green over blue over red, as in the ground and in the drop: clean water above, foul water below.</p>
+  <p class="cap" style="margin-top:6px;max-width:none">Surface, Invert and Field are grounds and a text green, chosen to carry these five. They have no meaning of their own.</p>
+</div>'''
+    page('colour', body)
+
 def colour_added():
     adds = ''.join(f'''<div style="display:flex;gap:18px;align-items:stretch;min-width:0">
       <div style="width:120px;height:120px;background:{c};flex:none;{'border:1px solid rgba(0,85,118,.18);' if c == SURFACE else ''}"></div>
@@ -170,18 +215,18 @@ def type_scale():
         ('Data', '14 / 20', 'Mono 400', '8 pt', 'SEHDS1800  Ø1800 mm', 'font:400 13px var(--mono);color:' + DEEP),
         ('Caption', '12 / 17', 'Mono 400', '7 pt', 'Re-shot from the 3D file.', 'font:400 11.5px var(--mono);color:' + DEEP),
     ]
-    tr = ''.join(f'<tr><td style="font-weight:700;width:110px;padding:6px 10px">{a}</td><td class="num">{b}</td><td>{c}</td><td class="num">{d}</td><td style="{s};white-space:nowrap">{e}</td></tr>' for a, b, c, d, e, s in rows)
+    tr = ''.join(f'<tr><td style="font-weight:700;width:110px;padding:5px 10px">{a}</td><td class="num">{b}</td><td>{c}</td><td class="num">{d}</td><td style="{s};white-space:nowrap">{e}</td></tr>' for a, b, c, d, e, s in rows)
     body = f'''
 <div class="area">
   <p class="eyebrow">1500 mm <span style="color:{DEEP}">/</span> Scale</p>
   <h2 class="two h2"><span class="lt">Nine sizes,</span> <b>screen and print</b></h2>
-  <table style="margin-top:24px"><tr><th>Role</th><th>Screen px</th><th>Weight</th><th>Print</th><th>Sample</th></tr>{tr}</table>
+  <table style="margin-top:18px" class="tight"><tr><th>Role</th><th>Screen px</th><th>Weight</th><th>Print</th><th>Sample</th></tr>{tr}</table>
   <p class="cap" style="margin-top:12px">Screen sizes are for desktop; on phones, Display and Heading 1 drop to 44 and 34 px. Line lengths stay near 65 characters.</p>
-  <div style="display:grid;grid-template-columns:1.3fr 1fr 240px;gap:30px;margin-top:22px;background:{SURFACE};padding:28px 30px;align-items:center">
-    <div><p class="eyebrow">In use</p><div class="two" style="font-size:44px"><span class="lt">Inspection</span><br><b>chambers</b></div>
+  <div style="display:grid;grid-template-columns:1.3fr 1fr 200px;gap:30px;margin-top:16px;background:{SURFACE};padding:20px 30px;align-items:center">
+    <div><p class="eyebrow">In use</p><div class="two" style="font-size:38px"><span class="lt">Inspection</span><br><b>chambers</b></div>
       <p style="font:500 17px/1.45 var(--display);margin:12px 0 0">One-piece HDPE, benched and channelled. Six diameters from 450 to 1200 mm.</p></div>
     <div class="mono" style="font-size:13px;line-height:2;color:{DEEP}">SERSIC600 &nbsp; Ø600 mm<br>Inlets 3 / 5 / 6 / 7 / 9<br>Outlet 12 o'clock<br>Depth to 6000 mm</div>
-    <div>{clock_plan(r=58)}</div>
+    <div>{clock_plan(r=46)}</div>
   </div>
 </div>'''
     page('type', body)
@@ -284,6 +329,6 @@ def say_table():
     page('voice', body)
 
 def build():
-    colour_opener(); colour_added(); colour_axis(); contrast()
+    colour_opener(); colour_meaning(); colour_added(); colour_axis(); contrast()
     type_opener(); type_voices(); type_scale(); names()
     voice_opener(); line_bank(); say_table()

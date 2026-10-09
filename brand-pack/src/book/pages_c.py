@@ -118,7 +118,7 @@ def heroes():
 
 def heroes_grid():
     pics = [('hero-1-trench', 'Lowering a RHINO SERSIC chamber, housing site, morning'), ('hero-3-delivery', 'SudSceptor SEHDS1800 arriving on site, low sun'), ('hero-4-dusk', 'RhinoLift PS50 bedded in, under work lights'), ('hero-5-street', 'Where the water starts: rain on a new street'), ('hero-6-outfall', 'Where it ends: a clean outfall to the beck')]
-    cells = ''.join(f'<figure style="margin:0;min-width:0;{"grid-row:span 2;" if i == 0 else ""}"><img src="{img("photo/" + p + ".png", 1100 if i == 0 else 640)}" style="width:100%;{"height:726px" if i == 0 else "height:337px"};object-fit:cover" alt="{c}"><figcaption class="cap" style="margin-top:6px">{c}</figcaption></figure>' for i, (p, c) in enumerate(pics))
+    cells = ''.join(f'<figure style="margin:0;min-width:0;{"grid-row:span 2;" if i == 0 else ""}"><img src="{img("../photography/hero/" + p + ".jpg", 1100 if i == 0 else 640)}" style="width:100%;{"height:726px" if i == 0 else "height:337px"};object-fit:cover" alt="{c}"><figcaption class="cap" style="margin-top:6px">{c}</figcaption></figure>' for i, (p, c) in enumerate(pics))
     body = f'''
 <div class="area">
   <p class="eyebrow">3000 mm <span style="color:{DEEP}">/</span> Hero set</p>
@@ -205,7 +205,7 @@ def journey():
         svgp.append(f'<line x1="{x:.1f}" y1="{G - 120}" x2="{x:.1f}" y2="{y - 10:.1f}" stroke="{DEEP}" stroke-width="1" stroke-dasharray="2 4" opacity=".5"/>')
         svgp.append(f'<text x="{x:.1f}" y="{G - 150}" text-anchor="middle" font-family="Montserrat" font-weight="800" font-size="19" fill="{BLUE}" style="text-transform:uppercase">{t.upper()}</text>')
         svgp.append(f'<text x="{x:.1f}" y="{G - 130}" text-anchor="middle" class="mono" font-size="10.5" fill="{DEEP}">{sub}</text>')
-    svgp.append(f'<text x="{x1 + 20}" y="{pts[-1][1] + 34:.1f}" class="mono" font-size="11" fill="#fff" text-anchor="end">falls with the ground</text>')
+    svgp.append(f'<text x="{x1 - 24}" y="{pts[-1][1] + 34:.1f}" class="mono" font-size="11" fill="{DEEP}" text-anchor="end">falls with the ground</text>')
     svgp.append('</svg>')
     imgs = ''.join(f'<img class="abs" src="{img("../photography/xray/" + im.replace("xray-", "") + ".png", 400, "webp")}" style="left:{pts[i][0] - 95:.0f}px;top:{pts[i][1] - 150:.0f}px;width:190px;height:190px;object-fit:contain;filter:drop-shadow(0 0 0 #fff) brightness(1.15)" alt="">' for i, (t, sub, im, _) in enumerate(stops) if im)
     body = f'''
@@ -213,7 +213,7 @@ def journey():
   <h2 class="two h2"><span class="lt">From roof</span> <b>to river</b></h2></div>
 {''.join(svgp)}
 {imgs}
-<p class="abs small" style="left:64px;top:810px;width:1150px;max-width:none;color:#fff">The site's Water Journey follows one storm from the roof to the river. The range sits along it in the same order, each product a little deeper than the last because the pipe falls with the ground. This strip is the brochure's contents, the website's product menu and the order of the data sheets.</p>'''
+<p class="abs small" style="left:64px;top:846px;width:1150px;max-width:none;color:#fff;background:rgba(6,42,58,.88);padding:14px 20px;margin:0">The site's Water Journey follows one storm from the roof to the river. The range sits along it in the same order, each product a little deeper than the last because the pipe falls with the ground. This strip is the brochure's contents, the website's product menu and the order of the data sheets.</p>'''
     page('rhino', body)
 
 def build():

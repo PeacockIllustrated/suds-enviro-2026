@@ -74,3 +74,5 @@ img{display:block;max-width:100%}
 @media (prefers-reduced-motion:no-preference){ .slot{scroll-margin-top:12px} }
 
 table.roomy td{padding:12px 10px}
+
+table.tight td{padding:5px 10px}
