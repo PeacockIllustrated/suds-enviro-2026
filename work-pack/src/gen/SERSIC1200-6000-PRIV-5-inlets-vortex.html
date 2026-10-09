@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuDS Enviro - SE-DRG-SERSIC1200-6000-PRIV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@page{size:297mm 210mm;margin:0;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{background:#dfe8ee;font-family:'Montserrat',Arial,sans-serif;}
+.sheet{width:297mm;height:210mm;overflow:hidden;background:#fff;position:relative;}
+.bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:#004d70;color:#fff;font-size:13px;font-weight:600;}
+.bar button{font:inherit;font-weight:700;background:#44af43;color:#fff;border:0;border-radius:6px;padding:8px 14px;cursor:pointer;}
+.stack{display:flex;flex-direction:column;align-items:center;gap:16px;padding:16px;}
+@media screen{.sheet{zoom:var(--fit,1);box-shadow:0 2px 14px rgba(0,77,112,0.18);}}
+@media print{
+  body{background:#fff;}
+  .bar{display:none;}
+  .stack{display:block;padding:0;}
+  .sheet{break-after:page;page-break-after:always;}
+  .sheet:last-child{break-after:auto;page-break-after:auto;}
+}
+
+.spec{font-family:'Montserrat',Arial,sans-serif;color:#0f2535;padding:9mm;height:100%;display:flex;flex-direction:column;gap:4mm;}
+.spec *{box-sizing:border-box;}
+.sp-head{display:flex;align-items:stretch;border:0.6mm solid #004d70;border-radius:1.2mm;overflow:hidden;min-height:22mm;}
+.sp-co{background:#004d70;color:#fff;display:flex;align-items:center;gap:3mm;padding:0 5mm;width:62mm;}
+.sp-mark{width:10mm;height:10mm;border-radius:1.8mm;background:#1a82a2;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:3.8mm;}
+.sp-co-name{font-weight:800;font-size:3.6mm;line-height:1.1;}
+.sp-co-sub{font-size:2.3mm;color:#9ccbe0;margin-top:0.6mm;}
+.sp-title{flex:1;padding:3mm 5mm;background:#f0f6fa;display:flex;flex-direction:column;justify-content:center;}
+.sp-doc{font-size:2.4mm;font-weight:700;letter-spacing:0.3mm;color:#5a7a90;}
+.sp-prod{font-size:5mm;font-weight:800;color:#004d70;line-height:1.15;margin-top:0.6mm;}
+.sp-series{font-size:2.6mm;font-weight:700;color:#1a82a2;margin-top:0.4mm;}
+.sp-meta{width:72mm;display:grid;grid-template-columns:1fr 1fr;border-left:0.3mm solid #ccdde8;}
+.sp-meta>div{padding:1.6mm 3mm;border-bottom:0.3mm solid #ccdde8;}
+.sp-meta>div:nth-child(odd){border-right:0.3mm solid #ccdde8;}
+.sp-meta>div:nth-last-child(-n+2){border-bottom:none;}
+.sp-k{font-size:1.9mm;font-weight:700;color:#5a7a90;letter-spacing:0.2mm;text-transform:uppercase;}
+.sp-v{font-size:2.8mm;font-weight:700;color:#0f2535;margin-top:0.3mm;white-space:nowrap;}
+.sp-code{display:inline-block;background:#44af43;color:#fff;border-radius:0.8mm;padding:0.3mm 1.6mm;font-size:2.6mm;}
+.sp-grid{display:grid;gap:4mm;}
+.sp-g3{grid-template-columns:1fr 1fr 1.25fr;}
+.sp-g2{grid-template-columns:1fr 1.25fr;}
+.sp-card{border:0.3mm solid #ccdde8;border-radius:1.2mm;overflow:hidden;background:#fff;}
+.sp-card h3{margin:0;background:#004d70;color:#fff;font-size:2.5mm;font-weight:800;letter-spacing:0.3mm;padding:1.6mm 3mm;text-transform:uppercase;}
+.sp-card table{width:100%;border-collapse:collapse;font-size:2.45mm;}
+.sp-card td,.sp-card th{padding:1.15mm 3mm;border-bottom:0.2mm solid #e1ebf2;text-align:left;vertical-align:top;line-height:1.3;}
+.sp-card tr:last-child td{border-bottom:none;}
+.sp-card tr:nth-child(even) td{background:#f7fbfd;}
+.sp-card th{font-size:1.95mm;color:#5a7a90;font-weight:700;letter-spacing:0.2mm;text-transform:uppercase;background:#f0f6fa;}
+.sp-card td.k{color:#5a7a90;font-weight:600;width:44%;}
+.sp-card td.v{font-weight:700;}
+.sp-card td.num{text-align:right;font-weight:700;white-space:nowrap;}
+.sp-card th.num{text-align:right;}
+.sp-in{color:#1a82a2;font-weight:800;}
+.sp-out{color:#339932;font-weight:800;}
+.sp-pill{display:inline-block;border-radius:0.8mm;padding:0.2mm 1.6mm;font-size:2mm;font-weight:800;letter-spacing:0.2mm;text-transform:uppercase;white-space:nowrap;}
+.sp-pass{background:#e2f2e1;color:#2a7a29;}
+.sp-fail{background:#fbe0dd;color:#b3261e;}
+.sp-warn{background:#fdf0d9;color:#9a5b00;}
+.sp-lock{display:inline-block;margin-left:1.2mm;font-size:1.9mm;font-weight:800;color:#339932;border:0.25mm solid #339932;border-radius:0.6mm;padding:0 0.8mm;}
+.sp-note{padding:1.6mm 3mm;font-size:2.2mm;color:#5a7a90;line-height:1.35;border-top:0.2mm solid #e1ebf2;}
+.sp-foot{margin-top:auto;display:flex;justify-content:space-between;gap:6mm;font-size:2.1mm;color:#5a7a90;border-top:0.3mm solid #ccdde8;padding-top:2mm;}
+.sp-foot b{color:#004d70;}
+
+.dwg text{font-family:'Montserrat',Arial,sans-serif;}
+.bdr-out{fill:none;stroke:#0a1e2e;stroke-width:0.7;}
+.zdiv{fill:none;stroke:#9fbccf;stroke-width:0.3;}
+.zdiv-h{fill:none;stroke:#0a1e2e;stroke-width:0.6;}
+.zone-bg{fill:#f7fbfd;}
+.zhdr{font-weight:700;fill:#004d70;letter-spacing:0.15px;}
+.zhdr-s{font-weight:500;fill:#5a7a90;}
+.obj-h{fill:none;stroke:#0a1e2e;stroke-width:0.45;}
+.obj-t{fill:none;stroke:#0a1e2e;stroke-width:0.22;}
+.hidden{fill:none;stroke:#4a6a88;stroke-width:0.2;stroke-dasharray:1.6,1;}
+.wall-fill{fill:#c8dde8;}
+.int-fill{fill:#eef6fa;}
+.sump-fill{fill:#d9e8f1;}
+.cover-fill{fill:#1a3a50;}
+.ctr{stroke:#c0392b;stroke-width:0.16;stroke-dasharray:4,1.2,0.8,1.2;fill:none;}
+.pcl-in{stroke:#1a82a2;stroke-width:0.16;stroke-dasharray:4,1.2,0.8,1.2;fill:none;}
+.pcl-out{stroke:#339932;stroke-width:0.16;stroke-dasharray:4,1.2,0.8,1.2;fill:none;}
+.de{fill:none;stroke:#004d70;stroke-width:0.15;}
+.dl{fill:none;stroke:#004d70;stroke-width:0.2;}
+.darrow{fill:#004d70;}
+.dt{font-weight:700;fill:#004d70;}
+.pipe-in{fill:#dcebf3;stroke:#1a82a2;stroke-width:0.35;}
+.pipe-out{fill:#e2f2e1;stroke:#339932;stroke-width:0.35;}
+.open-in{fill:#dcebf3;stroke:#1a82a2;stroke-width:0.3;}
+.open-hid{fill:none;stroke:#1a82a2;stroke-width:0.22;stroke-dasharray:1.2,0.8;}
+.farr-in{fill:none;stroke:#1a82a2;stroke-width:0.3;}
+.farr-out{fill:none;stroke:#339932;stroke-width:0.3;}
+.fhead-in{fill:#1a82a2;}
+.fhead-out{fill:#339932;}
+.cb-inlet{fill:#1a82a2;}
+.cb-outlet{fill:#339932;}
+.cb-ref{font-weight:600;fill:rgba(255,255,255,0.92);}
+.cb-dia{font-weight:800;fill:#fff;}
+.cb-std{font-weight:500;fill:rgba(255,255,255,0.92);}
+.halo{paint-order:stroke;stroke:#eef6fa;stroke-width:0.6;stroke-linejoin:round;}
+.tag-in{font-weight:700;fill:#1a82a2;}
+.tag-out{font-weight:700;fill:#339932;}
+.tag-x{font-weight:700;fill:#b35f16;}
+.lead{fill:none;stroke:#5a7a90;stroke-width:0.15;}
+.north-fill{fill:#0a1e2e;}
+.north-lbl{font-weight:800;fill:#0a1e2e;}
+.sec-thick{stroke:#e07b2a;stroke-width:0.7;fill:none;}
+.sec-arr{stroke:#e07b2a;stroke-width:0.3;fill:none;}
+.sec-head{fill:#e07b2a;}
+.sec-ltr{font-weight:800;fill:#e07b2a;}
+.gline{stroke:#4a8a68;stroke-width:0.45;fill:none;}
+.ghatch{stroke:#7aaa88;stroke-width:0.2;fill:none;}
+.ffl-lbl{font-weight:700;fill:#2a5a40;}
+.cover-lbl{font-weight:700;fill:#fff;}
+.sump-lbl{font-weight:700;fill:#004d70;}
+.device{fill:#fbe9d8;stroke:#e07b2a;stroke-width:0.3;}
+.brk{fill:#f7fbfd;stroke:none;}
+.brk-line{fill:none;stroke:#0a1e2e;stroke-width:0.25;}
+.tbl-title{font-weight:800;fill:#004d70;letter-spacing:0.15px;}
+.tbl-hdr-bg{fill:#004d70;}
+.tbl-hdr{font-weight:700;fill:#fff;}
+.row-a{fill:#f0f6fa;}
+.row-b{fill:#fff;}
+.cell{font-weight:500;fill:#0f2535;}
+.cell-b{font-weight:700;fill:#004d70;}
+.cell-in{font-weight:700;fill:#1a82a2;}
+.cell-out{font-weight:700;fill:#339932;}
+.cell-pno{font-weight:600;fill:#1a82a2;}
+.cell-m{font-weight:500;fill:#5a7a90;}
+.grid{stroke:#ccdde8;stroke-width:0.15;fill:none;}
+.note-n{font-weight:700;fill:#004d70;}
+.note-t{font-weight:500;fill:#2a4a5e;}
+.tb-co-bg{fill:#004d70;}
+.tb-ttl-bg{fill:#f0f6fa;}
+.tb-logo-mk{fill:#1a82a2;}
+.tb-logo-t{font-weight:800;fill:#fff;}
+.tb-co-name{font-weight:800;fill:#fff;}
+.tb-co-sub{font-weight:500;fill:#9ccbe0;}
+.tb-drw-t{font-weight:800;fill:#004d70;}
+.tb-drw-s2{font-weight:700;fill:#1a82a2;}
+.tb-drw-s{font-weight:600;fill:#0f2535;}
+.tb-drw-m{font-weight:500;fill:#5a7a90;}
+.tb-f1{fill:#f0f6fa;}
+.tb-f2{fill:#e4eff6;}
+.tb-flbl{font-weight:700;fill:#5a7a90;letter-spacing:0.15px;}
+.tb-fval{font-weight:700;fill:#0f2535;}
+.tb-code-bg{fill:#44af43;}
+.tb-code-t{font-weight:700;fill:#fff;}
+.proj{fill:none;stroke:#0a1e2e;stroke-width:0.22;}
+</style>
+<script>(function(){function fit(){var w=Math.min(1,(window.innerWidth-32)/1123);document.documentElement.style.setProperty('--fit',String(w>0.2?w:0.2));}fit();window.addEventListener('resize',fit);})();</script>
+</head>
+<body>
+<div class="bar"><span>Spec sheet SERSIC1200-6000-PRIV - 2 pages, A4 landscape</span><button type="button" onclick="window.print()">Print or save as PDF</button></div>
+<div class="stack">
+<section class="sheet"><div class="spec">
+  <div class="sp-head">
+    <div class="sp-co">
+      <div class="sp-mark">SE</div>
+      <div><div class="sp-co-name">SuDS Enviro Ltd</div><div class="sp-co-sub">The Home of SuDS Rhino</div></div>
+    </div>
+    <div class="sp-title">
+      <div class="sp-doc">TECHNICAL SPECIFICATION</div>
+      <div class="sp-prod">INSPECTION CHAMBER</div>
+      <div class="sp-series">RHINO SERSIC SERIES</div>
+    </div>
+    <div class="sp-meta">
+      <div><div class="sp-k">Product code</div><div class="sp-v"><span class="sp-code">SERSIC1200-6000-PRIV</span></div></div>
+      <div><div class="sp-k">Date</div><div class="sp-v">23 Sep 2026</div></div>
+      <div><div class="sp-k">Size</div><div class="sp-v">Ø1200 x 6000 mm</div></div>
+      <div><div class="sp-k">Sheet</div><div class="sp-v">1 of 2</div></div>
+    </div>
+  </div>
+
+  <div class="sp-grid sp-g3">
+    <div class="sp-card"><h3>Project information</h3><table><tr><td class="k">Configuration ref</td><td class="v">3F9C2A71</td></tr><tr><td class="k">Quote ref</td><td class="v">Not yet quoted</td></tr><tr><td class="k">Date issued</td><td class="v">23 Sep 2026</td></tr><tr><td class="k">Drawing no.</td><td class="v">SE-DRG-SERSIC1200-6000-PRIV</td></tr><tr><td class="k">Product</td><td class="v">Inspection chamber</td></tr><tr><td class="k">Series</td><td class="v">RHINO SERSIC SERIES</td></tr><tr><td class="k">Status</td><td class="v"><span class="sp-pill sp-pass">Pass</span> <span style="font-weight:600;color:#5a7a90">Rule checks passed</span></td></tr></table></div>
+    <div class="sp-card"><h3>Chamber specification</h3><table><tr><td class="k">System</td><td class="v">Surface water</td></tr><tr><td class="k">External diameter</td><td class="v">1200 mm</td></tr><tr><td class="k">Depth to outlet soffit</td><td class="v">6000 mm</td></tr><tr><td class="k">Overall height</td><td class="v">6690 mm</td></tr><tr><td class="k">Sump below outlet invert</td><td class="v">350 mm</td></tr><tr><td class="k">Adoption</td><td class="v">Private (non-adoptable)</td></tr><tr><td class="k">Maximum depth</td><td class="v">6000 mm (private)</td></tr><tr><td class="k">Access</td><td class="v">Reducing cap, Ø600 clear opening</td></tr><tr><td class="k">Cover</td><td class="v">D400 cover and frame</td></tr><tr><td class="k">Material</td><td class="v">HDPE, BS EN 13598-2</td></tr></table></div>
+    <div class="sp-card"><h3>Compliance</h3><table><tr><th>Standard</th><th>Scope</th><th class="num">Status</th></tr><tr><td class="v">DCG Section C7.1.1</td><td>Sediment Management - Adoptable</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v">Sewers for Adoption 7th Ed. (SfA7)</td><td>Adoptable Sewer Standards</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v">BS EN 13598-2 (2009)</td><td>Plastic Inspection Chambers</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v">Building Regulations Part H1</td><td>Surface Water Drainage</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v">DCG Parts B and C</td><td>Minimum 50mm fall from side inlets to main channel</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v">DCG Restricted Access (350mm &gt; 1m depth)</td><td>Manhole Cover Compliance</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v">Outlet rule - no flow increase on exit</td><td>Rule Engine Validation</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr></table></div>
+  </div>
+
+  <div class="sp-grid sp-g2">
+    <div class="sp-card"><h3>Pipework</h3>
+      <table><tr><th>Ref</th><th>Position</th><th class="num">Angle</th><th>Size</th><th class="num">Invert H</th><th class="num">Centre H</th></tr><tr><td class="sp-out">OUT</td><td>12 o'clock</td><td class="num">0°</td><td>Ø300 Twinwall<span class="sp-lock">R2 MIN Ø225</span></td><td class="num">350</td><td class="num">500</td></tr><tr><td class="sp-in">IN1</td><td>3 o'clock</td><td class="num">90°</td><td>Ø300 Twinwall</td><td class="num">350</td><td class="num">500</td></tr><tr><td class="sp-in">IN2</td><td>5 o'clock</td><td class="num">150°</td><td>Ø225 Twinwall</td><td class="num">425</td><td class="num">538</td></tr><tr><td class="sp-in">IN3</td><td>6 o'clock</td><td class="num">180°</td><td>Ø300 Twinwall</td><td class="num">350</td><td class="num">500</td></tr><tr><td class="sp-in">IN4</td><td>7 o'clock</td><td class="num">210°</td><td>Ø160 EN1401</td><td class="num">499</td><td class="num">575</td></tr><tr><td class="sp-in">IN5</td><td>9 o'clock</td><td class="num">270°</td><td>Ø225 Twinwall</td><td class="num">425</td><td class="num">538</td></tr></table>
+      <div class="sp-note">Heights in mm above the internal base. Outlet fixed at 12 o'clock (0°, north); angles clockwise from north. Inlet soffits aligned with the outlet soffit. Vortex flow control on the outlet, 12 L/s.</div>
+    </div>
+    <div class="sp-card"><h3>Rule engine log</h3><table><tr><th>Rule</th><th>Check</th><th>Result</th><th class="num">Status</th></tr><tr><td class="v" style="white-space:nowrap">R1</td><td class="v" style="white-space:nowrap">Maximum inlets</td><td>5 of 5 inlets allowed for a 1200mm chamber.</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v" style="white-space:nowrap">R2</td><td class="v" style="white-space:nowrap">Outlet minimum size</td><td>5 inlets need at least a Ø225 twinwall outlet. Outlet locked at Ø300 TW.</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v" style="white-space:nowrap">R3</td><td class="v" style="white-space:nowrap">Blocked positions</td><td>None. The outlet at 12 o&apos;clock does not block any inlet position.</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v" style="white-space:nowrap">R4</td><td class="v" style="white-space:nowrap">Maximum depth</td><td>6000mm selected, 6000mm maximum (private).</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v" style="white-space:nowrap">R5</td><td class="v" style="white-space:nowrap">Outlet position</td><td>Outlet fixed at 12 o&apos;clock (0°). Inlets at 3, 5, 6, 7, 9 o&apos;clock.</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v" style="white-space:nowrap">R6</td><td class="v" style="white-space:nowrap">No flow increase on exit</td><td>No inlet is larger than the Ø300 TW outlet.</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr><tr><td class="v" style="white-space:nowrap">R7</td><td class="v" style="white-space:nowrap">Maximum pipe size</td><td>All pipes within the Ø300 maximum for a 1200mm chamber.</td><td class="num"><span class="sp-pill sp-pass">Pass</span></td></tr></table></div>
+  </div>
+
+  <div class="sp-foot">
+    <span>Generated by the SuDS Enviro configurator. Subject to technical review by SuDS Enviro before manufacture. Engineering drawing on sheet 2.</span>
+    <span><b>SuDS Enviro Ltd</b>  |  9 Ambleside Court, Chester-le-Street DH3 2EB  |  01224 057 700  |  sales@sudsenviro.com</span>
+  </div>
+</div></section>
+<section class="sheet"><svg xmlns="http://www.w3.org/2000/svg" class="dwg" viewBox="0 0 297 210" width="297mm" height="210mm" style="display:block">
+<defs>
+  <clipPath id="cp-plan"><rect x="9" y="16" width="115" height="116"/></clipPath>
+  <clipPath id="cp-elev"><rect x="124" y="16" width="164" height="116"/></clipPath>
+</defs>
+<rect x="0" y="0" width="297" height="210" fill="#fff"/>
+<rect x="9" y="16" width="115" height="116" class="zone-bg"/>
+<rect x="124" y="16" width="164" height="116" class="zone-bg"/>
+<line x1="9" y1="16" x2="288" y2="16" class="zdiv"/>
+<line x1="124" y1="9" x2="124" y2="132" class="zdiv"/>
+<line x1="9" y1="132" x2="288" y2="132" class="zdiv"/>
+<line x1="150" y1="132" x2="150" y2="171" class="zdiv"/>
+<text x="12" y="13.6" font-size="2.2" text-anchor="start" class="zhdr">PLAN VIEW (COVER REMOVED)  |  SCALE 1:25</text>
+<text x="127" y="13.6" font-size="2.2" text-anchor="start" class="zhdr">SECTION A-A LOOKING WEST  |  SCALE 1:25  |  SHAFT SHOWN BROKEN</text>
+<g clip-path="url(#cp-plan)">
+<circle cx="66.5" cy="74.5" r="24" class="wall-fill"/>
+<circle cx="66.5" cy="74.5" r="22.8" class="int-fill"/>
+<circle cx="66.5" cy="74.5" r="24" class="obj-h"/>
+<circle cx="66.5" cy="74.5" r="22.8" class="obj-t"/>
+<circle cx="66.5" cy="74.5" r="12" class="hidden"/>
+<line x1="39" y1="74.5" x2="94" y2="74.5" class="ctr"/>
+<line x1="66.5" y1="47" x2="66.5" y2="102" class="ctr"/>
+<line x1="117" y1="33.5" x2="117" y2="21.5" class="obj-t"/>
+<polygon points="117,21.5 115.2,27 117,25.8" class="north-fill"/>
+<polygon points="117,21.5 118.8,27 117,25.8" class="obj-t"/>
+<text x="117" y="20.3" font-size="3.2" text-anchor="middle" class="north-lbl">N</text>
+<line x1="49.53" y1="57.53" x2="44.53" y2="52.53" class="de"/>
+<line x1="44.53" y1="52.53" x2="42.03" y2="52.53" class="de"/>
+<polygon points="49.53,57.53 47.87,56.65 48.65,55.87" class="darrow"/>
+<text x="41.33" y="53.28" font-size="2.1" text-anchor="end" class="dt">Ø1200 EXT</text>
+<polygon points="73.5,51.7 73.5,44.5 59.5,44.5 59.5,51.7" class="pipe-out"/>
+<line x1="66.5" y1="61.96" x2="66.5" y2="43" class="pcl-out"/>
+<polygon points="66.5,46.2 67.1,47.8 65.9,47.8" class="fhead-out"/>
+<polygon points="89.3,81.5 96.5,81.5 96.5,67.5 89.3,67.5" class="pipe-in"/>
+<line x1="79.04" y1="74.5" x2="98" y2="74.5" class="pcl-in"/>
+<polygon points="92.8,74.5 94.4,73.9 94.4,75.1" class="fhead-in"/>
+<polygon points="73.22,96.95 76.82,103.18 86.18,97.78 82.58,91.55" class="pipe-in"/>
+<line x1="72.77" y1="85.36" x2="82.25" y2="101.78" class="pcl-in"/>
+<polygon points="79.65,97.28 80.97,98.36 79.93,98.96" class="fhead-in"/>
+<polygon points="59.5,97.3 59.5,104.5 73.5,104.5 73.5,97.3" class="pipe-in"/>
+<line x1="66.5" y1="87.04" x2="66.5" y2="106" class="pcl-in"/>
+<polygon points="66.5,100.8 67.1,102.4 65.9,102.4" class="fhead-in"/>
+<polygon points="52.33,92.65 48.73,98.88 54.27,102.08 57.87,95.85" class="pipe-in"/>
+<line x1="60.23" y1="85.36" x2="50.75" y2="101.78" class="pcl-in"/>
+<polygon points="53.35,97.28 53.07,98.96 52.03,98.36" class="fhead-in"/>
+<polygon points="43.7,69.1 36.5,69.1 36.5,79.9 43.7,79.9" class="pipe-in"/>
+<line x1="53.96" y1="74.5" x2="35" y2="74.5" class="pcl-in"/>
+<polygon points="40.2,74.5 38.6,75.1 38.6,73.9" class="fhead-in"/>
+<line x1="66.5" y1="28.5" x2="66.5" y2="31.1" class="sec-thick"/>
+<line x1="66.5" y1="28.5" x2="61" y2="28.5" class="sec-arr"/>
+<polygon points="60.3,28.5 61.9,27.85 61.9,29.15" class="sec-head"/>
+<text x="58.9" y="29.5" font-size="2.8" text-anchor="end" class="sec-ltr">A</text>
+<line x1="66.5" y1="120.5" x2="66.5" y2="117.9" class="sec-thick"/>
+<line x1="66.5" y1="120.5" x2="61" y2="120.5" class="sec-arr"/>
+<polygon points="60.3,120.5 61.9,119.85 61.9,121.15" class="sec-head"/>
+<text x="58.9" y="121.5" font-size="2.8" text-anchor="end" class="sec-ltr">A</text>
+<rect x="57.75" y="31.7" width="17.5" height="11" rx="1.2" class="cb-outlet"/>
+<text x="66.5" y="35" font-size="1.75" text-anchor="middle" class="cb-ref">OUT  0°</text>
+<text x="66.5" y="38.6" font-size="3" text-anchor="middle" class="cb-dia">Ø300</text>
+<text x="66.5" y="41.5" font-size="1.6" text-anchor="middle" class="cb-std">TWINWALL</text>
+<rect x="57.75" y="106.3" width="17.5" height="11" rx="1.2" class="cb-inlet"/>
+<text x="66.5" y="109.6" font-size="1.75" text-anchor="middle" class="cb-ref">IN3  180°</text>
+<text x="66.5" y="113.2" font-size="3" text-anchor="middle" class="cb-dia">Ø300</text>
+<text x="66.5" y="116.1" font-size="1.6" text-anchor="middle" class="cb-std">TWINWALL</text>
+<rect x="98.3" y="69" width="17.5" height="11" rx="1.2" class="cb-inlet"/>
+<text x="107.05" y="72.3" font-size="1.75" text-anchor="middle" class="cb-ref">IN1  90°</text>
+<text x="107.05" y="75.9" font-size="3" text-anchor="middle" class="cb-dia">Ø300</text>
+<text x="107.05" y="78.8" font-size="1.6" text-anchor="middle" class="cb-std">TWINWALL</text>
+<rect x="78.22" y="104.45" width="17.5" height="11" rx="1.2" class="cb-inlet"/>
+<text x="86.97" y="107.75" font-size="1.75" text-anchor="middle" class="cb-ref">IN2  150°</text>
+<text x="86.97" y="111.35" font-size="3" text-anchor="middle" class="cb-dia">Ø225</text>
+<text x="86.97" y="114.25" font-size="1.6" text-anchor="middle" class="cb-std">TWINWALL</text>
+<rect x="37.28" y="104.45" width="17.5" height="11" rx="1.2" class="cb-inlet"/>
+<text x="46.03" y="107.75" font-size="1.75" text-anchor="middle" class="cb-ref">IN4  210°</text>
+<text x="46.03" y="111.35" font-size="3" text-anchor="middle" class="cb-dia">Ø160</text>
+<text x="46.03" y="114.25" font-size="1.6" text-anchor="middle" class="cb-std">EN1401</text>
+<rect x="17.2" y="69" width="17.5" height="11" rx="1.2" class="cb-inlet"/>
+<text x="25.95" y="72.3" font-size="1.75" text-anchor="middle" class="cb-ref">IN5  270°</text>
+<text x="25.95" y="75.9" font-size="3" text-anchor="middle" class="cb-dia">Ø225</text>
+<text x="25.95" y="78.8" font-size="1.6" text-anchor="middle" class="cb-std">TWINWALL</text>
+</g>
+<g clip-path="url(#cp-elev)">
+<line x1="128" y1="40.6" x2="204.5" y2="40.6" class="gline"/>
+<line x1="128.5" y1="42.8" x2="129.9" y2="40.6" class="ghatch"/>
+<line x1="130.3" y1="42.8" x2="131.7" y2="40.6" class="ghatch"/>
+<line x1="132.1" y1="42.8" x2="133.5" y2="40.6" class="ghatch"/>
+<line x1="133.9" y1="42.8" x2="135.3" y2="40.6" class="ghatch"/>
+<line x1="135.7" y1="42.8" x2="137.1" y2="40.6" class="ghatch"/>
+<line x1="137.5" y1="42.8" x2="138.9" y2="40.6" class="ghatch"/>
+<line x1="139.3" y1="42.8" x2="140.7" y2="40.6" class="ghatch"/>
+<line x1="141.1" y1="42.8" x2="142.5" y2="40.6" class="ghatch"/>
+<line x1="142.9" y1="42.8" x2="144.3" y2="40.6" class="ghatch"/>
+<line x1="144.7" y1="42.8" x2="146.1" y2="40.6" class="ghatch"/>
+<line x1="196" y1="42.8" x2="197.4" y2="40.6" class="ghatch"/>
+<line x1="197.8" y1="42.8" x2="199.2" y2="40.6" class="ghatch"/>
+<line x1="199.6" y1="42.8" x2="201" y2="40.6" class="ghatch"/>
+<line x1="201.4" y1="42.8" x2="202.8" y2="40.6" class="ghatch"/>
+<line x1="203.2" y1="42.8" x2="204.6" y2="40.6" class="ghatch"/>
+<text x="130.9" y="39.5" font-size="1.6" text-anchor="start" class="ffl-lbl">F.F.L.</text>
+<rect x="147.5" y="65" width="1.2" height="43.4" class="wall-fill"/>
+<rect x="194.3" y="65" width="1.2" height="43.4" class="wall-fill"/>
+<rect x="148.7" y="65" width="45.6" height="41.8" class="int-fill"/>
+<line x1="147.5" y1="65" x2="147.5" y2="108.4" class="obj-h"/>
+<line x1="195.5" y1="65" x2="195.5" y2="108.4" class="obj-h"/>
+<line x1="148.7" y1="65" x2="148.7" y2="106.8" class="obj-t"/>
+<line x1="194.3" y1="65" x2="194.3" y2="106.8" class="obj-t"/>
+<rect x="148.7" y="92.8" width="45.6" height="14" class="sump-fill"/>
+<rect x="147.5" y="106.8" width="48" height="1.6" class="wall-fill"/>
+<line x1="147.5" y1="108.4" x2="195.5" y2="108.4" class="obj-h"/>
+<line x1="148.7" y1="106.8" x2="194.3" y2="106.8" class="obj-t"/>
+<line x1="148.7" y1="92.8" x2="194.3" y2="92.8" class="hidden"/>
+<rect x="147.5" y="48.2" width="1.2" height="8.8" class="wall-fill"/>
+<rect x="194.3" y="48.2" width="1.2" height="8.8" class="wall-fill"/>
+<rect x="148.7" y="48.2" width="45.6" height="8.8" class="int-fill"/>
+<line x1="147.5" y1="48.2" x2="147.5" y2="57" class="obj-h"/>
+<line x1="195.5" y1="48.2" x2="195.5" y2="57" class="obj-h"/>
+<line x1="148.7" y1="48.2" x2="148.7" y2="57" class="obj-t"/>
+<line x1="194.3" y1="48.2" x2="194.3" y2="57" class="obj-t"/>
+<rect x="147.5" y="45" width="12" height="3.2" class="wall-fill"/>
+<rect x="183.5" y="45" width="12" height="3.2" class="wall-fill"/>
+<rect x="159.5" y="45" width="24" height="3.2" class="int-fill"/>
+<polyline points="159.5,45 147.5,45 147.5,48.2" class="obj-h"/>
+<polyline points="183.5,45 195.5,45 195.5,48.2" class="obj-h"/>
+<line x1="159.5" y1="45" x2="159.5" y2="48.2" class="obj-t"/>
+<line x1="183.5" y1="45" x2="183.5" y2="48.2" class="obj-t"/>
+<line x1="147.5" y1="48.2" x2="148.7" y2="48.2" class="obj-t"/>
+<line x1="194.3" y1="48.2" x2="195.5" y2="48.2" class="obj-t"/>
+<rect x="157.1" y="40.6" width="28.8" height="4.4" class="cover-fill"/>
+<text x="171.5" y="43.4" font-size="1.8" text-anchor="middle" class="cover-lbl">D400</text>
+<path d="M146,57 L169.5,57 L170.7,55.4 L172.3,58.6 L173.5,57 L197,57" class="brk-line"/>
+<path d="M146,65 L169.5,65 L170.7,63.4 L172.3,66.6 L173.5,65 L197,65" class="brk-line"/>
+<line x1="171.5" y1="38.1" x2="171.5" y2="40.6" class="ctr"/>
+<line x1="171.5" y1="45" x2="171.5" y2="110.9" class="ctr"/>
+<rect x="194.3" y="79.8" width="9.2" height="14" class="pipe-out"/>
+<line x1="192.8" y1="86.8" x2="210.5" y2="86.8" class="pcl-out"/>
+<line x1="204.3" y1="86.8" x2="208.7" y2="86.8" class="farr-out"/>
+<polygon points="209.9,86.8 208.4,87.4 208.4,86.2" class="fhead-out"/>
+<rect x="139.5" y="79.8" width="9.2" height="14" class="pipe-in"/>
+<line x1="132.5" y1="86.8" x2="150.2" y2="86.8" class="pcl-in"/>
+<line x1="133.9" y1="86.8" x2="138.1" y2="86.8" class="farr-in"/>
+<polygon points="139.1,86.8 137.6,87.4 137.6,86.2" class="fhead-in"/>
+<polygon points="164.5,86.8 164.56,85.89 164.74,84.99 165.03,84.12 165.44,83.3 165.95,82.54 166.55,81.85 167.24,81.25 168,80.74 168.82,80.33 169.69,80.04 170.59,79.86 171.5,79.8 172.41,79.86 173.31,80.04 174.18,80.33 175,80.74 175.76,81.25 176.45,81.85 177.05,82.54 177.56,83.3 177.97,84.12 178.26,84.99 178.44,85.89 178.5,86.8 178.44,87.71 178.26,88.61 177.97,89.48 177.56,90.3 177.05,91.06 176.45,91.75 175.76,92.35 175,92.86 174.18,93.27 173.31,93.56 172.41,93.74 171.5,93.8 170.59,93.74 169.69,93.56 168.82,93.27 168,92.86 167.24,92.35 166.55,91.75 165.95,91.06 165.44,90.3 165.03,89.48 164.74,88.61 164.56,87.71" class="open-hid"/>
+<polygon points="176.9,85.3 176.85,84.6 176.72,83.9 176.49,83.23 176.18,82.6 175.78,82.01 175.32,81.48 174.79,81.02 174.2,80.62 173.57,80.31 172.9,80.08 172.2,79.95 171.5,79.9 170.8,79.95 170.1,80.08 169.43,80.31 168.8,80.62 168.21,81.02 167.68,81.48 167.22,82.01 166.82,82.6 166.51,83.23 166.28,83.9 166.15,84.6 166.1,85.3 166.15,86 166.28,86.7 166.51,87.37 166.82,88 167.22,88.59 167.68,89.12 168.21,89.58 168.8,89.98 169.43,90.29 170.1,90.52 170.8,90.65 171.5,90.7 172.2,90.65 172.9,90.52 173.57,90.29 174.2,89.98 174.79,89.58 175.32,89.12 175.78,88.59 176.18,88 176.49,87.37 176.72,86.7 176.85,86" class="open-in"/>
+<polygon points="149.62,85.3 149.63,84.6 149.67,83.9 149.74,83.23 149.84,82.6 149.96,82.01 150.12,81.48 150.32,81.02 150.54,80.62 150.8,80.31 151.09,80.08 151.41,79.95 151.75,79.9 152.12,79.95 152.49,80.08 152.87,80.31 153.24,80.62 153.6,81.02 153.94,81.48 154.25,82.01 154.51,82.6 154.73,83.23 154.89,83.9 154.98,84.6 155.02,85.3 154.98,86 154.89,86.7 154.73,87.37 154.51,88 154.25,88.59 153.94,89.12 153.6,89.58 153.24,89.98 152.87,90.29 152.49,90.52 152.12,90.65 151.75,90.7 151.41,90.65 151.09,90.52 150.8,90.29 150.54,89.98 150.32,89.58 150.12,89.12 149.96,88.59 149.84,88 149.74,87.37 149.67,86.7 149.63,86" class="open-hid"/>
+<polygon points="153.55,83.82 153.53,83.4 153.48,82.99 153.4,82.6 153.29,82.22 153.15,81.87 152.98,81.56 152.8,81.28 152.6,81.05 152.4,80.86 152.18,80.73 151.97,80.65 151.75,80.62 151.55,80.65 151.35,80.73 151.17,80.86 151,81.05 150.85,81.28 150.72,81.56 150.61,81.87 150.52,82.22 150.44,82.6 150.39,82.99 150.36,83.4 150.35,83.82 150.36,84.24 150.39,84.65 150.44,85.04 150.52,85.42 150.61,85.77 150.72,86.08 150.85,86.36 151,86.59 151.17,86.78 151.35,86.91 151.55,86.99 151.75,87.02 151.97,86.99 152.18,86.91 152.4,86.78 152.6,86.59 152.8,86.36 152.98,86.08 153.15,85.77 153.29,85.42 153.4,85.04 153.48,84.65 153.53,84.24" class="open-in"/>
+<rect x="181.5" y="75" width="12.8" height="23.6" rx="0.6" class="device"/>
+<text x="171.5" y="105.6" font-size="1.8" text-anchor="middle" class="sump-lbl halo">SUMP</text>
+<text x="197.52" y="78.7" font-size="1.8" text-anchor="start" class="tag-out halo">OUT</text>
+<text x="141.59" y="78.7" font-size="1.8" text-anchor="start" class="tag-in halo">IN3</text>
+<text x="166.91" y="78.7" font-size="1.8" text-anchor="start" class="tag-in halo">IN1 / IN5</text>
+<text x="149.3" y="78.8" font-size="1.8" text-anchor="start" class="tag-in halo">IN2 / IN4</text>
+<text x="179.45" y="73.9" font-size="1.8" text-anchor="start" class="tag-x halo">VORTEX 12 L/s</text>
+<line x1="186.5" y1="40.6" x2="214" y2="40.6" class="de"/>
+<line x1="204.1" y1="80.8" x2="214" y2="80.8" class="de"/>
+<line x1="204.1" y1="92.8" x2="214" y2="92.8" class="de"/>
+<line x1="196.1" y1="106.8" x2="214" y2="106.8" class="de"/>
+<line x1="213" y1="40.6" x2="213" y2="80.8" class="dl"/>
+<polygon points="213,40.6 213.55,42.4 212.45,42.4" class="darrow"/>
+<polygon points="213,80.8 212.45,79 213.55,79" class="darrow"/>
+<text x="212.1" y="60.7" font-size="1.9" text-anchor="middle" class="dt" transform="rotate(-90 212.1 60.7)">6000 TO OUTLET SOFFIT</text>
+<line x1="213" y1="92.8" x2="213" y2="106.8" class="dl"/>
+<polygon points="213,92.8 213.55,94.6 212.45,94.6" class="darrow"/>
+<polygon points="213,106.8 212.45,105 213.55,105" class="darrow"/>
+<text x="212.1" y="99.8" font-size="1.9" text-anchor="middle" class="dt" transform="rotate(-90 212.1 99.8)">SUMP 350</text>
+<line x1="156.5" y1="40.6" x2="129" y2="40.6" class="de"/>
+<line x1="146.9" y1="108.4" x2="129" y2="108.4" class="de"/>
+<line x1="130" y1="40.6" x2="130" y2="108.4" class="dl"/>
+<polygon points="130,40.6 130.55,42.4 129.45,42.4" class="darrow"/>
+<polygon points="130,108.4 129.45,106.6 130.55,106.6" class="darrow"/>
+<text x="129.1" y="74.5" font-size="1.9" text-anchor="middle" class="dt" transform="rotate(-90 129.1 74.5)">OVERALL 6690</text>
+<line x1="147.5" y1="109" x2="147.5" y2="113.9" class="de"/>
+<line x1="195.5" y1="109" x2="195.5" y2="113.9" class="de"/>
+<line x1="147.5" y1="112.9" x2="195.5" y2="112.9" class="dl"/>
+<polygon points="147.5,112.9 149.3,112.35 149.3,113.45" class="darrow"/>
+<polygon points="195.5,112.9 193.7,113.45 193.7,112.35" class="darrow"/>
+<text x="171.5" y="115.7" font-size="2" text-anchor="middle" class="dt">Ø1200 EXT</text>
+<line x1="159.5" y1="40.2" x2="159.5" y2="36.6" class="de"/>
+<line x1="183.5" y1="40.2" x2="183.5" y2="36.6" class="de"/>
+<line x1="159.5" y1="37.4" x2="183.5" y2="37.4" class="dl"/>
+<polygon points="159.5,37.4 161.3,36.85 161.3,37.95" class="darrow"/>
+<polygon points="183.5,37.4 181.7,37.95 181.7,36.85" class="darrow"/>
+<text x="184.7" y="38.1" font-size="1.8" text-anchor="start" class="dt">Ø600 OPENING</text>
+<text x="227" y="21.4" font-size="2.2" text-anchor="start" class="tbl-title">PIPE SCHEDULE</text>
+<rect x="227" y="22.6" width="58" height="4" class="tbl-hdr-bg"/>
+<text x="228.5" y="25.4" font-size="1.7" text-anchor="start" class="tbl-hdr">REF</text>
+<text x="236.5" y="25.4" font-size="1.7" text-anchor="start" class="tbl-hdr">POSITION</text>
+<text x="250" y="25.4" font-size="1.7" text-anchor="start" class="tbl-hdr">ANGLE</text>
+<text x="259" y="25.4" font-size="1.7" text-anchor="start" class="tbl-hdr">SIZE</text>
+<text x="283.5" y="25.4" font-size="1.7" text-anchor="end" class="tbl-hdr">H</text>
+<rect x="227" y="26.6" width="58" height="3.5" class="row-a"/>
+<text x="228.5" y="29.05" font-size="1.75" text-anchor="start" class="cell-out">OUT</text>
+<text x="236.5" y="29.05" font-size="1.75" text-anchor="start" class="cell">12 o&apos;clock</text>
+<text x="250" y="29.05" font-size="1.75" text-anchor="start" class="cell">0°</text>
+<text x="259" y="29.05" font-size="1.75" text-anchor="start" class="cell">Ø300 TW</text>
+<text x="283.5" y="29.05" font-size="1.75" text-anchor="end" class="cell-b">500</text>
+<rect x="227" y="30.1" width="58" height="3.5" class="row-b"/>
+<text x="228.5" y="32.55" font-size="1.75" text-anchor="start" class="cell-in">IN1</text>
+<text x="236.5" y="32.55" font-size="1.75" text-anchor="start" class="cell">3 o&apos;clock</text>
+<text x="250" y="32.55" font-size="1.75" text-anchor="start" class="cell">90°</text>
+<text x="259" y="32.55" font-size="1.75" text-anchor="start" class="cell">Ø300 TW</text>
+<text x="283.5" y="32.55" font-size="1.75" text-anchor="end" class="cell-b">500</text>
+<rect x="227" y="33.6" width="58" height="3.5" class="row-a"/>
+<text x="228.5" y="36.05" font-size="1.75" text-anchor="start" class="cell-in">IN2</text>
+<text x="236.5" y="36.05" font-size="1.75" text-anchor="start" class="cell">5 o&apos;clock</text>
+<text x="250" y="36.05" font-size="1.75" text-anchor="start" class="cell">150°</text>
+<text x="259" y="36.05" font-size="1.75" text-anchor="start" class="cell">Ø225 TW</text>
+<text x="283.5" y="36.05" font-size="1.75" text-anchor="end" class="cell-b">538</text>
+<rect x="227" y="37.1" width="58" height="3.5" class="row-b"/>
+<text x="228.5" y="39.55" font-size="1.75" text-anchor="start" class="cell-in">IN3</text>
+<text x="236.5" y="39.55" font-size="1.75" text-anchor="start" class="cell">6 o&apos;clock</text>
+<text x="250" y="39.55" font-size="1.75" text-anchor="start" class="cell">180°</text>
+<text x="259" y="39.55" font-size="1.75" text-anchor="start" class="cell">Ø300 TW</text>
+<text x="283.5" y="39.55" font-size="1.75" text-anchor="end" class="cell-b">500</text>
+<rect x="227" y="40.6" width="58" height="3.5" class="row-a"/>
+<text x="228.5" y="43.05" font-size="1.75" text-anchor="start" class="cell-in">IN4</text>
+<text x="236.5" y="43.05" font-size="1.75" text-anchor="start" class="cell">7 o&apos;clock</text>
+<text x="250" y="43.05" font-size="1.75" text-anchor="start" class="cell">210°</text>
+<text x="259" y="43.05" font-size="1.75" text-anchor="start" class="cell">Ø160 EN1401</text>
+<text x="283.5" y="43.05" font-size="1.75" text-anchor="end" class="cell-b">575</text>
+<rect x="227" y="44.1" width="58" height="3.5" class="row-b"/>
+<text x="228.5" y="46.55" font-size="1.75" text-anchor="start" class="cell-in">IN5</text>
+<text x="236.5" y="46.55" font-size="1.75" text-anchor="start" class="cell">9 o&apos;clock</text>
+<text x="250" y="46.55" font-size="1.75" text-anchor="start" class="cell">270°</text>
+<text x="259" y="46.55" font-size="1.75" text-anchor="start" class="cell">Ø225 TW</text>
+<text x="283.5" y="46.55" font-size="1.75" text-anchor="end" class="cell-b">538</text>
+<rect x="227" y="22.6" width="58" height="25" class="grid"/>
+<text x="227" y="50.4" font-size="1.55" text-anchor="start" class="cell-m">H = CENTRELINE ABOVE INTERNAL BASE (mm).</text>
+<text x="227" y="52.9" font-size="1.55" text-anchor="start" class="cell-m">INLET SOFFITS ALIGNED WITH OUTLET SOFFIT.</text>
+<text x="227" y="56.5" font-size="1.9" text-anchor="start" class="tbl-title">FLOW CONTROL</text>
+<text x="227" y="59.3" font-size="1.75" text-anchor="start" class="cell">Vortex unit on the outlet, 12 L/s.</text>
+</g>
+<text x="12" y="136.3" font-size="2.4" text-anchor="start" class="tbl-title">BILL OF MATERIALS</text>
+<rect x="10.5" y="138" width="138" height="4.2" class="tbl-hdr-bg"/>
+<text x="12" y="140.95" font-size="1.8" text-anchor="start" class="tbl-hdr">#</text>
+<text x="18" y="140.95" font-size="1.8" text-anchor="start" class="tbl-hdr">DESCRIPTION</text>
+<text x="69" y="140.95" font-size="1.8" text-anchor="start" class="tbl-hdr">MATERIAL</text>
+<text x="107" y="140.95" font-size="1.8" text-anchor="start" class="tbl-hdr">QTY</text>
+<text x="116" y="140.95" font-size="1.8" text-anchor="start" class="tbl-hdr">PART NO.</text>
+<rect x="10.5" y="142.2" width="138" height="3.6" class="row-a"/>
+<text x="12" y="144.65" font-size="1.85" text-anchor="start" class="cell-b">1</text>
+<text x="18" y="144.65" font-size="1.85" text-anchor="start" class="cell">Chamber body and base</text>
+<text x="69" y="144.65" font-size="1.85" text-anchor="start" class="cell">HDPE, BS EN 13598-2</text>
+<text x="107" y="144.65" font-size="1.85" text-anchor="start" class="cell">1</text>
+<text x="116" y="144.65" font-size="1.85" text-anchor="start" class="cell-pno">SE-SERSIC1200-BODY</text>
+<rect x="10.5" y="145.8" width="138" height="3.6" class="row-b"/>
+<text x="12" y="148.25" font-size="1.85" text-anchor="start" class="cell-b">2</text>
+<text x="18" y="148.25" font-size="1.85" text-anchor="start" class="cell">Riser shaft sections</text>
+<text x="69" y="148.25" font-size="1.85" text-anchor="start" class="cell">HDPE</text>
+<text x="107" y="148.25" font-size="1.85" text-anchor="start" class="cell">A/R</text>
+<text x="116" y="148.25" font-size="1.85" text-anchor="start" class="cell-pno">SE-SERSIC1200-RISER</text>
+<rect x="10.5" y="149.4" width="138" height="3.6" class="row-a"/>
+<text x="12" y="151.85" font-size="1.85" text-anchor="start" class="cell-b">3</text>
+<text x="18" y="151.85" font-size="1.85" text-anchor="start" class="cell">Reducing cap to Ø600 opening</text>
+<text x="69" y="151.85" font-size="1.85" text-anchor="start" class="cell">HDPE</text>
+<text x="107" y="151.85" font-size="1.85" text-anchor="start" class="cell">1</text>
+<text x="116" y="151.85" font-size="1.85" text-anchor="start" class="cell-pno">SE-CAP-1200-600</text>
+<rect x="10.5" y="153" width="138" height="3.6" class="row-b"/>
+<text x="12" y="155.45" font-size="1.85" text-anchor="start" class="cell-b">4</text>
+<text x="18" y="155.45" font-size="1.85" text-anchor="start" class="cell">D400 cover and frame</text>
+<text x="69" y="155.45" font-size="1.85" text-anchor="start" class="cell">Ductile iron, BS EN 124</text>
+<text x="107" y="155.45" font-size="1.85" text-anchor="start" class="cell">1</text>
+<text x="116" y="155.45" font-size="1.85" text-anchor="start" class="cell-pno">SE-COVER-D400</text>
+<rect x="10.5" y="156.6" width="138" height="3.6" class="row-a"/>
+<text x="12" y="159.05" font-size="1.85" text-anchor="start" class="cell-b">5</text>
+<text x="18" y="159.05" font-size="1.85" text-anchor="start" class="cell">Pipe sealing rings</text>
+<text x="69" y="159.05" font-size="1.85" text-anchor="start" class="cell">EPDM, BS EN 681-1</text>
+<text x="107" y="159.05" font-size="1.85" text-anchor="start" class="cell">6</text>
+<text x="116" y="159.05" font-size="1.85" text-anchor="start" class="cell-pno">SE-SEAL-EPDM</text>
+<rect x="10.5" y="160.2" width="138" height="3.6" class="row-b"/>
+<text x="12" y="162.65" font-size="1.85" text-anchor="start" class="cell-b">6</text>
+<text x="18" y="162.65" font-size="1.85" text-anchor="start" class="cell">Vortex flow control, 12 L/s</text>
+<text x="69" y="162.65" font-size="1.85" text-anchor="start" class="cell">Stainless steel 316</text>
+<text x="107" y="162.65" font-size="1.85" text-anchor="start" class="cell">1</text>
+<text x="116" y="162.65" font-size="1.85" text-anchor="start" class="cell-pno">SE-VFC-12LS</text>
+<rect x="10.5" y="163.8" width="138" height="3.6" class="row-a"/>
+<text x="12" y="166.25" font-size="1.85" text-anchor="start" class="cell-b">7</text>
+<text x="18" y="166.25" font-size="1.85" text-anchor="start" class="cell">Access steps</text>
+<text x="69" y="166.25" font-size="1.85" text-anchor="start" class="cell">GRP, BS EN 13101</text>
+<text x="107" y="166.25" font-size="1.85" text-anchor="start" class="cell">Set</text>
+<text x="116" y="166.25" font-size="1.85" text-anchor="start" class="cell-pno">SE-STEP-GRP</text>
+<rect x="10.5" y="138" width="138" height="29.4" class="grid"/>
+<line x1="16.5" y1="138" x2="16.5" y2="167.4" class="grid"/>
+<line x1="67.5" y1="138" x2="67.5" y2="167.4" class="grid"/>
+<line x1="105.5" y1="138" x2="105.5" y2="167.4" class="grid"/>
+<line x1="114.5" y1="138" x2="114.5" y2="167.4" class="grid"/>
+<text x="153" y="136.3" font-size="2.4" text-anchor="start" class="tbl-title">GENERAL NOTES</text>
+<text x="153" y="140.4" font-size="1.75" text-anchor="start" class="note-n">1.</text>
+<text x="157" y="140.4" font-size="1.75" text-anchor="start" class="note-t">ALL DIMENSIONS IN MILLIMETRES UNLESS STATED. DO NOT SCALE FROM THIS DRAWING.</text>
+<text x="153" y="143.1" font-size="1.75" text-anchor="start" class="note-n">2.</text>
+<text x="157" y="143.1" font-size="1.75" text-anchor="start" class="note-t">OUTLET FIXED AT 12 O&apos;CLOCK (0°, NORTH). INLET ANGLES ARE MEASURED CLOCKWISE FROM NORTH. INLETS ARE MANUFACTURED AT 3,</text>
+<text x="157" y="145.8" font-size="1.75" text-anchor="start" class="note-t">5, 6, 7 AND 9 O&apos;CLOCK ONLY.</text>
+<text x="153" y="148.5" font-size="1.75" text-anchor="start" class="note-n">3.</text>
+<text x="157" y="148.5" font-size="1.75" text-anchor="start" class="note-t">OUTLET MINIMUM Ø225 TWINWALL IS RULE-ENGINE LOCKED (R2, 5 INLETS). Ø300 TWINWALL SPECIFIED. DO NOT REDUCE.</text>
+<text x="153" y="151.2" font-size="1.75" text-anchor="start" class="note-n">4.</text>
+<text x="157" y="151.2" font-size="1.75" text-anchor="start" class="note-t">INLET SOFFITS ARE ALIGNED WITH THE OUTLET SOFFIT. H IS THE PIPE CENTRELINE HEIGHT ABOVE THE INTERNAL BASE.</text>
+<text x="153" y="153.9" font-size="1.75" text-anchor="start" class="note-n">5.</text>
+<text x="157" y="153.9" font-size="1.75" text-anchor="start" class="note-t">SUMP DEPTH 350mm IS MEASURED FROM THE OUTLET INVERT TO THE INTERNAL BASE.</text>
+<text x="153" y="156.6" font-size="1.75" text-anchor="start" class="note-n">6.</text>
+<text x="157" y="156.6" font-size="1.75" text-anchor="start" class="note-t">DEPTH IS MEASURED FROM COVER LEVEL TO THE OUTLET SOFFIT. MAXIMUM 3000mm S104 ADOPTABLE, 6000mm PRIVATE.</text>
+<text x="153" y="159.3" font-size="1.75" text-anchor="start" class="note-n">7.</text>
+<text x="157" y="159.3" font-size="1.75" text-anchor="start" class="note-t">VORTEX FLOW CONTROL ON THE OUTLET, 12 L/s. DESIGN HEAD TO BE CONFIRMED WITH SuDS ENVIRO.</text>
+<text x="153" y="162" font-size="1.75" text-anchor="start" class="note-n">8.</text>
+<text x="157" y="162" font-size="1.75" text-anchor="start" class="note-t">PIPE JOINT SEALS TO BS EN 681-1. LUBRICATE TO THE MANUFACTURER&apos;S SPECIFICATION.</text>
+<text x="153" y="164.7" font-size="1.75" text-anchor="start" class="note-n">9.</text>
+<text x="157" y="164.7" font-size="1.75" text-anchor="start" class="note-t">TOLERANCES: LINEAR +/-5mm, ANGULAR +/-1°. THIRD ANGLE PROJECTION.</text>
+<rect x="9" y="171" width="54" height="30" class="tb-co-bg"/>
+<rect x="12" y="174" width="9.5" height="9.5" rx="1.8" class="tb-logo-mk"/>
+<text x="16.75" y="180.1" font-size="3.6" text-anchor="middle" class="tb-logo-t">SE</text>
+<text x="24" y="178.4" font-size="3.3" text-anchor="start" class="tb-co-name">SuDS Enviro Ltd</text>
+<text x="24" y="182.4" font-size="2" text-anchor="start" class="tb-co-sub">The Home of SuDS Rhino</text>
+<text x="12" y="189.6" font-size="1.85" text-anchor="start" class="tb-co-sub">01224 057 700  |  sales@sudsenviro.com</text>
+<text x="12" y="193.3" font-size="1.85" text-anchor="start" class="tb-co-sub">9 Ambleside Court</text>
+<text x="12" y="197" font-size="1.85" text-anchor="start" class="tb-co-sub">Chester-le-Street  DH3 2EB</text>
+<rect x="63" y="171" width="98" height="30" class="tb-ttl-bg"/>
+<line x1="63" y1="171" x2="63" y2="201" class="zdiv-h"/>
+<line x1="161" y1="171" x2="161" y2="201" class="zdiv-h"/>
+<text x="66" y="177.2" font-size="4" text-anchor="start" class="tb-drw-t">INSPECTION CHAMBER</text>
+<text x="66" y="181.4" font-size="2.3" text-anchor="start" class="tb-drw-s2">RHINO SERSIC SERIES</text>
+<text x="66" y="185.4" font-size="2" text-anchor="start" class="tb-drw-s">Ø1200mm x 6000mm to outlet soffit  |  HDPE, BS EN 13598-2</text>
+<text x="66" y="189.1" font-size="1.85" text-anchor="start" class="tb-drw-m">Surface water  |  Private (non-adoptable)  |  5 inlets</text>
+<rect x="66" y="192.3" width="38.94" height="5.2" rx="1" class="tb-code-bg"/>
+<text x="68.5" y="195.7" font-size="2" text-anchor="start" class="tb-code-t">CODE  SERSIC1200-6000-PRIV</text>
+<rect x="161" y="171" width="50.8" height="15" class="tb-f1"/>
+<text x="162.8" y="174.4" font-size="1.55" text-anchor="start" class="tb-flbl">DRG NO.</text>
+<text x="162.8" y="181.2" font-size="2.4" text-anchor="start" class="tb-fval">SE-DRG-SERSIC1200-6000-PRIV</text>
+<rect x="211.8" y="171" width="25.4" height="15" class="tb-f2"/>
+<text x="213.6" y="174.4" font-size="1.55" text-anchor="start" class="tb-flbl">DATE</text>
+<text x="213.6" y="181.2" font-size="2.4" text-anchor="start" class="tb-fval">23 Sep 2026</text>
+<rect x="237.2" y="171" width="25.4" height="15" class="tb-f1"/>
+<text x="239" y="174.4" font-size="1.55" text-anchor="start" class="tb-flbl">SHEET</text>
+<text x="239" y="181.2" font-size="2.4" text-anchor="start" class="tb-fval">2 of 2</text>
+<rect x="262.6" y="171" width="25.4" height="15" class="tb-f2"/>
+<text x="264.4" y="174.4" font-size="1.55" text-anchor="start" class="tb-flbl">REVISION</text>
+<text x="264.4" y="181.2" font-size="2.4" text-anchor="start" class="tb-fval">A</text>
+<rect x="161" y="186" width="25.4" height="15" class="tb-f2"/>
+<text x="162.8" y="189.4" font-size="1.55" text-anchor="start" class="tb-flbl">SCALE (A4)</text>
+<text x="162.8" y="193.8" font-size="2" text-anchor="start" class="tb-fval">PLAN 1:25</text>
+<text x="162.8" y="197.2" font-size="2" text-anchor="start" class="tb-fval">SECTION 1:25</text>
+<rect x="186.4" y="186" width="25.4" height="15" class="tb-f1"/>
+<text x="188.2" y="189.4" font-size="1.55" text-anchor="start" class="tb-flbl">PROJECTION</text>
+<rect x="211.8" y="186" width="25.4" height="15" class="tb-f2"/>
+<text x="213.6" y="189.4" font-size="1.55" text-anchor="start" class="tb-flbl">DRAWN BY</text>
+<text x="213.6" y="196.2" font-size="2.4" text-anchor="start" class="tb-fval">Configurator</text>
+<rect x="237.2" y="186" width="25.4" height="15" class="tb-f1"/>
+<text x="239" y="189.4" font-size="1.55" text-anchor="start" class="tb-flbl">CHECKED</text>
+<text x="239" y="196.2" font-size="2.4" text-anchor="start" class="tb-fval">Review required</text>
+<rect x="262.6" y="186" width="25.4" height="15" class="tb-f2"/>
+<text x="264.4" y="189.4" font-size="1.55" text-anchor="start" class="tb-flbl">APPROVED</text>
+<text x="264.4" y="196.2" font-size="2.4" text-anchor="start" class="tb-fval">Pending</text>
+<polygon points="190.4,192.2 196.4,193.4 196.4,196.6 190.4,197.8" class="proj"/>
+<line x1="189.4" y1="195" x2="197.4" y2="195" class="ctr"/>
+<circle cx="201.4" cy="195" r="2.8" class="proj"/>
+<circle cx="201.4" cy="195" r="1.6" class="proj"/>
+<line x1="197.9" y1="195" x2="204.9" y2="195" class="ctr"/>
+<text x="189.4" y="199.9" font-size="1.35" text-anchor="start" class="tb-flbl">THIRD ANGLE</text>
+<line x1="161" y1="186" x2="288" y2="186" class="grid"/>
+<line x1="186.4" y1="186" x2="186.4" y2="201" class="grid"/>
+<line x1="211.8" y1="171" x2="211.8" y2="201" class="grid"/>
+<line x1="237.2" y1="171" x2="237.2" y2="201" class="grid"/>
+<line x1="262.6" y1="171" x2="262.6" y2="201" class="grid"/>
+<line x1="9" y1="171" x2="288" y2="171" class="zdiv-h"/>
+<rect x="9" y="9" width="279" height="192" class="bdr-out"/>
+</svg></section>
+</div>
+</body>
+</html>
