@@ -6,3 +6,6 @@ src/film/score.wav
 src/film/film.html
 film/*-silent.mp4
 __pycache__/
+src/reel/reel.html
+src/reel/stills/
+src/reel/score.wav
