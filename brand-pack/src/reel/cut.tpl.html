@@ -1,0 +1,329 @@
+<!doctype html><html><head><meta charset="utf-8"><title>SuDS Enviro showcase, 3D cut</title>
+<style>
+@font-face{font-family:"Montserrat";src:url(FONT_M) format("woff2");font-weight:300 900}
+@font-face{font-family:"Montserrat";src:url(FONT_MI) format("woff2");font-weight:300 900;font-style:italic}
+@font-face{font-family:"Plex Mono";src:url(FONT_P5) format("woff2");font-weight:500}
+html,body{margin:0;background:#000;overflow:hidden}canvas{display:block;position:absolute;left:0;top:0}
+#bb{position:absolute;left:-9999px;top:0}
+</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body><canvas id="bg"></canvas><canvas id="gl"></canvas><canvas id="fg"></canvas><svg id="bb" xmlns="http://www.w3.org/2000/svg"></svg>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+/*DATA*/
+const q = new URLSearchParams(location.search);
+const PORTRAIT = (q.get('fmt') || 'portrait') === 'portrait';
+const SPRITE = q.get('mode') === 'sprite', SP = 900, FS = 30;
+const W = SPRITE ? SP : PORTRAIT ? 1080 : 1920, H = SPRITE ? SP : PORTRAIT ? 1920 : 1080;
+const S = Math.min(W, H) / 1080, CX = W / 2, CY = H / 2, TAU = Math.PI * 2;
+const C = {blue:'#1d80b9', deep:'#005576', green:'#54b54d', red:'#c34c4a', surface:'#eef3f5', invert:'#062a3a', sky:'#afdbf4', field:'#3d8537', paper:'#ffffff'};
+const BPM = 90, BEAT = 60 / BPM, BAR = BEAT * 4, DUR = 20;
+const T = { intro: 0, range: 2 * BAR, section: 5 * BAR, end: 6 * BAR };   // 0, 5.33, 13.33, 16
+// ---------- easing
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const eo = t => 1 - Math.pow(1 - t, 3), eo5 = t => 1 - Math.pow(1 - t, 5), ei = t => t * t * t;
+const eio = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const es = t => .5 - .5 * Math.cos(Math.PI * clamp(t));
+const eback = t => { const c1 = 1.4, c3 = c1 + 1; return t <= 0 ? 0 : 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+function hex(h) { return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); }
+function mix(a, b, t) { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',') + ')'; }
+function tint(mm) {
+  const st = [[0, C.surface], [1200, C.sky], [2800, C.blue], [4600, C.deep], [6350, C.invert]];
+  for (let i = 0; i < st.length - 1; i++) if (mm <= st[i + 1][0]) return mix(st[i][1], st[i + 1][1], (mm - st[i][0]) / (st[i + 1][0] - st[i][0]));
+  return C.invert;
+}
+function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+// ---------- 2D layers
+const bgc = document.getElementById('bg'), fgc = document.getElementById('fg'), glc = document.getElementById('gl');
+[bgc, fgc].forEach(c => { c.width = W; c.height = H; });
+const bx = bgc.getContext('2d'), fx = fgc.getContext('2d');
+let x = fx;
+function font(size, weight = 800, fam = 'm', italic = false) { return `${italic ? 'italic ' : ''}${weight} ${size}px ${fam === 'mono' ? '"Plex Mono"' : 'Montserrat'}`; }
+function txt(s, X, Y, size, weight, col, align = 'left', fam = 'm', track = 0, italic = false) {
+  x.font = font(size, weight, fam, italic); x.fillStyle = col; x.textAlign = align; x.textBaseline = 'alphabetic';
+  x.letterSpacing = track + 'px'; x.fillText(s, X, Y); x.letterSpacing = '0px';
+}
+function measure(s, size, weight, fam = 'm', track = 0, italic = false) { x.font = font(size, weight, fam, italic); x.letterSpacing = track + 'px'; const w = x.measureText(s).width; x.letterSpacing = '0px'; return w; }
+function two(light, bold, X, Y, size, colL, colB, align = 'center') {
+  const L = light ? light.toUpperCase() + ' ' : '', B = bold.toUpperCase();
+  const wl = L ? measure(L, size, 300) : 0, wb = measure(B, size, 800), tot = wl + wb;
+  const ax = align === 'center' ? X - tot / 2 : align === 'right' ? X - tot : X;
+  if (L) txt(L, ax, Y, size, 300, colL); txt(B, ax + wl, Y, size, 800, colB);
+}
+// soft rise for a block of text
+function rise(t, t0, t1, fn) { const k = eo(lin(t, t0, t0 + .7)) * (t1 ? 1 - lin(t, t1 - .4, t1) : 1); if (k <= 0) return; x.save(); x.globalAlpha = k; x.translate(0, (1 - k) * 24 * S); fn(); x.restore(); }
+const grain = [];
+for (let g = 0; g < 4; g++) {
+  const c = document.createElement('canvas'); c.width = c.height = 256; const gx = c.getContext('2d');
+  const id = gx.createImageData(256, 256), r = mulberry(99 + g);
+  for (let i = 0; i < id.data.length; i += 4) { const v = r() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 10; }
+  gx.putImageData(id, 0, 0); grain.push(c);
+}
+// logo paths
+function prep(set) { return set.p.map(p => ({ f: p.f, d: p.d, path: new Path2D(p.d) })); }
+const P = { hz: prep(D.hz), drop: prep(D.drop) };
+const bbs = document.getElementById('bb');
+function boxes(set) { return set.map(p => { const e = document.createElementNS('http://www.w3.org/2000/svg', 'path'); e.setAttribute('d', p.d); bbs.appendChild(e); const b = e.getBBox(); return { x: b.x, y: b.y, w: b.width, h: b.height }; }); }
+P.hzBox = boxes(P.hz);
+
+// ---------- 3D
+const AA = q.get('aa') !== '0', SH = q.get('sh') !== '0', RES = +(q.get('res') || 1);
+const r = new THREE.WebGLRenderer({ canvas: glc, antialias: AA, alpha: true, preserveDrawingBuffer: true });
+r.setPixelRatio(RES); r.setSize(W, H, false); glc.style.width = W + 'px'; glc.style.height = H + 'px';
+r.setClearColor(0x000000, 0); r.outputColorSpace = THREE.SRGBColorSpace;
+r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.0; r.localClippingEnabled = true;
+r.shadowMap.enabled = SH; r.shadowMap.type = THREE.PCFShadowMap;
+const scene = new THREE.Scene();
+const pm = new THREE.PMREMGenerator(r); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; scene.environmentIntensity = .8;
+const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-.7, 5.2, 1.1); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 6; key.shadow.bias = -0.0006;
+const sc = key.shadow.camera; sc.left = sc.bottom = -1.4; sc.right = sc.top = 1.4; sc.near = .1; sc.far = 10;
+scene.add(key); scene.add(key.target); key.target.position.set(0, .4, 0);
+const hemi = new THREE.HemisphereLight(0xf4fbff, 0x9fb3bf, .7); scene.add(hemi);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.ShadowMaterial({ opacity: .16 }));
+ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+const cam = new THREE.PerspectiveCamera(22, W / H, .05, 100);
+
+const PRODUCTS = [
+  { id: 'sersic600', file: 'rhino-inspection-chamber/rhino-inspection-chamber-sersic600.glb', light: 'RHINO', bold: 'SERSIC 600', role: 'INSPECTION CHAMBER', col: C.blue },
+  { id: 'sehds1800', file: 'sudsceptor/sudsceptor-sehds1800.glb', light: 'SUDSCEPTOR', bold: 'SEHDS1800', role: 'HYDRODYNAMIC SEPARATOR', col: C.green },
+  { id: 'rotexc1200', file: 'rhinorotex/rhinorotex-c1200.glb', light: 'RHINOROTEX', bold: 'C1200', role: 'VORTEX FLOW CONTROL', col: C.deep, fit: .58 },
+  { id: 'ps50', file: 'rhinolift-pump-tank/rhinolift-ps50.glb', light: 'RHINOLIFT', bold: 'PS50', role: 'PUMPING STATION', col: C.blue, fit: .78 },
+];
+const M = {};
+const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
+let ready = 0;
+function setup(p, g) {
+  const root = g.scene, kill = [];
+  const planes = [new THREE.Plane(new THREE.Vector3(0, -1, 0), 10), new THREE.Plane(new THREE.Vector3(0, 0, -1), 10)];
+  const mats = {
+    body: new THREE.MeshStandardMaterial({ color: 0x27343d, roughness: .62, metalness: 0, transparent: !SPRITE, clippingPlanes: planes, side: THREE.DoubleSide }),
+    blue: new THREE.MeshStandardMaterial({ color: 0x1d80b9, roughness: .5, transparent: !SPRITE, clippingPlanes: planes }),
+    green: new THREE.MeshStandardMaterial({ color: 0x54b54d, roughness: .5, transparent: !SPRITE, clippingPlanes: planes }),
+    face: new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .06, depthWrite: false, side: THREE.DoubleSide, clippingPlanes: planes }),
+    eBlue: new THREE.LineBasicMaterial({ color: 0xafdbf4, transparent: true, opacity: .9, clippingPlanes: planes }),
+    eGreen: new THREE.LineBasicMaterial({ color: 0x54b54d, transparent: true, opacity: .95, clippingPlanes: planes }),
+  };
+  // the model keeps its own node transforms (positions are quantized, so never bake them)
+  const solid = root, xray = root.clone(true);
+  const kind = o => { const c = o.material && o.material.color ? o.material.color.getHSL({}) : { s: 0, l: .2 }; const accent = c.s > .35 && c.l > .25; return accent ? (o.material.color.g > o.material.color.b * 1.1 ? 'green' : 'blue') : 'body'; };
+  const cube = o => /cube/i.test(o.name) || /cube/i.test(o.parent && o.parent.name || '');
+  const xm = []; xray.traverse(o => { if (o.isMesh) xm.push(o); });
+  xm.forEach(o => { if (cube(o)) { o.visible = false; return; } const k = kind(o); o.material = mats.face; if (q.get('nf') === '1') o.material = new THREE.MeshBasicMaterial({ visible: false }); o.add(new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 28), k === 'green' ? mats.eGreen : mats.eBlue)); });
+  const sm = []; solid.traverse(o => { if (o.isMesh) sm.push(o); });
+  sm.forEach(o => { if (cube(o)) { o.visible = false; return; } o.material = mats[kind(o)]; o.castShadow = o.receiveShadow = true; });
+  const holder = new THREE.Group(); holder.add(solid); holder.add(xray);
+  const box = new THREE.Box3().setFromObject(solid), size = box.getSize(new THREE.Vector3()), ctr = box.getCenter(new THREE.Vector3());
+  const s = 1 / size.y; holder.scale.setScalar(s); holder.position.set(-ctr.x * s, -box.min.y * s, -ctr.z * s);
+  const spin = new THREE.Group(); spin.add(holder); scene.add(spin); spin.visible = false;
+  M[p.id] = { p, spin, solid, xray, mats, planes, w: Math.max(size.x, size.z) * s, rad: new THREE.Vector3(size.x * s, 1, size.z * s).length() / 2 };
+  ready++;
+}
+if (SPRITE) PRODUCTS.forEach(p => loader.load('/public/models/library/v1/' + p.file, g => setup(p, g), undefined, e => { document.title = 'ERR ' + p.file; }));
+window.READY = () => (SPRITE ? ready === PRODUCTS.length : spritesReady()) && document.fonts.check('800 40px Montserrat') && document.fonts.check('300 40px Montserrat') && document.fonts.check('500 20px "Plex Mono"');
+['800 40px Montserrat', '300 40px Montserrat', 'italic 800 40px Montserrat', '500 20px "Plex Mono"'].forEach(f => document.fonts.load(f));
+
+// state for one product this frame
+function show(id, o) {
+  const m = M[id]; m.spin.visible = true;
+  m.spin.rotation.y = o.yaw || 0; m.spin.position.y = o.dy || 0;
+  const so = o.solid ?? 1, xo = o.xray ?? 0;
+  m.solid.visible = so > .001; m.xray.visible = xo > .001;
+  m.mats.body.opacity = m.mats.blue.opacity = m.mats.green.opacity = so;
+  m.mats.body.depthWrite = m.mats.blue.depthWrite = m.mats.green.depthWrite = so > .5;
+  m.mats.face.opacity = .06 * xo; m.mats.eBlue.opacity = .9 * xo; m.mats.eGreen.opacity = .95 * xo;
+  m.planes[0].constant = o.reveal ?? 10;
+  m.planes[1].constant = o.cut ?? 10;
+  return m;
+}
+// frame the product: fill is the share of the shorter side its height takes; oy shifts it on screen (fraction of H, + is up)
+function frame(m, yawDeg, pitchDeg, fill, oy = 0, ox = 0) {
+  const tv = Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2), aspect = W / H;
+  const dist = PORTRAIT ? (1 / fill) / (2 * tv * aspect) : (1 / fill) / (2 * tv);
+  const yr = THREE.MathUtils.degToRad(yawDeg), pr = THREE.MathUtils.degToRad(pitchDeg);
+  const ctr = new THREE.Vector3(0, .5, 0), dir = new THREE.Vector3(Math.sin(yr) * Math.cos(pr), Math.sin(pr), Math.cos(yr) * Math.cos(pr));
+  cam.position.copy(ctr).addScaledVector(dir, dist); cam.lookAt(ctr);
+  cam.setViewOffset(W, H, -ox * W, oy * H, W, H); cam.updateProjectionMatrix();
+}
+function hideAll() { for (const k in M) M[k].spin.visible = false; }
+// a scene asks for the product at screen centre (cx, cy), height hpx; spec carries the 3D state
+let CUR = null, CURT = 0;
+const IMG = { solid: {}, xray: {} }; let want = 0, got = 0, listed = false;
+function spritesReady() { return listed && got === want; }
+if (!SPRITE) fetch('sprites/index.json').then(r => r.json()).then(ix => { ix.forEach(([layer, n]) => { want++; const im = new Image(); im.onload = () => got++; im.src = `sprites/${layer}-${n}.png`; IMG[layer][n] = im; }); listed = true; });
+function put(spec, cx, cy, hpx) {
+  if (SPRITE) { CUR = spec; return; }
+  const n = Math.round(CURT * FS), k = hpx / (.8 * SP);
+  for (const layer of ['xray', 'solid']) {
+    const a = spec[layer] ?? (layer === 'solid' ? 1 : 0), im = IMG[layer][n];
+    if (a <= .001 || !im) continue;
+    x.save(); x.globalAlpha = a; x.drawImage(im, cx - SP * k / 2, cy - SP * k / 2, SP * k, SP * k); x.restore();
+  }
+}
+// sprite pass: set the 3D for time t and one layer, return a PNG
+window.sprite = (t, layer) => {
+  CUR = null; CURT = t; scenes(t); if (!CUR) return null;
+  const a = CUR[layer] ?? (layer === 'solid' ? 1 : 0); if (a <= .001) return null;
+  hideAll(); ground.visible = layer === 'solid' && CUR.ground !== false; ground.material.opacity = .16 * (CUR.shadow ?? 1);
+  const m = show(CUR.id, { yaw: CUR.yaw, reveal: CUR.reveal, cut: CUR.cut, solid: layer === 'solid' ? 1 : 0, xray: layer === 'xray' ? 1 : 0 });
+  m.mats.eBlue.color.set(CUR.edge === 'blue' ? 0x1d80b9 : 0xafdbf4); m.mats.face.opacity = CUR.face ?? .06;
+  frame(m, CUR.camYaw ?? 0, CUR.pitch ?? 14, .8 * (m.p.fit || 1), 0, 0);
+  r.render(scene, cam); return glc.toDataURL('image/png');
+};
+
+// ---------- HUD
+function hud(t, dark) {
+  if (t > T.end + .2) return;
+  const col = dark ? C.paper : C.deep, m = (PORTRAIT ? 56 : 40) * S, L = 22 * S, lw = 2 * S;
+  x.save(); x.globalAlpha = .7 * lin(t, 1.2, 2.2) * (1 - lin(t, T.end - .3, T.end + .2)); x.fillStyle = col;
+  [[m, m, 1, 1], [W - m, m, -1, 1], [m, H - m, 1, -1], [W - m, H - m, -1, -1]].forEach(([X, Y, sx, sy]) => { x.fillRect(X, Y, L * sx, lw * sy); x.fillRect(X, Y, lw * sx, L * sy); });
+  const z = 17 * S;
+  txt('SUDS ENVIRO', m + 36 * S, m + 20 * S, z, 500, col, 'left', 'mono', 4);
+  txt('BRAND IDENTITY / 2026', W - m - 36 * S, m + 20 * S, z, 500, col, 'right', 'mono', 4);
+  x.restore();
+}
+// right-edge staff gauge with a moving marker
+function gauge(t, mm, col, alpha) {
+  const top = H * .14, bot = H * .86, k = (bot - top) / 6350, gx = W - (PORTRAIT ? 64 : 56) * S;
+  x.save(); x.globalAlpha = alpha; x.fillStyle = col;
+  for (let v = 0; v <= 6350; v += 100) { const y = top + v * k, L = (v % 1000 ? (v % 500 ? 7 : 14) : 22) * S; x.fillRect(gx - L, y - .8 * S, L, 1.6 * S); if (v % 1000 === 0 && v <= 6000) txt(String(v / 1000), gx + 10 * S, y + 6 * S, 15 * S, 500, col, 'left', 'mono'); }
+  const y = top + mm * k; x.fillStyle = C.green; x.fillRect(gx - 34 * S, y - 1.5 * S, 34 * S, 3 * S);
+  x.beginPath(); x.moveTo(gx - 34 * S, y); x.lineTo(gx - 48 * S, y - 8 * S); x.lineTo(gx - 48 * S, y + 8 * S); x.fill();
+  txt(Math.round(mm / 10) * 10 + ' MM', gx - 56 * S, y + 6 * S, 16 * S, 500, col, 'right', 'mono', 2);
+  x.restore();
+}
+
+// ---------- scenes
+function intro(t) {
+  // night ground; a turf line draws across; the chamber settles into view below it, bottom band first, as an x-ray
+  x = bx; x.fillStyle = C.invert; x.fillRect(0, 0, W, H);
+  const gy = H * (PORTRAIT ? .27 : .2), kl = eio(lin(t, .5, 2.0));
+  // strata below the line, faint
+  for (let i = 0; i < 14; i++) { const y0 = gy + i * (H - gy) / 14; x.fillStyle = tint(500 + i * 420); x.globalAlpha = .07 * lin(t, 1.2, 2.6); x.fillRect(0, y0, W, (H - gy) / 14 + 1); }
+  x.globalAlpha = 1;
+  // rain, sparse and slow, above the line only
+  const rr = mulberry(5);
+  for (let i = 0; i < 40; i++) { const X = rr() * W, sp = (.25 + rr() * .3) * H, L = (30 + rr() * 50) * S; const y = ((rr() * gy + t * sp) % (gy + L)) - L; x.strokeStyle = C.sky; x.globalAlpha = .18 * lin(t, 0, 1) * (1 - lin(t, 3.6, 4.6)); x.lineWidth = 1.5 * S; x.beginPath(); x.moveTo(X, y); x.lineTo(X, Math.min(gy, y + L)); x.stroke(); }
+  x.globalAlpha = 1;
+  x.fillStyle = C.green; x.fillRect(CX - W / 2 * kl, gy - 3 * S, W * kl, 6 * S);
+  { const px = PORTRAIT ? CX : CX - .14 * W, py = PORTRAIT ? CY + .01 * H : CY + .07 * H, rr = Math.min(W, H) * .55, g = x.createRadialGradient(px, py, 0, px, py, rr);
+    g.addColorStop(0, 'rgba(29,128,185,.38)'); g.addColorStop(1, 'rgba(29,128,185,0)'); x.globalAlpha = es(lin(t, 1.2, 3.6)); x.fillStyle = g; x.fillRect(px - rr, py - rr, rr * 2, rr * 2); x.globalAlpha = 1; }
+  // 3D: chamber below the line
+  if (t >= 1.4) put({ id: 'sersic600', yaw: -.6 + t * .12, camYaw: 18, pitch: 14 - 6 * es(lin(t, 0, 5.3)), reveal: 1.06 * eio(lin(t, 1.4, 4.0)) - .001,
+    xray: 1 - lin(t, 3.6, 4.6), solid: es(lin(t, 3.5, 4.8)), ground: false },
+    PORTRAIT ? CX : CX - .14 * W, PORTRAIT ? CY + .01 * H : CY + .07 * H, (PORTRAIT ? .66 : .7) * Math.min(W, H));
+  x = fx;
+  // depth reading follows the reveal
+  gauge(t, 6350 * (1 - eio(lin(t, 1.4, 4.0))), C.sky, .55 * lin(t, 1.0, 1.8) * (1 - lin(t, 4.8, 5.3)));
+  txt('0 MM / GROUND LEVEL', PORTRAIT ? CX : 120 * S, gy - 26 * S, 18 * S, 500, C.sky, PORTRAIT ? 'center' : 'left', 'mono', 5);
+  x.globalAlpha = 1;
+  // the line
+  const lz = (PORTRAIT ? 64 : 58) * S;
+  if (PORTRAIT) {
+    rise(t, 2.6, 0, () => txt('EVERY DROP,', CX, H * .845, lz, 300, C.sky, 'center'));
+    rise(t, 3.2, 0, () => txt('ACCOUNTED FOR.', CX, H * .845 + lz * 1.1, lz, 800, C.paper, 'center'));
+  } else {
+    rise(t, 2.6, 0, () => txt('EVERY DROP,', W * .6, CY - 10 * S, lz, 300, C.sky));
+    rise(t, 3.2, 0, () => txt('ACCOUNTED FOR.', W * .6, CY - 10 * S + lz * 1.1, lz, 800, C.paper));
+  }
+  hud(t, true);
+}
+function range(t) {
+  const i = clamp(Math.floor((t - T.range) / (BAR * .75)), 0, 3), t0 = T.range + i * BAR * .75, t1 = t0 + BAR * .75, p = PRODUCTS[i];
+  x = bx; x.fillStyle = C.surface; x.fillRect(0, 0, W, H);
+  // the big role word behind the product, very pale
+  const word = p.role.split(' ').pop();
+  x.save(); x.font = font(PORTRAIT ? 300 * S : 330 * S, 800); x.textAlign = 'center'; x.strokeStyle = p.col; x.globalAlpha = .14 * lin(t, t0, t0 + .6) * (1 - lin(t, t1 - .35, t1)); x.lineWidth = 2 * S;
+  const ww = x.measureText(word).width, fs = Math.min(1, W * .96 / ww); x.translate(CX, PORTRAIT ? H * .44 : CY + 110 * S); x.scale(fs, fs); x.strokeText(word, 0, 0); x.restore();
+  // colour tab
+  x.fillStyle = p.col; x.fillRect(0, 0, 10 * S, H * eo(lin(t, t0, t0 + .5)));
+  // 3D: the water level fills the product in, then drains it out
+  const kin = eio(lin(t, t0, t0 + .7)), kout = ei(lin(t, t1 - .45, t1));
+  put({ id: p.id, yaw: .5 + (t - t0) * .45, camYaw: 28, pitch: 16, reveal: 1.06 * kin * (1 - kout) - .001, solid: 1, xray: 0, shadow: es(lin(t, t0 + .2, t0 + .8)) * (1 - es(lin(t, t1 - .5, t1 - .1))) },
+    PORTRAIT ? CX : CX + .12 * W, PORTRAIT ? CY - .06 * H : CY - .02 * H, (PORTRAIT ? .8 : .76) * Math.min(W, H));
+  x = fx;
+  const k = 1 - lin(t, t1 - .3, t1);
+  const ny = PORTRAIT ? H * .76 : CY - 40 * S, nx = PORTRAIT ? CX : 150 * S, al = PORTRAIT ? 'center' : 'left', z = (PORTRAIT ? 66 : 60) * S;
+  x.save(); x.globalAlpha = k;
+  rise(t, t0 + .2, 0, () => txt(String(i + 1).padStart(2, '0') + ' / 04', nx, ny - z * 1.1, 20 * S, 500, C.field, al, 'mono', 5));
+  rise(t, t0 + .3, 0, () => { if (PORTRAIT) { txt(p.light, nx, ny, z * .7, 300, C.field, al); txt(p.bold, nx, ny + z * .95, z, 800, C.blue, al); } else { txt(p.light, nx, ny, z * .7, 300, C.field, al); txt(p.bold, nx, ny + z * .95, z, 800, C.blue, al); } });
+  rise(t, t0 + .45, 0, () => txt(p.role, nx, ny + z * 1.75, 20 * S, 500, C.deep, al, 'mono', 5));
+  x.restore();
+  hud(t, false);
+}
+function section(t) {
+  const t0 = T.section, t1 = T.end;
+  // the ground in section behind: strata top to bottom
+  x = bx;
+  const gy = H * .16;
+  x.fillStyle = C.surface; x.fillRect(0, 0, W, gy);
+  for (let i = 0; i < 24; i++) { const y0 = gy + i * (H - gy) / 24; x.fillStyle = tint(i * 6350 / 24); x.fillRect(0, y0, W, (H - gy) / 24 + 1); }
+  x.fillStyle = C.green; x.fillRect(0, gy - 6 * S, W, 8 * S);
+  const kin = eo(lin(t, t0, t0 + .6)); x.fillStyle = C.surface; x.globalAlpha = 1 - kin; x.fillRect(0, 0, W, H); x.globalAlpha = 1;
+  // the cut sweeps through the separator, front half away
+  put({ id: 'sehds1800', yaw: -.35 + (t - t0) * .08, camYaw: 0, pitch: 10, cut: .8 - .8 * eio(lin(t, t0 + .3, t0 + 1.8)), solid: 1, xray: 0, reveal: 10, ground: false },
+    PORTRAIT ? CX : CX - .14 * W, PORTRAIT ? CY + .02 * H : CY + .1 * H, (PORTRAIT ? .82 : .72) * Math.min(W, H));
+  x = fx;
+  const z = (PORTRAIT ? 70 : 62) * S;
+  if (PORTRAIT) { rise(t, t0 + .5, 0, () => { txt('DRAWN', CX, H * .095 + 10 * S, z * .62, 300, C.field, 'center'); }); rise(t, t0 + .7, 0, () => txt('IN SECTION', CX, H * .095 + z * .85, z * .8, 800, C.blue, 'center')); }
+  else { rise(t, t0 + .5, 0, () => txt('DRAWN', W * .62, CY - 80 * S, z * .8, 300, C.paper)); rise(t, t0 + .7, 0, () => txt('IN SECTION', W * .62, CY - 80 * S + z * 1.05, z, 800, C.paper)); }
+  // the three meanings
+  const rows = [[C.green, 'GREEN', 'THE GROUND'], [C.blue, 'BLUE', 'SURFACE WATER'], [C.red, 'RED', 'FOUL WATER']];
+  rows.forEach(([c, n, mng], j) => {
+    const lx = PORTRAIT ? 100 * S + j * 300 * S : W * .62, ly = PORTRAIT ? H * .9 : CY + 60 * S + j * 54 * S;
+    rise(t, t0 + .9 + j * .2, 0, () => { x.fillStyle = c; x.fillRect(lx, ly - 22 * S, 26 * S, 26 * S); txt(mng, lx + 40 * S, ly, (PORTRAIT ? 19 : 22) * S, 500, C.paper, 'left', 'mono', 3); });
+  });
+  gauge(t, 1800 + (t - t0) * 300, C.paper, .5);
+  hud(t, true);
+}
+function end(t) {
+  x = bx; x.fillStyle = C.deep; x.fillRect(0, 0, W, H);
+  x = fx;
+  // a slow tide of sky lines
+  x.save(); x.strokeStyle = C.sky; x.lineWidth = 2 * S; for (let i = 0; i < 8; i++) { const y = H - ((t - T.end) * 40 * S + i * H / 8) % H; x.globalAlpha = .06; x.beginPath(); for (let u = 0; u <= W; u += 40 * S) x.lineTo(u, y + Math.sin(u / (220 * S) + t + i) * 9 * S); x.stroke(); } x.restore();
+  const vb = D.hz.vb, w = PORTRAIT ? W * .82 : W * .5, s = w / vb[2], h = vb[3] * s, X = CX - w / 2, Y = CY - h / 2 - 30 * S;
+  const drop = [5, 6, 7, 8, 9], dOrder = drop.slice().sort((a, b) => (P.hzBox[b].y + P.hzBox[b].h / 2) - (P.hzBox[a].y + P.hzBox[a].h / 2));
+  const letters = P.hz.map((p, i) => i).filter(i => !drop.includes(i)).sort((a, b) => P.hzBox[a].x - P.hzBox[b].x);
+  x.save(); x.translate(X, Y); x.scale(s, s); x.translate(-vb[0], -vb[1]);
+  letters.forEach((i, o) => { const k = lin(t, T.end + 1.2 + o * .05, T.end + 1.7 + o * .05); if (k <= 0) return; x.save(); x.globalAlpha = eo(k); x.translate(0, (1 - eo(k)) * 30); x.fillStyle = P.hz[i].f; x.fill(P.hz[i].path); x.restore(); });
+  x.restore();
+  // the drop settles bottom band first, large and centred, then glides into the lockup
+  let bx0 = 1e9, by0 = 1e9, bx1 = -1e9, by1 = -1e9; drop.forEach(i => { const b = P.hzBox[i]; bx0 = Math.min(bx0, b.x); by0 = Math.min(by0, b.y); bx1 = Math.max(bx1, b.x + b.w); by1 = Math.max(by1, b.y + b.h); });
+  const dcx = (bx0 + bx1) / 2, dcy = (by0 + by1) / 2, dh = by1 - by0, mm = eio(lin(t, T.end + .9, T.end + 1.8));
+  const sc0 = 360 * S / dh, sx1 = X + (dcx - vb[0]) * s, sy1 = Y + (dcy - vb[1]) * s;
+  const dsx = CX + (sx1 - CX) * mm, dsy = (CY - 30 * S) + (sy1 - CY + 30 * S) * mm, dsc = sc0 + (s - sc0) * mm;
+  x.save(); x.translate(dsx, dsy); x.scale(dsc, dsc); x.translate(-dcx, -dcy);
+  drop.forEach(i => { const o = dOrder.indexOf(i), k = lin(t, T.end + .1 + o * .14, T.end + .6 + o * .14); if (k <= 0) return; const e = eback(k); x.save(); x.globalAlpha = clamp(k * 2); x.translate(0, -(1 - e) * 60 * S / dsc); x.fillStyle = P.hz[i].f; x.fill(P.hz[i].path); x.restore(); });
+  x.restore();
+  const k2 = eo(lin(t, T.end + 2.0, T.end + 2.6));
+  if (k2 > 0) {
+    const z = (PORTRAIT ? 46 : 40) * S, a = 'BESPOKE, ', b = 'STANDARDISED', wa = measure(a, z, 800), wb = measure(b, z, 800, 'm', 0, true), ax = CX - (wa + wb) / 2, ay = Y + h + 110 * S + (1 - k2) * 16 * S;
+    x.globalAlpha = k2; txt(a, ax, ay, z, 800, C.paper); txt(b, ax + wa, ay, z, 800, C.sky, 'left', 'm', 0, true);
+    x.fillStyle = C.green; x.fillRect(CX - 50 * S * k2, ay + 30 * S, 100 * S * k2, 4 * S); x.globalAlpha = 1;
+  }
+  const k3 = lin(t, T.end + 2.5, T.end + 3.0); if (k3 > 0) { x.globalAlpha = k3; txt('SUDSENVIRO.COM', CX, PORTRAIT ? H - 240 * S : H - 100 * S, 24 * S, 500, C.sky, 'center', 'mono', 8); x.globalAlpha = 1; }
+}
+
+// ---------- frame
+function scenes(t) { if (t < T.range) intro(t); else if (t < T.section) range(t); else if (t < T.end) section(t); else end(t); }
+const XF = .5; // crossfade between scenes, seconds
+function render(t) {
+  bx.setTransform(1, 0, 0, 1, 0, 0); fx.setTransform(1, 0, 0, 1, 0, 0); fx.clearRect(0, 0, W, H);
+  CURT = t; scenes(t);
+  // dissolve over each cut: a plate of the next scene's ground colour rises and clears
+  x = fx;
+  const cuts = [[T.range, C.surface], [T.section, C.invert]];
+  // end card covers the 3D with the deep ground fading up over the last half second of the section
+  const ke = lin(t, T.end - .45, T.end); if (t < T.end && ke > 0) { x.fillStyle = C.deep; x.globalAlpha = es(ke); x.fillRect(0, 0, W, H); x.globalAlpha = 1; }
+  cuts.forEach(([tc, col]) => { const a = 1 - Math.abs(t - tc) / (XF / 2); if (a > 0) { x.fillStyle = col; x.globalAlpha = es(a); x.fillRect(0, 0, W, H); x.globalAlpha = 1; } });
+  const g = grain[Math.floor(t * 24) % 4]; for (let gy = 0; gy < H; gy += 256) for (let gx = 0; gx < W; gx += 256) x.drawImage(g, gx, gy);
+  const fa = Math.max(1 - lin(t, 0, .8), lin(t, DUR - .6, DUR));
+  if (fa > 0) { x.fillStyle = '#000'; x.globalAlpha = fa; x.fillRect(0, 0, W, H); x.globalAlpha = 1; }
+}
+window.render = render;
+</script></body></html>

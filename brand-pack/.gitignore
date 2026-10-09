@@ -9,3 +9,6 @@ __pycache__/
 src/reel/reel.html
 src/reel/stills/
 src/reel/score.wav
+src/reel/cut.html
+src/reel/sprites/
+src/reel/cut_score.wav

@@ -25,6 +25,7 @@ The SuDS Enviro drop is already a section through the ground: green land on top,
 | `photography/hero/` | Six hero images (see the note below) |
 | `film/` | Identity film, 36 s at 60 fps with score: 16:9 (1920 x 1080) and 9:16 (1080 x 1920) |
 | `film/suds-enviro-showcase-*.mp4` | Showcase reel for social, 30 s at 60 fps, 120 bpm: 9:16 for Reels and Stories, 16:9 for LinkedIn and the site |
+| `film/suds-enviro-showcase-3d-*.mp4` | Calmer 3D cut, 20 s at 30 fps, 90 bpm, built from the 3D product library: 9:16 and 16:9 |
 | `src/` | Every script that made the pack, so it can be rebuilt |
 
 ## How it was made
@@ -40,6 +41,7 @@ The SuDS Enviro drop is already a section through the ground: green land on top,
 | Film frames, deterministic `render(t)` stepped by Playwright, piped to ffmpeg | `src/film/film.tpl.html`, `src/film/film_build.py`, `src/film/film_render.cjs` |
 | Score, 100 bpm, synthesised | `src/film/score.py` |
 | Showcase reel: frames, score and mux | `src/reel/reel.tpl.html`, `src/reel/reel_build.py`, `src/reel/reel_render.cjs`, `src/reel/score.py` |
+| 3D cut: product passes rendered with three.js (`cut_sprites.cjs`, static server on port 3200 at the repo root), then composited | `src/reel/cut.tpl.html`, `src/reel/cut_build.py`, `src/reel/cut_sprites.cjs`, `src/reel/cut_render.cjs`, `src/reel/cut_score.py` |
 
 Rebuild the book: `python3 src/book/build.py`, then `NODE_PATH=$(npm root -g) node src/scripts/pages.cjs` and `node src/scripts/pdf.cjs`. Catalogue renders need a static server on port 3200 at the repo root (`npx http-server -p 3200`).
 
