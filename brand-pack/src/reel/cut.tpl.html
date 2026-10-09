@@ -212,7 +212,7 @@ window.sprite = (t, layer) => {
   const a = CUR[layer] ?? (layer === 'solid' ? 1 : 0); if (a <= .001) return null;
   hideAll(); ground.visible = layer === 'solid' && CUR.ground !== false; ground.material.opacity = .16 * (CUR.shadow ?? 1);
   const m = show(CUR.id, { yaw: CUR.yaw, reveal: CUR.reveal, cut: CUR.cut, see: layer === 'xray' ? 1 : CUR.see || 0 });
-  ground.scale.setScalar(m.rad * 2.6);
+  ground.scale.setScalar(m.rad * 1.6);
   frame(m, CUR.camYaw ?? 0, CUR.pitch ?? 14, .8 * (m.p.fit || 1), 0, 0);
   r.render(scene, cam); return glc.toDataURL('image/png');
 };
