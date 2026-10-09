@@ -1,0 +1,482 @@
+<!doctype html><html><head><meta charset="utf-8"><title>SuDS Enviro identity film</title>
+<style>
+@font-face{font-family:"Montserrat";src:url(FONT_M) format("woff2");font-weight:300 900}
+@font-face{font-family:"Plex Mono";src:url(FONT_P5) format("woff2");font-weight:500}
+html,body{margin:0;background:#000}canvas{display:block}
+</style></head><body><canvas id="c"></canvas>
+<script>
+/*DATA*/
+const q = new URLSearchParams(location.search);
+const PORTRAIT = q.get('fmt') === 'portrait';
+const W = PORTRAIT ? 1080 : 1920, H = PORTRAIT ? 1920 : 1080;
+const cv = document.getElementById('c'); cv.width = W; cv.height = H;
+const x = cv.getContext('2d');
+const C = {blue:'#1d80b9', deep:'#005576', green:'#54b54d', red:'#c34c4a', surface:'#eef3f5', invert:'#062a3a', sky:'#afdbf4', field:'#3d8537', paper:'#ffffff'};
+const BPM = 100, BEAT = 60 / BPM, BAR = BEAT * 4, DUR = 36;
+const S = Math.min(W, H) / 1080; // unit scale
+// ---------- helpers
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const eo = t => 1 - Math.pow(1 - t, 3);          // ease out
+const eio = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function hex(h) { return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); }
+function mix(a, b, t) { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',') + ')'; }
+function tint(mm) {
+  const st = [[0, C.surface], [1200, C.sky], [2800, C.blue], [4600, C.deep], [6350, C.invert]];
+  for (let i = 0; i < st.length - 1; i++) if (mm <= st[i + 1][0]) return mix(st[i][1], st[i + 1][1], (mm - st[i][0]) / (st[i + 1][0] - st[i][0]));
+  return C.invert;
+}
+function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+// grain tiles, built once from a seeded PRNG so every render is identical
+const grain = [];
+for (let g = 0; g < 6; g++) {
+  const c = document.createElement('canvas'); c.width = c.height = 256; const gx = c.getContext('2d');
+  const id = gx.createImageData(256, 256), r = mulberry(1234 + g);
+  for (let i = 0; i < id.data.length; i += 4) { const v = r() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 14; }
+  gx.putImageData(id, 0, 0); grain.push(c);
+}
+const P = {};
+function prep(set) { return set.p.map(p => ({ f: p.f, path: new Path2D(p.d) })); }
+P.hz = prep(D.hz); P.drop = prep(D.drop);
+const IM = {}; let loaded = 0; const want = Object.keys(D.xr).length + 1;
+for (const k in D.xr) { const i = new Image(); i.onload = () => loaded++; i.src = D.xr[k]; IM[k] = i; }
+{ const i = new Image(); i.onload = () => loaded++; i.src = D.photo; IM.photo = i; }
+window.READY = () => loaded === want && document.fonts.check('800 40px Montserrat') && document.fonts.check('500 20px "Plex Mono"');
+document.fonts.load('800 40px Montserrat'); document.fonts.load('300 40px Montserrat'); document.fonts.load('500 20px "Plex Mono"');
+
+function txt(s, X, Y, size, weight, col, align = 'left', fam = 'Montserrat', track = 0) {
+  x.font = `${weight} ${size}px ${fam === 'mono' ? '"Plex Mono"' : 'Montserrat'}`;
+  x.fillStyle = col; x.textAlign = align; x.textBaseline = 'alphabetic';
+  if (track) { x.letterSpacing = track + 'px'; } else x.letterSpacing = '0px';
+  x.fillText(s, X, Y);
+}
+// two voices: light then bold, uppercase, soft rise
+function two(light, bold, X, Y, size, t0, t, colL, colB, align = 'left', lineBreak = false) {
+  const k = eo(lin(t, t0, t0 + .6)); if (k <= 0) return;
+  x.save(); x.globalAlpha = k; const dy = (1 - k) * 18 * S;
+  x.font = `300 ${size}px Montserrat`; const wl = light ? x.measureText(light.toUpperCase() + ' ').width : 0;
+  x.font = `800 ${size}px Montserrat`; const wb = x.measureText(bold.toUpperCase()).width;
+  if (lineBreak) {
+    const ax = align === 'center' ? X - Math.max(wl, wb) / 2 : X;
+    const xl = align === 'center' ? X - (wl) / 2 : ax, xb = align === 'center' ? X - wb / 2 : ax;
+    if (light) txt(light.toUpperCase(), xl, Y + dy, size, 300, colL);
+    const k2 = eo(lin(t, t0 + .15, t0 + .75)); x.globalAlpha = k2;
+    txt(bold.toUpperCase(), xb, Y + size * 1.0 + (1 - k2) * 18 * S, size, 800, colB);
+  } else {
+    const total = wl + wb; const ax = align === 'center' ? X - total / 2 : X;
+    if (light) txt(light.toUpperCase() + ' ', ax, Y + dy, size, 300, colL);
+    txt(bold.toUpperCase(), ax + wl, Y + dy, size, 800, colB);
+  }
+  x.restore();
+}
+function drawSet(set, vb, X, Y, Hh, filter, alphaFn) {
+  const s = Hh / vb[3];
+  x.save(); x.translate(X, Y); x.scale(s, s); x.translate(-vb[0], -vb[1]);
+  set.forEach((p, i) => { if (filter && !filter(p, i)) return; x.save(); const a = alphaFn ? alphaFn(p, i) : null; if (a) { x.globalAlpha = a.al; x.translate(0, a.dy); } x.fillStyle = p.f; x.fill(p.path); x.restore(); });
+  x.restore();
+}
+function clock(cx, cy, r, inlets, t, t0, dark) {
+  const ink = dark ? C.sky : C.deep;
+  x.save(); x.lineWidth = r * .07; x.strokeStyle = ink;
+  const ka = eo(lin(t, t0, t0 + .8));
+  x.beginPath(); x.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ka); x.stroke();
+  for (let h = 0; h < 12; h++) { const th = h * Math.PI / 6; x.globalAlpha = .35 * ka; x.lineWidth = r * .025; x.beginPath(); x.moveTo(cx + (r - r * .1) * Math.sin(th), cy - (r - r * .1) * Math.cos(th)); x.lineTo(cx + (r - r * .2) * Math.sin(th), cy - (r - r * .2) * Math.cos(th)); x.stroke(); }
+  x.globalAlpha = 1;
+  const nodes = [3, 5, 6, 7, 9];
+  nodes.forEach((h, i) => {
+    const th = h * Math.PI / 6, on = inlets.includes(h);
+    const tn = t0 + .9 + i * BEAT; const k = eo(lin(t, tn, tn + .35));
+    const px = cx + r * Math.sin(th), py = cy - r * Math.cos(th), nr = r * .13;
+    x.fillStyle = dark ? C.invert : C.paper; x.strokeStyle = ink; x.lineWidth = nr * .25;
+    x.globalAlpha = .6 * ka; x.beginPath(); x.arc(px, py, nr * .62, 0, 7); x.fill(); x.stroke(); x.globalAlpha = 1;
+    if (on && k > 0) {
+      x.strokeStyle = C.blue; x.lineWidth = nr * 1.25; x.beginPath(); x.moveTo(px, py); x.lineTo(cx + (r + nr * 2.6 * k) * Math.sin(th), cy - (r + nr * 2.6 * k) * Math.cos(th)); x.stroke();
+      x.fillStyle = C.blue; x.beginPath(); x.arc(px, py, nr * k, 0, 7); x.fill();
+    }
+    x.globalAlpha = ka; txt(String(h), cx + (r + nr * 4.6) * Math.sin(th), cy - (r + nr * 4.6) * Math.cos(th) + nr * .55, nr * 1.5, 500, ink, 'center', 'mono');
+  });
+  const to = t0 + .9 + 5 * BEAT; const k = eo(lin(t, to, to + .4));
+  if (k > 0) { const nr = r * .13; x.strokeStyle = C.green; x.lineWidth = nr * 1.6; x.beginPath(); x.moveTo(cx, cy - r); x.lineTo(cx, cy - r - nr * 2.6 * k); x.stroke(); x.fillStyle = C.green; x.beginPath(); x.arc(cx, cy - r, nr * 1.25 * k, 0, 7); x.fill(); txt('12', cx, cy - r - nr * 3.4, nr * 1.5, 500, ink, 'center', 'mono'); }
+  x.restore();
+}
+function gaugeDraw(t, depth, dark, top, bot, gx) {
+  const k = (bot - top) / 6350, w = 30 * S;
+  const ink = dark ? C.sky : C.deep;
+  x.save(); x.fillStyle = C.blue; x.globalAlpha = .18; x.fillRect(gx, top, w, depth * k); x.globalAlpha = 1;
+  for (let m = 0; m < 7; m++) { const y0 = top + m * 1000 * k, y1 = Math.min(bot, top + (m + 1) * 1000 * k); if (y0 >= bot) break; x.fillStyle = m % 2 ? C.blue : ink; x.fillRect(gx + w - 4 * S, y0, 4 * S, y1 - y0); }
+  for (let mm = 0; mm <= 6350; mm += 100) { const y = top + mm * k, L = (mm % 1000 ? (mm % 500 ? 6 : 12) : 18) * S; x.fillStyle = (Math.floor(mm / 1000) % 2) ? C.blue : ink; x.fillRect(gx + w - 4 * S - L, y - .7 * S, L, 1.4 * S); if (mm % 1000 === 0 && mm <= 6000) txt(String(mm / 1000), gx + 2 * S, y + 4 * S, 11 * S, 500, ink, 'left', 'mono'); }
+  const y = top + depth * k; x.fillStyle = C.green; x.fillRect(gx - 6 * S, y - 1.5 * S, w + 6 * S, 3 * S);
+  x.beginPath(); x.moveTo(gx - 6 * S, y); x.lineTo(gx - 18 * S, y - 8 * S); x.lineTo(gx - 18 * S, y + 8 * S); x.fill();
+  txt(Math.round(depth) + ' mm', gx - 24 * S, y + 5 * S, 15 * S, 500, ink, 'right', 'mono');
+  x.restore();
+}
+
+// ---------- timeline (seconds), cut on bars
+const T = { rain: 0, cut: 2 * BAR, down: 4 * BAR, plan: 7 * BAR, xray: 9 * BAR, drop: 11 * BAR, end: 13 * BAR };
+const TAU = Math.PI * 2;
+const es = v => .5 - .5 * Math.cos(Math.PI * clamp(v));            // sine ease in-out
+// ---------- water toolkit: everything is a smooth function of position and t
+// travelling water noise: three incommensurate sines, roughly unit amplitude
+function wv(u, t, s) { return .55 * Math.sin(u * .0052 + t * 1.15 + s) + .3 * Math.sin(u * .0119 - t * .83 + s * 2.3) + .15 * Math.sin(u * .027 + t * 1.9 + s * 4.1); }
+// smooth open curve through points (midpoint quadratics)
+function curve(pts, move = true) {
+  if (move) x.moveTo(pts[0][0], pts[0][1]); else x.lineTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length - 1; i++) x.quadraticCurveTo(pts[i][0], pts[i][1], (pts[i][0] + pts[i + 1][0]) / 2, (pts[i][1] + pts[i + 1][1]) / 2);
+  const L = pts[pts.length - 1]; x.lineTo(L[0], L[1]);
+}
+// smooth closed curve
+function loop(pts) {
+  const n = pts.length, mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const m0 = mid(pts[n - 1], pts[0]); x.moveTo(m0[0], m0[1]);
+  for (let i = 0; i < n; i++) { const m = mid(pts[i], pts[(i + 1) % n]); x.quadraticCurveTo(pts[i][0], pts[i][1], m[0], m[1]); }
+  x.closePath();
+}
+// a liquid edge across the frame. 'up': horizontal edge, inside = below. 'right': vertical edge, inside = left.
+function edgePts(dir, pos, t, seed, amp) {
+  const pts = [], step = 36 * S, span = dir === 'up' ? W : H;
+  for (let u = -step; u <= span + step * 1.5; u += step) { const d = wv(u / S, t, seed) * amp; pts.push(dir === 'up' ? [u, pos + d] : [pos + d, u]); }
+  return pts;
+}
+function regionPath(dir, pts) {
+  const m = 80 * S; x.beginPath(); curve(pts);
+  if (dir === 'up') { x.lineTo(W + m, H + m); x.lineTo(-m, H + m); } else { x.lineTo(-m, H + m); x.lineTo(-m, -m); }
+  x.closePath();
+}
+// a water front: coloured layers lead, the next scene follows behind them. p runs 0..1 across the frame.
+function front(dir, p, t, layers, seed, amp, drawNext, sheen = .5) {
+  const tot = layers.reduce((a, l) => a + l[1], 0), sw = .6 + .4 * Math.sin(Math.PI * p);
+  const span = dir === 'up' ? H : W;
+  const lead = dir === 'up' ? (H + amp * 1.6) - p * (H + tot + amp * 3.4) : -amp * 1.6 + p * (W + tot + amp * 3.4);
+  let off = 0;
+  for (let i = 0; i <= layers.length; i++) {
+    if (i) off += layers[i - 1][1] * sw;
+    const pos = dir === 'up' ? lead + off : lead - off;
+    const pts = edgePts(dir, pos, t * 1.4, seed + i * .45, amp * (1 + .12 * i));
+    regionPath(dir, pts);
+    if (i < layers.length) { x.save(); x.globalAlpha = layers[i][2] ?? 1; x.fillStyle = layers[i][0]; x.fill(); x.restore(); }
+    else { x.save(); x.clip(); drawNext(); x.restore(); }
+    if (i === 0 && sheen) { x.save(); x.beginPath(); curve(pts); x.strokeStyle = '#ffffff'; x.globalAlpha = sheen; x.lineWidth = 2.5 * S; x.stroke(); x.restore(); }
+  }
+}
+// ring with a gently wobbling rim
+function ringPts(cx, cy, R, t, seed, amp) {
+  const pts = [], n = 72, a = amp * Math.min(1, R / (260 * S));
+  for (let i = 0; i < n; i++) { const th = i / n * TAU; const rr = Math.max(0, R + a * (.6 * Math.sin(th * 5 + t * 1.6 + seed) + .4 * Math.sin(th * 8 - t * 2.1 + seed * 1.9))); pts.push([cx + rr * Math.cos(th), cy + rr * Math.sin(th)]); }
+  return pts;
+}
+// ripple rings: the next scene opens from a point
+function ripple(cx, cy, p, t, layers, seed, amp, drawNext, ringCol, sheen = .45) {
+  const tot = layers.reduce((a, l) => a + l[1], 0);
+  const far = Math.max(Math.hypot(cx, cy), Math.hypot(W - cx, cy), Math.hypot(cx, H - cy), Math.hypot(W - cx, H - cy));
+  const lead = p * (far + tot + amp * 2);
+  // forerunners: faint rings travelling ahead of the front
+  x.save(); x.strokeStyle = ringCol; x.lineWidth = 2 * S;
+  for (let j = 1; j <= 3; j++) { const R = lead + j * 70 * S * (1 + p); x.globalAlpha = .28 * (1 - j / 4) * Math.sin(Math.PI * p); x.beginPath(); loop(ringPts(cx, cy, R, t, seed + j, amp * .6)); x.stroke(); }
+  x.restore();
+  let off = 0;
+  for (let i = 0; i <= layers.length; i++) {
+    if (i) off += layers[i - 1][1];
+    const R = lead - off; if (R <= 0) break;
+    x.beginPath(); loop(ringPts(cx, cy, R, t, seed + i * .5, amp));
+    if (i < layers.length) { x.save(); x.globalAlpha = layers[i][2] ?? 1; x.fillStyle = layers[i][0]; x.fill(); x.restore(); }
+    else {
+      x.save(); x.clip(); drawNext();
+      // wake: rings left behind inside the new scene
+      x.strokeStyle = ringCol; x.lineWidth = 1.6 * S;
+      for (let j = 1; j <= 4; j++) { const r2 = R - j * 90 * S; if (r2 <= 0) break; x.globalAlpha = .22 * (1 - j / 5) * (1 - p * .6); x.beginPath(); loop(ringPts(cx, cy, r2, t, seed + j * .3, amp * .5)); x.stroke(); }
+      x.restore();
+    }
+    if (i === 0 && sheen) { x.save(); x.beginPath(); loop(ringPts(cx, cy, R, t, seed, amp)); x.strokeStyle = '#ffffff'; x.globalAlpha = sheen; x.lineWidth = 2.5 * S; x.stroke(); x.restore(); }
+  }
+}
+// slow caustic light: two families of crossing sine filaments
+function caustic(y0, y1, t, col, al, seed, n = 8) {
+  x.save(); x.strokeStyle = col; x.lineCap = 'round';
+  for (let i = 0; i < n; i++) {
+    const base = y0 + (y1 - y0) * (i + .5) / n;
+    for (let f = 0; f < 2; f++) {
+      const sg = f ? -1 : 1, pts = [];
+      for (let u = -60 * S; u <= W + 60 * S; u += 48 * S) { const v = u / S; pts.push([u, base + sg * (22 * S * Math.sin(v * .0041 + sg * t * .45 + i * 1.7 + seed) + 10 * S * Math.sin(v * .0107 - t * .62 + i * .9 + seed * 1.3))]); }
+      x.globalAlpha = al * (.55 + .45 * Math.sin(t * .7 + i * 2.1 + f * 1.3)); x.lineWidth = (1.2 + 2.6 * (.5 + .5 * Math.sin(i * 3.3 + f * 1.1 + t * .3))) * S;
+      x.beginPath(); curve(pts); x.stroke();
+    }
+  }
+  x.restore();
+}
+// strata with undulating edges, painted top to bottom; the turf datum (0 mm) stays level
+function strataWavy(G, cam, kk, t, step) {
+  const first = Math.max(0, Math.floor((cam + (-40 * S - G) / kk) / step) * step);
+  for (let mm = first; mm < 6350; mm += step) {
+    const y0 = G + (mm - cam) * kk; if (y0 > H + 40 * S) break;
+    const amp = 10 * S * Math.min(1, mm / 450), pts = [];
+    for (let u = -40 * S; u <= W + 60 * S; u += 40 * S) pts.push([u, y0 + amp * wv(u / S + mm * .35, t * .8, mm * .0021)]);
+    x.beginPath(); curve(pts); x.lineTo(W + 80 * S, H + 80 * S); x.lineTo(-80 * S, H + 80 * S); x.closePath();
+    x.fillStyle = tint(mm + step / 2); x.fill();
+  }
+}
+// water inside a shaft between screen rows top..bot, surface at sy
+function shaftWater(sx, sw, sy, bot, t, al) {
+  if (sy >= bot) return;
+  const pts = []; for (let u = 0; u <= 8; u++) { const px = sx + sw * u / 8; pts.push([px, sy + 4 * S * Math.sin(u * .9 + t * 2.4) + 2.5 * S * Math.sin(u * 1.7 - t * 3.1)]); }
+  x.save(); x.beginPath(); curve(pts); x.lineTo(sx + sw, bot); x.lineTo(sx, bot); x.closePath();
+  const g = x.createLinearGradient(0, sy, 0, Math.max(sy + 1, bot)); g.addColorStop(0, C.sky); g.addColorStop(1, C.blue);
+  x.globalAlpha = al; x.fillStyle = g; x.fill();
+  x.beginPath(); curve(pts); x.strokeStyle = '#ffffff'; x.lineWidth = 2.5 * S; x.globalAlpha = al * .8; x.stroke();
+  // bubbles rising, a little sway
+  const r = mulberry(41), hh = bot - sy;
+  if (hh > 30 * S) for (let j = 0; j < 12; j++) {
+    const bx = sx + sw * (.12 + .76 * r()) + Math.sin(t * 2 + j) * 5 * S, sp = (50 + r() * 70) * S, ph = r() * 1000;
+    const by = bot - ((t * sp + ph) % hh); const rad = (2 + r() * 4) * S;
+    x.globalAlpha = al * .55 * lin(by, sy, sy + 30 * S); x.beginPath(); x.arc(bx, by, rad, 0, TAU); x.strokeStyle = '#ffffff'; x.lineWidth = 1.4 * S; x.stroke();
+  }
+  x.restore();
+}
+// polyline helpers for the flow lines on the plan
+function arcLen(pts) { const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])); return L; }
+function partial(pts, f) {
+  const L = arcLen(pts), want = L[L.length - 1] * clamp(f); x.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) {
+    if (L[i] <= want) { x.lineTo(pts[i][0], pts[i][1]); continue; }
+    const k = (want - L[i - 1]) / Math.max(1e-6, L[i] - L[i - 1]); x.lineTo(pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * k, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * k); break;
+  }
+}
+function bez(p0, p1, p2, p3, n) { const o = []; for (let i = 0; i <= n; i++) { const s = i / n, a = (1 - s) ** 3, b = 3 * (1 - s) ** 2 * s, c = 3 * (1 - s) * s * s, d = s ** 3; o.push([a * p0[0] + b * p1[0] + c * p2[0] + d * p3[0], a * p0[1] + b * p1[1] + c * p2[1] + d * p3[1]]); } return o; }
+
+// ---------- geometry shared between scenes and transitions
+const G = PORTRAIT ? H * .52 : H * .58;      // ground line on screen
+const SX = PORTRAIT ? W * .74 : W * .66, SW = 150 * S;  // the shaft
+function dropBox() {
+  const vb = D.hz.vb, hh = (PORTRAIT ? 120 : 150) * S, ww = hh * vb[2] / vb[3];
+  const X = (W - ww) / 2, Y = (PORTRAIT ? H * .40 : H * .42) - hh / 2, s = hh / vb[3];
+  return { vb, hh, ww, X, Y, cx: X + (470 - vb[0]) * s, cy: Y + (40 - vb[1]) * s };
+}
+
+// ---------- transitions: every scene change is water, peaking on the bar
+const SCENES = [t => sceneGround(t), t => sceneDown(t), t => scenePlan(t), t => sceneXray(t), t => sceneDrop(t), t => sceneEnd(t)];
+const TR = [
+  { at: T.down, kind: 'dive' },     // ripple rings open from the shaft mouth
+  { at: T.plan, kind: 'bands' },    // the drop's four bands rise past the lens as we sink
+  { at: T.xray, kind: 'wash' },     // a liquid wash sweeps the dark plan into light
+  { at: T.drop, kind: 'ring' },     // one ring opens from where the drop will settle
+  { at: T.end, kind: 'flood' },     // the level rises and leaves the deep end card
+];
+const HALF = BEAT;                   // each transition spans one beat either side of the bar
+function transition(tr, t, from, to) {
+  const p = es(lin(t, tr.at - HALF, tr.at + HALF));
+  SCENES[from](t);
+  const next = () => SCENES[to](t);
+  if (tr.kind === 'dive') ripple(SX + SW / 2, G - 30 * S, p, t, [[C.sky, 70 * S, .55], [C.blue, 26 * S, .9], [C.deep, 10 * S, 1]], 1.3, 11 * S, next, C.blue);
+  else if (tr.kind === 'bands') front('up', p, t, [[C.green, 64 * S], [C.blue, 84 * S], [C.green, 38 * S], [C.red, 22 * S]], 2.1, 30 * S, next, .35);
+  else if (tr.kind === 'wash') front('right', p, t, [[C.blue, 60 * S, .35], [C.blue, 70 * S, .9], [C.sky, 90 * S, 1]], 4.7, 34 * S, next, .5);
+  else if (tr.kind === 'ring') { const d = dropBox(); ripple(d.cx, d.cy, p, t, [[C.sky, 90 * S, .45], [C.sky, 14 * S, 1]], 3.9, 8 * S, next, C.sky); }
+  else if (tr.kind === 'flood') front('up', p, t, [[C.sky, 50 * S, .5], [C.blue, 56 * S, 1], [C.deep, 80 * S, 1]], 6.2, 26 * S, next, .45);
+}
+
+function render(t) {
+  x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1; x.clearRect(0, 0, W, H);
+  // camera pulse on each bar
+  const bp = (t % BAR) / BAR; const pulse = 1 + .012 * Math.exp(-bp * 10);
+  x.translate(W / 2, H / 2); x.scale(pulse, pulse); x.translate(-W / 2, -H / 2);
+  const i = TR.findIndex(r => t >= r.at - HALF && t < r.at + HALF);
+  if (i >= 0) transition(TR[i], t, i, i + 1);
+  else SCENES[TR.filter(r => t >= r.at).length](t);
+  // grain, even
+  x.setTransform(1, 0, 0, 1, 0, 0);
+  const gi = grain[Math.floor(t * 24) % grain.length]; x.globalAlpha = 1;
+  for (let yy = 0; yy < H; yy += 256) for (let xx = 0; xx < W; xx += 256) x.drawImage(gi, xx, yy);
+}
+
+function sceneGround(t) {
+  x.fillStyle = C.paper; x.fillRect(0, 0, W, H);
+  x.fillStyle = C.surface; x.fillRect(0, G, W, H - G);
+  const k = (H * .9) / 6350;
+  // rain, with ripples spreading where it meets the turf
+  const r = mulberry(7);
+  x.strokeStyle = C.blue; x.lineWidth = 2.2 * S; x.lineCap = 'round';
+  const fade = 1 - es(lin(t, T.cut + BAR * .5, T.cut + BAR * 1.5));
+  for (let i = 0; i < 70; i++) {
+    const px = r() * W, sp = (700 + r() * 500) * S, ph = r() * 3, len = (26 + r() * 30) * S;
+    const y = ((t + ph) * sp) % (G + 200 * S) - 100 * S;
+    if (y < G - len) { x.globalAlpha = .55 * fade; x.beginPath(); x.moveTo(px, y); x.lineTo(px, y + len); x.stroke(); }
+    else { const rp = (y - (G - len)) / (200 * S), e = eo(rp); x.globalAlpha = .5 * (1 - rp) * fade; x.beginPath(); x.ellipse(px, G - 4 * S, 6 * S + e * 46 * S, 2 * S + e * 6 * S, 0, 0, TAU); x.stroke(); if (rp > .25) { x.globalAlpha *= .5; x.beginPath(); x.ellipse(px, G - 4 * S, 4 * S + (e - .2) * 30 * S, 1.5 * S + (e - .2) * 4 * S, 0, 0, TAU); x.stroke(); } }
+  }
+  x.globalAlpha = 1;
+  // the cut opens: strata revealed downward from the turf line behind a falling liquid front
+  const rv = es(lin(t, T.cut, T.cut + BAR * 1.4)) * (H - G + 60 * S);
+  if (rv > 0) {
+    const fp = edgePts('up', G + rv, t, .7, 14 * S * Math.min(1, rv / (80 * S)));
+    x.save(); x.beginPath(); x.moveTo(-80 * S, G); x.lineTo(W + 80 * S, G); curve(fp.slice().reverse(), false); x.closePath(); x.clip();
+    strataWavy(G, 0, k, t, 250);
+    caustic(G, H, t, '#ffffff', .1, 2, 5);
+    x.restore();
+    if (rv < H - G) { x.save(); x.beginPath(); curve(fp); x.strokeStyle = '#ffffff'; x.globalAlpha = .7; x.lineWidth = 3 * S; x.stroke(); x.restore(); }
+  }
+  // turf line draws across
+  const tl = eo(lin(t, .2, 1.4)); x.fillStyle = C.green; x.fillRect(0, G - 6 * S, W * tl, 10 * S);
+  // shaft, then rainwater gathering inside it
+  if (t > T.cut + BAR * .6) {
+    const ks = eio(lin(t, T.cut + BAR * .6, T.cut + BAR * 1.8)), bot = G - 30 * S + (H - G + 40) * ks;
+    x.fillStyle = 'rgba(255,255,255,.92)'; x.fillRect(SX, G - 30 * S, SW, (H - G + 40) * ks);
+    const lv = es(lin(t, T.cut + BAR * 1.2, T.down + BEAT));
+    shaftWater(SX, SW, H + 10 * S - (H - G) * .5 * lv, bot, t, .85 * lv);
+    x.fillStyle = C.deep; x.fillRect(SX - 8 * S, G - 30 * S, 8 * S, (H - G + 40) * ks); x.fillRect(SX + SW, G - 30 * S, 8 * S, (H - G + 40) * ks);
+    x.fillStyle = '#0b2b3c'; x.fillRect(SX - 26 * S, G - 38 * S, SW + 52 * S, 10 * S * ks);
+  }
+  if (t > T.cut) gaugeDraw(t, 0, false, 60 * S, H - 60 * S, W - 70 * S);
+  // words
+  const tx = PORTRAIT ? W * .16 : 120 * S;
+  two('From roof', 'to river.', tx, G - (PORTRAIT ? 380 : 260) * S, (PORTRAIT ? 92 : 104) * S, .9, t, C.field, C.blue, 'left', true);
+  if (t > T.cut + BAR) two('Drawn', 'in section.', tx, G + (PORTRAIT ? 260 : 200) * S, (PORTRAIT ? 70 : 72) * S, T.cut + BAR, t, '#ffffff', '#ffffff', 'left', true);
+}
+function sceneDown(t) {
+  const k = (H * .9) / 6350;
+  const p = eio(lin(t, T.down, T.plan - BEAT));
+  const camMm = p * 6000;                               // depth at the ground line position
+  const kk = k * 4.5;                                    // zoomed in while descending
+  x.fillStyle = tint(camMm); x.fillRect(0, 0, W, H);
+  strataWavy(G, camMm, kk, t, 50);
+  const dark = camMm > 2000;
+  caustic(0, H, t, dark ? C.sky : '#ffffff', dark ? .05 : .12, 3, 7);
+  // ground (above) when near the top
+  const gy = G - camMm * kk; if (gy > 0) { x.fillStyle = C.paper; x.fillRect(0, 0, W, gy); x.fillStyle = C.green; x.fillRect(0, gy - 6 * S, W, 10 * S); }
+  const top = Math.max(0, gy);
+  x.fillStyle = 'rgba(255,255,255,.9)'; x.fillRect(SX, top, SW, H);
+  // water running down the shaft walls, then standing water near the base
+  const wl = G + (5200 - camMm) * kk;
+  { const r = mulberry(23); x.save(); x.strokeStyle = C.sky; x.lineCap = 'round'; x.lineWidth = 2.4 * S;
+    for (let j = 0; j < 7; j++) { const px = SX + SW * (.12 + .76 * r()), sp = (520 + r() * 300) * S, ph = r() * 2000, len = (60 + r() * 70) * S, span = H + 300 * S;
+      const y = (t * sp + ph) % span - 150 * S; if (y + len < top || y > wl) continue; x.globalAlpha = .7; x.beginPath(); x.moveTo(px, Math.max(top, y)); x.lineTo(px, Math.min(wl, y + len)); x.stroke(); }
+    x.restore(); }
+  shaftWater(SX, SW, wl, H + 10 * S, t, .9);
+  x.fillStyle = C.deep; x.fillRect(SX - 8 * S, top, 8 * S, H); x.fillRect(SX + SW, top, 8 * S, H);
+  // depth level line at the screen ground position
+  x.fillStyle = C.green; x.fillRect(0, G - 1.5 * S, W, 3 * S);
+  gaugeDraw(t, camMm, dark, 60 * S, H - 60 * S, W - 70 * S);
+  const tx = PORTRAIT ? W * .16 : 120 * S;
+  txt(String(Math.round(camMm / 10) * 10).padStart(4, '0'), tx, G - 40 * S, (PORTRAIT ? 190 : 210) * S, 800, dark ? '#ffffff' : C.deep);
+  txt('MM BELOW GROUND', tx + 8 * S, G + 46 * S, 20 * S, 500, dark ? C.sky : C.deep, 'left', 'mono', 3 * S);
+  const facts = [[1000, '1000 mm. The shallowest chamber.'], [3000, '3000 mm. The deepest adoptable chamber.'], [6000, '6000 mm. The bottom of the range.']];
+  facts.forEach(([mm, s]) => { const a = es(lin(camMm, mm - 250, mm)) * (1 - es(lin(camMm, mm + 350, mm + 600))); if (a > 0 && camMm < 6001) { x.save(); x.globalAlpha = a; txt(s, tx + 8 * S, G + 110 * S + (1 - a) * 14 * S, (PORTRAIT ? 24 : 30) * S, 500, dark ? '#dcebf3' : C.deep, 'left', 'mono'); x.restore(); } });
+}
+function scenePlan(t) {
+  x.fillStyle = C.invert; x.fillRect(0, 0, W, H);
+  caustic(0, H, t, C.sky, .045, 5, 8);
+  const cx = PORTRAIT ? W / 2 : W * .71, cy = PORTRAIT ? H * .36 : H / 2 + 10 * S, r = (PORTRAIT ? 290 : 265) * S;
+  const ka = eo(lin(t, T.plan, T.plan + .8));
+  // still water in the chamber: slow rings spreading from the centre
+  x.save(); x.strokeStyle = C.sky; x.lineWidth = 1.5 * S;
+  for (let j = 0; j < 4; j++) { const f = (t * .22 + j / 4) % 1; x.globalAlpha = .16 * ka * Math.sin(Math.PI * f); x.beginPath(); loop(ringPts(cx, cy, r * .92 * f + 4 * S, t, j, 5 * S)); x.stroke(); }
+  x.restore();
+  clock(cx, cy, r, [3, 5, 6, 7, 9], t, T.plan, true);
+  // flow: each inlet feeds a stream through the chamber to the outlet at 12, which carries it away north
+  const nr = r * .13, O = [cx, cy - r], to = T.plan + .9 + 5 * BEAT;
+  [3, 5, 6, 7, 9].forEach((h, i) => {
+    const th = h * Math.PI / 6, sn = Math.sin(th), cs = -Math.cos(th), tn = T.plan + .9 + i * BEAT;
+    const E = [cx + (r + nr * 2.6) * sn, cy + (r + nr * 2.6) * cs], N = [cx + r * sn, cy + r * cs];
+    const path = [E, ...bez(N, [cx + .42 * r * sn, cy + .42 * r * cs], [cx, cy - .3 * r], O, 28)];
+    const f = es(lin(t, tn + .3, tn + 1.5)); if (f <= 0) return;
+    x.save(); x.lineCap = 'round'; x.lineJoin = 'round';
+    x.beginPath(); partial(path, f); x.strokeStyle = C.blue; x.globalAlpha = .45; x.lineWidth = 6 * S; x.stroke();
+    x.beginPath(); partial(path, f); x.strokeStyle = '#ffffff'; x.globalAlpha = .85; x.lineWidth = 3 * S;
+    x.setLineDash([10 * S, 26 * S]); x.lineDashOffset = -t * 150 * S - i * 11 * S; x.stroke();
+    x.restore();
+  });
+  const ko = es(lin(t, to + .2, to + 1));
+  if (ko > 0) {
+    const out = [O, [cx, cy - r - nr * 2.6 * ko - 10 * S]];
+    x.save(); x.lineCap = 'round'; x.beginPath(); x.moveTo(out[0][0], out[0][1]); x.lineTo(out[1][0], out[1][1]);
+    x.strokeStyle = '#ffffff'; x.globalAlpha = .9 * ko; x.lineWidth = 3.4 * S; x.setLineDash([12 * S, 18 * S]); x.lineDashOffset = -t * 190 * S; x.stroke(); x.restore();
+  }
+  const tx = PORTRAIT ? W / 2 : 140 * S, al = PORTRAIT ? 'center' : 'left';
+  two('Five ways in.', 'One way out.', tx, PORTRAIT ? H * .68 : H * .44, (PORTRAIT ? 84 : 84) * S, T.plan + BAR * .5, t, C.green, '#ffffff', al, true);
+  const k = eo(lin(t, T.plan + BAR, T.plan + BAR + .6));
+  x.save(); x.globalAlpha = k; txt('INLETS 3 · 5 · 6 · 7 · 9   OUTLET 12', tx, (PORTRAIT ? H * .68 + 190 * S : H * .44 + 160 * S) + (1 - k) * 14 * S, 22 * S, 500, C.sky, al, 'mono', 2 * S); x.restore();
+}
+function sceneXray(t) {
+  x.fillStyle = C.surface; x.fillRect(0, 0, W, H);
+  caustic(0, H, t, '#ffffff', .7, 9, 8);
+  caustic(0, H, t + 7, C.sky, .1, 13, 5);
+  const list = [['sersic600', 'Inspect', 'RHINO SERSIC600'], ['serpt600', 'Settle', 'RhinoPit SERPT600'], ['sehds1800', 'Separate', 'SudSceptor SEHDS1800'], ['rotexc1200', 'Control', 'RhinoRoTex C1200']];
+  const i = clamp(Math.floor((t - T.xray) / (BEAT * 2)), 0, 3);
+  const tl = (t - T.xray) - i * BEAT * 2;
+  const [k, verb, name] = list[i];
+  const sz = 860 * S;
+  const ix = PORTRAIT ? (W - sz) / 2 : W * .52, iy = PORTRAIT ? H * .12 : (H - sz) / 2;
+  const bob = Math.sin(t * 1.3) * 4 * S;                 // a gentle float
+  if (i === 0) { const a = es(clamp(tl / .5)); x.save(); x.globalAlpha = a; x.drawImage(IM[k], ix, iy + bob + (1 - a) * 20 * S, sz, sz); x.restore(); }
+  else {
+    // the next product rises in on a water level; the last one stays above the line until it is gone
+    const f = es(clamp(tl / .6)), amp = 12 * S * Math.sin(Math.PI * f);
+    const lvl = iy + sz + 20 * S - f * (sz + 40 * S);
+    const pts = []; for (let u = 0; u <= 12; u++) { const px = ix - 20 * S + (sz + 40 * S) * u / 12; pts.push([px, lvl + amp * wv(px / S, t * 1.6, 2.2)]); }
+    x.save(); x.beginPath(); curve(pts); x.lineTo(ix + sz + 20 * S, iy - 40 * S); x.lineTo(ix - 20 * S, iy - 40 * S); x.closePath(); x.clip();
+    x.globalAlpha = 1 - f * .6; x.drawImage(IM[list[i - 1][0]], ix, iy + bob, sz, sz); x.restore();
+    x.save(); x.beginPath(); curve(pts); x.lineTo(ix + sz + 20 * S, iy + sz + 40 * S); x.lineTo(ix - 20 * S, iy + sz + 40 * S); x.closePath(); x.clip();
+    x.drawImage(IM[k], ix, iy + bob + (1 - f) * 16 * S, sz, sz); x.restore();
+    if (f < 1) { x.save(); x.beginPath(); curve(pts); x.strokeStyle = C.blue; x.globalAlpha = .35 * Math.sin(Math.PI * f); x.lineWidth = 2 * S; x.stroke(); x.restore(); }
+  }
+  const tx = PORTRAIT ? W / 2 : 140 * S, al = PORTRAIT ? 'center' : 'left', ty = PORTRAIT ? H * .74 : H * .48;
+  two('', verb + '.', tx, ty, (PORTRAIT ? 110 : 120) * S, T.xray + i * BEAT * 2, t, C.field, C.blue, al);
+  const kn = es(lin(t, T.xray + i * BEAT * 2 + .1, T.xray + i * BEAT * 2 + .6));
+  x.save(); x.globalAlpha = kn; txt(name, tx, ty + 70 * S + (1 - kn) * 10 * S, 26 * S, 500, C.deep, al, 'mono', 1 * S); x.restore();
+  // progress of the journey: four pips, each filling like a gauge
+  for (let j = 0; j < 4; j++) {
+    const px = (PORTRAIT ? W / 2 - 66 * S : 140 * S) + j * 44 * S, fj = j < i ? 1 : j === i ? es(clamp(tl / .5)) : 0;
+    x.fillStyle = 'rgba(0,85,118,.2)'; x.fillRect(px, ty + 110 * S, 32 * S, 6 * S);
+    x.fillStyle = C.blue; x.fillRect(px, ty + 110 * S, 32 * S * fj, 6 * S);
+  }
+}
+function sceneDrop(t) {
+  x.fillStyle = C.paper; x.fillRect(0, 0, W, H);
+  const d = dropBox(), { vb, hh, X, Y } = d;
+  // the last of the ripple dies away around the drop
+  x.save(); x.strokeStyle = C.sky; x.lineWidth = 1.6 * S;
+  for (let j = 0; j < 3; j++) { const f = lin(t, T.drop + j * .5, T.drop + 2.6 + j * .5); if (f <= 0 || f >= 1) continue; x.globalAlpha = .45 * (1 - f) * Math.sin(Math.PI * Math.min(1, f * 4)); x.beginPath(); loop(ringPts(d.cx, d.cy, 60 * S + eo(f) * 520 * S, t, j, 8 * S)); x.stroke(); }
+  x.restore();
+  // drop paths are indexes 5..9 in the master; settle bottom first: red, small green, blue (+speck), top green
+  const order = { 7: 0, 9: 1, 8: 2, 5: 2, 6: 3 };
+  const t0 = T.drop + .2;
+  drawSet(P.hz, vb, X, Y, hh, (p, i) => i in order, (p, i) => { const k = eo(lin(t, t0 + order[i] * .44, t0 + order[i] * .44 + .7)); return { al: k, dy: -(1 - k) * 40 }; });
+  const kw = eo(lin(t, t0 + 1.8, t0 + 2.5));
+  drawSet(P.hz, vb, X, Y, hh, (p, i) => !(i in order), () => ({ al: kw, dy: (1 - kw) * 8 }));
+  const ks = eo(lin(t, t0 + 2.7, t0 + 3.3));
+  x.save(); x.globalAlpha = ks; const dy = (1 - ks) * 12 * S;
+  txt('BESPOKE,', W / 2 - 8 * S, Y + hh + 90 * S + dy, 30 * S, 700, C.blue, 'right', 'Montserrat', 4 * S);
+  x.font = `italic 700 ${30 * S}px Montserrat`; x.fillStyle = C.blue; x.textAlign = 'left'; x.letterSpacing = 4 * S + 'px'; x.fillText(' STANDARDISED', W / 2 - 8 * S, Y + hh + 90 * S + dy); x.restore();
+}
+// the drop's four bands as one flowing ribbon, green, blue, green, red from the top, head tapered
+function ribbon(t, yc, u, grow, al) {
+  const bands = [[C.green, 1], [C.blue, 1.3], [C.green, .62], [C.red, .38]], tot = bands.reduce((a, b) => a + b[1], 0);
+  const head = grow * (W + 400 * S), xs = [];
+  for (let px = -40 * S; px <= Math.min(W + 60 * S, head); px += 24 * S) xs.push(px);
+  if (xs.length < 3) return;
+  xs.push(Math.min(W + 60 * S, head));
+  const rows = xs.map(px => {
+    const v = px / S, c = yc + 30 * S * Math.sin(v * .0034 - t * .8) + 12 * S * Math.sin(v * .0091 + t * .55);
+    const taper = es((head - px) / (360 * S)), sw = u * (1 + .32 * Math.sin(v * .0058 - t * .7)) * taper;
+    const e = [c - tot * sw / 2]; bands.forEach(b => e.push(e[e.length - 1] + b[1] * sw)); return [px, e];
+  });
+  x.save(); x.globalAlpha = al;
+  bands.forEach((b, bi) => {
+    x.beginPath(); curve(rows.map(r => [r[0], r[1][bi]])); curve(rows.slice().reverse().map(r => [r[0], r[1][bi + 1]]), false); x.closePath();
+    x.fillStyle = b[0]; x.fill();
+  });
+  x.restore();
+}
+function sceneEnd(t) {
+  x.fillStyle = C.invert; x.fillRect(0, 0, W, H);
+  const k = eo(lin(t, T.end, T.end + 1.2));
+  // deep water at the foot, caustics overhead
+  const g = x.createLinearGradient(0, H * .62, 0, H); g.addColorStop(0, C.invert); g.addColorStop(1, C.deep);
+  x.fillStyle = g; x.fillRect(0, H * .62, W, H * .38);
+  caustic(0, H, t, C.sky, .04, 11, 8);
+  ribbon(t, H * (PORTRAIT ? .82 : .86), (PORTRAIT ? 26 : 22) * S, es(lin(t, T.end + .2, T.end + 2.6)), 1);
+  const vb = D.drop.vb, dh = 120 * S, dw = dh * vb[2] / vb[3];
+  drawSet(P.drop, vb, W / 2 - dw / 2, H * (PORTRAIT ? .30 : .20), dh, null, () => ({ al: k, dy: 0 }));
+  two('Every drop,', 'accounted for.', W / 2, H * (PORTRAIT ? .46 : .48), (PORTRAIT ? 86 : 100) * S, T.end + .4, t, C.green, '#ffffff', 'center', true);
+  const k2 = eo(lin(t, T.end + 1.4, T.end + 2)); x.save(); x.globalAlpha = k2;
+  txt('SUDSENVIRO.COM', W / 2, H * (PORTRAIT ? .64 : .70) + (1 - k2) * 10 * S, 24 * S, 500, C.sky, 'center', 'mono', 6 * S); x.restore();
+  const kf = es(lin(t, DUR - .8, DUR)); if (kf > 0) { x.fillStyle = `rgba(0,0,0,${kf})`; x.fillRect(0, 0, W, H); }
+}
+window.render = render; window.DUR = DUR;
+</script></body></html>

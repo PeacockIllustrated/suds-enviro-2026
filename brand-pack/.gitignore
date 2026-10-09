@@ -1,0 +1,15 @@
+# Raw renders and model outputs; the compressed copies live in ../photography
+src/photo/
+src/catalogue/out/
+src/film/stills/
+src/film/score.wav
+src/film/film.html
+film/*-silent.mp4
+__pycache__/
+src/reel/reel.html
+src/reel/stills/
+src/reel/score.wav
+src/reel/cut.html
+src/reel/sprites/
+src/reel/cut_score.wav
+src/reel/site3d/
