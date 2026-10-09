@@ -153,6 +153,8 @@ function setup(p, g) {
   parts.forEach(part => {
     const role = roles[part.name] || 'body'; if (role === 'xray') return;
     const mat = new THREE.MeshToonMaterial({ color: ROLE_COLOUR[role], gradientMap: ramp, side: THREE.DoubleSide });
+    // the RoTex file carries its vortex band twice, once inside the base: pull the band forward so the two don't fight
+    if (p.id === 'rotexc1200' && role === 'accent') { mat.polygonOffset = true; mat.polygonOffsetFactor = -2; mat.polygonOffsetUnits = -8; }
     const mesh = new THREE.Mesh(part.geometry, mat);
     const hull = new THREE.Mesh(toCreasedNormals(part.geometry.index ? part.geometry.toNonIndexed() : part.geometry, Math.PI / 5), inkMaterial(role === 'inlet' ? '#2f7c3a' : TOON.ink, 3));
     mesh.add(hull); holder.add(mesh); list.push({ role, mesh, mat, hull });
