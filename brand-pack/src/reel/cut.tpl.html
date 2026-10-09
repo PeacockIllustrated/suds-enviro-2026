@@ -6,13 +6,15 @@
 html,body{margin:0;background:#000;overflow:hidden}canvas{display:block;position:absolute;left:0;top:0}
 #bb{position:absolute;left:-9999px;top:0}
 </style>
-<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/","three/examples/jsm/":"/node_modules/three/examples/jsm/"}}</script>
 </head><body><canvas id="bg"></canvas><canvas id="gl"></canvas><canvas id="fg"></canvas><svg id="bb" xmlns="http://www.w3.org/2000/svg"></svg>
 <script type="module">
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { mergeGeometries, toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
+import { assembleParts } from './site3d/components/site/three/assembly.js';
+import { PRODUCT_MODELS } from './site3d/lib/content/product-models.js';
 /*DATA*/
 const q = new URLSearchParams(location.search);
 const PORTRAIT = (q.get('fmt') || 'portrait') === 'portrait';
@@ -71,22 +73,49 @@ const bbs = document.getElementById('bb');
 function boxes(set) { return set.map(p => { const e = document.createElementNS('http://www.w3.org/2000/svg', 'path'); e.setAttribute('d', p.d); bbs.appendChild(e); const b = e.getBBox(); return { x: b.x, y: b.y, w: b.width, h: b.height }; }); }
 P.hzBox = boxes(P.hz);
 
-// ---------- 3D
-const AA = q.get('aa') !== '0', SH = q.get('sh') !== '0', RES = +(q.get('res') || 1);
-const r = new THREE.WebGLRenderer({ canvas: glc, antialias: AA, alpha: true, preserveDrawingBuffer: true });
+// ---------- 3D, in the website's look: toon bands, white bodies, inked outlines (components/site/three/toon.tsx)
+const RES = +(q.get('res') || 1);
+const r = new THREE.WebGLRenderer({ canvas: glc, antialias: true, alpha: true, preserveDrawingBuffer: true });
 r.setPixelRatio(RES); r.setSize(W, H, false); glc.style.width = W + 'px'; glc.style.height = H + 'px';
-r.setClearColor(0x000000, 0); r.outputColorSpace = THREE.SRGBColorSpace;
-r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.0; r.localClippingEnabled = true;
-r.shadowMap.enabled = SH; r.shadowMap.type = THREE.PCFShadowMap;
+r.setClearColor(0x000000, 0); r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.NoToneMapping;
+const CLIP = [new THREE.Plane(new THREE.Vector3(0, -1, 0), 10), new THREE.Plane(new THREE.Vector3(0, 0, -1), 10)];
+r.clippingPlanes = CLIP;
 const scene = new THREE.Scene();
-const pm = new THREE.PMREMGenerator(r); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; scene.environmentIntensity = .8;
-const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-.7, 5.2, 1.1); key.castShadow = true;
-key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 6; key.shadow.bias = -0.0006;
-const sc = key.shadow.camera; sc.left = sc.bottom = -1.4; sc.right = sc.top = 1.4; sc.near = .1; sc.far = 10;
-scene.add(key); scene.add(key.target); key.target.position.set(0, .4, 0);
-const hemi = new THREE.HemisphereLight(0xf4fbff, 0x9fb3bf, .7); scene.add(hemi);
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.ShadowMaterial({ opacity: .16 }));
-ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+scene.add(new THREE.AmbientLight(0xffffff, 1.15));
+const k1 = new THREE.DirectionalLight(0xffffff, 1.5); k1.position.set(3, 6, 4); scene.add(k1);
+const k2 = new THREE.DirectionalLight(0xffffff, .35); k2.position.set(-4, 2, -3); scene.add(k2);
+const TOON = { ink: '#0e4f73', body: '#e6f4fb', accent: '#1d80b9', accentLight: '#afdbf4', green: '#54b54d' };
+const ROLE_COLOUR = { body: TOON.body, casing: TOON.body, insides: TOON.accentLight, accent: TOON.accent, inlet: TOON.green };
+const ramp = (() => { const st = [128, 188, 228, 255], d = new Uint8Array(16); st.forEach((v, i) => d.set([v, v, v, 255], i * 4));
+  const t = new THREE.DataTexture(d, 4, 1, THREE.RGBAFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.generateMipmaps = false; t.needsUpdate = true; return t; })();
+// inverted-hull ink line, offset in screen pixels (drei Outlines, as the site uses it)
+const inkVert = `#include <common>
+#include <clipping_planes_pars_vertex>
+uniform float thickness; uniform vec2 size;
+void main() {
+  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+  vec4 clip = projectionMatrix * mvPosition;
+  vec3 cn = mat3(projectionMatrix) * (normalMatrix * normal);
+  clip.xy += normalize(cn.xy) * thickness / size * clip.w * 2.0;
+  gl_Position = clip;
+  #include <clipping_planes_vertex>
+}`;
+const inkFrag = `#include <clipping_planes_pars_fragment>
+uniform vec3 color; uniform float opacity;
+void main() {
+  #include <clipping_planes_fragment>
+  gl_FragColor = vec4(color, opacity);
+  #include <colorspace_fragment>
+}`;
+function inkMaterial(col, thickness) {
+  return new THREE.ShaderMaterial({ vertexShader: inkVert, fragmentShader: inkFrag, side: THREE.BackSide, clipping: true, transparent: true,
+    uniforms: { color: { value: new THREE.Color(col) }, opacity: { value: 1 }, thickness: { value: thickness }, size: { value: new THREE.Vector2(SP * RES, SP * RES) } } });
+}
+// soft contact shadow under the product
+const shadowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(14,79,115,1)'); gr.addColorStop(1, 'rgba(14,79,115,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: .16, depthWrite: false }));
+ground.rotation.x = -Math.PI / 2; ground.position.y = .001; scene.add(ground);
 const cam = new THREE.PerspectiveCamera(22, W / H, .05, 100);
 
 const PRODUCTS = [
@@ -95,50 +124,62 @@ const PRODUCTS = [
   { id: 'rotexc1200', file: 'rhinorotex/rhinorotex-c1200.glb', light: 'RHINOROTEX', bold: 'C1200', role: 'VORTEX FLOW CONTROL', col: C.deep, fit: .58 },
   { id: 'ps50', file: 'rhinolift-pump-tank/rhinolift-ps50.glb', light: 'RHINOLIFT', bold: 'PS50', role: 'PUMPING STATION', col: C.blue, fit: .78 },
 ];
+// part roles as the product pages set them
+function siteRoles(url) { let found = {}; (function walk(o) { if (!o || typeof o !== 'object') return; if (o.url === url && o.roles) { found = o.roles; return; } Object.values(o).forEach(walk); })(PRODUCT_MODELS); return found; }
+// a library file's parts as float geometry in mm, grouped by part node, then assembled as on the site
+function libraryParts(scene) {
+  scene.updateMatrixWorld(true);
+  const product = scene.children.length === 1 && !scene.children[0].isMesh ? scene.children[0] : scene, byPart = new Map();
+  scene.traverse(mesh => {
+    if (!mesh.isMesh) return;
+    let node = mesh; while (node.parent && node.parent !== product && node.parent !== scene) node = node.parent;
+    const name = node === mesh && product === scene ? mesh.name : node.name;
+    const src = mesh.geometry.getAttribute('position'), a = new Float32Array(src.count * 3);
+    for (let i = 0; i < src.count; i++) { a[i * 3] = src.getX(i); a[i * 3 + 1] = src.getY(i); a[i * 3 + 2] = src.getZ(i); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(a, 3));
+    if (mesh.geometry.index) g.setIndex(mesh.geometry.index.clone());
+    g.applyMatrix4(mesh.matrixWorld); g.computeVertexNormals();
+    (byPart.get(name) || byPart.set(name, []).get(name)).push(g);
+  });
+  return [...byPart.entries()].map(([name, gs]) => ({ name, geometry: gs.length === 1 ? gs[0] : mergeGeometries(gs, false) }));
+}
 const M = {};
 const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
 let ready = 0;
 function setup(p, g) {
-  const root = g.scene, kill = [];
-  const planes = [new THREE.Plane(new THREE.Vector3(0, -1, 0), 10), new THREE.Plane(new THREE.Vector3(0, 0, -1), 10)];
-  const mats = {
-    body: new THREE.MeshStandardMaterial({ color: 0x27343d, roughness: .62, metalness: 0, transparent: !SPRITE, clippingPlanes: planes, side: THREE.DoubleSide }),
-    blue: new THREE.MeshStandardMaterial({ color: 0x1d80b9, roughness: .5, transparent: !SPRITE, clippingPlanes: planes }),
-    green: new THREE.MeshStandardMaterial({ color: 0x54b54d, roughness: .5, transparent: !SPRITE, clippingPlanes: planes }),
-    face: new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .06, depthWrite: false, side: THREE.DoubleSide, clippingPlanes: planes }),
-    eBlue: new THREE.LineBasicMaterial({ color: 0xafdbf4, transparent: true, opacity: .9, clippingPlanes: planes }),
-    eGreen: new THREE.LineBasicMaterial({ color: 0x54b54d, transparent: true, opacity: .95, clippingPlanes: planes }),
-  };
-  // the model keeps its own node transforms (positions are quantized, so never bake them)
-  const solid = root, xray = root.clone(true);
-  const kind = o => { const c = o.material && o.material.color ? o.material.color.getHSL({}) : { s: 0, l: .2 }; const accent = c.s > .35 && c.l > .25; return accent ? (o.material.color.g > o.material.color.b * 1.1 ? 'green' : 'blue') : 'body'; };
-  const cube = o => /cube/i.test(o.name) || /cube/i.test(o.parent && o.parent.name || '');
-  const xm = []; xray.traverse(o => { if (o.isMesh) xm.push(o); });
-  xm.forEach(o => { if (cube(o)) { o.visible = false; return; } const k = kind(o); o.material = mats.face; if (q.get('nf') === '1') o.material = new THREE.MeshBasicMaterial({ visible: false }); o.add(new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 28), k === 'green' ? mats.eGreen : mats.eBlue)); });
-  const sm = []; solid.traverse(o => { if (o.isMesh) sm.push(o); });
-  sm.forEach(o => { if (cube(o)) { o.visible = false; return; } o.material = mats[kind(o)]; o.castShadow = o.receiveShadow = true; });
-  const holder = new THREE.Group(); holder.add(solid); holder.add(xray);
-  const box = new THREE.Box3().setFromObject(solid), size = box.getSize(new THREE.Vector3()), ctr = box.getCenter(new THREE.Vector3());
+  const url = '/models/library/v1/' + p.file, roles = siteRoles(url);
+  const parts = assembleParts(url, libraryParts(g.scene), (name, geometry) => ({ name, geometry }));
+  const holder = new THREE.Group(), list = [];
+  parts.forEach(part => {
+    const role = roles[part.name] || 'body'; if (role === 'xray') return;
+    const mat = new THREE.MeshToonMaterial({ color: ROLE_COLOUR[role], gradientMap: ramp, side: THREE.DoubleSide });
+    const mesh = new THREE.Mesh(part.geometry, mat);
+    const hull = new THREE.Mesh(toCreasedNormals(part.geometry.index ? part.geometry.toNonIndexed() : part.geometry, Math.PI / 5), inkMaterial(role === 'inlet' ? '#2f7c3a' : TOON.ink, 3));
+    mesh.add(hull); holder.add(mesh); list.push({ role, mesh, mat, hull });
+  });
+  const box = new THREE.Box3().setFromObject(holder), size = box.getSize(new THREE.Vector3()), ctr = box.getCenter(new THREE.Vector3());
   const s = 1 / size.y; holder.scale.setScalar(s); holder.position.set(-ctr.x * s, -box.min.y * s, -ctr.z * s);
   const spin = new THREE.Group(); spin.add(holder); scene.add(spin); spin.visible = false;
-  M[p.id] = { p, spin, solid, xray, mats, planes, w: Math.max(size.x, size.z) * s, rad: new THREE.Vector3(size.x * s, 1, size.z * s).length() / 2 };
+  M[p.id] = { p, spin, list, w: Math.max(size.x, size.z) * s, rad: new THREE.Vector3(size.x * s, 1, size.z * s).length() / 2 };
   ready++;
 }
 if (SPRITE) PRODUCTS.forEach(p => loader.load('/public/models/library/v1/' + p.file, g => setup(p, g), undefined, e => { document.title = 'ERR ' + p.file; }));
 window.READY = () => (SPRITE ? ready === PRODUCTS.length : spritesReady()) && document.fonts.check('800 40px Montserrat') && document.fonts.check('300 40px Montserrat') && document.fonts.check('500 20px "Plex Mono"');
 ['800 40px Montserrat', '300 40px Montserrat', 'italic 800 40px Montserrat', '500 20px "Plex Mono"'].forEach(f => document.fonts.load(f));
 
-// state for one product this frame
+// state for one product this frame; see = how far the casings fade to show the insides (the site's hover reveal)
 function show(id, o) {
   const m = M[id]; m.spin.visible = true;
   m.spin.rotation.y = o.yaw || 0; m.spin.position.y = o.dy || 0;
-  const so = o.solid ?? 1, xo = o.xray ?? 0;
-  m.solid.visible = so > .001; m.xray.visible = xo > .001;
-  m.mats.body.opacity = m.mats.blue.opacity = m.mats.green.opacity = so;
-  m.mats.body.depthWrite = m.mats.blue.depthWrite = m.mats.green.depthWrite = so > .5;
-  m.mats.face.opacity = .06 * xo; m.mats.eBlue.opacity = .9 * xo; m.mats.eGreen.opacity = .95 * xo;
-  m.planes[0].constant = o.reveal ?? 10;
-  m.planes[1].constant = o.cut ?? 10;
+  const see = o.see || 0;
+  m.list.forEach(({ role, mesh, mat, hull }) => {
+    const op = role === 'casing' ? 1 - .9 * see : 1, tr = op < .999;
+    if (mat.transparent !== tr) { mat.transparent = tr; mat.depthWrite = !tr; mat.side = tr ? THREE.FrontSide : THREE.DoubleSide; mat.needsUpdate = true; }
+    mat.opacity = op; mesh.renderOrder = tr ? 2 : 0;
+    hull.visible = op > .5; hull.material.uniforms.opacity.value = tr ? (op - .5) * 2 : 1;
+  });
+  CLIP[0].constant = o.reveal ?? 10;
+  CLIP[1].constant = o.cut ?? 10;
   return m;
 }
 // frame the product: fill is the share of the shorter side its height takes; oy shifts it on screen (fraction of H, + is up)
@@ -170,8 +211,8 @@ window.sprite = (t, layer) => {
   CUR = null; CURT = t; scenes(t); if (!CUR) return null;
   const a = CUR[layer] ?? (layer === 'solid' ? 1 : 0); if (a <= .001) return null;
   hideAll(); ground.visible = layer === 'solid' && CUR.ground !== false; ground.material.opacity = .16 * (CUR.shadow ?? 1);
-  const m = show(CUR.id, { yaw: CUR.yaw, reveal: CUR.reveal, cut: CUR.cut, solid: layer === 'solid' ? 1 : 0, xray: layer === 'xray' ? 1 : 0 });
-  m.mats.eBlue.color.set(CUR.edge === 'blue' ? 0x1d80b9 : 0xafdbf4); m.mats.face.opacity = CUR.face ?? .06;
+  const m = show(CUR.id, { yaw: CUR.yaw, reveal: CUR.reveal, cut: CUR.cut, see: layer === 'xray' ? 1 : CUR.see || 0 });
+  ground.scale.setScalar(m.rad * 2.6);
   frame(m, CUR.camYaw ?? 0, CUR.pitch ?? 14, .8 * (m.p.fit || 1), 0, 0);
   r.render(scene, cam); return glc.toDataURL('image/png');
 };
