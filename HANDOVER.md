@@ -79,9 +79,8 @@ this app has one wizard that takes inlet count as a step.
    150 mm is not. **Nothing has been changed either way**, and the
    marketing copy omits the figure deliberately so nothing ships taking a
    side. This is a manufacturing spec - do not resolve it by guessing.
-2. **Contact card copy** - Sales, Help & Support and More info are lorem
-   ipsum on the live Webflow site. Carried over verbatim and flagged in
-   `lib/content/contact.ts`. Do not invent replacements.
+2. **Contact card copy** - resolved 2026-10-09. Sales, Help & Support and
+   More info now carry real copy on Webflow and in `lib/content/contact.ts`.
 3. **"SuDS" or "SUDS"** in uppercase headings. `uppercase` currently
    flattens the brand's own capitalisation.
 

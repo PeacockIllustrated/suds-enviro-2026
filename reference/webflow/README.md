@@ -46,8 +46,8 @@ page. Unpack it to `reference/webflow-export/`.
 
 ## Notes on the Webflow content itself
 
-- The **Contact page is unfinished**: the three cards (Sales, Help & Support,
-  More info) all still carry lorem ipsum. Real copy is needed from the client.
+- The Contact page cards (Sales, Help & Support, More info) carried lorem
+  ipsum until 2026-10-09, when real copy replaced it on Webflow and here.
 - Several nav entries are placeholders: the Hydrodynamic Separator and
   Oil/Water Separator dropdown items read `*****` and are marked `disabled`.
 - Six of the Home page product-card images are AI-generated stand-ins

@@ -3,9 +3,8 @@ import type { RichText } from './rich-text'
 /**
  * Contact page copy, transcribed from the Webflow `Contact` page.
  *
- * The three support cards are still lorem ipsum on the Webflow site. They
- * are kept here verbatim, flagged, rather than invented - real copy has to
- * come from the client.
+ * The three support cards carried lorem ipsum on Webflow until 2026-10-09;
+ * the copy below replaced it on both sites.
  */
 
 export const CONTACT_HERO = {
@@ -21,34 +20,26 @@ export interface SupportCard {
   heading: string
   body: string
   cta: { label: string; href: string }
-  /** True while the Webflow site still carries placeholder copy. */
-  placeholder?: boolean
 }
 
 export const SUPPORT_CARDS: SupportCard[] = [
   {
     id: 'sales',
     heading: 'Sales',
-    // TODO(client): placeholder on the Webflow site. Needs real copy.
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in ero.',
+    body: 'Pricing a scheme or speccing a chamber? Talk to our team about the right RHINO products for your site.',
     cta: { label: 'Contact sales', href: '#contact-form' },
-    placeholder: true,
   },
   {
     id: 'support',
     heading: 'Help & Support',
-    // TODO(client): placeholder on the Webflow site. Needs real copy.
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in ero.',
+    body: 'Questions on installation or maintenance? Our team is on hand to keep your system working as designed.',
     cta: { label: 'Get support', href: '#contact-form' },
-    placeholder: true,
   },
   {
     id: 'more',
     heading: 'More info',
-    // TODO(client): placeholder on the Webflow site. Needs real copy.
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in ero.',
+    body: 'Explore the RHINO range, from inspection chambers to flow controls, and find the right fit for your site.',
     cta: { label: 'Learn more', href: '/products' },
-    placeholder: true,
   },
 ]
 
